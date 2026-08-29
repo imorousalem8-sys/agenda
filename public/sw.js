@@ -1,7 +1,7 @@
 // AlarmAgenda Service Worker
 // Handles push notifications and background alarm functionality
 
-const CACHE_NAME = "alarm-agenda-v2";
+const CACHE_NAME = "alarm-agenda-v3";
 const STATIC_ASSETS = [
   "/manifest.json",
 ];
@@ -11,7 +11,7 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate
+// Activate - instantly delete all old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -23,16 +23,22 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch — network first, cache fallback
+// Fetch — network first, never cache HTML navigation or APIs
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-  if (event.request.url.includes("/api/")) return; // Never cache API
+  if (event.request.url.includes("/api/")) return;
+  if (event.request.mode === "navigate") {
+    event.respondWith(fetch(event.request));
+    return;
+  }
 
   event.respondWith(
     fetch(event.request)
       .then((res) => {
-        const clone = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        if (res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
         return res;
       })
       .catch(() => caches.match(event.request))
