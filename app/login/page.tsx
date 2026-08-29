@@ -195,29 +195,46 @@ export default function LandingPage() {
     authRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleTestVoiceDemo = () => {
+  const handleTestVoiceDemo = async () => {
     setDemoVoicePlaying(true);
-    speakAIText(
-      "Bonjour ! Je suis votre assistante AlarmAgenda. Vos rendez-vous et vos tâches urgentes sont sous contrôle absolu.",
-      { gender: "FEMALE" }
-    );
-    setTimeout(() => setDemoVoicePlaying(false), 4500);
+    try {
+      const res = await fetch("/api/voice/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "" }),
+      });
+      const data = await res.json();
+      const message = data.spokenText || "Bonjour ! Je suis votre assistante AlarmAgenda. Dictez-moi simplement vos rendez-vous et je m'occupe de tout.";
+      
+      speakAIText(message, {
+        gender: "FEMALE",
+        onEnd: () => setDemoVoicePlaying(false),
+        onError: () => setDemoVoicePlaying(false),
+      });
+    } catch {
+      speakAIText(
+        "Bonjour ! Je suis votre assistante AlarmAgenda. Vos rendez-vous et vos tâches urgentes sont sous contrôle absolu.",
+        { gender: "FEMALE", onEnd: () => setDemoVoicePlaying(false), onError: () => setDemoVoicePlaying(false) }
+      );
+    }
   };
 
-  const handleSandboxSimulate = (prompt: string) => {
+  const handleSandboxSimulate = async (prompt: string) => {
     setSandboxInput(prompt);
-    if (prompt.includes("Marc")) {
-      setSandboxResult(
-        "✨ Action planifiée : Tâche créée pour Demain à 14h00 • Contact associé : Marc • Alarme vocale programmée."
-      );
-    } else if (prompt.includes("docteur") || prompt.includes("médecin")) {
-      setSandboxResult(
-        "✨ Action planifiée : Rendez-vous médical programmé Jeudi à 10h30 • Rappel persistant 15 min avant."
-      );
-    } else {
-      setSandboxResult(
-        "✨ Action planifiée : Rappel vocal configuré pour Ce Soir à 18h00 avec énonciation automatique des notes."
-      );
+    try {
+      const res = await fetch("/api/voice/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+      const data = await res.json();
+      setSandboxResult(data.summary);
+
+      if (data.spokenText) {
+        speakAIText(data.spokenText, { gender: "FEMALE" });
+      }
+    } catch {
+      setSandboxResult("✨ Action planifiée : Événement enregistré avec succès • Alarme vocale activée.");
     }
   };
 
