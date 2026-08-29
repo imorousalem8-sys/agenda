@@ -16,12 +16,10 @@ import {
   Briefcase,
   User,
   Volume2,
-  LogOut,
-  Menu,
   Sparkles,
   Phone,
-  X,
   Crown,
+  Bot,
 } from "lucide-react";
 import AlarmOverlay from "@/components/reminders/AlarmOverlay";
 import NotificationManager from "@/components/reminders/NotificationManager";
