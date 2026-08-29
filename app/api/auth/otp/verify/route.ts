@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email et code OTP requis" }, { status: 400 });
     }
 
-    const verification = verifyStoredOtp(email, code);
+    const verification = await verifyStoredOtp(email, code);
 
     if (!verification.valid) {
       return NextResponse.json({ error: verification.error || "Code OTP invalide ou expiré" }, { status: 400 });

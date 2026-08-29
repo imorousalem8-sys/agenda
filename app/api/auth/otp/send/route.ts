@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { storeOtp } from "@/lib/otpStore";
+import { storeOtp, generateStatelessOtp } from "@/lib/otpStore";
 import { sendSupabaseOtp } from "@/lib/supabase";
 import { sendOtpEmail } from "@/lib/email";
 
@@ -17,10 +17,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Le mot de passe doit contenir au moins 6 caractères" }, { status: 400 });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Check if user already exists
     try {
       const existing = await prisma.user.findUnique({
-        where: { email: email.toLowerCase().trim() },
+        where: { email: normalizedEmail },
       });
       if (existing) {
         return NextResponse.json(
@@ -32,25 +34,25 @@ export async function POST(req: NextRequest) {
       console.warn("DB check warning:", e);
     }
 
-    // Generate secure 6-digit OTP code
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate cryptographic stateless OTP code for 100% distributed uptime
+    const otpCode = generateStatelessOtp(normalizedEmail, 10);
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Store in OTP memory store
-    storeOtp(email, otpCode, name || "Utilisateur", hashedPassword);
+    // Store in distributed DB and memory store
+    await storeOtp(normalizedEmail, otpCode, name || "Utilisateur", hashedPassword);
 
-    // 1. Try sending via direct SMTP / Resend Email service
+    // 1. Dispatch through Resend transactional email engine
     const emailResult = await sendOtpEmail({
-      to: email,
+      to: normalizedEmail,
       name: name || "Utilisateur",
       code: otpCode,
     });
 
-    // 2. Try sending through Supabase Auth OTP service as complementary channel
+    // 2. Dispatch through Supabase Auth as secondary relay
     let sentViaSupabase = false;
     try {
       if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
-        const sbResult = await sendSupabaseOtp(email);
+        const sbResult = await sendSupabaseOtp(normalizedEmail);
         if (sbResult.ok) {
           sentViaSupabase = true;
         }
@@ -59,12 +61,11 @@ export async function POST(req: NextRequest) {
       console.warn("Supabase OTP send warning:", sbErr);
     }
 
-    // Log delivery outcome for observability
-    console.log(`[OTP] Email code dispatched for ${email} - Direct Mailer: ${emailResult.success ? "SENT (" + emailResult.provider + ")" : "NO_SMTP_CONFIGURED"}, Supabase Auth: ${sentViaSupabase ? "SENT" : "SKIPPED_OR_LIMITED"}`);
+    console.log(`[OTP] Code dispatched for ${normalizedEmail} - Resend: ${emailResult.success ? "OK" : "FAILED"}, Supabase: ${sentViaSupabase ? "OK" : "NO"}`);
 
     return NextResponse.json({
       success: true,
-      message: `Un code de confirmation à 6 chiffres a été envoyé à ${email}.`,
+      message: `Un code de confirmation à 6 chiffres a été envoyé à ${normalizedEmail}.`,
       sentViaDirectMailer: emailResult.success,
       sentViaSupabase,
     });
