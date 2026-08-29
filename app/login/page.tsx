@@ -66,12 +66,58 @@ export default function LandingPage() {
   const [otpStep, setOtpStep] = useState(false);
   const [otpCode, setOtpCode] = useState("");
   const [pendingRegData, setPendingRegData] = useState<RegisterInput | null>(null);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resendSuccess, setResendSuccess] = useState("");
 
   const scrollToAuth = (mode: "LOGIN" | "REGISTER" = "LOGIN") => {
     setAuthTab(mode);
     setOtpStep(false);
     setError("");
+    setResendSuccess("");
     authRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleResendOtp = async () => {
+    if (!pendingRegData || resendCooldown > 0) return;
+    setLoading(true);
+    setError("");
+    setResendSuccess("");
+    try {
+      const res = await fetch("/api/auth/otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: pendingRegData.email.toLowerCase().trim(),
+          name: pendingRegData.name,
+          password: pendingRegData.password,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? "Erreur lors de l'envoi du nouveau code.");
+        setLoading(false);
+        return;
+      }
+
+      setOtpCode("");
+      setResendSuccess("Nouveau code généré et envoyé à votre adresse email !");
+      setResendCooldown(30);
+      setLoading(false);
+
+      const timer = setInterval(() => {
+        setResendCooldown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch {
+      setError("Erreur réseau lors de l'envoi du nouveau code.");
+      setLoading(false);
+    }
   };
 
   const onLogin = async (data: LoginInput) => {
@@ -153,34 +199,13 @@ export default function LandingPage() {
         return;
       }
 
-      // Automatically sign in with verified credentials
-      const signInRes = await signIn("credentials", {
+      // Automatically sign in with verified credentials and redirect to dashboard
+      await signIn("credentials", {
         email: pendingRegData.email.toLowerCase().trim(),
         password: pendingRegData.password,
-        redirect: false,
+        callbackUrl: "/",
+        redirect: true,
       });
-
-      if (signInRes?.error) {
-        // Switch to login tab smoothly with prefilled values
-        setAuthTab("LOGIN");
-        setOtpStep(false);
-        setLoginValue("email", pendingRegData.email);
-        setLoginValue("password", pendingRegData.password);
-        setError("");
-        // Attempt one direct login
-        const directLogin = await signIn("credentials", {
-          email: pendingRegData.email.toLowerCase().trim(),
-          password: pendingRegData.password,
-          redirect: false,
-        });
-        if (!directLogin?.error) {
-          window.location.href = "/";
-        } else {
-          setLoading(false);
-        }
-      } else {
-        window.location.href = "/";
-      }
     } catch {
       setError("Erreur inattendue lors de la validation du code.");
       setLoading(false);
@@ -1107,6 +1132,22 @@ export default function LandingPage() {
                     />
                   </div>
 
+                  {resendSuccess && (
+                    <div
+                      style={{
+                        background: "rgba(16, 185, 129, 0.15)",
+                        border: "1px solid rgba(16, 185, 129, 0.4)",
+                        borderRadius: "10px",
+                        padding: "10px 14px",
+                        color: "#34d399",
+                        fontSize: "13px",
+                        textAlign: "center",
+                      }}
+                    >
+                      {resendSuccess}
+                    </div>
+                  )}
+
                   <button
                     type="submit"
                     disabled={loading || otpCode.length < 6}
@@ -1121,17 +1162,31 @@ export default function LandingPage() {
                     {loading ? <Loader2 size={19} style={{ animation: "spin 1s linear infinite" }} /> : "Valider mon compte & Accéder"}
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setOtpStep(false);
-                      setError("");
-                    }}
-                    className="btn btn-ghost btn-sm"
-                    style={{ color: "var(--text-muted)", fontSize: "12px" }}
-                  >
-                    ← Modifier mon adresse email ou mes identifiants
-                  </button>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "center", marginTop: "4px" }}>
+                    <button
+                      type="button"
+                      onClick={handleResendOtp}
+                      disabled={loading || resendCooldown > 0}
+                      className="btn btn-ghost btn-sm"
+                      style={{ color: "#38bdf8", fontSize: "13px", fontWeight: 700 }}
+                      id="btn-resend-otp"
+                    >
+                      {resendCooldown > 0 ? `Renvoyer un nouveau code (${resendCooldown}s)` : "📩 Renvoyer un nouveau code par email"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOtpStep(false);
+                        setError("");
+                        setResendSuccess("");
+                      }}
+                      className="btn btn-ghost btn-sm"
+                      style={{ color: "var(--text-muted)", fontSize: "12px" }}
+                    >
+                      ← Modifier mon adresse email
+                    </button>
+                  </div>
                 </form>
               ) : (
                 /* Step 1: User info input */

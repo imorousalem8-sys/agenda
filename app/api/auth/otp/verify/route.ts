@@ -19,7 +19,11 @@ export async function POST(req: NextRequest) {
 
     const normalizedEmail = email.toLowerCase().trim();
     const finalName = verification.name || name || "Utilisateur";
-    const passwordHash = verification.passwordHash || (password ? await bcrypt.hash(password, 10) : "");
+    const cleanPassword = (password || "").trim();
+    let passwordHash = verification.passwordHash;
+    if (!passwordHash || !passwordHash.startsWith("$2")) {
+      passwordHash = await bcrypt.hash(cleanPassword || "DefaultPass123!", 10);
+    }
 
     const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 

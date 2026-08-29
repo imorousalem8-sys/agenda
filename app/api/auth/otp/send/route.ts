@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { storeOtp, generateStatelessOtp } from "@/lib/otpStore";
+import { storeOtp, generateFreshOtp } from "@/lib/otpStore";
 import { sendSupabaseOtp } from "@/lib/supabase";
 import { sendOtpEmail } from "@/lib/email";
 
@@ -34,8 +34,8 @@ export async function POST(req: NextRequest) {
       console.warn("DB check warning:", e);
     }
 
-    // Generate cryptographic stateless OTP code for 100% distributed uptime
-    const otpCode = generateStatelessOtp(normalizedEmail, 10);
+    // Generate a fresh random 6-digit OTP code on every request/resend
+    const otpCode = generateFreshOtp();
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Store in distributed DB and memory store

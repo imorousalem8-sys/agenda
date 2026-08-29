@@ -1,7 +1,7 @@
 // AlarmAgenda Service Worker
 // Handles push notifications and background alarm functionality
 
-const CACHE_NAME = "alarm-agenda-v3";
+const CACHE_NAME = "alarm-agenda-v4";
 const STATIC_ASSETS = [
   "/manifest.json",
 ];

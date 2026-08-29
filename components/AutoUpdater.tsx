@@ -59,17 +59,22 @@ export default function AutoUpdater() {
     // Run check on mount
     checkVersion();
 
-    // Run check when window gains focus or online
+    // Run check when window gains focus, becomes visible or comes online
     const handleFocus = () => checkVersion();
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") checkVersion();
+    };
     window.addEventListener("focus", handleFocus);
     window.addEventListener("online", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibility);
 
-    // Periodic check every 2 minutes
-    const interval = setInterval(checkVersion, 120000);
+    // Fast periodic check every 15 seconds for real-time fleet synchronization
+    const interval = setInterval(checkVersion, 15000);
 
     return () => {
       window.removeEventListener("focus", handleFocus);
       window.removeEventListener("online", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
       clearInterval(interval);
     };
   }, []);
