@@ -88,8 +88,7 @@ export default function LandingPage() {
         setError("Email ou mot de passe incorrect. Vérifiez vos identifiants ou créez un compte.");
         setLoading(false);
       } else {
-        router.push("/");
-        router.refresh();
+        window.location.href = "/";
       }
     } catch {
       setError("Erreur inattendue lors de la connexion.");
@@ -104,7 +103,11 @@ export default function LandingPage() {
       const res = await fetch("/api/auth/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          email: data.email.toLowerCase().trim(),
+          name: data.name,
+          password: data.password,
+        }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -136,7 +139,7 @@ export default function LandingPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: pendingRegData.email,
+          email: pendingRegData.email.toLowerCase().trim(),
           code: otpCode.trim(),
           name: pendingRegData.name,
           password: pendingRegData.password,
@@ -158,11 +161,25 @@ export default function LandingPage() {
       });
 
       if (signInRes?.error) {
-        setError("Compte créé mais erreur de connexion automatique.");
-        setLoading(false);
+        // Switch to login tab smoothly with prefilled values
+        setAuthTab("LOGIN");
+        setOtpStep(false);
+        setLoginValue("email", pendingRegData.email);
+        setLoginValue("password", pendingRegData.password);
+        setError("");
+        // Attempt one direct login
+        const directLogin = await signIn("credentials", {
+          email: pendingRegData.email.toLowerCase().trim(),
+          password: pendingRegData.password,
+          redirect: false,
+        });
+        if (!directLogin?.error) {
+          window.location.href = "/";
+        } else {
+          setLoading(false);
+        }
       } else {
-        router.push("/");
-        router.refresh();
+        window.location.href = "/";
       }
     } catch {
       setError("Erreur inattendue lors de la validation du code.");

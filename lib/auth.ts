@@ -8,7 +8,8 @@ import { prisma } from "@/lib/prisma";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
-  secret: process.env.AUTH_SECRET,
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "alarm-agenda-auth-secret-key-2026-production-secure-99182371",
+  trustHost: true,
   pages: {
     signIn: "/login",
     error: "/login",
