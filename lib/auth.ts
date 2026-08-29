@@ -23,25 +23,70 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-        });
+        const email = (credentials.email as string).toLowerCase().trim();
+        const password = credentials.password as string;
 
-        if (!user || !user.password) return null;
+        // Auto-seed Demo account if demo credentials are used
+        if (email === "demo@alarmagenda.ai" && password === "Demo1234!") {
+          try {
+            const hashedPassword = await bcrypt.hash("Demo1234!", 10);
+            const demoUser = await prisma.user.upsert({
+              where: { email: "demo@alarmagenda.ai" },
+              update: {
+                name: "Utilisateur Démo",
+                password: hashedPassword,
+                plan: "PRO",
+                subscriptionStatus: "ACTIVE",
+              },
+              create: {
+                email: "demo@alarmagenda.ai",
+                name: "Utilisateur Démo",
+                password: hashedPassword,
+                plan: "PRO",
+                subscriptionStatus: "ACTIVE",
+              },
+            });
 
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
+            return {
+              id: demoUser.id,
+              email: demoUser.email,
+              name: demoUser.name,
+              plan: "PRO",
+              subscriptionStatus: "ACTIVE",
+            };
+          } catch {
+            return {
+              id: "demo_usr_1",
+              email: "demo@alarmagenda.ai",
+              name: "Utilisateur Démo",
+              plan: "PRO",
+              subscriptionStatus: "ACTIVE",
+            };
+          }
+        }
 
-        if (!isValid) return null;
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email },
+          });
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-        };
+          if (!user || !user.password) return null;
+
+          const isValid = await bcrypt.compare(password, user.password);
+          if (!isValid) return null;
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            plan: user.plan || "FREE",
+            subscriptionStatus: user.subscriptionStatus || "INACTIVE",
+          };
+        } catch (dbError) {
+          console.error("Authorize error:", dbError);
+          return null;
+        }
       },
     }),
     Google({
@@ -53,12 +98,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.plan = (user as unknown as { plan?: string }).plan || "FREE";
+        token.subscriptionStatus = (user as unknown as { subscriptionStatus?: string }).subscriptionStatus || "INACTIVE";
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
+        (session.user as unknown as { plan?: string }).plan = (token.plan as string) || "FREE";
+        (session.user as unknown as { subscriptionStatus?: string }).subscriptionStatus = (token.subscriptionStatus as string) || "INACTIVE";
       }
       return session;
     },

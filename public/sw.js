@@ -1,17 +1,13 @@
 // AlarmAgenda Service Worker
 // Handles push notifications and background alarm functionality
 
-const CACHE_NAME = "alarm-agenda-v1";
+const CACHE_NAME = "alarm-agenda-v2";
 const STATIC_ASSETS = [
-  "/",
   "/manifest.json",
 ];
 
 // Install
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
-  );
   self.skipWaiting();
 });
 
@@ -20,7 +16,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
+        keys.map((k) => caches.delete(k))
       )
     )
   );

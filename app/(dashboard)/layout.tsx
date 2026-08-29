@@ -16,9 +16,12 @@ import {
   Briefcase,
   User,
   Volume2,
-  Phone,
+  LogOut,
+  Menu,
   Sparkles,
-  Bot,
+  Phone,
+  X,
+  Crown,
 } from "lucide-react";
 import AlarmOverlay from "@/components/reminders/AlarmOverlay";
 import NotificationManager from "@/components/reminders/NotificationManager";
@@ -26,10 +29,13 @@ import AIAssistantWidget from "@/components/ai/AIAssistantWidget";
 import VoiceSettingsModal from "@/components/settings/VoiceSettingsModal";
 import PhoneSettingsModal from "@/components/settings/PhoneSettingsModal";
 import Logo from "@/components/brand/Logo";
+import CyberGridBackground from "@/components/landing/CyberGridBackground";
+import UpgradeModal from "@/components/subscription/UpgradeModal";
+import { useSubscription } from "@/lib/useSubscription";
 
 const navLinks = [
   { href: "/", icon: LayoutDashboard, label: "Tableau de bord" },
-  { href: "/agent", icon: Bot, label: "Agent & Discussion IA" },
+  { href: "/agent", icon: Bot, label: "Agent & Discussion Vocale" },
   { href: "/calendar", icon: Calendar, label: "Calendrier" },
   { href: "/reminders", icon: Bell, label: "Rappels & Alarmes" },
   { href: "/tasks", icon: CheckSquare, label: "Tâches" },
@@ -46,13 +52,32 @@ export default function DashboardLayout({
   const [mode, setMode] = useState<"PERSONAL" | "PROFESSIONAL">("PERSONAL");
   const [showVoiceSettings, setShowVoiceSettings] = useState(false);
   const [showPhoneSettings, setShowPhoneSettings] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeFeature, setUpgradeFeature] = useState("cette fonctionnalité");
+
+  const { subscription, isPro } = useSubscription();
 
   useEffect(() => {
     const saved = localStorage.getItem("aa-mode") as "PERSONAL" | "PROFESSIONAL" | null;
     if (saved) setMode(saved);
+
+    const handleOpenUpgrade = (e: Event) => {
+      const customEvent = e as CustomEvent<{ feature?: string }>;
+      setUpgradeFeature(customEvent.detail?.feature || "cette option");
+      setShowUpgradeModal(true);
+    };
+
+    window.addEventListener("open-upgrade-modal", handleOpenUpgrade);
+    return () => window.removeEventListener("open-upgrade-modal", handleOpenUpgrade);
   }, []);
 
   const toggleMode = (newMode: "PERSONAL" | "PROFESSIONAL") => {
+    if (newMode === "PROFESSIONAL" && !isPro) {
+      setUpgradeFeature("l'espace Professionnel étanche");
+      setShowUpgradeModal(true);
+      return;
+    }
+
     setMode(newMode);
     localStorage.setItem("aa-mode", newMode);
     window.dispatchEvent(new CustomEvent("mode-changed", { detail: newMode }));
@@ -64,6 +89,9 @@ export default function DashboardLayout({
 
   return (
     <>
+      {/* Dynamic Cyber Grid Background */}
+      <CyberGridBackground />
+
       {/* Mobile Backdrop */}
       {sidebarOpen && (
         <div
@@ -111,7 +139,7 @@ export default function DashboardLayout({
             id="sidebar-ai-btn"
           >
             <Sparkles size={16} />
-            <span>Copilote IA & Voix</span>
+            <span>Copilote Vocal</span>
           </button>
         </div>
 
@@ -177,6 +205,61 @@ export default function DashboardLayout({
           ))}
         </nav>
 
+        {/* Subscription Status Card */}
+        <div
+          style={{
+            marginTop: "16px",
+            marginBottom: "8px",
+            padding: "12px",
+            borderRadius: "14px",
+            background: isPro
+              ? "linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.2))"
+              : "rgba(255, 255, 255, 0.04)",
+            border: isPro
+              ? "1px solid rgba(99, 102, 241, 0.5)"
+              : "1px solid rgba(255, 255, 255, 0.08)",
+          }}
+        >
+          {isPro ? (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Crown size={18} color="#f59e0b" />
+              <div>
+                <div style={{ fontSize: "12px", fontWeight: "800", color: "#ffffff" }}>
+                  MEMBRE PRO ⭐
+                </div>
+                <div style={{ fontSize: "11px", color: "#34d399" }}>
+                  Toutes les options débloquées
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+                <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                  Plan Gratuit
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  setUpgradeFeature("l'accès illimité & alarmes vocales");
+                  setShowUpgradeModal(true);
+                }}
+                className="btn btn-primary btn-sm"
+                style={{
+                  width: "100%",
+                  justifyContent: "center",
+                  padding: "6px 10px",
+                  fontSize: "11px",
+                  fontWeight: "800",
+                  background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
+                }}
+              >
+                Passer en Pro (9,99 €)
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* System Settings & Logout */}
         <div
           style={{
@@ -195,7 +278,7 @@ export default function DashboardLayout({
             id="voice-settings-btn"
           >
             <Volume2 size={16} />
-            <span>Voix & Synthèse IA</span>
+            <span>Voix & Synthèse Vocale</span>
           </button>
           <button
             onClick={() => setShowPhoneSettings(true)}
@@ -269,6 +352,12 @@ export default function DashboardLayout({
       <AlarmOverlay />
       <NotificationManager />
       <AIAssistantWidget />
+
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        featureName={upgradeFeature}
+      />
 
       {showVoiceSettings && (
         <VoiceSettingsModal onClose={() => setShowVoiceSettings(false)} />

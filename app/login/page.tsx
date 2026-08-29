@@ -30,6 +30,8 @@ import {
 } from "lucide-react";
 import Logo from "@/components/brand/Logo";
 import { speakAIText } from "@/lib/voice";
+import CyberGridBackground from "@/components/landing/CyberGridBackground";
+import MonumentalHoloClock from "@/components/landing/MonumentalHoloClock";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -60,8 +62,14 @@ export default function LandingPage() {
     formState: { errors: regErrors },
   } = useForm<RegisterInput>({ resolver: zodResolver(registerSchema) });
 
+  // OTP Registration States
+  const [otpStep, setOtpStep] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [pendingRegData, setPendingRegData] = useState<RegisterInput | null>(null);
+
   const scrollToAuth = (mode: "LOGIN" | "REGISTER" = "LOGIN") => {
     setAuthTab(mode);
+    setOtpStep(false);
     setError("");
     authRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -71,13 +79,13 @@ export default function LandingPage() {
     setError("");
     try {
       const result = await signIn("credentials", {
-        email: data.email,
+        email: data.email.toLowerCase().trim(),
         password: data.password,
         redirect: false,
       });
 
       if (result?.error) {
-        setError("Email ou mot de passe incorrect.");
+        setError("Email ou mot de passe incorrect. Vérifiez vos identifiants ou créez un compte.");
         setLoading(false);
       } else {
         router.push("/");
@@ -89,30 +97,75 @@ export default function LandingPage() {
     }
   };
 
-  const onRegister = async (data: RegisterInput) => {
+  const onSendOtp = async (data: RegisterInput) => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch("/api/auth/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error ?? "Erreur lors de l'inscription.");
+        setError(json.error ?? "Erreur lors de l'envoi du code OTP.");
         setLoading(false);
         return;
       }
-      await signIn("credentials", {
-        email: data.email,
-        password: data.password,
+
+      setPendingRegData(data);
+      setOtpStep(true);
+      setLoading(false);
+    } catch {
+      setError("Erreur réseau lors de l'envoi du code OTP.");
+      setLoading(false);
+    }
+  };
+
+  const onVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pendingRegData || !otpCode.trim()) {
+      setError("Veuillez renseigner le code à 6 chiffres.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/auth/otp/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: pendingRegData.email,
+          code: otpCode.trim(),
+          name: pendingRegData.name,
+          password: pendingRegData.password,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? "Code OTP invalide.");
+        setLoading(false);
+        return;
+      }
+
+      // Automatically sign in with verified credentials
+      const signInRes = await signIn("credentials", {
+        email: pendingRegData.email.toLowerCase().trim(),
+        password: pendingRegData.password,
         redirect: false,
       });
-      router.push("/");
-      router.refresh();
+
+      if (signInRes?.error) {
+        setError("Compte créé mais erreur de connexion automatique.");
+        setLoading(false);
+      } else {
+        router.push("/");
+        router.refresh();
+      }
     } catch {
-      setError("Erreur inattendue lors de l'inscription.");
+      setError("Erreur inattendue lors de la validation du code.");
       setLoading(false);
     }
   };
@@ -152,15 +205,18 @@ export default function LandingPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#07090e", color: "var(--text-primary)", position: "relative" }}>
+      {/* Dynamic Cyber Grid with Animated Luminous Pulses across entire page */}
+      <CyberGridBackground />
+
       {/* 1. TOP NAVBAR */}
       <header
         style={{
           position: "sticky",
           top: 0,
           zIndex: 50,
-          background: "rgba(7, 9, 14, 0.85)",
-          backdropFilter: "blur(16px)",
+          background: "rgba(7, 9, 14, 0.88)",
+          backdropFilter: "blur(20px)",
           borderBottom: "1px solid var(--border-subtle)",
           padding: "14px 24px",
         }}
@@ -184,10 +240,13 @@ export default function LandingPage() {
               Fonctionnalités
             </a>
             <a href="#ai-demo" style={{ color: "var(--text-secondary)", fontSize: "14px", textDecoration: "none", fontWeight: 500 }}>
-              Copilote IA
+              Commande Vocale
             </a>
             <a href="#stats" style={{ color: "var(--text-secondary)", fontSize: "14px", textDecoration: "none", fontWeight: 500 }}>
               Avantages
+            </a>
+            <a href="#pricing" style={{ color: "var(--text-secondary)", fontSize: "14px", textDecoration: "none", fontWeight: 500 }}>
+              Tarifs
             </a>
           </nav>
 
@@ -214,33 +273,17 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* 2. HERO SECTION */}
+      {/* 2. HERO SECTION — PURE CRISP GRID VISIBLE BEHIND TITLE */}
       <section
         style={{
           position: "relative",
           padding: "90px 24px 70px",
           textAlign: "center",
           overflow: "hidden",
+          zIndex: 1,
+          background: "transparent",
         }}
-        className="aurora-bg grid-overlay"
       >
-        {/* Glow Spheres */}
-        <div
-          style={{
-            position: "absolute",
-            top: "5%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "650px",
-            height: "400px",
-            borderRadius: "50%",
-            background: "radial-gradient(ellipse, rgba(99, 102, 241, 0.28) 0%, rgba(6, 182, 212, 0.15) 45%, transparent 70%)",
-            filter: "blur(60px)",
-            pointerEvents: "none",
-            zIndex: 0,
-          }}
-        />
-
         <div style={{ maxWidth: "900px", margin: "0 auto", position: "relative", zIndex: 1 }} className="animate-slide-up">
           {/* Badge */}
           <div
@@ -260,7 +303,7 @@ export default function LandingPage() {
             }}
           >
             <Sparkles size={15} color="#38bdf8" />
-            <span>L&apos;Agenda Nouvelle Génération Piloté par Intelligence Artificielle</span>
+            <span>L&apos;Agenda Nouvelle Génération Piloté à la Voix</span>
           </div>
 
           {/* Main Title */}
@@ -287,7 +330,7 @@ export default function LandingPage() {
               margin: "0 auto 36px",
             }}
           >
-            Le premier agenda augmenté par IA qui comprend vos instructions en langage naturel, planifie vos tâches et déclenche des réveils vocaux persistants.
+            Le premier agenda augmenté qui comprend vos instructions en langage naturel, planifie vos tâches et déclenche des réveils vocaux persistants.
           </p>
 
           {/* Hero CTAs */}
@@ -313,7 +356,7 @@ export default function LandingPage() {
               }}
               id="hero-cta-start"
             >
-              <span>Commencer maintenant — C&apos;est gratuit</span>
+              <span>Démarrer l&apos;essai 7 jours</span>
               <ArrowRight size={18} />
             </button>
 
@@ -329,7 +372,7 @@ export default function LandingPage() {
               id="hero-cta-voice"
             >
               <Volume2 size={18} color="#38bdf8" />
-              <span>{demoVoicePlaying ? "Écoute en cours..." : "Écouter la voix IA"}</span>
+              <span>{demoVoicePlaying ? "Écoute en cours..." : "Écouter la démonstration vocale"}</span>
             </button>
           </div>
 
@@ -347,7 +390,7 @@ export default function LandingPage() {
           >
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <CheckCircle2 size={16} color="#34d399" />
-              <span>Aucune carte requise</span>
+              <span>Essai 7 jours sans engagement</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <CheckCircle2 size={16} color="#34d399" />
@@ -360,127 +403,191 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* 3. HERO INTERACTIVE MOCKUP SHOWCASE */}
+        {/* 3. MONUMENTAL 3D HOLOGRAPHIC CHRONO & DIGITAL CLOCK */}
         <div
           style={{
-            maxWidth: "1020px",
-            margin: "54px auto 0",
+            maxWidth: "1080px",
+            margin: "64px auto 0",
             position: "relative",
             zIndex: 2,
           }}
-          className="animate-float"
         >
+          <MonumentalHoloClock />
+        </div>
+      </section>
+
+      {/* 4. COMPARISON MATRIX: WHY TRADITIONAL CALENDARS FAIL */}
+      <section style={{ padding: "80px 24px 60px", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <div style={{ textAlign: "center", marginBottom: "48px" }}>
+          <span className="badge badge-glow-cyan" style={{ marginBottom: "12px" }}>Le Problème Résolu</span>
+          <h2 style={{ fontSize: "clamp(26px, 4vw, 38px)", fontWeight: "900", color: "#ffffff", letterSpacing: "-0.02em" }}>
+            Pourquoi les agendas classiques vous font perdre du temps
+          </h2>
+          <p style={{ color: "var(--text-secondary)", fontSize: "16px", marginTop: "10px", maxWidth: "680px", margin: "10px auto 0" }}>
+            Une simple notification silencieuse ne suffit plus quand votre journée est chargée.
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "24px",
+          }}
+        >
+          {/* Classic Agenda Failures */}
           <div
             className="glass-card"
             style={{
-              padding: "24px",
-              borderRadius: "24px",
-              border: "1px solid rgba(99, 102, 241, 0.35)",
-              background: "linear-gradient(180deg, rgba(17, 24, 39, 0.92) 0%, rgba(10, 14, 23, 0.95) 100%)",
-              boxShadow: "0 30px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(99, 102, 241, 0.2)",
+              padding: "32px 28px",
+              borderRadius: "22px",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
+              background: "rgba(20, 10, 15, 0.8)",
             }}
           >
-            {/* Window bar */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", paddingBottom: "12px", borderBottom: "1px solid var(--border-subtle)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#ef4444" }} />
-                <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#f59e0b" }} />
-                <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#10b981" }} />
-                <span style={{ fontSize: "12px", color: "var(--text-muted)", marginLeft: "12px" }}>
-                  app.alarmagenda.ai — Copilote IA Actif
-                </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+              <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "rgba(239, 68, 68, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ef4444", fontWeight: "900", fontSize: "18px" }}>
+                ✕
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                <span className="badge badge-glow-cyan" style={{ fontSize: "10px" }}>Live Engine 2.0</span>
-              </div>
+              <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#fca5a5" }}>Agenda classique ordinaire</h3>
             </div>
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "14px", color: "#cbd5e1", fontSize: "14px" }}>
+              <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <span style={{ color: "#ef4444", fontWeight: "bold" }}>✕</span>
+                <span>Saisie manuelle fastidieuse champ par champ sur petit écran.</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <span style={{ color: "#ef4444", fontWeight: "bold" }}>✕</span>
+                <span>Simple notification muette noyée parmi 50 messages WhatsApp et emails.</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <span style={{ color: "#ef4444", fontWeight: "bold" }}>✕</span>
+                <span>Rendez-vous manqués et stress permanent de devoir tout vérifier.</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <span style={{ color: "#ef4444", fontWeight: "bold" }}>✕</span>
+                <span>Mélange anarchique entre vie personnelle et rendez-vous pro.</span>
+              </li>
+            </ul>
+          </div>
 
-            {/* Dashboard Mockup Grid */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gap: "18px",
-                textAlign: "left",
-              }}
-            >
-              {/* Card 1: AI Prompt in action */}
-              <div
-                style={{
-                  background: "rgba(13, 18, 30, 0.8)",
-                  borderRadius: "16px",
-                  padding: "18px",
-                  border: "1px solid rgba(6, 182, 212, 0.3)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
-                  <Bot size={18} color="#38bdf8" />
-                  <span style={{ fontSize: "13px", fontWeight: "700", color: "#f8fafc" }}>Ordre vocal dicté</span>
-                </div>
-                <p style={{ fontSize: "13px", color: "#94a3b8", fontStyle: "italic", marginBottom: "12px" }}>
-                  &ldquo;Mets-moi cette tâche demain à 14h avec Marc pour finaliser le chantier.&rdquo;
-                </p>
-                <div style={{ padding: "10px 12px", borderRadius: "10px", background: "rgba(16, 185, 129, 0.15)", border: "1px solid rgba(16, 185, 129, 0.3)", color: "#34d399", fontSize: "12px" }}>
-                  ✓ Tâche créée automatiquement • Contact Marc lié
-                </div>
+          {/* AlarmAgenda Advantages */}
+          <div
+            className="glass-card"
+            style={{
+              padding: "32px 28px",
+              borderRadius: "22px",
+              border: "1px solid rgba(16, 185, 129, 0.4)",
+              background: "rgba(8, 24, 20, 0.85)",
+              boxShadow: "0 10px 40px rgba(16, 185, 129, 0.15)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+              <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "rgba(16, 185, 129, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#34d399", fontWeight: "900", fontSize: "18px" }}>
+                ✓
               </div>
-
-              {/* Card 2: Voice Alarm Card */}
-              <div
-                style={{
-                  background: "rgba(13, 18, 30, 0.8)",
-                  borderRadius: "16px",
-                  padding: "18px",
-                  border: "1px solid rgba(168, 85, 247, 0.3)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
-                  <Volume2 size={18} color="#c084fc" />
-                  <span style={{ fontSize: "13px", fontWeight: "700", color: "#f8fafc" }}>Rappel persistant</span>
-                </div>
-                <p style={{ fontSize: "15px", fontWeight: "800", color: "#ffffff", marginBottom: "4px" }}>
-                  Réunion de chantier • 14:00
-                </p>
-                <p style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
-                  Sonne jusqu&apos;à confirmation manuelle ou répétition
-                </p>
-              </div>
-
-              {/* Card 3: Metrics */}
-              <div
-                style={{
-                  background: "rgba(13, 18, 30, 0.8)",
-                  borderRadius: "16px",
-                  padding: "18px",
-                  border: "1px solid rgba(99, 102, 241, 0.3)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
-                  <CheckSquare size={18} color="#818cf8" />
-                  <span style={{ fontSize: "13px", fontWeight: "700", color: "#f8fafc" }}>Organisation optimale</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "12px" }}>
-                  <div>
-                    <p style={{ fontSize: "22px", fontWeight: "900", color: "#ffffff" }}>0 oubli</p>
-                    <p style={{ fontSize: "11px", color: "var(--text-muted)" }}>Sérénité totale</p>
-                  </div>
-                  <span className="badge badge-glow-green">100% à l&apos;heure</span>
-                </div>
-              </div>
+              <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#6ee7b7" }}>Avec AlarmAgenda</h3>
             </div>
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "14px", color: "#f8fafc", fontSize: "14px" }}>
+              <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <span style={{ color: "#34d399", fontWeight: "bold" }}>✓</span>
+                <span><strong>Dictée vocale en 3 secondes</strong> : parlez naturellement, tout est classé.</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <span style={{ color: "#34d399", fontWeight: "bold" }}>✓</span>
+                <span><strong>Alarme vocale persistante</strong> : sonne et vous parle jusqu&apos;à confirmation.</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <span style={{ color: "#34d399", fontWeight: "bold" }}>✓</span>
+                <span><strong>Zéro oubli garanti</strong> : présence et ponctualité respectées à 100%.</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <span style={{ color: "#34d399", fontWeight: "bold" }}>✓</span>
+                <span><strong>Double espace Pro & Perso étanche</strong> en un seul clic.</span>
+              </li>
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* 4. INTERACTIVE SANDBOX SECTION */}
-      <section id="ai-demo" style={{ padding: "80px 24px", maxWidth: "960px", margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+      {/* 5. 3-STEP WORKFLOW */}
+      <section style={{ padding: "70px 24px", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <div style={{ textAlign: "center", marginBottom: "48px" }}>
+          <span className="badge badge-glow-purple" style={{ marginBottom: "12px" }}>Simplicité Absolue</span>
+          <h2 style={{ fontSize: "clamp(26px, 4vw, 36px)", fontWeight: "900", color: "#ffffff" }}>
+            Comment ça marche en 3 étapes
+          </h2>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "24px",
+          }}
+        >
+          {[
+            {
+              step: "01",
+              title: "Parlez librement",
+              desc: "Dictez vos rendez-vous, tâches urgentes ou rappels comme vous le feriez à un assistant humain.",
+              color: "#38bdf8",
+            },
+            {
+              step: "02",
+              title: "Planification instantanée",
+              desc: "L'agenda extrait l'heure, la personne et le niveau d'urgence pour tout organiser proprement dans votre calendrier.",
+              color: "#818cf8",
+            },
+            {
+              step: "03",
+              title: "Alerte vocale inratable",
+              desc: "Le moment venu, l'alarme sonne et vous énonce l'objet du rendez-vous jusqu'à validation.",
+              color: "#a855f7",
+            },
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className="glass-card"
+              style={{
+                padding: "32px 26px",
+                borderRadius: "20px",
+                position: "relative",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "36px",
+                  fontWeight: "900",
+                  color: item.color,
+                  opacity: 0.8,
+                  marginBottom: "12px",
+                  fontFamily: "monospace",
+                }}
+              >
+                {item.step}
+              </div>
+              <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#ffffff", marginBottom: "8px" }}>
+                {item.title}
+              </h3>
+              <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: "1.6" }}>
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. INTERACTIVE SANDBOX SECTION */}
+      <section id="ai-demo" style={{ padding: "60px 24px 80px", maxWidth: "960px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <div style={{ textAlign: "center", marginBottom: "36px" }}>
           <span className="badge badge-glow-cyan" style={{ marginBottom: "12px" }}>Démonstration Interactive</span>
           <h2 style={{ fontSize: "32px", fontWeight: "800", color: "#ffffff" }}>
-            Testez la puissance de l&apos;IA sans attendre
+            Testez la commande vocale en direct
           </h2>
           <p style={{ color: "var(--text-secondary)", fontSize: "15px", marginTop: "8px" }}>
-            Cliquez sur un exemple pour voir comment l&apos;IA structure vos phrases orales :
+            Cliquez sur un exemple pour voir comment l&apos;agenda structure vos phrases orales :
           </p>
         </div>
 
@@ -521,77 +628,216 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 5. FEATURES GRID */}
-      <section id="features" style={{ padding: "80px 24px", background: "var(--bg-secondary)", borderTop: "1px solid var(--border-subtle)" }}>
-        <div style={{ maxWidth: "1140px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "50px" }}>
-            <span className="badge badge-glow-purple" style={{ marginBottom: "12px" }}>Fonctionnalités Clés</span>
-            <h2 style={{ fontSize: "36px", fontWeight: "900", color: "#ffffff" }}>
-              Tout ce dont vous avez besoin pour maîtriser votre planning
-            </h2>
-          </div>
+      {/* 7. STATS & KEY METRICS */}
+      <section id="stats" style={{ padding: "60px 24px", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "20px",
+            textAlign: "center",
+          }}
+        >
+          {[
+            { value: "0", label: "Oubli constaté", sublabel: "dès la première semaine", color: "#34d399" },
+            { value: "3s", label: "Pour planifier", sublabel: "n'importe quelle consigne", color: "#38bdf8" },
+            { value: "99.9%", label: "De ponctualité", sublabel: "respectée aux rendez-vous", color: "#a855f7" },
+            { value: "100%", label: "Chiffré & Privé", sublabel: "sécurité & confidentialité totales", color: "#f59e0b" },
+          ].map((s, idx) => (
+            <div
+              key={idx}
+              className="glass-card"
+              style={{ padding: "28px 20px", borderRadius: "18px" }}
+            >
+              <div style={{ fontSize: "38px", fontWeight: "900", color: s.color, lineHeight: 1, marginBottom: "8px", fontFamily: "monospace" }}>
+                {s.value}
+              </div>
+              <div style={{ fontSize: "15px", fontWeight: "800", color: "#ffffff", marginBottom: "4px" }}>
+                {s.label}
+              </div>
+              <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+                {s.sublabel}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
+      {/* 8. PRICING & SUBSCRIPTIONS SECTION (2 COMPACT REFINED OFFERS) */}
+      <section id="pricing" style={{ padding: "70px 24px 60px", maxWidth: "920px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+          <span className="badge badge-glow-purple" style={{ marginBottom: "12px" }}>Tarification Simple & Rentable</span>
+          <h2 style={{ fontSize: "clamp(26px, 4vw, 36px)", fontWeight: "900", color: "#ffffff", letterSpacing: "-0.03em" }}>
+            Investissez dans votre ponctualité et votre temps
+          </h2>
+          <p style={{ color: "var(--text-secondary)", fontSize: "15px", marginTop: "8px", maxWidth: "600px", margin: "8px auto 0" }}>
+            Un seul rendez-vous important sécurisé rentabilise instantanément votre abonnement.
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "24px",
+            alignItems: "stretch",
+          }}
+        >
+          {/* Plan 1: Gratuit Découverte */}
           <div
+            className="glass-card"
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: "24px",
+              padding: "28px 24px",
+              borderRadius: "20px",
+              display: "flex",
+              flexDirection: "column",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              background: "rgba(17, 24, 39, 0.75)",
             }}
           >
-            {[
-              {
-                icon: Bot,
-                title: "Agence & Copilote IA",
-                desc: "Analyse instantanément vos phrases en français, extrait dates, personnes et urgences, et les programme sans effort.",
-                color: "#38bdf8",
-              },
-              {
-                icon: Bell,
-                title: "Rappels Persistants",
-                desc: "Ne manquez plus jamais un moment clé : les alertes sonnent comme une véritable alarme jusqu'à prise en compte.",
-                color: "#a855f7",
-              },
-              {
-                icon: Layers,
-                title: "Double Espace Perso & Pro",
-                desc: "Basculez d'un clic entre votre gestion d'entreprise et votre quotidien familial sans mélange des données.",
-                color: "#10b981",
-              },
-              {
-                icon: ShieldCheck,
-                title: "Confidentialité & Hors-Ligne",
-                desc: "Application PWA autonome avec synchronisation ultra-rapide et protection totale de vos rendez-vous privés.",
-                color: "#f59e0b",
-              },
-            ].map((f, i) => (
-              <div
-                key={i}
-                className="glass-card-interactive"
-                style={{ padding: "30px 24px", display: "flex", flexDirection: "column", gap: "14px" }}
-              >
-                <div
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "14px",
-                    background: `${f.color}20`,
-                    border: `1px solid ${f.color}40`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <f.icon size={24} color={f.color} />
-                </div>
-                <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#ffffff" }}>{f.title}</h3>
-                <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: "1.6" }}>{f.desc}</p>
+            <div style={{ marginBottom: "16px" }}>
+              <span style={{ fontSize: "11px", fontWeight: "800", color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                DÉCOUVERTE
+              </span>
+              <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#ffffff", marginTop: "4px" }}>
+                Plan Gratuit
+              </h3>
+              <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginTop: "2px" }}>
+                Pour tester l&apos;agenda et les rendez-vous standard.
+              </p>
+            </div>
+
+            <div style={{ marginBottom: "20px" }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+                <span style={{ fontSize: "34px", fontWeight: "900", color: "#ffffff", fontFamily: "monospace" }}>0 €</span>
+                <span style={{ color: "var(--text-muted)", fontSize: "13px" }}>/ pour toujours</span>
               </div>
-            ))}
+              <span style={{ fontSize: "11px", color: "#94a3b8" }}>Sans carte bancaire</span>
+            </div>
+
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", color: "#cbd5e1", fontSize: "13px", marginBottom: "26px", flex: 1 }}>
+              <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <CheckCircle2 size={15} color="#34d399" />
+                <span>Calendrier personnel standard</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <CheckCircle2 size={15} color="#34d399" />
+                <span>Notifications classiques simples</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-muted)" }}>
+                <span>✕</span>
+                <span>Pas d&apos;alarme vocale persistante</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-muted)" }}>
+                <span>✕</span>
+                <span>Pas de double espace Professionnel</span>
+              </li>
+            </ul>
+
+            <button
+              onClick={() => scrollToAuth("REGISTER")}
+              className="btn btn-secondary btn-sm"
+              style={{ width: "100%", justifyContent: "center", padding: "10px", fontWeight: "700" }}
+            >
+              Créer un compte gratuit
+            </button>
+          </div>
+
+          {/* Plan 2: Premium Pro (HIGHLIGHTED & COMPACT) */}
+          <div
+            className="glass-card"
+            style={{
+              padding: "28px 24px",
+              borderRadius: "20px",
+              display: "flex",
+              flexDirection: "column",
+              position: "relative",
+              border: "2px solid rgba(99, 102, 241, 0.8)",
+              background: "linear-gradient(180deg, rgba(26, 32, 58, 0.95) 0%, rgba(15, 20, 36, 0.95) 100%)",
+              boxShadow: "0 15px 40px rgba(99, 102, 241, 0.3), 0 0 25px rgba(56, 189, 248, 0.15)",
+            }}
+          >
+            {/* Badge */}
+            <div
+              style={{
+                position: "absolute",
+                top: "-11px",
+                right: "20px",
+                background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
+                padding: "3px 12px",
+                borderRadius: "14px",
+                fontSize: "10px",
+                fontWeight: "900",
+                color: "#ffffff",
+                letterSpacing: "0.06em",
+              }}
+            >
+              ⭐ ACCÈS ILLIMITÉ
+            </div>
+
+            <div style={{ marginBottom: "16px" }}>
+              <span style={{ fontSize: "11px", fontWeight: "800", color: "#818cf8", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                RECOMMANDÉ
+              </span>
+              <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#ffffff", marginTop: "4px" }}>
+                Abonnement Pro
+              </h3>
+              <p style={{ fontSize: "13px", color: "#c7d2fe", marginTop: "2px" }}>
+                Pour les indépendants, cadres et personnes exigeantes.
+              </p>
+            </div>
+
+            <div style={{ marginBottom: "20px" }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+                <span style={{ fontSize: "34px", fontWeight: "900", color: "#ffffff", fontFamily: "monospace" }}>9,99 €</span>
+                <span style={{ color: "var(--text-muted)", fontSize: "13px" }}>/ mois</span>
+              </div>
+              <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: "600" }}>Zéro engagement • 7 jours d&apos;essai offerts</span>
+            </div>
+
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", color: "#f1f5f9", fontSize: "13px", marginBottom: "26px", flex: 1 }}>
+              <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <CheckCircle2 size={15} color="#38bdf8" />
+                <span><strong>Dictée vocale illimitée</strong> en français</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <CheckCircle2 size={15} color="#38bdf8" />
+                <span><strong>Alarmes vocales persistantes inratables</strong></span>
+              </li>
+              <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <CheckCircle2 size={15} color="#38bdf8" />
+                <span><strong>Double espace Pro & Perso étanche</strong></span>
+              </li>
+              <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <CheckCircle2 size={15} color="#38bdf8" />
+                <span>Mode hors-ligne PWA + Synchronisation temps réel</span>
+              </li>
+              <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <CheckCircle2 size={15} color="#38bdf8" />
+                <span>Support prioritaire 7j/7</span>
+              </li>
+            </ul>
+
+            <button
+              onClick={() => scrollToAuth("REGISTER")}
+              className="btn btn-primary"
+              style={{
+                width: "100%",
+                justifyContent: "center",
+                padding: "11px",
+                fontWeight: "800",
+                fontSize: "14px",
+                background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
+                boxShadow: "0 4px 18px rgba(99, 102, 241, 0.4)",
+              }}
+            >
+              Démarrer l&apos;offre Pro (9,99 €)
+            </button>
           </div>
         </div>
       </section>
 
-      {/* 6. AUTH TUNNEL SECTION (SE CONNECTER / COMMENCER MAINTENANT) */}
+      {/* 9. AUTH TUNNEL SECTION (SE CONNECTER / COMMENCER MAINTENANT) */}
       <section
         ref={authRef}
         id="auth-section"
@@ -600,7 +846,7 @@ export default function LandingPage() {
           position: "relative",
           overflow: "hidden",
         }}
-        className="aurora-bg grid-overlay"
+        className="aurora-bg"
       >
         <div style={{ maxWidth: "480px", margin: "0 auto", position: "relative", zIndex: 2 }}>
           <div style={{ textAlign: "center", marginBottom: "32px" }}>
@@ -614,10 +860,10 @@ export default function LandingPage() {
                 letterSpacing: "-0.02em",
               }}
             >
-              {authTab === "LOGIN" ? "Accéder à votre espace" : "Créer votre compte gratuit"}
+              {authTab === "LOGIN" ? "Accéder à votre espace" : "Créer votre compte & Essai"}
             </h2>
             <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginTop: "6px" }}>
-              Rejoignez AlarmAgenda et pilotez votre emploi du temps avec l&apos;IA.
+              Rejoignez AlarmAgenda et pilotez votre emploi du temps en toute simplicité.
             </p>
           </div>
 
@@ -782,78 +1028,150 @@ export default function LandingPage() {
                 </button>
               </form>
             ) : (
-              /* REGISTER FORM */
-              <form onSubmit={handleRegSubmit(onRegister)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                <div className="form-group">
-                  <label className="form-label">Nom complet ou Prénom</label>
-                  <input
-                    {...regRegister("name")}
-                    type="text"
-                    placeholder="Alexandre Martin"
-                    className="form-input"
-                    autoComplete="name"
-                    id="reg-name"
-                  />
-                  {regErrors.name && <span className="form-error">{regErrors.name.message}</span>}
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Adresse Email</label>
-                  <input
-                    {...regRegister("email")}
-                    type="email"
-                    placeholder="alex@exemple.com"
-                    className="form-input"
-                    autoComplete="email"
-                    id="reg-email"
-                  />
-                  {regErrors.email && <span className="form-error">{regErrors.email.message}</span>}
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Mot de passe (8 car. min)</label>
-                  <div style={{ position: "relative" }}>
-                    <input
-                      {...regRegister("password")}
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••••••"
-                      className="form-input"
-                      style={{ paddingRight: "44px" }}
-                      autoComplete="new-password"
-                      id="reg-password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      style={{
-                        position: "absolute",
-                        right: "12px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                        color: "var(--text-muted)",
-                        display: "flex",
-                        padding: "4px",
-                      }}
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
+              /* REGISTER FORM WITH 2-STEP EMAIL OTP VERIFICATION */
+              otpStep ? (
+                /* Step 2: Enter 6-digit OTP code */
+                <form onSubmit={onVerifyOtp} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                  <div style={{ textAlign: "center", marginBottom: "8px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                      ÉTAPE 2/2 • VÉRIFICATION EMAIL
+                    </span>
+                    <p style={{ fontSize: "14px", color: "var(--text-secondary)", marginTop: "6px" }}>
+                      Entrez le code à 6 chiffres envoyé à votre boîte mail :<br />
+                      <strong style={{ color: "#ffffff" }}>{pendingRegData?.email}</strong>
+                    </p>
                   </div>
-                  {regErrors.password && <span className="form-error">{regErrors.password.message}</span>}
-                </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn btn-primary btn-lg"
-                  style={{ width: "100%", justifyContent: "center", marginTop: "6px" }}
-                  id="btn-submit-register"
-                >
-                  {loading ? <Loader2 size={19} style={{ animation: "spin 1s linear infinite" }} /> : "Créer mon compte"}
-                </button>
-              </form>
+                  <div className="form-group">
+                    <label className="form-label" style={{ textAlign: "center", display: "block" }}>
+                      Code de confirmation (6 chiffres)
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                      placeholder="••••••"
+                      className="form-input"
+                      style={{
+                        fontSize: "26px",
+                        letterSpacing: "0.3em",
+                        textAlign: "center",
+                        fontWeight: "900",
+                        fontFamily: "monospace",
+                        padding: "12px",
+                      }}
+                      autoFocus
+                      id="input-otp-code"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading || otpCode.length < 6}
+                    className="btn btn-primary btn-lg"
+                    style={{
+                      width: "100%",
+                      justifyContent: "center",
+                      background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
+                    }}
+                    id="btn-validate-otp"
+                  >
+                    {loading ? <Loader2 size={19} style={{ animation: "spin 1s linear infinite" }} /> : "Valider mon compte & Accéder"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOtpStep(false);
+                      setError("");
+                    }}
+                    className="btn btn-ghost btn-sm"
+                    style={{ color: "var(--text-muted)", fontSize: "12px" }}
+                  >
+                    ← Modifier mon adresse email ou mes identifiants
+                  </button>
+                </form>
+              ) : (
+                /* Step 1: User info input */
+                <form onSubmit={handleRegSubmit(onSendOtp)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <div className="form-group">
+                    <label className="form-label">Nom complet ou Prénom</label>
+                    <input
+                      {...regRegister("name")}
+                      type="text"
+                      placeholder="Alexandre Martin"
+                      className="form-input"
+                      autoComplete="name"
+                      id="reg-name"
+                    />
+                    {regErrors.name && <span className="form-error">{regErrors.name.message}</span>}
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Adresse Email de vérification</label>
+                    <input
+                      {...regRegister("email")}
+                      type="email"
+                      placeholder="alex@exemple.com"
+                      className="form-input"
+                      autoComplete="email"
+                      id="reg-email"
+                    />
+                    {regErrors.email && <span className="form-error">{regErrors.email.message}</span>}
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Mot de passe (8 car. min)</label>
+                    <div style={{ position: "relative" }}>
+                      <input
+                        {...regRegister("password")}
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••••••"
+                        className="form-input"
+                        style={{ paddingRight: "44px" }}
+                        autoComplete="new-password"
+                        id="reg-password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{
+                          position: "absolute",
+                          right: "12px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          color: "var(--text-muted)",
+                          display: "flex",
+                          padding: "4px",
+                        }}
+                        aria-label="Afficher mot de passe"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                    {regErrors.password && <span className="form-error">{regErrors.password.message}</span>}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn btn-primary btn-lg"
+                    style={{
+                      width: "100%",
+                      justifyContent: "center",
+                      marginTop: "6px",
+                      background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
+                    }}
+                    id="btn-submit-register"
+                  >
+                    {loading ? <Loader2 size={19} style={{ animation: "spin 1s linear infinite" }} /> : "Recevoir mon code par mail ✉️"}
+                  </button>
+                </form>
+              )
             )}
           </div>
         </div>
@@ -871,7 +1189,7 @@ export default function LandingPage() {
         <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: "14px" }}>
           <Logo size={28} />
           <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
-            © {new Date().getFullYear()} AlarmAgenda IA. Conçu pour une productivité et une ponctualité absolues.
+            © {new Date().getFullYear()} AlarmAgenda. Conçu pour une productivité et une ponctualité absolues.
           </p>
         </div>
       </footer>

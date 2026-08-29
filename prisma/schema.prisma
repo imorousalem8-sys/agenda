@@ -18,10 +18,14 @@ model User {
   emailVerified DateTime?
   password      String?
   image         String?
-  mode          String    @default("PERSONAL") // PERSONAL | PROFESSIONAL
-  timezone      String    @default("Europe/Paris")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  mode               String    @default("PERSONAL") // PERSONAL | PROFESSIONAL
+  timezone           String    @default("Europe/Paris")
+  plan               String    @default("FREE") // FREE | PRO
+  subscriptionStatus String    @default("INACTIVE") // INACTIVE | ACTIVE | TRIAL | EXPIRED
+  trialEndsAt        DateTime?
+  subscriptionEndsAt DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   accounts      Account[]
   sessions      Session[]

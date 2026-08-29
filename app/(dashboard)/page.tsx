@@ -22,6 +22,7 @@ import {
 import { formatDate, formatTime, formatDateShort, getCategoryColor, getCategoryLabel } from "@/lib/utils";
 import { isToday, isTomorrow, parseISO } from "date-fns";
 import EventFormModal from "@/components/forms/EventFormModal";
+import DashboardClockHero from "@/components/dashboard/DashboardClockHero";
 
 interface Event {
   id: string;
@@ -145,62 +146,14 @@ export default function DashboardPage() {
 
   return (
     <div style={{ padding: "32px 28px", maxWidth: "1160px", margin: "0 auto" }}>
-      {/* Top Header */}
-      <div
-        style={{
-          marginBottom: "28px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "16px",
-          flexWrap: "wrap",
-        }}
-      >
-        <div>
-          <h1
-            style={{
-              fontSize: "28px",
-              fontWeight: "800",
-              letterSpacing: "-0.03em",
-              color: "#ffffff",
-            }}
-          >
-            {greeting} 👋
-          </h1>
-          <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginTop: "4px" }}>
-            {new Date().toLocaleDateString("fr-FR", {
-              weekday: "long",
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </p>
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <button
-            onClick={() => window.dispatchEvent(new Event("open-ai-assistant"))}
-            className="btn btn-secondary"
-            style={{
-              borderColor: "rgba(99, 102, 241, 0.4)",
-              color: "#c7d2fe",
-              background: "rgba(99, 102, 241, 0.12)",
-            }}
-          >
-            <Sparkles size={16} color="#818cf8" />
-            <span>Assistant IA</span>
-          </button>
-
-          <button
-            onClick={() => setShowEventForm(true)}
-            className="btn btn-primary"
-            id="dashboard-new-event"
-          >
-            <Plus size={16} />
-            <span>Nouveau rendez-vous</span>
-          </button>
-        </div>
-      </div>
+      {/* 3D Cyber Clock Hero with Volume & Depth */}
+      <DashboardClockHero
+        greeting={greeting}
+        onOpenAI={() => window.dispatchEvent(new Event("open-ai-assistant"))}
+        onNewEvent={() => setShowEventForm(true)}
+        nextReminderTitle={nextReminder?.title}
+        nextReminderTime={nextReminder ? formatTime(nextReminder.fireAt) : undefined}
+      />
 
       {/* AI Quick Command Bar */}
       <div
@@ -216,7 +169,7 @@ export default function DashboardPage() {
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
           <Bot size={18} color="#38bdf8" />
           <span style={{ fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Copilote IA Express
+            Copilote Vocal Express
           </span>
           <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>
             • Dictez ou écrivez n&apos;importe quelle consigne en français

@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Disable dev indicators overlay in development
+  devIndicators: false,
   // Allow images from external sources if needed
   images: {
     remotePatterns: [],

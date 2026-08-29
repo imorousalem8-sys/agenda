@@ -449,6 +449,13 @@ body {
 }
 
 /* Mobile responsive styles */
+@media (max-width: 900px) {
+  .chrono-grid {
+    grid-template-columns: 1fr !important;
+    justify-items: center !important;
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
@@ -461,3 +468,18 @@ body {
     margin-left: 0;
   }
 }
+
+/* Hide Next.js dev error overlay / issue indicator */
+nextjs-portal,
+[data-nextjs-toast],
+[data-nextjs-dialog-overlay],
+div[class*="nextjs-toast"],
+div[class*="nextjs-portal"],
+next-route-announcer {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+

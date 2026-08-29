@@ -163,21 +163,6 @@ export default function Logo({
             >
               AlarmAgenda
             </span>
-            <span
-              style={{
-                fontSize: `${Math.max(9, size * 0.24)}px`,
-                fontWeight: "800",
-                padding: "2px 5px",
-                borderRadius: "6px",
-                background: "linear-gradient(135deg, rgba(99,102,241,0.25), rgba(168,85,247,0.25))",
-                border: "1px solid rgba(139,92,246,0.4)",
-                color: "#c084fc",
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-              }}
-            >
-              IA
-            </span>
           </div>
           <span
             style={{
