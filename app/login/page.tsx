@@ -218,7 +218,7 @@ export default function LandingPage() {
           background: "rgba(7, 9, 14, 0.88)",
           backdropFilter: "blur(20px)",
           borderBottom: "1px solid var(--border-subtle)",
-          padding: "14px 24px",
+          padding: "12px clamp(12px, 3vw, 24px)",
         }}
       >
         <div
@@ -230,7 +230,7 @@ export default function LandingPage() {
             justifyContent: "space-between",
           }}
         >
-          <Logo size={36} animated={true} />
+          <Logo size={34} animated={true} />
 
           <nav
             style={{ display: "flex", alignItems: "center", gap: "28px" }}
@@ -250,13 +250,13 @@ export default function LandingPage() {
             </a>
           </nav>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <button
               onClick={() => scrollToAuth("LOGIN")}
               className="btn btn-ghost btn-sm"
-              style={{ color: "#ffffff", fontWeight: 600 }}
+              style={{ color: "#ffffff", fontWeight: 600, padding: "6px 12px", fontSize: "13px" }}
             >
-              Se connecter
+              Connexion
             </button>
             <button
               onClick={() => scrollToAuth("REGISTER")}
@@ -265,9 +265,11 @@ export default function LandingPage() {
                 background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
                 fontWeight: 700,
                 boxShadow: "0 4px 15px rgba(99, 102, 241, 0.4)",
+                padding: "6px 14px",
+                fontSize: "13px",
               }}
             >
-              Commencer maintenant
+              Commencer
             </button>
           </div>
         </div>
@@ -277,7 +279,7 @@ export default function LandingPage() {
       <section
         style={{
           position: "relative",
-          padding: "90px 24px 70px",
+          padding: "clamp(40px, 7vw, 90px) clamp(12px, 3vw, 24px) clamp(30px, 5vw, 70px)",
           textAlign: "center",
           overflow: "hidden",
           zIndex: 1,
@@ -291,29 +293,29 @@ export default function LandingPage() {
               display: "inline-flex",
               alignItems: "center",
               gap: "8px",
-              padding: "6px 18px",
+              padding: "6px 16px",
               borderRadius: "30px",
               background: "rgba(99, 102, 241, 0.15)",
               border: "1px solid rgba(99, 102, 241, 0.4)",
               color: "#c7d2fe",
-              fontSize: "13px",
+              fontSize: "12px",
               fontWeight: "700",
-              marginBottom: "28px",
+              marginBottom: "24px",
               boxShadow: "0 0 20px rgba(99, 102, 241, 0.25)",
             }}
           >
-            <Sparkles size={15} color="#38bdf8" />
+            <Sparkles size={14} color="#38bdf8" />
             <span>L&apos;Agenda Nouvelle Génération Piloté à la Voix</span>
           </div>
 
           {/* Main Title */}
           <h1
             style={{
-              fontSize: "clamp(36px, 6vw, 64px)",
+              fontSize: "clamp(26px, 5.5vw, 60px)",
               fontWeight: "900",
-              lineHeight: "1.1",
+              lineHeight: "1.15",
               letterSpacing: "-0.035em",
-              marginBottom: "24px",
+              marginBottom: "20px",
             }}
             className="gradient-text"
           >
@@ -323,11 +325,11 @@ export default function LandingPage() {
           {/* Subtitle */}
           <p
             style={{
-              fontSize: "clamp(16px, 2.2vw, 20px)",
+              fontSize: "clamp(14px, 2.2vw, 19px)",
               color: "var(--text-secondary)",
               lineHeight: "1.6",
               maxWidth: "720px",
-              margin: "0 auto 36px",
+              margin: "0 auto 32px",
             }}
           >
             Le premier agenda augmenté qui comprend vos instructions en langage naturel, planifie vos tâches et déclenche des réveils vocaux persistants.
@@ -335,22 +337,23 @@ export default function LandingPage() {
 
           {/* Hero CTAs */}
           <div
+            className="mobile-stack"
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: "16px",
+              gap: "14px",
               flexWrap: "wrap",
-              marginBottom: "48px",
+              marginBottom: "40px",
             }}
           >
             <button
               onClick={() => scrollToAuth("REGISTER")}
-              className="btn btn-primary btn-lg"
+              className="btn btn-primary btn-lg btn-mobile-full"
               style={{
-                fontSize: "16px",
-                padding: "16px 36px",
-                borderRadius: "16px",
+                fontSize: "15px",
+                padding: "14px 30px",
+                borderRadius: "14px",
                 background: "linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #a855f7 100%)",
                 boxShadow: "0 8px 30px rgba(99, 102, 241, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
               }}
@@ -362,11 +365,11 @@ export default function LandingPage() {
 
             <button
               onClick={handleTestVoiceDemo}
-              className="btn btn-secondary btn-lg"
+              className="btn btn-secondary btn-lg btn-mobile-full"
               style={{
-                fontSize: "15px",
-                padding: "15px 26px",
-                borderRadius: "16px",
+                fontSize: "14px",
+                padding: "14px 22px",
+                borderRadius: "14px",
                 borderColor: "rgba(255, 255, 255, 0.18)",
               }}
               id="hero-cta-voice"
@@ -382,22 +385,22 @@ export default function LandingPage() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: "24px",
+              gap: "18px",
               flexWrap: "wrap",
               color: "var(--text-secondary)",
-              fontSize: "13px",
+              fontSize: "12px",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <CheckCircle2 size={16} color="#34d399" />
+              <CheckCircle2 size={15} color="#34d399" />
               <span>Essai 7 jours sans engagement</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <CheckCircle2 size={16} color="#34d399" />
+              <CheckCircle2 size={15} color="#34d399" />
               <span>Disponible sur PC & Mobile</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <CheckCircle2 size={16} color="#34d399" />
+              <CheckCircle2 size={15} color="#34d399" />
               <span>100% Chiffré & Privé</span>
             </div>
           </div>
@@ -407,7 +410,7 @@ export default function LandingPage() {
         <div
           style={{
             maxWidth: "1080px",
-            margin: "64px auto 0",
+            margin: "48px auto 0",
             position: "relative",
             zIndex: 2,
           }}
@@ -417,22 +420,23 @@ export default function LandingPage() {
       </section>
 
       {/* 4. COMPARISON MATRIX: WHY TRADITIONAL CALENDARS FAIL */}
-      <section style={{ padding: "80px 24px 60px", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
-        <div style={{ textAlign: "center", marginBottom: "48px" }}>
+      <section style={{ padding: "clamp(40px, 6vw, 80px) clamp(12px, 3vw, 24px) 40px", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <span className="badge badge-glow-cyan" style={{ marginBottom: "12px" }}>Le Problème Résolu</span>
-          <h2 style={{ fontSize: "clamp(26px, 4vw, 38px)", fontWeight: "900", color: "#ffffff", letterSpacing: "-0.02em" }}>
+          <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: "900", color: "#ffffff", letterSpacing: "-0.02em" }}>
             Pourquoi les agendas classiques vous font perdre du temps
           </h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "16px", marginTop: "10px", maxWidth: "680px", margin: "10px auto 0" }}>
+          <p style={{ color: "var(--text-secondary)", fontSize: "15px", marginTop: "10px", maxWidth: "680px", margin: "10px auto 0" }}>
             Une simple notification silencieuse ne suffit plus quand votre journée est chargée.
           </p>
         </div>
 
         <div
+          className="comparison-mobile-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "24px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "20px",
           }}
         >
           {/* Classic Agenda Failures */}
@@ -511,32 +515,33 @@ export default function LandingPage() {
       </section>
 
       {/* 5. 3-STEP WORKFLOW */}
-      <section style={{ padding: "70px 24px", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
-        <div style={{ textAlign: "center", marginBottom: "48px" }}>
+      <section style={{ padding: "clamp(40px, 6vw, 70px) clamp(12px, 3vw, 24px)", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <span className="badge badge-glow-purple" style={{ marginBottom: "12px" }}>Simplicité Absolue</span>
-          <h2 style={{ fontSize: "clamp(26px, 4vw, 36px)", fontWeight: "900", color: "#ffffff" }}>
+          <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: "900", color: "#ffffff" }}>
             Comment ça marche en 3 étapes
           </h2>
         </div>
 
         <div
+          className="steps-mobile-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "24px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gap: "20px",
           }}
         >
           {[
             {
               step: "01",
               title: "Parlez librement",
-              desc: "Dictez vos rendez-vous, tâches urgentes ou rappels comme vous le feriez à un assistant humain.",
+              desc: "Dictez vos rendez-vous, tâches urgentes ou rappels comme vous le feriez à un assistant.",
               color: "#38bdf8",
             },
             {
               step: "02",
               title: "Planification instantanée",
-              desc: "L'agenda extrait l'heure, la personne et le niveau d'urgence pour tout organiser proprement dans votre calendrier.",
+              desc: "L'agenda extrait l'heure, la personne et le niveau d'urgence pour tout organiser dans votre calendrier.",
               color: "#818cf8",
             },
             {
@@ -550,28 +555,28 @@ export default function LandingPage() {
               key={idx}
               className="glass-card"
               style={{
-                padding: "32px 26px",
-                borderRadius: "20px",
+                padding: "26px 22px",
+                borderRadius: "18px",
                 position: "relative",
                 border: "1px solid rgba(255, 255, 255, 0.1)",
               }}
             >
               <div
                 style={{
-                  fontSize: "36px",
+                  fontSize: "32px",
                   fontWeight: "900",
                   color: item.color,
                   opacity: 0.8,
-                  marginBottom: "12px",
+                  marginBottom: "10px",
                   fontFamily: "monospace",
                 }}
               >
                 {item.step}
               </div>
-              <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#ffffff", marginBottom: "8px" }}>
+              <h3 style={{ fontSize: "17px", fontWeight: "800", color: "#ffffff", marginBottom: "8px" }}>
                 {item.title}
               </h3>
-              <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: "1.6" }}>
+              <p style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: "1.5" }}>
                 {item.desc}
               </p>
             </div>
@@ -580,19 +585,19 @@ export default function LandingPage() {
       </section>
 
       {/* 6. INTERACTIVE SANDBOX SECTION */}
-      <section id="ai-demo" style={{ padding: "60px 24px 80px", maxWidth: "960px", margin: "0 auto", position: "relative", zIndex: 1 }}>
-        <div style={{ textAlign: "center", marginBottom: "36px" }}>
+      <section id="ai-demo" style={{ padding: "clamp(40px, 6vw, 60px) clamp(12px, 3vw, 24px)", maxWidth: "960px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <div style={{ textAlign: "center", marginBottom: "32px" }}>
           <span className="badge badge-glow-cyan" style={{ marginBottom: "12px" }}>Démonstration Interactive</span>
-          <h2 style={{ fontSize: "32px", fontWeight: "800", color: "#ffffff" }}>
+          <h2 style={{ fontSize: "clamp(22px, 3.5vw, 32px)", fontWeight: "800", color: "#ffffff" }}>
             Testez la commande vocale en direct
           </h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "15px", marginTop: "8px" }}>
+          <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginTop: "8px" }}>
             Cliquez sur un exemple pour voir comment l&apos;agenda structure vos phrases orales :
           </p>
         </div>
 
-        <div className="glass-card" style={{ padding: "28px", border: "1px solid var(--border-accent)" }}>
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "18px" }}>
+        <div className="glass-card" style={{ padding: "22px 18px", border: "1px solid var(--border-accent)" }}>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "16px" }}>
             {[
               "Mets cette tâche demain 14h avec Marc pour valider le devis",
               "Rappelle-moi d'aller chez le docteur jeudi à 10h30",
@@ -602,7 +607,7 @@ export default function LandingPage() {
                 key={idx}
                 onClick={() => handleSandboxSimulate(p)}
                 className="btn btn-secondary btn-sm"
-                style={{ fontSize: "12px", background: sandboxInput === p ? "rgba(99, 102, 241, 0.3)" : undefined }}
+                style={{ fontSize: "12px", background: sandboxInput === p ? "rgba(99, 102, 241, 0.3)" : undefined, textAlign: "left" }}
               >
                 &ldquo;{p}&rdquo;
               </button>
@@ -612,12 +617,12 @@ export default function LandingPage() {
           {sandboxResult && (
             <div
               style={{
-                padding: "16px 20px",
-                borderRadius: "14px",
+                padding: "14px 18px",
+                borderRadius: "12px",
                 background: "rgba(99, 102, 241, 0.12)",
                 border: "1px solid rgba(99, 102, 241, 0.35)",
                 color: "#e2e8f0",
-                fontSize: "14px",
+                fontSize: "13px",
                 lineHeight: "1.5",
                 animation: "fadeIn 0.3s ease-out",
               }}
@@ -629,12 +634,13 @@ export default function LandingPage() {
       </section>
 
       {/* 7. STATS & KEY METRICS */}
-      <section id="stats" style={{ padding: "60px 24px", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+      <section id="stats" style={{ padding: "clamp(40px, 5vw, 60px) clamp(12px, 3vw, 24px)", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
         <div
+          className="stats-mobile-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "20px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gap: "16px",
             textAlign: "center",
           }}
         >
@@ -642,20 +648,20 @@ export default function LandingPage() {
             { value: "0", label: "Oubli constaté", sublabel: "dès la première semaine", color: "#34d399" },
             { value: "3s", label: "Pour planifier", sublabel: "n'importe quelle consigne", color: "#38bdf8" },
             { value: "99.9%", label: "De ponctualité", sublabel: "respectée aux rendez-vous", color: "#a855f7" },
-            { value: "100%", label: "Chiffré & Privé", sublabel: "sécurité & confidentialité totales", color: "#f59e0b" },
+            { value: "100%", label: "Chiffré & Privé", sublabel: "sécurité & confidentialité", color: "#f59e0b" },
           ].map((s, idx) => (
             <div
               key={idx}
               className="glass-card"
-              style={{ padding: "28px 20px", borderRadius: "18px" }}
+              style={{ padding: "22px 16px", borderRadius: "16px" }}
             >
-              <div style={{ fontSize: "38px", fontWeight: "900", color: s.color, lineHeight: 1, marginBottom: "8px", fontFamily: "monospace" }}>
+              <div style={{ fontSize: "32px", fontWeight: "900", color: s.color, lineHeight: 1, marginBottom: "6px", fontFamily: "monospace" }}>
                 {s.value}
               </div>
-              <div style={{ fontSize: "15px", fontWeight: "800", color: "#ffffff", marginBottom: "4px" }}>
+              <div style={{ fontSize: "14px", fontWeight: "800", color: "#ffffff", marginBottom: "4px" }}>
                 {s.label}
               </div>
-              <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+              <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
                 {s.sublabel}
               </div>
             </div>
@@ -664,10 +670,10 @@ export default function LandingPage() {
       </section>
 
       {/* 8. PRICING & SUBSCRIPTIONS SECTION (2 COMPACT REFINED OFFERS) */}
-      <section id="pricing" style={{ padding: "70px 24px 60px", maxWidth: "920px", margin: "0 auto", position: "relative", zIndex: 1 }}>
-        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+      <section id="pricing" style={{ padding: "clamp(40px, 6vw, 70px) clamp(12px, 3vw, 24px) 50px", maxWidth: "920px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <div style={{ textAlign: "center", marginBottom: "36px" }}>
           <span className="badge badge-glow-purple" style={{ marginBottom: "12px" }}>Tarification Simple & Rentable</span>
-          <h2 style={{ fontSize: "clamp(26px, 4vw, 36px)", fontWeight: "900", color: "#ffffff", letterSpacing: "-0.03em" }}>
+          <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: "900", color: "#ffffff", letterSpacing: "-0.03em" }}>
             Investissez dans votre ponctualité et votre temps
           </h2>
           <p style={{ color: "var(--text-secondary)", fontSize: "15px", marginTop: "8px", maxWidth: "600px", margin: "8px auto 0" }}>
@@ -676,6 +682,7 @@ export default function LandingPage() {
         </div>
 
         <div
+          className="pricing-mobile-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
@@ -687,7 +694,7 @@ export default function LandingPage() {
           <div
             className="glass-card"
             style={{
-              padding: "28px 24px",
+              padding: "26px 20px",
               borderRadius: "20px",
               display: "flex",
               flexDirection: "column",
@@ -695,33 +702,33 @@ export default function LandingPage() {
               background: "rgba(17, 24, 39, 0.75)",
             }}
           >
-            <div style={{ marginBottom: "16px" }}>
-              <span style={{ fontSize: "11px", fontWeight: "800", color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            <div style={{ marginBottom: "14px" }}>
+              <span style={{ fontSize: "10px", fontWeight: "800", color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                 DÉCOUVERTE
               </span>
-              <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#ffffff", marginTop: "4px" }}>
+              <h3 style={{ fontSize: "19px", fontWeight: "900", color: "#ffffff", marginTop: "4px" }}>
                 Plan Gratuit
               </h3>
-              <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginTop: "2px" }}>
+              <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
                 Pour tester l&apos;agenda et les rendez-vous standard.
               </p>
             </div>
 
-            <div style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "18px" }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-                <span style={{ fontSize: "34px", fontWeight: "900", color: "#ffffff", fontFamily: "monospace" }}>0 €</span>
-                <span style={{ color: "var(--text-muted)", fontSize: "13px" }}>/ pour toujours</span>
+                <span style={{ fontSize: "32px", fontWeight: "900", color: "#ffffff", fontFamily: "monospace" }}>0 €</span>
+                <span style={{ color: "var(--text-muted)", fontSize: "12px" }}>/ pour toujours</span>
               </div>
               <span style={{ fontSize: "11px", color: "#94a3b8" }}>Sans carte bancaire</span>
             </div>
 
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", color: "#cbd5e1", fontSize: "13px", marginBottom: "26px", flex: 1 }}>
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "9px", color: "#cbd5e1", fontSize: "12px", marginBottom: "22px", flex: 1 }}>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <CheckCircle2 size={15} color="#34d399" />
+                <CheckCircle2 size={14} color="#34d399" />
                 <span>Calendrier personnel standard</span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <CheckCircle2 size={15} color="#34d399" />
+                <CheckCircle2 size={14} color="#34d399" />
                 <span>Notifications classiques simples</span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-muted)" }}>
@@ -736,7 +743,7 @@ export default function LandingPage() {
 
             <button
               onClick={() => scrollToAuth("REGISTER")}
-              className="btn btn-secondary btn-sm"
+              className="btn btn-secondary btn-sm btn-mobile-full"
               style={{ width: "100%", justifyContent: "center", padding: "10px", fontWeight: "700" }}
             >
               Créer un compte gratuit
@@ -747,7 +754,7 @@ export default function LandingPage() {
           <div
             className="glass-card"
             style={{
-              padding: "28px 24px",
+              padding: "26px 20px",
               borderRadius: "20px",
               display: "flex",
               flexDirection: "column",
@@ -762,9 +769,9 @@ export default function LandingPage() {
               style={{
                 position: "absolute",
                 top: "-11px",
-                right: "20px",
+                right: "18px",
                 background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
-                padding: "3px 12px",
+                padding: "3px 10px",
                 borderRadius: "14px",
                 fontSize: "10px",
                 fontWeight: "900",
@@ -775,52 +782,52 @@ export default function LandingPage() {
               ⭐ ACCÈS ILLIMITÉ
             </div>
 
-            <div style={{ marginBottom: "16px" }}>
-              <span style={{ fontSize: "11px", fontWeight: "800", color: "#818cf8", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            <div style={{ marginBottom: "14px" }}>
+              <span style={{ fontSize: "10px", fontWeight: "800", color: "#818cf8", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                 RECOMMANDÉ
               </span>
-              <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#ffffff", marginTop: "4px" }}>
+              <h3 style={{ fontSize: "19px", fontWeight: "900", color: "#ffffff", marginTop: "4px" }}>
                 Abonnement Pro
               </h3>
-              <p style={{ fontSize: "13px", color: "#c7d2fe", marginTop: "2px" }}>
+              <p style={{ fontSize: "12px", color: "#c7d2fe", marginTop: "2px" }}>
                 Pour les indépendants, cadres et personnes exigeantes.
               </p>
             </div>
 
-            <div style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "18px" }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-                <span style={{ fontSize: "34px", fontWeight: "900", color: "#ffffff", fontFamily: "monospace" }}>9,99 €</span>
-                <span style={{ color: "var(--text-muted)", fontSize: "13px" }}>/ mois</span>
+                <span style={{ fontSize: "32px", fontWeight: "900", color: "#ffffff", fontFamily: "monospace" }}>9,99 €</span>
+                <span style={{ color: "var(--text-muted)", fontSize: "12px" }}>/ mois</span>
               </div>
-              <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: "600" }}>Zéro engagement • 7 jours d&apos;essai offerts</span>
+              <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: "600" }}>Zéro engagement • 7 jours offerts</span>
             </div>
 
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", color: "#f1f5f9", fontSize: "13px", marginBottom: "26px", flex: 1 }}>
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "9px", color: "#f1f5f9", fontSize: "12px", marginBottom: "22px", flex: 1 }}>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <CheckCircle2 size={15} color="#38bdf8" />
+                <CheckCircle2 size={14} color="#38bdf8" />
                 <span><strong>Dictée vocale illimitée</strong> en français</span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <CheckCircle2 size={15} color="#38bdf8" />
+                <CheckCircle2 size={14} color="#38bdf8" />
                 <span><strong>Alarmes vocales persistantes inratables</strong></span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <CheckCircle2 size={15} color="#38bdf8" />
+                <CheckCircle2 size={14} color="#38bdf8" />
                 <span><strong>Double espace Pro & Perso étanche</strong></span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <CheckCircle2 size={15} color="#38bdf8" />
-                <span>Mode hors-ligne PWA + Synchronisation temps réel</span>
+                <CheckCircle2 size={14} color="#38bdf8" />
+                <span>Mode hors-ligne PWA + Synchro temps réel</span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <CheckCircle2 size={15} color="#38bdf8" />
+                <CheckCircle2 size={14} color="#38bdf8" />
                 <span>Support prioritaire 7j/7</span>
               </li>
             </ul>
 
             <button
               onClick={() => scrollToAuth("REGISTER")}
-              className="btn btn-primary"
+              className="btn btn-primary btn-mobile-full"
               style={{
                 width: "100%",
                 justifyContent: "center",
@@ -842,7 +849,7 @@ export default function LandingPage() {
         ref={authRef}
         id="auth-section"
         style={{
-          padding: "90px 24px",
+          padding: "clamp(50px, 7vw, 90px) clamp(12px, 3vw, 24px)",
           position: "relative",
           overflow: "hidden",
         }}

@@ -339,7 +339,7 @@ export default function DashboardLayout({
             }}
           >
             <Bot size={14} />
-            <span>IA</span>
+            <span>Assistant</span>
           </button>
         </div>
 

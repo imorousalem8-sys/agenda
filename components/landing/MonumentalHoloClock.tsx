@@ -99,8 +99,8 @@ export default function MonumentalHoloClock() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%) translateZ(-80px)",
-            width: "680px",
-            height: "680px",
+            width: "min(680px, 95vw)",
+            height: "min(680px, 95vw)",
             borderRadius: "50%",
             background:
               "radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, rgba(6, 182, 212, 0.18) 40%, rgba(168, 85, 247, 0.1) 60%, transparent 75%)",
@@ -112,6 +112,7 @@ export default function MonumentalHoloClock() {
 
         {/* Outer 3D Cyber Glass Chrono Container */}
         <div
+          className="chrono-container-pad"
           style={{
             position: "relative",
             zIndex: 1,
@@ -128,17 +129,18 @@ export default function MonumentalHoloClock() {
         >
           {/* Top Chrono Header Bar */}
           <div
+            className="chrono-header-bar"
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: "36px",
-              paddingBottom: "18px",
+              marginBottom: "32px",
+              paddingBottom: "16px",
               borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
               transform: "translateZ(30px)",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
               <div
                 style={{
                   width: "10px",
@@ -147,19 +149,20 @@ export default function MonumentalHoloClock() {
                   background: "#10b981",
                   boxShadow: "0 0 12px #10b981",
                   animation: "pulseGlow 2s infinite alternate",
+                  flexShrink: 0,
                 }}
               />
               <span
                 style={{
-                  fontSize: "12px",
+                  fontSize: "11px",
                   fontWeight: "800",
-                  letterSpacing: "0.15em",
+                  letterSpacing: "0.12em",
                   textTransform: "uppercase",
                   color: "#38bdf8",
                   fontFamily: "monospace",
                 }}
               >
-                MATRICE HORLOGE TEMPS RÉEL • SYNCHRONISÉ UTC+2
+                MATRICE HORLOGE TEMPS RÉEL • UTC+2
               </span>
             </div>
 
@@ -190,7 +193,7 @@ export default function MonumentalHoloClock() {
               display: "grid",
               gridTemplateColumns: "1fr auto 1fr",
               alignItems: "center",
-              gap: "36px",
+              gap: "32px",
               transform: "translateZ(40px)",
             }}
             className="chrono-grid"
@@ -200,15 +203,18 @@ export default function MonumentalHoloClock() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "18px",
+                gap: "16px",
                 transform: "translateZ(20px)",
+                width: "100%",
+                maxWidth: "420px",
+                margin: "0 auto",
               }}
             >
               <div
                 style={{
                   background: "rgba(13, 18, 30, 0.8)",
                   borderRadius: "18px",
-                  padding: "20px",
+                  padding: "18px",
                   border: "1px solid rgba(56, 189, 248, 0.3)",
                   boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
                 }}
@@ -231,7 +237,7 @@ export default function MonumentalHoloClock() {
                 style={{
                   background: "rgba(13, 18, 30, 0.8)",
                   borderRadius: "18px",
-                  padding: "20px",
+                  padding: "18px",
                   border: "1px solid rgba(168, 85, 247, 0.3)",
                   boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
                 }}
@@ -242,7 +248,7 @@ export default function MonumentalHoloClock() {
                     ALARME PERSISTANTE INRATABLE
                   </span>
                 </div>
-                <div style={{ fontSize: "18px", fontWeight: "900", color: "#ffffff" }}>
+                <div style={{ fontSize: "17px", fontWeight: "900", color: "#ffffff" }}>
                   0 oubli garanti
                 </div>
                 <p style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
@@ -255,19 +261,20 @@ export default function MonumentalHoloClock() {
             <div
               style={{
                 position: "relative",
-                width: "360px",
-                height: "360px",
+                width: "min(320px, 80vw)",
+                height: "min(320px, 80vw)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 transformStyle: "preserve-3d",
+                margin: "0 auto",
               }}
             >
               {/* Outer Glowing Cyber Ring 1 (Slow Rotating Counter Clockwise) */}
               <div
                 style={{
                   position: "absolute",
-                  inset: "-12px",
+                  inset: "-10px",
                   borderRadius: "50%",
                   border: "2px dashed rgba(56, 189, 248, 0.35)",
                   animation: "spin 50s linear infinite reverse",
@@ -279,7 +286,7 @@ export default function MonumentalHoloClock() {
               <div
                 style={{
                   position: "absolute",
-                  inset: "8px",
+                  inset: "6px",
                   borderRadius: "50%",
                   border: "1px solid rgba(99, 102, 241, 0.4)",
                   boxShadow: "0 0 30px rgba(99, 102, 241, 0.25), inset 0 0 30px rgba(99, 102, 241, 0.2)",
@@ -289,8 +296,8 @@ export default function MonumentalHoloClock() {
 
               {/* Holographic Chrono SVG Dial */}
               <svg
-                width="340"
-                height="340"
+                width="100%"
+                height="100%"
                 viewBox="0 0 340 340"
                 style={{
                   position: "absolute",
@@ -428,15 +435,18 @@ export default function MonumentalHoloClock() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "18px",
+                gap: "16px",
                 transform: "translateZ(20px)",
+                width: "100%",
+                maxWidth: "420px",
+                margin: "0 auto",
               }}
             >
               <div
                 style={{
                   background: "rgba(13, 18, 30, 0.75)",
                   borderRadius: "18px",
-                  padding: "20px",
+                  padding: "18px",
                   border: "1px solid rgba(16, 185, 129, 0.25)",
                   boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
                 }}
@@ -470,7 +480,7 @@ export default function MonumentalHoloClock() {
                 style={{
                   background: "rgba(13, 18, 30, 0.75)",
                   borderRadius: "18px",
-                  padding: "20px",
+                  padding: "18px",
                   border: "1px solid rgba(236, 72, 153, 0.25)",
                   boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
                 }}
@@ -481,7 +491,7 @@ export default function MonumentalHoloClock() {
                     CALENDRIER AUGMENTÉ
                   </span>
                 </div>
-                <div style={{ fontSize: "18px", fontWeight: "800", color: "#ffffff" }}>
+                <div style={{ fontSize: "17px", fontWeight: "800", color: "#ffffff" }}>
                   100% Automatisé
                 </div>
                 <p style={{ fontSize: "12px", color: "#94a3b8", marginTop: "2px" }}>
@@ -494,8 +504,8 @@ export default function MonumentalHoloClock() {
           {/* MONUMENTAL DIGITAL TIME DISPLAY AT BOTTOM WITH 3D DEPTH */}
           <div
             style={{
-              marginTop: "42px",
-              paddingTop: "28px",
+              marginTop: "36px",
+              paddingTop: "24px",
               borderTop: "1px solid rgba(255, 255, 255, 0.08)",
               textAlign: "center",
               transform: "translateZ(50px)",
@@ -507,14 +517,14 @@ export default function MonumentalHoloClock() {
                 display: "inline-flex",
                 alignItems: "baseline",
                 justifyContent: "center",
-                gap: "8px",
+                gap: "6px",
                 fontFamily: "monospace",
               }}
             >
               <div
                 suppressHydrationWarning
                 style={{
-                  fontSize: "clamp(48px, 8vw, 76px)",
+                  fontSize: "clamp(30px, 8.5vw, 76px)",
                   fontWeight: "900",
                   letterSpacing: "-0.04em",
                   lineHeight: 1,
@@ -530,7 +540,7 @@ export default function MonumentalHoloClock() {
               <div
                 suppressHydrationWarning
                 style={{
-                  fontSize: "clamp(20px, 3.5vw, 32px)",
+                  fontSize: "clamp(16px, 3.5vw, 32px)",
                   fontWeight: "800",
                   color: "#38bdf8",
                   letterSpacing: "-0.02em",
