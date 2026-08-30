@@ -1,12 +1,14 @@
 import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { getMemoryUser } from "@/lib/userStore";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://olcvcfselpcebqgrwkly.supabase.co";
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "alarm-agenda-auth-secret-key-2026-production-secure-99182371",
   trustHost: true,
@@ -27,67 +29,74 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = (credentials.email as string).toLowerCase().trim();
         const password = credentials.password as string;
 
-        // Auto-seed Demo account if demo credentials are used
+        // 1. Compte Démo instantané
         if (email === "demo@alarmagenda.ai" && password === "Demo1234!") {
+          return {
+            id: "demo_usr_1",
+            email: "demo@alarmagenda.ai",
+            name: "Utilisateur Démo",
+            plan: "PRO",
+            subscriptionStatus: "ACTIVE",
+          };
+        }
+
+        let user: any = null;
+
+        // 2. Recherche prioritaire dans le store mémoire (utilisateur venant de valider l'OTP)
+        const memUser = getMemoryUser(email);
+        if (memUser) {
+          user = {
+            id: memUser.id,
+            email: memUser.email,
+            name: memUser.name,
+            password: memUser.passwordHash,
+            plan: memUser.plan,
+            subscriptionStatus: memUser.subscriptionStatus,
+          };
+        }
+
+        // 3. Recherche via Supabase REST API HTTPS (Port 443)
+        if (!user && supabaseServiceKey) {
           try {
-            const hashedPassword = await bcrypt.hash("Demo1234!", 10);
-            const demoUser = await prisma.user.upsert({
-              where: { email: "demo@alarmagenda.ai" },
-              update: {
-                name: "Utilisateur Démo",
-                password: hashedPassword,
-                plan: "PRO",
-                subscriptionStatus: "ACTIVE",
-              },
-              create: {
-                email: "demo@alarmagenda.ai",
-                name: "Utilisateur Démo",
-                password: hashedPassword,
-                plan: "PRO",
-                subscriptionStatus: "ACTIVE",
+            const res = await fetch(`${supabaseUrl}/rest/v1/User?email=eq.${encodeURIComponent(email)}&select=*`, {
+              headers: {
+                "apikey": supabaseServiceKey,
+                "Authorization": `Bearer ${supabaseServiceKey}`,
               },
             });
-
-            return {
-              id: demoUser.id,
-              email: demoUser.email,
-              name: demoUser.name,
-              plan: "PRO",
-              subscriptionStatus: "ACTIVE",
-            };
-          } catch {
-            return {
-              id: "demo_usr_1",
-              email: "demo@alarmagenda.ai",
-              name: "Utilisateur Démo",
-              plan: "PRO",
-              subscriptionStatus: "ACTIVE",
-            };
+            const users = await res.json().catch(() => []);
+            if (Array.isArray(users) && users.length > 0) {
+              user = users[0];
+            }
+          } catch (restErr) {
+            console.warn("[Auth] Supabase REST search exception:", restErr);
           }
         }
 
-        try {
-          const user = await prisma.user.findUnique({
-            where: { email },
-          });
-
-          if (!user || !user.password) return null;
-
-          const isValid = await bcrypt.compare(password, user.password);
-          if (!isValid) return null;
-
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-            plan: user.plan || "FREE",
-            subscriptionStatus: user.subscriptionStatus || "INACTIVE",
-          };
-        } catch (dbError) {
-          console.error("Authorize error:", dbError);
-          return null;
+        // 4. Recherche via Prisma DB
+        if (!user) {
+          try {
+            user = await prisma.user.findUnique({
+              where: { email },
+            });
+          } catch (dbError) {
+            console.warn("[Auth] Prisma DB search exception:", dbError);
+          }
         }
+
+        if (!user || !user.password) return null;
+
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) return null;
+
+        return {
+          id: user.id || `usr_${Date.now()}`,
+          email: user.email,
+          name: user.name || "Utilisateur",
+          image: user.image,
+          plan: user.plan || "PRO",
+          subscriptionStatus: user.subscriptionStatus || "TRIAL",
+        };
       },
     }),
     Google({
@@ -99,16 +108,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.plan = (user as unknown as { plan?: string }).plan || "FREE";
-        token.subscriptionStatus = (user as unknown as { subscriptionStatus?: string }).subscriptionStatus || "INACTIVE";
+        token.plan = (user as unknown as { plan?: string }).plan || "PRO";
+        token.subscriptionStatus = (user as unknown as { subscriptionStatus?: string }).subscriptionStatus || "TRIAL";
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
-        (session.user as unknown as { plan?: string }).plan = (token.plan as string) || "FREE";
-        (session.user as unknown as { subscriptionStatus?: string }).subscriptionStatus = (token.subscriptionStatus as string) || "INACTIVE";
+        (session.user as unknown as { plan?: string }).plan = (token.plan as string) || "PRO";
+        (session.user as unknown as { subscriptionStatus?: string }).subscriptionStatus = (token.subscriptionStatus as string) || "TRIAL";
       }
       return session;
     },

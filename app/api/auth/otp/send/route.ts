@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Check if user already exists
+    // Vérifier si l'utilisateur existe déjà
     try {
       const existing = await prisma.user.findUnique({
         where: { email: normalizedEmail },
@@ -34,21 +34,21 @@ export async function POST(req: NextRequest) {
       console.warn("DB check warning:", e);
     }
 
-    // Generate a fresh random 6-digit OTP code on every request/resend
+    // 1. Générer le code OTP
     const otpCode = generateFreshOtp();
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Store in distributed DB and memory store
-    await storeOtp(normalizedEmail, otpCode, name || "Utilisateur", hashedPassword);
+    // 2. Stocker le code OTP pour l'inscription
+    await storeOtp(normalizedEmail, otpCode, name || "Utilisateur", hashedPassword, "REGISTER");
 
-    // 1. Dispatch through Resend transactional email engine
+    // 3. Envoyer le code par email direct (Resend)
     const emailResult = await sendOtpEmail({
       to: normalizedEmail,
       name: name || "Utilisateur",
       code: otpCode,
     });
 
-    // 2. Dispatch through Supabase Auth as secondary relay
+    // 4. Déclencher également l'authentification Supabase Auth
     let sentViaSupabase = false;
     try {
       if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
@@ -58,10 +58,10 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (sbErr) {
-      console.warn("Supabase OTP send warning:", sbErr);
+      console.warn("Supabase OTP send notice:", sbErr);
     }
 
-    console.log(`[OTP] Code dispatched for ${normalizedEmail} - Resend: ${emailResult.success ? "OK" : "FAILED"}, Supabase: ${sentViaSupabase ? "OK" : "NO"}`);
+    console.log(`[OTP Send] Email: ${normalizedEmail} | Resend: ${emailResult.success ? "OK" : "NO"} | Supabase: ${sentViaSupabase ? "OK" : "NO"}`);
 
     return NextResponse.json({
       success: true,

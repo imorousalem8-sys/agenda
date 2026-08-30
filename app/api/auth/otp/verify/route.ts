@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { verifyStoredOtp } from "@/lib/otpStore";
+import { verifySupabaseOtp, upsertSupabaseUserViaRest } from "@/lib/supabase";
+import { saveMemoryUser } from "@/lib/userStore";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,25 +13,56 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email et code OTP requis" }, { status: 400 });
     }
 
-    const verification = await verifyStoredOtp(email, code);
+    const normalizedEmail = email.toLowerCase().trim();
+    const cleanCode = code.toString().trim();
 
-    if (!verification.valid) {
-      return NextResponse.json({ error: verification.error || "Code OTP invalide ou expiré" }, { status: 400 });
+    let isValid = false;
+    let storedName: string | undefined;
+    let storedPasswordHash: string | undefined;
+
+    // 1. Vérifier d'abord auprès du store local (Resend / mémoire / token DB)
+    const localVerification = await verifyStoredOtp(normalizedEmail, cleanCode, "REGISTER");
+    if (localVerification.valid) {
+      isValid = true;
+      storedName = localVerification.name;
+      storedPasswordHash = localVerification.passwordHash;
+    } else {
+      // 2. Si non trouvé en local, vérifier auprès de Supabase Auth
+      const supabaseVerification = await verifySupabaseOtp(normalizedEmail, cleanCode);
+      if (supabaseVerification.ok) {
+        isValid = true;
+        console.log(`[OTP Verify] Code validé avec succès via Supabase Auth pour ${normalizedEmail}`);
+      }
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
-    const finalName = verification.name || name || "Utilisateur";
+    if (!isValid) {
+      return NextResponse.json(
+        { error: "Code de confirmation incorrect ou expiré. Veuillez vérifier le code reçu dans vos emails ou en demander un nouveau." },
+        { status: 400 }
+      );
+    }
+
+    const finalName = storedName || name || "Utilisateur";
     const cleanPassword = (password || "").trim();
-    let passwordHash = verification.passwordHash;
+    let passwordHash = storedPasswordHash;
     if (!passwordHash || !passwordHash.startsWith("$2")) {
       passwordHash = await bcrypt.hash(cleanPassword || "DefaultPass123!", 10);
     }
 
+    // 0. Stockage prioritaire en mémoire pour authentification immédiate sans délai
+    saveMemoryUser({
+      email: normalizedEmail,
+      name: finalName,
+      passwordHash,
+      plan: "PRO",
+      subscriptionStatus: "TRIAL",
+    });
+
     const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    // Upsert or create verified user
+    // 1. Enregistrement Prisma
     try {
-      const user = await prisma.user.upsert({
+      await prisma.user.upsert({
         where: { email: normalizedEmail },
         update: {
           name: finalName,
@@ -48,37 +81,36 @@ export async function POST(req: NextRequest) {
           subscriptionStatus: "TRIAL",
           trialEndsAt,
         },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          plan: true,
-          subscriptionStatus: true,
-        },
       });
-
-      return NextResponse.json({
-        success: true,
-        message: "Compte vérifié et créé avec succès !",
-        user,
-      });
-    } catch (dbError) {
-      console.error("DB create user error:", dbError);
-      // Fallback user object if DB is temporarily disconnected
-      return NextResponse.json({
-        success: true,
-        message: "Compte vérifié avec succès !",
-        user: {
-          id: `usr_${Date.now()}`,
-          email: normalizedEmail,
-          name: finalName,
-          plan: "PRO",
-          subscriptionStatus: "TRIAL",
-        },
-      });
+    } catch (prismaErr) {
+      console.warn("[OTP Verify] Prisma upsert notice:", prismaErr);
     }
+
+    // 2. Enregistrement de secours Supabase REST API HTTPS (Port 443)
+    try {
+      await upsertSupabaseUserViaRest({
+        email: normalizedEmail,
+        name: finalName,
+        password: passwordHash,
+        plan: "PRO",
+        subscriptionStatus: "TRIAL",
+      });
+    } catch (sbErr) {
+      console.warn("[OTP Verify] Supabase REST upsert notice:", sbErr);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Compte vérifié et activé avec succès !",
+      user: {
+        email: normalizedEmail,
+        name: finalName,
+        plan: "PRO",
+        subscriptionStatus: "TRIAL",
+      },
+    });
   } catch (error) {
     console.error("OTP verify error:", error);
-    return NextResponse.json({ error: "Erreur lors de la vérification du code OTP" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur inattendue lors de la vérification du code OTP" }, { status: 500 });
   }
 }

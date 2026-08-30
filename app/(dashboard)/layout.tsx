@@ -86,10 +86,7 @@ export default function DashboardLayout({
   };
 
   return (
-    <>
-      {/* Dynamic Cyber Grid Background */}
-      <CyberGridBackground />
-
+    <div style={{ minHeight: "100vh", background: "#0b0f19", color: "#f8fafc" }}>
       {/* Mobile Backdrop */}
       {sidebarOpen && (
         <div
@@ -374,6 +371,6 @@ export default function DashboardLayout({
           .mobile-topbar { display: flex !important; }
         }
       `}</style>
-    </>
+    </div>
   );
 }

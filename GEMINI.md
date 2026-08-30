@@ -69,3 +69,12 @@ Avant toute décision technique ou stratégique majeure :
 - Identifier et signaler les risques de sécurité (failles XSS, injections, exposition de secrets/API keys).
 - Appliquer les meilleures pratiques de sécurité dès la conception (Security by Design).
 - Respecter rigoureusement la confidentialité des données utilisateur.
+
+---
+
+## 8. Standards d'Authentification, OTP & Gestion de Compte
+Pour tout système de connexion, inscription ou gestion d'utilisateurs :
+- **Mot de passe oublié systématique** : Intégrer obligatoirement d'office le flux complet de « Mot de passe oublié » (Code OTP + Reset).
+- **Zéro `localhost` en dur** : Détecter dynamiquement l'URL de base (`origin`, `x-forwarded-host`, `x-forwarded-proto`) pour tous les liens et emails.
+- **Synchronisation OTP infaillible** : S'assurer que le code envoyé est validé par la même autorité (Supabase Auth / Mailer) sans divergence de code.
+- **Résilience et redirection immédiate** : Assurer un fallback HTTPS (Port 443) pour la persistance des données et rediriger explicitement après connexion (`window.location.href`).

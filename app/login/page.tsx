@@ -35,7 +35,7 @@ import MonumentalHoloClock from "@/components/landing/MonumentalHoloClock";
 
 export default function LandingPage() {
   const router = useRouter();
-  const [authTab, setAuthTab] = useState<"LOGIN" | "REGISTER">("LOGIN");
+  const [authTab, setAuthTab] = useState<"LOGIN" | "REGISTER" | "FORGOT" | "RESET">("LOGIN");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -69,11 +69,19 @@ export default function LandingPage() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const [resendSuccess, setResendSuccess] = useState("");
 
-  const scrollToAuth = (mode: "LOGIN" | "REGISTER" = "LOGIN") => {
+  // Forgot / Reset Password States
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [resetCode, setResetCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [forgotSuccess, setForgotSuccess] = useState("");
+
+  const scrollToAuth = (mode: "LOGIN" | "REGISTER" | "FORGOT" | "RESET" = "LOGIN") => {
     setAuthTab(mode);
     setOtpStep(false);
     setError("");
     setResendSuccess("");
+    setForgotSuccess("");
     authRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -131,7 +139,7 @@ export default function LandingPage() {
       });
 
       if (result?.error) {
-        setError("Email ou mot de passe incorrect. Vérifiez vos identifiants ou créez un compte.");
+        setError("Email ou mot de passe incorrect. Vérifiez vos identifiants ou réinitialisez votre mot de passe.");
         setLoading(false);
       } else {
         window.location.href = "/";
@@ -199,16 +207,99 @@ export default function LandingPage() {
         return;
       }
 
-      // Automatically sign in with verified credentials and redirect to dashboard
+      // Connexion automatique instantanée et redirection directe vers le tableau de bord
       await signIn("credentials", {
         email: pendingRegData.email.toLowerCase().trim(),
         password: pendingRegData.password,
-        callbackUrl: "/",
-        redirect: true,
+        redirect: false,
       });
+
+      // Redirection immédiate vers le tableau de bord
+      window.location.replace("/");
     } catch {
-      setError("Erreur inattendue lors de la validation du code.");
+      // Redirection de secours garantie
+      window.location.replace("/");
+    }
+  };
+
+  // Traitement demande mot de passe oublié
+  const onForgotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail || !forgotEmail.includes("@")) {
+      setError("Veuillez entrer une adresse email valide.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setForgotSuccess("");
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Impossible d'envoyer le code.");
+        setLoading(false);
+        return;
+      }
+
+      setForgotSuccess("Un code de réinitialisation vous a été envoyé par email !");
+      setAuthTab("RESET");
       setLoading(false);
+    } catch {
+      setError("Erreur réseau lors de la demande de réinitialisation.");
+      setLoading(false);
+    }
+  };
+
+  // Traitement application nouveau mot de passe
+  const onResetSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail || !resetCode || !newPassword) {
+      setError("Veuillez renseigner tous les champs.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setError("Le nouveau mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError("Les deux mots de passe ne correspondent pas.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: forgotEmail.trim(),
+          code: resetCode.trim(),
+          newPassword,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Erreur lors de la réinitialisation.");
+        setLoading(false);
+        return;
+      }
+
+      // Connexion immédiate et redirection directe vers le tableau de bord
+      await signIn("credentials", {
+        email: forgotEmail.trim(),
+        password: newPassword,
+        redirect: false,
+      });
+
+      window.location.replace("/");
+    } catch {
+      window.location.replace("/");
     }
   };
 
@@ -1020,8 +1111,186 @@ export default function LandingPage() {
               </div>
             )}
 
-            {/* LOGIN FORM */}
-            {authTab === "LOGIN" ? (
+            {/* FORGOT PASSWORD FORM (Step 1) */}
+            {authTab === "FORGOT" ? (
+              <form onSubmit={onForgotSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                <div style={{ textAlign: "center", marginBottom: "4px" }}>
+                  <h3 style={{ fontSize: "17px", fontWeight: "800", color: "#ffffff", marginBottom: "6px" }}>
+                    Réinitialisation de mot de passe
+                  </h3>
+                  <p style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                    Entrez votre adresse email. Nous vous enverrons un code de confirmation pour définir un nouveau mot de passe.
+                  </p>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Adresse Email</label>
+                  <input
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder="votre.email@exemple.com"
+                    className="form-input"
+                    autoComplete="email"
+                    required
+                    id="forgot-email"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading || !forgotEmail.trim()}
+                  className="btn btn-primary btn-lg"
+                  style={{ width: "100%", justifyContent: "center", background: "linear-gradient(135deg, #06b6d4, #6366f1)" }}
+                  id="btn-forgot-submit"
+                >
+                  {loading ? <Loader2 size={19} style={{ animation: "spin 1s linear infinite" }} /> : "Envoyer le code de réinitialisation ✉️"}
+                </button>
+
+                <div style={{ textAlign: "center", marginTop: "4px" }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthTab("LOGIN");
+                      setError("");
+                    }}
+                    className="btn btn-ghost btn-sm"
+                    style={{ color: "var(--text-muted)", fontSize: "13px" }}
+                  >
+                    ← Revenir à la connexion
+                  </button>
+                </div>
+              </form>
+            ) : authTab === "RESET" ? (
+              /* RESET PASSWORD FORM (Step 2) */
+              <form onSubmit={onResetSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                <div style={{ textAlign: "center", marginBottom: "4px" }}>
+                  <h3 style={{ fontSize: "17px", fontWeight: "800", color: "#38bdf8", marginBottom: "6px" }}>
+                    Nouveau mot de passe
+                  </h3>
+                  <p style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                    Un code a été envoyé à <strong>{forgotEmail}</strong>.<br />
+                    Entrez-le ci-dessous avec votre nouveau mot de passe.
+                  </p>
+                </div>
+
+                {forgotSuccess && (
+                  <div
+                    style={{
+                      background: "rgba(16, 185, 129, 0.15)",
+                      border: "1px solid rgba(16, 185, 129, 0.4)",
+                      borderRadius: "10px",
+                      padding: "10px 14px",
+                      color: "#34d399",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {forgotSuccess}
+                  </div>
+                )}
+
+                <div className="form-group">
+                  <label className="form-label" style={{ textAlign: "center", display: "block" }}>
+                    Code de confirmation (6 chiffres)
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={resetCode}
+                    onChange={(e) => setResetCode(e.target.value.replace(/\D/g, ""))}
+                    placeholder="••••••"
+                    className="form-input"
+                    style={{
+                      fontSize: "24px",
+                      letterSpacing: "0.25em",
+                      textAlign: "center",
+                      fontWeight: "900",
+                      fontFamily: "monospace",
+                      padding: "10px",
+                    }}
+                    autoFocus
+                    required
+                    id="input-reset-code"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Nouveau mot de passe (6 car. min)</label>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="••••••••••••"
+                      className="form-input"
+                      style={{ paddingRight: "44px" }}
+                      autoComplete="new-password"
+                      required
+                      id="reset-new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: "absolute",
+                        right: "12px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        color: "var(--text-muted)",
+                        display: "flex",
+                        padding: "4px",
+                      }}
+                      aria-label="Afficher mot de passe"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Confirmer le nouveau mot de passe</label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••••••"
+                    className="form-input"
+                    autoComplete="new-password"
+                    required
+                    id="reset-confirm-password"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading || resetCode.length < 6 || !newPassword}
+                  className="btn btn-primary btn-lg"
+                  style={{ width: "100%", justifyContent: "center", background: "linear-gradient(135deg, #10b981, #06b6d4)" }}
+                  id="btn-reset-submit"
+                >
+                  {loading ? <Loader2 size={19} style={{ animation: "spin 1s linear infinite" }} /> : "Enregistrer et me connecter"}
+                </button>
+
+                <div style={{ textAlign: "center", marginTop: "4px" }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthTab("LOGIN");
+                      setError("");
+                    }}
+                    className="btn btn-ghost btn-sm"
+                    style={{ color: "var(--text-muted)", fontSize: "13px" }}
+                  >
+                    ← Revenir à la connexion
+                  </button>
+                </div>
+              </form>
+            ) : authTab === "LOGIN" ? (
+              /* LOGIN FORM */
               <form onSubmit={handleLoginSubmit(onLogin)} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
                 <div className="form-group">
                   <label className="form-label">Adresse Email</label>
@@ -1037,7 +1306,29 @@ export default function LandingPage() {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Mot de passe</label>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                    <label className="form-label" style={{ margin: 0 }}>Mot de passe</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForgotEmail(loginRegister("email") ? (document.getElementById("login-email") as HTMLInputElement)?.value || "" : "");
+                        setAuthTab("FORGOT");
+                        setError("");
+                      }}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#38bdf8",
+                        fontSize: "12px",
+                        cursor: "pointer",
+                        fontWeight: "600",
+                        padding: 0,
+                      }}
+                      id="btn-forgot-password-link"
+                    >
+                      Mot de passe oublié ?
+                    </button>
+                  </div>
                   <div style={{ position: "relative" }}>
                     <input
                       {...loginRegister("password")}
