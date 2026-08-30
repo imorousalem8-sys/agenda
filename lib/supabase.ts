@@ -47,8 +47,8 @@ export function getDynamicBaseUrl(req?: NextRequest | Request): string {
     return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
   }
 
-  // URL de production en ligne garantie (Zéro port local 3000)
-  return "https://agenda-iota-six.vercel.app";
+  // URL officielle de production AlarmAgenda sur Vercel
+  return "https://agenda-gamma-orpin.vercel.app";
 }
 
 /**
