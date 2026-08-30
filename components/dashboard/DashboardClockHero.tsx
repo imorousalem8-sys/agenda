@@ -42,31 +42,17 @@ export default function DashboardClockHero({
     : "";
 
   return (
-    <div
-      style={{
-        background: "#111827",
-        border: "1px solid #1f293d",
-        borderRadius: "18px",
-        padding: "24px 28px",
-        marginBottom: "24px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: "20px",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-      }}
-    >
+    <div className="hero-banner">
       {/* Left: Greeting & Current Date */}
-      <div>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
+      <div className="hero-left">
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px", flexWrap: "wrap" }}>
           <span
             style={{
               padding: "3px 10px",
               borderRadius: "20px",
               background: "rgba(99, 102, 241, 0.15)",
               color: "#818cf8",
-              fontSize: "12px",
+              fontSize: "11px",
               fontWeight: "700",
               textTransform: "uppercase",
               letterSpacing: "0.05em",
@@ -78,7 +64,7 @@ export default function DashboardClockHero({
             {formattedDate}
           </span>
         </div>
-        <h1 style={{ fontSize: "26px", fontWeight: "800", color: "#ffffff", letterSpacing: "-0.02em" }}>
+        <h1 className="hero-title">
           {greeting}, Alexandre 👋
         </h1>
         <p style={{ fontSize: "14px", color: "var(--text-secondary)", marginTop: "4px" }}>
@@ -87,61 +73,37 @@ export default function DashboardClockHero({
       </div>
 
       {/* Right: Clean Live Clock & Quick Actions */}
-      <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+      <div className="hero-actions">
         {/* Time Badge */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            background: "#0c101a",
-            border: "1px solid #1e293b",
-            padding: "10px 18px",
-            borderRadius: "14px",
-          }}
-        >
-          <Clock size={20} color="#38bdf8" />
-          <div style={{ fontFamily: "monospace", fontSize: "22px", fontWeight: "800", color: "#f8fafc", letterSpacing: "0.05em" }}>
+        <div className="hero-time-badge">
+          <Clock size={18} color="#38bdf8" />
+          <div style={{ fontFamily: "monospace", fontSize: "20px", fontWeight: "800", color: "#f8fafc", letterSpacing: "0.05em" }}>
             <span>{hours}:{minutes}</span>
-            <span style={{ fontSize: "14px", color: "#64748b", marginLeft: "4px" }}>:{seconds}</span>
+            <span style={{ fontSize: "13px", color: "#64748b", marginLeft: "4px" }}>:{seconds}</span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <button
-          onClick={onNewEvent}
-          className="btn btn-primary"
-          style={{
-            padding: "10px 18px",
-            gap: "8px",
-            fontWeight: "700",
-            fontSize: "13px",
-            borderRadius: "12px",
-            background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-          }}
-          id="hero-new-event-btn"
-        >
-          <Plus size={16} />
-          <span>Nouveau rendez-vous</span>
-        </button>
+        <div className="hero-btn-group">
+          <button
+            onClick={onNewEvent}
+            className="btn btn-primary hero-action-btn"
+            id="hero-new-event-btn"
+          >
+            <Plus size={15} />
+            <span>Nouveau rendez-vous</span>
+          </button>
 
-        <button
-          onClick={onOpenAI}
-          className="btn btn-secondary"
-          style={{
-            padding: "10px 16px",
-            gap: "8px",
-            fontWeight: "700",
-            fontSize: "13px",
-            borderRadius: "12px",
-            color: "#38bdf8",
-            border: "1px solid rgba(56, 189, 248, 0.3)",
-          }}
-          id="hero-copilot-btn"
-        >
-          <Bot size={16} color="#38bdf8" />
-          <span>Assistant Vocal</span>
-        </button>
+          <button
+            onClick={onOpenAI}
+            className="btn btn-secondary hero-action-btn"
+            style={{ color: "#38bdf8", borderColor: "rgba(56, 189, 248, 0.3)" }}
+            id="hero-copilot-btn"
+          >
+            <Bot size={15} color="#38bdf8" />
+            <span>Assistant Vocal</span>
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -145,7 +145,7 @@ export default function DashboardPage() {
   const nextReminder = reminders.find((r) => new Date(r.fireAt) > now);
 
   return (
-    <div style={{ padding: "32px 28px", maxWidth: "1160px", margin: "0 auto" }}>
+    <div className="dashboard-container">
       {/* 3D Cyber Clock Hero with Volume & Depth */}
       <DashboardClockHero
         greeting={greeting}
@@ -156,17 +156,8 @@ export default function DashboardPage() {
       />
 
       {/* AI Quick Command Bar */}
-      <div
-        className="glass-card animate-slide-up"
-        style={{
-          padding: "16px 20px",
-          marginBottom: "28px",
-          border: "1px solid rgba(99, 102, 241, 0.35)",
-          background: "linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(12, 16, 26, 0.9))",
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.35), var(--glow-primary)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+      <div className="glass-card animate-slide-up dashboard-ai-bar">
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
           <Bot size={18} color="#38bdf8" />
           <span style={{ fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
             Copilote Vocal Express
@@ -176,23 +167,22 @@ export default function DashboardPage() {
           </span>
         </div>
 
-        <form onSubmit={handleQuickAISubmit} style={{ display: "flex", gap: "10px" }}>
+        <form onSubmit={handleQuickAISubmit} className="dashboard-ai-form">
           <input
             type="text"
             value={aiPrompt}
             onChange={(e) => setAiPrompt(e.target.value)}
-            placeholder="Ex: Mets-moi cette tâche demain à 14h avec Marc pour signer les devis..."
+            placeholder="Ex: Mets-moi un rappel demain à 14h avec Marc pour signer les devis..."
             className="form-input"
-            style={{ fontSize: "13px", padding: "10px 14px", flex: 1 }}
+            style={{ fontSize: "13px", padding: "10px 14px", flex: 1, minWidth: 0 }}
           />
           <button
             type="submit"
             disabled={aiLoading || !aiPrompt.trim()}
-            className="btn btn-primary"
-            style={{ padding: "10px 18px", flexShrink: 0 }}
+            className="btn btn-primary dashboard-ai-submit"
           >
             {aiLoading ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Send size={15} />}
-            <span style={{ display: "inline" }}>Exécuter</span>
+            <span>Exécuter</span>
           </button>
         </form>
 
@@ -219,14 +209,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Row */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-          gap: "16px",
-          marginBottom: "32px",
-        }}
-      >
+      <div className="dashboard-stats-grid">
         {[
           { icon: Calendar, label: "Aujourd'hui", value: todayEvents.length, color: "#6366f1", sublabel: "rendez-vous" },
           { icon: Bell, label: "Rappels actifs", value: reminders.length, color: "#a855f7", sublabel: "à venir" },
@@ -235,19 +218,13 @@ export default function DashboardPage() {
         ].map(({ icon: Icon, label, value, color, sublabel }) => (
           <div
             key={label}
-            className="glass-card-interactive"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-              padding: "18px 20px",
-            }}
+            className="glass-card-interactive dashboard-stat-card"
           >
             <div
               style={{
-                width: "46px",
-                height: "46px",
-                borderRadius: "14px",
+                width: "44px",
+                height: "44px",
+                borderRadius: "12px",
                 background: `${color}20`,
                 border: `1px solid ${color}40`,
                 display: "flex",
@@ -256,10 +233,10 @@ export default function DashboardPage() {
                 flexShrink: 0,
               }}
             >
-              <Icon size={22} color={color} />
+              <Icon size={20} color={color} />
             </div>
             <div>
-              <p style={{ fontSize: "24px", fontWeight: "800", color: "#ffffff", lineHeight: 1 }}>
+              <p style={{ fontSize: "22px", fontWeight: "800", color: "#ffffff", lineHeight: 1 }}>
                 {value}
               </p>
               <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "4px" }}>
@@ -271,7 +248,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "24px" }}>
+      <div className="dashboard-main-grid">
         {/* Left Column: Agenda */}
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           {/* Today */}
