@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import {
   Bell,
   Calendar,
@@ -20,6 +20,8 @@ import {
   Phone,
   Crown,
   Bot,
+  UserPlus,
+  ArrowRight,
 } from "lucide-react";
 import AlarmOverlay from "@/components/reminders/AlarmOverlay";
 import NotificationManager from "@/components/reminders/NotificationManager";
@@ -27,7 +29,6 @@ import AIAssistantWidget from "@/components/ai/AIAssistantWidget";
 import VoiceSettingsModal from "@/components/settings/VoiceSettingsModal";
 import PhoneSettingsModal from "@/components/settings/PhoneSettingsModal";
 import Logo from "@/components/brand/Logo";
-import CyberGridBackground from "@/components/landing/CyberGridBackground";
 import UpgradeModal from "@/components/subscription/UpgradeModal";
 import { useSubscription } from "@/lib/useSubscription";
 
@@ -46,6 +47,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mode, setMode] = useState<"PERSONAL" | "PROFESSIONAL">("PERSONAL");
   const [showVoiceSettings, setShowVoiceSettings] = useState(false);
@@ -54,6 +56,8 @@ export default function DashboardLayout({
   const [upgradeFeature, setUpgradeFeature] = useState("cette fonctionnalité");
 
   const { subscription, isPro } = useSubscription();
+
+  const isDemoUser = session?.user?.email === "demo@alarmagenda.ai";
 
   useEffect(() => {
     const saved = localStorage.getItem("aa-mode") as "PERSONAL" | "PROFESSIONAL" | null;
@@ -85,6 +89,10 @@ export default function DashboardLayout({
     window.dispatchEvent(new Event("open-ai-assistant"));
   };
 
+  const handleExitDemoAndRegister = () => {
+    signOut({ callbackUrl: "/login" });
+  };
+
   return (
     <div style={{ minHeight: "100vh", background: "#0b0f19", color: "#f8fafc" }}>
       {/* Mobile Backdrop */}
@@ -114,6 +122,45 @@ export default function DashboardLayout({
             <Logo size={36} animated={true} />
           </Link>
         </div>
+
+        {/* Demo Account Badge & Exit Button inside sidebar */}
+        {isDemoUser && (
+          <div
+            style={{
+              marginBottom: "16px",
+              padding: "12px",
+              borderRadius: "14px",
+              background: "linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.15))",
+              border: "1px solid rgba(245, 158, 11, 0.4)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
+              <Sparkles size={14} color="#f59e0b" />
+              <span style={{ fontSize: "11px", fontWeight: "800", color: "#fbbf24", textTransform: "uppercase" }}>
+                Mode Démo Actif
+              </span>
+            </div>
+            <p style={{ fontSize: "11px", color: "var(--text-secondary)", marginBottom: "8px", lineHeight: 1.4 }}>
+              Vous testez AlarmAgenda en mode aperçu.
+            </p>
+            <button
+              onClick={handleExitDemoAndRegister}
+              className="btn btn-primary btn-sm"
+              style={{
+                width: "100%",
+                justifyContent: "center",
+                fontSize: "11px",
+                fontWeight: "800",
+                background: "linear-gradient(135deg, #10b981, #06b6d4)",
+                gap: "5px",
+              }}
+              id="sidebar-create-real-account-btn"
+            >
+              <UserPlus size={13} />
+              <span>Créer mon compte</span>
+            </button>
+          </div>
+        )}
 
         {/* AI Copilot Quick Launcher Button */}
         <div style={{ marginBottom: "20px" }}>
@@ -291,22 +338,73 @@ export default function DashboardLayout({
             id="logout-btn"
           >
             <LogOut size={16} />
-            <span>Déconnexion</span>
+            <span>{isDemoUser ? "Quitter la Démo" : "Déconnexion"}</span>
           </button>
         </div>
       </aside>
 
       {/* Main Area */}
       <div className="main-content">
+        {/* Top Demo Banner across all pages when in demo mode */}
+        {isDemoUser && (
+          <div
+            style={{
+              background: "linear-gradient(90deg, #1e1b4b, #31104b, #1e1b4b)",
+              borderBottom: "1px solid rgba(168, 85, 247, 0.4)",
+              padding: "8px 16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "10px",
+              flexWrap: "wrap",
+              fontSize: "12px",
+              zIndex: 25,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ background: "#f59e0b", color: "#000000", fontWeight: "900", padding: "2px 7px", borderRadius: "6px", fontSize: "10px" }}>
+                MODE DÉMO
+              </span>
+              <span style={{ color: "#e2e8f0" }}>
+                Vous naviguez sur le compte d&apos;évaluation. Vos données de test ne sont pas sauvegardées.
+              </span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <button
+                onClick={handleExitDemoAndRegister}
+                className="btn btn-primary btn-sm"
+                style={{
+                  padding: "5px 12px",
+                  fontSize: "11px",
+                  fontWeight: "800",
+                  background: "linear-gradient(135deg, #10b981, #06b6d4)",
+                  gap: "4px",
+                }}
+                id="banner-create-account-btn"
+              >
+                <UserPlus size={12} />
+                <span>Créer mon compte</span>
+              </button>
+              <button
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="btn btn-ghost btn-sm"
+                style={{ padding: "5px 10px", fontSize: "11px", color: "var(--text-muted)" }}
+                id="banner-exit-demo-btn"
+              >
+                <span>Quitter</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Mobile Topbar */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            padding: "12px 16px",
+            padding: "10px 14px",
             borderBottom: "1px solid var(--border-subtle)",
-            background: "rgba(12, 16, 26, 0.95)",
-            backdropFilter: "blur(12px)",
+            background: "#0f1422",
             position: "sticky",
             top: 0,
             zIndex: 30,
@@ -322,22 +420,40 @@ export default function DashboardLayout({
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
           <div style={{ marginLeft: "8px" }}>
-            <Logo size={28} showText={false} />
+            <Logo size={26} showText={false} />
           </div>
           <div style={{ flex: 1 }} />
-          <button
-            onClick={handleOpenAI}
-            className="btn btn-primary btn-sm"
-            style={{
-              padding: "6px 10px",
-              gap: "5px",
-              fontSize: "12px",
-              background: "linear-gradient(135deg, #06b6d4, #6366f1)",
-            }}
-          >
-            <Bot size={14} />
-            <span>Assistant</span>
-          </button>
+          {isDemoUser ? (
+            <button
+              onClick={handleExitDemoAndRegister}
+              className="btn btn-primary btn-sm"
+              style={{
+                padding: "6px 10px",
+                fontSize: "11px",
+                fontWeight: "800",
+                background: "linear-gradient(135deg, #10b981, #06b6d4)",
+                gap: "4px",
+              }}
+              id="mobile-create-account-btn"
+            >
+              <UserPlus size={12} />
+              <span>Créer compte</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleOpenAI}
+              className="btn btn-primary btn-sm"
+              style={{
+                padding: "6px 10px",
+                gap: "5px",
+                fontSize: "12px",
+                background: "linear-gradient(135deg, #06b6d4, #6366f1)",
+              }}
+            >
+              <Bot size={14} />
+              <span>Assistant</span>
+            </button>
+          )}
         </div>
 
         {children}
