@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { storeOtp, generateFreshOtp } from "@/lib/otpStore";
-import { sendSupabaseOtp } from "@/lib/supabase";
+import { sendSupabaseOtp, getDynamicBaseUrl } from "@/lib/supabase";
 import { sendOtpEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
@@ -48,11 +48,13 @@ export async function POST(req: NextRequest) {
       code: otpCode,
     });
 
-    // 4. Déclencher également l'authentification Supabase Auth
+    // 4. Déclencher également l'authentification Supabase Auth avec URL de redirection dynamique en ligne
     let sentViaSupabase = false;
     try {
       if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
-        const sbResult = await sendSupabaseOtp(normalizedEmail);
+        const baseUrl = getDynamicBaseUrl(req);
+        const redirectTo = `${baseUrl}/login?tab=REGISTER`;
+        const sbResult = await sendSupabaseOtp(normalizedEmail, redirectTo);
         if (sbResult.ok) {
           sentViaSupabase = true;
         }

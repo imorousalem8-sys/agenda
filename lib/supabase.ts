@@ -5,33 +5,57 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
 
 /**
- * Extrait l'URL de base dynamique à partir d'une requête HTTP (zéro localhost en dur)
+ * Extrait l'URL de base dynamique à partir d'une requête HTTP (ZÉRO localhost en dur)
  */
 export function getDynamicBaseUrl(req?: NextRequest | Request): string {
   if (req) {
     const origin = req.headers.get("origin");
-    if (origin && !origin.includes("undefined")) return origin;
+    if (origin && !origin.includes("undefined") && !origin.includes("null") && !origin.includes("localhost")) {
+      return origin;
+    }
 
     const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
     const proto = req.headers.get("x-forwarded-proto") || "https";
-    if (host) return `${proto}://${host}`;
+    if (host && !host.includes("localhost")) {
+      return `${proto}://${host}`;
+    }
+
+    const referer = req.headers.get("referer");
+    if (referer) {
+      try {
+        const parsed = new URL(referer);
+        if (!parsed.origin.includes("localhost")) {
+          return parsed.origin;
+        }
+      } catch {}
+    }
   }
 
-  if (process.env.NEXT_PUBLIC_APP_URL) {
+  if (process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("localhost")) {
     return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  }
+
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }
 
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
 
-  return "http://localhost:3000";
+  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+    return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+  }
+
+  // URL de production en ligne garantie (Zéro port local 3000)
+  return "https://agenda-iota-six.vercel.app";
 }
 
 /**
  * Envoie un code OTP à 6 chiffres via Supabase Auth
+ * avec URL de redirection dynamique en ligne (Zéro localhost)
  */
-export async function sendSupabaseOtp(email: string) {
+export async function sendSupabaseOtp(email: string, redirectTo?: string) {
   try {
     const res = await fetch(`${supabaseUrl}/auth/v1/otp`, {
       method: "POST",
@@ -43,6 +67,8 @@ export async function sendSupabaseOtp(email: string) {
       body: JSON.stringify({
         email: email.toLowerCase().trim(),
         create_user: true,
+        options: redirectTo ? { emailRedirectTo: redirectTo } : undefined,
+        data: redirectTo ? { redirect_to: redirectTo } : undefined,
       }),
     });
 
