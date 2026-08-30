@@ -177,13 +177,14 @@ export async function upsertSupabaseUserViaRest(userData: {
           email: normalizedEmail,
           name: userData.name || "Utilisateur",
           password: userData.password || "",
-          plan: userData.plan || "PRO",
-          subscriptionStatus: userData.subscriptionStatus || "TRIAL",
+          mode: "PERSONAL",
+          timezone: "Europe/Paris",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         }),
       });
       const inserted = await insertRes.json().catch(() => []);
+      console.log(`[Supabase REST] User ${normalizedEmail} inserted successfully:`, insertRes.status);
       return { ok: insertRes.ok, user: Array.isArray(inserted) ? inserted[0] : { id: newId, email: normalizedEmail } };
     }
   } catch (e) {
