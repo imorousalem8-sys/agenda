@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, CheckCircle2, Shield, X, Zap, Crown, ArrowRight } from "lucide-react";
+import { Sparkles, CheckCircle2, Shield, X, Zap, Crown, ArrowRight, CreditCard, Lock } from "lucide-react";
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -17,17 +17,46 @@ export default function UpgradeModal({
   onSuccess,
 }: UpgradeModalProps) {
   const [loading, setLoading] = useState(false);
+  const [loadingTrial, setLoadingTrial] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
   if (!isOpen) return null;
 
-  const handleUpgrade = async (action: "ACTIVATE_PRO" | "START_TRIAL") => {
+  // 1. Redirection vers Stripe Checkout sécurisé
+  const handleStripeCheckout = async () => {
     setLoading(true);
+    try {
+      const res = await fetch("/api/checkout/stripe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          returnUrl: window.location.pathname,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.url) {
+        // Redirection vers la page de paiement officielle Stripe
+        window.location.href = data.url;
+      } else {
+        alert(data.error || "Impossible d'ouvrir la page de paiement");
+        setLoading(false);
+      }
+    } catch {
+      alert("Erreur réseau lors de la connexion à Stripe");
+      setLoading(false);
+    }
+  };
+
+  // 2. Essai gratuit 7 jours
+  const handleStartTrial = async () => {
+    setLoadingTrial(true);
     try {
       const res = await fetch("/api/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ action: "START_TRIAL" }),
       });
       const data = await res.json();
 
@@ -35,18 +64,18 @@ export default function UpgradeModal({
         setSuccessMsg(data.message);
         window.dispatchEvent(new CustomEvent("subscription-updated", { detail: data.subscription }));
         setTimeout(() => {
-          setLoading(false);
+          setLoadingTrial(false);
           setSuccessMsg("");
           if (onSuccess) onSuccess();
           onClose();
         }, 1200);
       } else {
-        alert(data.error || "Erreur lors de l'activation");
-        setLoading(false);
+        alert(data.error || "Erreur lors de l'activation de l'essai");
+        setLoadingTrial(false);
       }
     } catch {
       alert("Erreur réseau");
-      setLoading(false);
+      setLoadingTrial(false);
     }
   };
 
@@ -55,9 +84,9 @@ export default function UpgradeModal({
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(0, 0, 0, 0.82)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
+        background: "rgba(0, 0, 0, 0.85)",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -72,11 +101,11 @@ export default function UpgradeModal({
       <div
         style={{
           background: "linear-gradient(180deg, #131a2a 0%, #0c101d 100%)",
-          border: "1px solid rgba(99, 102, 241, 0.4)",
-          boxShadow: "0 25px 70px rgba(0, 0, 0, 0.9), 0 0 40px rgba(99, 102, 241, 0.25)",
+          border: "1px solid rgba(99, 102, 241, 0.45)",
+          boxShadow: "0 25px 70px rgba(0, 0, 0, 0.95), 0 0 50px rgba(99, 102, 241, 0.25)",
           borderRadius: "24px",
           width: "100%",
-          maxWidth: "760px",
+          maxWidth: "780px",
           padding: "36px 32px",
           position: "relative",
           color: "#ffffff",
@@ -124,14 +153,14 @@ export default function UpgradeModal({
             }}
           >
             <Crown size={14} color="#f59e0b" />
-            <span>DÉVERROUILLER L&apos;OFFRE PRO</span>
+            <span>PASSERELLES STRIPE SÉCURISÉE</span>
           </div>
 
-          <h2 style={{ fontSize: "24px", fontWeight: "900", color: "#ffffff", letterSpacing: "-0.02em" }}>
-            Passez à la vitesse supérieure
+          <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#ffffff", letterSpacing: "-0.02em" }}>
+            Rejoignez AlarmAgenda Pro
           </h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginTop: "6px", maxWidth: "520px", margin: "6px auto 0" }}>
-            Pour utiliser <strong>{featureName}</strong> et éliminer définitivement tout risque d&apos;oubli, rejoignez l&apos;abonnement Pro.
+          <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginTop: "6px", maxWidth: "540px", margin: "6px auto 0" }}>
+            Débloquez <strong>{featureName}</strong>, l&apos;assistant vocal illimité et les alarmes inratables.
           </p>
         </div>
 
@@ -154,17 +183,17 @@ export default function UpgradeModal({
           </div>
         )}
 
-        {/* 2 Compact Comparison Cards */}
+        {/* 2 Comparison Cards */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1.25fr",
+            gridTemplateColumns: "1fr 1.3fr",
             gap: "20px",
-            marginBottom: "28px",
+            marginBottom: "24px",
           }}
           className="upgrade-grid"
         >
-          {/* Card 1: Gratuit (Actuel) */}
+          {/* Card 1: Gratuit */}
           <div
             style={{
               background: "rgba(18, 24, 38, 0.6)",
@@ -194,7 +223,7 @@ export default function UpgradeModal({
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span>✓</span>
-                <span>Espace Personnel uniquement</span>
+                <span>Espace Personnel</span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px", color: "#ef4444" }}>
                 <span>✕</span>
@@ -205,19 +234,38 @@ export default function UpgradeModal({
                 <span>Dictée vocale bridée</span>
               </li>
             </ul>
+
+            <button
+              onClick={handleStartTrial}
+              disabled={loadingTrial || loading}
+              style={{
+                marginTop: "16px",
+                padding: "10px",
+                borderRadius: "10px",
+                background: "rgba(255, 255, 255, 0.06)",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                color: "#e2e8f0",
+                fontSize: "12px",
+                fontWeight: "700",
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              {loadingTrial ? "Activation essai..." : "🎁 Essayer 7 jours gratuitement"}
+            </button>
           </div>
 
-          {/* Card 2: Pro (Full Features) */}
+          {/* Card 2: Pro (Stripe Checkout) */}
           <div
             style={{
-              background: "linear-gradient(180deg, rgba(30, 41, 72, 0.9) 0%, rgba(17, 24, 48, 0.9) 100%)",
-              border: "2px solid rgba(99, 102, 241, 0.7)",
+              background: "linear-gradient(180deg, rgba(30, 41, 72, 0.95) 0%, rgba(17, 24, 48, 0.95) 100%)",
+              border: "2px solid rgba(99, 102, 241, 0.75)",
               borderRadius: "18px",
               padding: "24px 22px",
               display: "flex",
               flexDirection: "column",
               position: "relative",
-              boxShadow: "0 10px 30px rgba(99, 102, 241, 0.3)",
+              boxShadow: "0 10px 35px rgba(99, 102, 241, 0.35)",
             }}
           >
             <div
@@ -234,7 +282,7 @@ export default function UpgradeModal({
                 letterSpacing: "0.05em",
               }}
             >
-              RECOMMANDE
+              OFFRE PRO RECOMMANDÉE
             </div>
 
             <div style={{ marginBottom: "12px" }}>
@@ -242,18 +290,18 @@ export default function UpgradeModal({
                 ACCÈS ILLIMITÉ
               </span>
               <div style={{ fontSize: "18px", fontWeight: "800", color: "#ffffff", marginTop: "2px" }}>
-                Premium Pro
+                AlarmAgenda Pro
               </div>
               <div style={{ display: "flex", alignItems: "baseline", gap: "4px", marginTop: "8px" }}>
-                <span style={{ fontSize: "26px", fontWeight: "900", color: "#ffffff", fontFamily: "monospace" }}>9,99 €</span>
-                <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>/ mois</span>
+                <span style={{ fontSize: "28px", fontWeight: "900", color: "#ffffff", fontFamily: "monospace" }}>9,99 €</span>
+                <span style={{ fontSize: "13px", color: "var(--text-muted)" }}>/ mois</span>
               </div>
             </div>
 
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", color: "#e2e8f0", fontSize: "12px", marginTop: "10px", flex: 1 }}>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <CheckCircle2 size={14} color="#34d399" />
-                <span><strong>Dictée vocale illimitée</strong></span>
+                <span><strong>Dictée vocale & IA Copilote illimités</strong></span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <CheckCircle2 size={14} color="#34d399" />
@@ -270,29 +318,34 @@ export default function UpgradeModal({
             </ul>
 
             <button
-              onClick={() => handleUpgrade("ACTIVATE_PRO")}
-              disabled={loading}
+              onClick={handleStripeCheckout}
+              disabled={loading || loadingTrial}
               className="btn btn-primary"
               style={{
                 marginTop: "16px",
                 width: "100%",
                 justifyContent: "center",
-                padding: "11px",
+                gap: "8px",
+                padding: "12px",
                 fontWeight: "800",
-                fontSize: "13px",
+                fontSize: "14px",
                 background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
+                boxShadow: "0 8px 20px rgba(99, 102, 241, 0.4)",
               }}
             >
-              {loading ? "Activation en cours..." : "Activer l'abonnement Pro (9,99 €)"}
+              <CreditCard size={18} />
+              {loading ? "Redirection Stripe..." : "S'abonner avec Stripe (9,99 €)"}
             </button>
           </div>
         </div>
 
         {/* Footer Guarantee */}
         <div style={{ textAlign: "center", fontSize: "12px", color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center", gap: "16px" }}>
-          <span>🔒 Sans engagement • Résiliation en 1 clic</span>
+          <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+            <Lock size={12} color="#34d399" /> Paiement 100% sécurisé par Stripe
+          </span>
           <span>•</span>
-          <span>🛡️ Zéro rendez-vous manqué garanti</span>
+          <span>Sans engagement • Résiliation en 1 clic</span>
         </div>
       </div>
     </div>

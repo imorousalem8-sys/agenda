@@ -30,6 +30,7 @@ import VoiceSettingsModal from "@/components/settings/VoiceSettingsModal";
 import PhoneSettingsModal from "@/components/settings/PhoneSettingsModal";
 import Logo from "@/components/brand/Logo";
 import UpgradeModal from "@/components/subscription/UpgradeModal";
+import PaymentSuccessToast from "@/components/subscription/PaymentSuccessToast";
 import { useSubscription } from "@/lib/useSubscription";
 
 const navLinks = [
@@ -460,6 +461,7 @@ export default function DashboardLayout({
       </div>
 
       {/* Overlays */}
+      <PaymentSuccessToast />
       <AlarmOverlay />
       <NotificationManager />
       <AIAssistantWidget />
