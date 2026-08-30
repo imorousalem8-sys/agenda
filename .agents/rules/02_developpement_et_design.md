@@ -17,3 +17,6 @@ trigger: always_on
 3. **SEO & Bonnes Pratiques** :
    - Balisage SEO complet (title, meta description, balises OpenGraph, hiérarchie H1-H6).
    - Identifiants uniques et sémantiques pour les tests et l'accessibilité.
+
+4. **Déploiement Automatique & Immédiat en Ligne** :
+   - À chaque modification validée et testée, l'agent doit systématiquement et immédiatement commiter et pusher les changements sur la branche `main` de GitHub (`git push origin main`) afin que Vercel mette à jour le site en ligne en temps réel sans que l'utilisateur n'ait à le demander.
