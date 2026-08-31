@@ -126,8 +126,33 @@ export default function EventFormModal({ onClose, onSaved, initialDate, eventToE
   };
 
   return (
-    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="modal animate-scale-in">
+    <div
+      className="modal-overlay"
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(5, 8, 18, 0.85)",
+        backdropFilter: "blur(12px)",
+        zIndex: 99999,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "16px",
+      }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        className="modal animate-scale-in"
+        style={{
+          maxWidth: "560px",
+          background: "#0f172a",
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          borderRadius: "20px",
+          boxShadow: "0 25px 60px rgba(0, 0, 0, 0.9)",
+          overflow: "hidden",
+        }}
+      >
+
         {/* Header */}
         <div
           style={{

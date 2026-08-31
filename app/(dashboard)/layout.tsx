@@ -56,6 +56,8 @@ export default function DashboardLayout({
   // Listen to open-upgrade-modal event
   useEffect(() => {
     const handleOpenUpgrade = (e: CustomEvent<{ feature?: string }>) => {
+      setShowVoiceSettings(false);
+      setShowPhoneSettings(false);
       setUpgradeFeature(e.detail?.feature);
       setShowUpgradeModal(true);
     };
@@ -66,6 +68,41 @@ export default function DashboardLayout({
     };
   }, []);
 
+  // Global Escape key listener to close modals
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowVoiceSettings(false);
+        setShowPhoneSettings(false);
+        setShowUpgradeModal(false);
+        setSidebarOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Prevent background scroll when any modal is active
+  useEffect(() => {
+    if (showVoiceSettings || showPhoneSettings || showUpgradeModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [showVoiceSettings, showPhoneSettings, showUpgradeModal]);
+
+  const handleOpenVoiceSettings = () => {
+    setShowPhoneSettings(false);
+    setShowUpgradeModal(false);
+    setShowVoiceSettings(true);
+  };
+
+  const handleOpenPhoneSettings = () => {
+    setShowVoiceSettings(false);
+    setShowUpgradeModal(false);
+    setShowPhoneSettings(true);
+  };
+
   const handleOpenAI = () => {
     window.dispatchEvent(new CustomEvent("open-ai-assistant"));
   };
@@ -74,6 +111,7 @@ export default function DashboardLayout({
     await signOut({ redirect: false });
     window.location.href = "/register";
   };
+
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-app)" }}>
@@ -239,7 +277,7 @@ export default function DashboardLayout({
           </div>
 
           <button
-            onClick={() => setShowVoiceSettings(true)}
+            onClick={handleOpenVoiceSettings}
             style={{
               width: "100%",
               display: "flex",
@@ -262,7 +300,7 @@ export default function DashboardLayout({
           </button>
 
           <button
-            onClick={() => setShowPhoneSettings(true)}
+            onClick={handleOpenPhoneSettings}
             style={{
               width: "100%",
               display: "flex",
@@ -283,6 +321,7 @@ export default function DashboardLayout({
             <Phone size={18} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
             <span>Téléphonie & Alertes</span>
           </button>
+
         </nav>
 
         {/* Live Quota Indicator Box */}
