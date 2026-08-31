@@ -2,9 +2,9 @@ import { AIUserContext, AIEngineResponse, AIChatMessage, AIActionExecutionResult
 import { buildUserAIContext } from "./context";
 import { executeAITool, AI_TOOL_DEFINITIONS } from "./tools";
 import { checkAndIncrementQuota } from "./quotas";
-import { getAIProvider } from "./providers/factory";
+import { getAvailableAIProviders } from "./providers/factory";
+import { AIProvider, ProviderResponse } from "./providers/base";
 import { APP_CONFIG } from "@/lib/config";
-import { executeLocalContextualAgent } from "./localEngine";
 
 export async function processUserAIMessage(
   userId: string,
@@ -12,7 +12,7 @@ export async function processUserAIMessage(
   conversationHistory: AIChatMessage[] = [],
   activeTarget?: AIUserContext["activeTarget"]
 ): Promise<AIEngineResponse> {
-  // 1. Quota Check (1 user message = 1 debit, independent of number of internal tool steps)
+  // 1. Check & increment user quota (1 user prompt = 1 request debit)
   const quotaStatus = await checkAndIncrementQuota(userId);
   if (quotaStatus.isExceeded) {
     return {
@@ -24,35 +24,41 @@ export async function processUserAIMessage(
     };
   }
 
-  // 2. Build Rich User Context (Timezone, Agenda, Tasks, Memory, Contacts)
+  // 2. Build Rich User Context
   const context = await buildUserAIContext(userId);
   if (activeTarget) {
     context.activeTarget = activeTarget;
   }
 
-  const provider = getAIProvider();
+  // 3. Multi-Model Provider Fallback Chain (Gemini -> OpenAI -> Claude -> Local)
+  const providers = getAvailableAIProviders();
+  let lastError = "";
 
-  // 3. Try Multi-Step Provider Execution
-  if (provider) {
+  for (const provider of providers) {
     try {
-      return await executeMultiStepAgent(provider, userMessage, conversationHistory, context, quotaStatus);
-    } catch (err) {
-      console.warn("AIProvider call failed, falling back to Local Deterministic Engine:", err);
+      const response = await executeMultiStepAgent(provider, userMessage, conversationHistory, context, quotaStatus);
+      return response;
+    } catch (err: unknown) {
+      lastError = err instanceof Error ? err.message : String(err);
+      console.warn(`AI Provider [${provider.name}] failed, cascading to next in chain... Error:`, lastError);
     }
   }
 
-  // 4. Ultimate Fallback: Local Contextual Engine
-  const localRes = await executeLocalContextualAgent(userMessage, conversationHistory, context);
-  localRes.quota = { used: quotaStatus.used, limit: quotaStatus.limit, remaining: quotaStatus.remaining };
-  return localRes;
+  // If even the fallback chain failed entirely (should never happen with LocalEngineProvider)
+  return {
+    reply: "Désolé, une erreur technique temporaire est survenue. Veuillez réessayer dans quelques instants.",
+    spokenReply: "Une erreur technique temporaire est survenue.",
+    action: null,
+    executed: false,
+    quota: { used: quotaStatus.used, limit: quotaStatus.limit, remaining: quotaStatus.remaining },
+  };
 }
 
 /**
- * Multi-Step Agent Runner
- * Executes a sequence of tool calls safely with a maximum iteration guardrail.
+ * Multi-Step Agent Runner across any AIProvider
  */
 async function executeMultiStepAgent(
-  provider: ReturnType<typeof getAIProvider> & object,
+  provider: AIProvider,
   userMessage: string,
   history: AIChatMessage[],
   context: AIUserContext,
@@ -117,8 +123,8 @@ RÈGLES D'ACTION MULTI-OUTILS & PRÉCISION :
 4. STYLE DE RÉPONSE :
    - Synthétise clairement toutes les actions accomplies de manière élégante et rassurante.`;
 
-  // First pass: Ask provider for plan and tool calls
-  const response = await provider.generateResponse(
+  // Generate response & tool calls from the active provider
+  const response: ProviderResponse = await provider.generateResponse(
     systemPrompt,
     history,
     userMessage,
@@ -169,7 +175,7 @@ RÈGLES D'ACTION MULTI-OUTILS & PRÉCISION :
     executedCount++;
   }
 
-  // If no natural text was returned, build a consolidated synthesis from the executed actions
+  // If no text was returned, build consolidated synthesis from executed actions
   if (!finalReply && actionResults.length > 0) {
     if (actionResults.length === 1) {
       const first = actionResults[0];

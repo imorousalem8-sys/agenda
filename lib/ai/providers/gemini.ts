@@ -1,13 +1,25 @@
-import { AIProvider, ProviderResponse, ToolCallRequest } from "./base";
+import { AIProvider, ProviderResponse, AIToolDefinition, NormalizedToolCall } from "./base";
 import { AIChatMessage, AIUserContext } from "../types";
 import { APP_CONFIG } from "@/lib/config";
 
 export class GeminiProvider implements AIProvider {
-  name = "gemini";
+  readonly id = "gemini" as const;
+  readonly name = "Google Gemini";
   private apiKey: string;
+  private primaryModel: string;
+  private fallbackModels: string[];
 
-  constructor(apiKey: string) {
-    this.apiKey = apiKey;
+  constructor(apiKey?: string, model?: string) {
+    this.apiKey = apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
+    this.primaryModel = model || process.env.GEMINI_MODEL || APP_CONFIG.AI.PRIMARY_MODEL || "gemini-2.5-flash";
+    this.fallbackModels = (process.env.GEMINI_FALLBACK_MODELS || "gemini-2.0-flash,gemini-1.5-flash,gemini-flash-latest")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+
+  isConfigured(): boolean {
+    return Boolean(this.apiKey && this.apiKey.trim().length > 5);
   }
 
   async generateResponse(
@@ -15,16 +27,13 @@ export class GeminiProvider implements AIProvider {
     history: AIChatMessage[],
     userMessage: string,
     _context: AIUserContext,
-    tools: Array<{
-      name: string;
-      description: string;
-      parameters: Record<string, unknown>;
-    }>
+    tools: AIToolDefinition[]
   ): Promise<ProviderResponse> {
-    const candidateModels = [
-      APP_CONFIG.AI.PRIMARY_MODEL,
-      ...APP_CONFIG.AI.FALLBACK_MODELS,
-    ].filter(Boolean);
+    if (!this.isConfigured()) {
+      throw new Error("Gemini Provider is not configured (missing GEMINI_API_KEY).");
+    }
+
+    const candidateModels = [this.primaryModel, ...this.fallbackModels].filter(Boolean);
 
     const contents = [
       {
@@ -61,7 +70,6 @@ export class GeminiProvider implements AIProvider {
     };
 
     let lastError = "";
-    let successfulModel = "";
 
     for (const model of candidateModels) {
       try {
@@ -77,13 +85,14 @@ export class GeminiProvider implements AIProvider {
           const candidate = data.candidates?.[0];
           const parts = candidate?.content?.parts || [];
 
-          // Extract all tool calls in the response (multi-step support)
-          const toolCalls: ToolCallRequest[] = [];
-          for (const p of parts) {
+          const toolCalls: NormalizedToolCall[] = [];
+          for (let i = 0; i < parts.length; i++) {
+            const p = parts[i];
             if (p.functionCall) {
               toolCalls.push({
+                id: `gemini-call-${Date.now()}-${i}`,
                 name: p.functionCall.name,
-                args: p.functionCall.args || {},
+                args: (p.functionCall.args as Record<string, unknown>) || {},
               });
             }
           }
@@ -91,11 +100,16 @@ export class GeminiProvider implements AIProvider {
           const textPart = parts.find((p: { text?: string }) => p.text);
           const text = textPart?.text || "";
 
-          successfulModel = model;
           return {
             text,
             toolCalls,
-            modelUsed: successfulModel,
+            providerName: this.name,
+            modelUsed: model,
+            usage: {
+              promptTokens: data.usageMetadata?.promptTokenCount,
+              completionTokens: data.usageMetadata?.candidatesTokenCount,
+              totalTokens: data.usageMetadata?.totalTokenCount,
+            },
           };
         } else {
           lastError = await res.text();
@@ -105,6 +119,6 @@ export class GeminiProvider implements AIProvider {
       }
     }
 
-    throw new Error(`Gemini Provider failed on all candidate models (${candidateModels.join(", ")}): ${lastError}`);
+    throw new Error(`Gemini Provider failed across candidate models: ${lastError}`);
   }
 }
