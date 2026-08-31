@@ -13,27 +13,33 @@ export async function GET(_req: NextRequest) {
     return NextResponse.json({ reminders: [] });
   }
 
-  const now = new Date();
+  try {
+    const now = new Date();
 
-  // Find all pending reminders that should have fired
-  const dueReminders = await prisma.reminder.findMany({
-    where: {
-      userId: session.user.id,
-      status: "PENDING",
-      fireAt: { lte: now },
-    },
-    include: { event: true, task: true },
-  });
-
-  if (dueReminders.length > 0) {
-    // Mark them as FIRED
-    await prisma.reminder.updateMany({
+    // Find all pending reminders that should have fired
+    const dueReminders = await prisma.reminder.findMany({
       where: {
-        id: { in: dueReminders.map((r) => r.id) },
+        userId: session.user.id,
+        status: "PENDING",
+        fireAt: { lte: now },
       },
-      data: { status: "FIRED" },
+      include: { event: true, task: true },
     });
-  }
 
-  return NextResponse.json({ reminders: dueReminders });
+    if (dueReminders.length > 0) {
+      // Mark them as FIRED
+      await prisma.reminder.updateMany({
+        where: {
+          id: { in: dueReminders.map((r) => r.id) },
+        },
+        data: { status: "FIRED" },
+      });
+    }
+
+    return NextResponse.json({ reminders: dueReminders });
+  } catch (err) {
+    console.warn("Reminders check non-fatal error:", err);
+    return NextResponse.json({ reminders: [] });
+  }
 }
+
