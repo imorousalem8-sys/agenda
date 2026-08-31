@@ -1,14 +1,30 @@
-export type AIMode = "PERSONAL" | "PROFESSIONAL";
-
 export interface AIChatMessage {
   role: "user" | "assistant" | "system";
   content: string;
 }
 
+/**
+ * Tool call security levels:
+ * 1 = auto-execute (read-only, create simple items)
+ * 2 = optional confirmation (modify, delete)
+ * 3 = mandatory confirmation (send email, invoice, bulk delete)
+ */
+export type ToolCallLevel = 1 | 2 | 3;
+
+/**
+ * Visual step shown to the user while the agent works
+ */
+export interface AgentStep {
+  id: string;
+  label: string; // e.g. "Analyse de ton agenda..."
+  status: "pending" | "running" | "done" | "error";
+  detail?: string; // e.g. "3 rendez-vous trouvés"
+  icon?: string; // emoji or icon name
+}
+
 export interface AIUserContext {
   userId: string;
   userName?: string | null;
-  mode: AIMode;
   currentTime: string; // ISO format
   currentDateFormatted: string; // e.g. "jeudi 27 août 2026, 12:30"
   timezone: string;
@@ -51,6 +67,12 @@ export interface AIUserContext {
     phone?: string | null;
     email?: string | null;
   }[];
+  memorySummary: {
+    key: string;
+    value: string;
+  }[];
+  quotaRemaining: number;
+  quotaLimit: number;
 }
 
 export interface AIToolCall {
@@ -60,7 +82,7 @@ export interface AIToolCall {
 
 export interface AIActionExecutionResult {
   id?: string;
-  type: "TASK" | "EVENT" | "REMINDER" | "CONTACT" | "INFO" | "DELETE_CONFIRM";
+  type: "TASK" | "EVENT" | "REMINDER" | "CONTACT" | "INFO" | "DELETE_CONFIRM" | "MEMORY" | "SCHEDULE";
   title: string;
   notes?: string;
   dateTime?: string;
@@ -69,18 +91,25 @@ export interface AIActionExecutionResult {
   mode?: string;
   category?: string;
   status?: string;
+  level?: ToolCallLevel;
   requiresConfirmation?: boolean;
   confirmationPayload?: {
-    action: "DELETE_EVENT" | "DELETE_TASK";
+    action: "DELETE_EVENT" | "DELETE_TASK" | "SEND_EMAIL";
     targetId: string;
     targetTitle: string;
   };
+  scheduleItems?: {
+    time: string;
+    title: string;
+    type: "event" | "task" | "reminder" | "free";
+  }[];
 }
 
 export interface AIEngineResponse {
   reply: string;
   spokenReply?: string;
   action?: AIActionExecutionResult | null;
+  steps?: AgentStep[];
   activeTarget?: {
     type: "EVENT" | "TASK" | "REMINDER";
     id: string;
@@ -89,4 +118,9 @@ export interface AIEngineResponse {
   } | null;
   saved?: boolean;
   executed?: boolean;
+  quota?: {
+    used: number;
+    limit: number;
+    remaining: number;
+  };
 }

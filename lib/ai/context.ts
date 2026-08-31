@@ -1,19 +1,19 @@
 import { prisma } from "@/lib/prisma";
-import { AIUserContext, AIMode } from "./types";
+import { AIUserContext } from "./types";
+import { getQuotaStatus } from "./quotas";
 import { addDays, subHours } from "date-fns";
 
 export async function buildUserAIContext(
-  userId: string,
-  preferredMode?: AIMode
+  userId: string
 ): Promise<AIUserContext> {
   const now = new Date();
   const nextWeek = addDays(now, 7);
   const pastHours = subHours(now, 12);
 
-  const [user, events, tasks, reminders, contacts] = await Promise.all([
+  const [user, events, tasks, reminders, contacts, memories, quotaStatus] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
-      select: { name: true, mode: true, timezone: true },
+      select: { name: true, timezone: true },
     }),
     prisma.event.findMany({
       where: {
@@ -46,9 +46,14 @@ export async function buildUserAIContext(
       orderBy: { firstName: "asc" },
       take: 25,
     }),
+    prisma.userMemory.findMany({
+      where: { userId },
+      orderBy: { updatedAt: "desc" },
+      take: 20,
+    }).catch(() => []), // Graceful fallback if table doesn't exist yet
+    getQuotaStatus(userId),
   ]);
 
-  const mode: AIMode = preferredMode || (user?.mode === "PROFESSIONAL" ? "PROFESSIONAL" : "PERSONAL");
   const timezone = user?.timezone || "Europe/Paris";
 
   const currentDateFormatted = now.toLocaleDateString("fr-FR", {
@@ -63,7 +68,6 @@ export async function buildUserAIContext(
   return {
     userId,
     userName: user?.name,
-    mode,
     currentTime: now.toISOString(),
     currentDateFormatted,
     timezone,
@@ -120,5 +124,11 @@ export async function buildUserAIContext(
       phone: c.phone,
       email: c.email,
     })),
+    memorySummary: memories.map((m) => ({
+      key: m.key,
+      value: m.value,
+    })),
+    quotaRemaining: quotaStatus.remaining,
+    quotaLimit: quotaStatus.limit,
   };
 }

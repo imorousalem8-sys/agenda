@@ -18,12 +18,14 @@ model User {
   emailVerified DateTime?
   password      String?
   image         String?
-  mode               String    @default("PERSONAL") // PERSONAL | PROFESSIONAL
+  mode               String    @default("PERSONAL") // PERSONAL | PROFESSIONAL (legacy, kept for data compat)
   timezone           String    @default("Europe/Paris")
   plan               String    @default("FREE") // FREE | PRO
   subscriptionStatus String    @default("INACTIVE") // INACTIVE | ACTIVE | TRIAL | EXPIRED
   trialEndsAt        DateTime?
   subscriptionEndsAt DateTime?
+  aiQuotaUsed        Int       @default(0)
+  aiQuotaResetAt     DateTime?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
@@ -34,6 +36,8 @@ model User {
   tasks         Task[]
   contacts      Contact[]
   pushSubs      PushSubscription[]
+  memories      UserMemory[]
+  agentLogs     AgentLog[]
 }
 
 model Account {
@@ -158,3 +162,32 @@ model PushSubscription {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model UserMemory {
+  id        String   @id @default(cuid())
+  userId    String
+  key       String   // ex: "preferred_reminder_minutes", "favorite_supplier"
+  value     String   // valeur stockée
+  source    String   @default("AI") // AI | USER | SYSTEM
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+}
+
+model AgentLog {
+  id          String   @id @default(cuid())
+  userId      String
+  tool        String   // ex: "create_event", "organize_day"
+  params      String?  // JSON sanitized (no secrets)
+  success     Boolean  @default(true)
+  errorMsg    String?
+  durationMs  Int?
+  aiRequestId String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+

@@ -9,32 +9,35 @@ import {
   Clock,
   Plus,
   ArrowRight,
-  Briefcase,
-  User,
-  TrendingUp,
   Sparkles,
   Bot,
   Send,
   Loader2,
+  Mic,
+  MicOff,
   CheckCircle2,
-  Volume2,
+  AlertCircle,
+  MapPin,
+  User,
 } from "lucide-react";
-import { formatDate, formatTime, formatDateShort, getCategoryColor, getCategoryLabel } from "@/lib/utils";
-import { isToday, isTomorrow, parseISO } from "date-fns";
+import { useSession } from "next-auth/react";
 import EventFormModal from "@/components/forms/EventFormModal";
 import DashboardClockHero from "@/components/dashboard/DashboardClockHero";
+import AgentStepCard from "@/components/ai/AgentStepCard";
+import ToolCallCard from "@/components/ai/ToolCallCard";
+import { AgentStep, AIActionExecutionResult } from "@/lib/ai/types";
+import { speakAIText } from "@/lib/voice";
 
-interface Event {
+interface EventItem {
   id: string;
   title: string;
   startAt: string;
   category: string;
-  mode: string;
   location?: string | null;
   reminders: { id: string; fireAt: string; status: string }[];
 }
 
-interface Reminder {
+interface ReminderItem {
   id: string;
   title: string;
   fireAt: string;
@@ -42,7 +45,7 @@ interface Reminder {
   method: string;
 }
 
-interface Task {
+interface TaskItem {
   id: string;
   title: string;
   priority: string;
@@ -50,18 +53,29 @@ interface Task {
   dueAt?: string | null;
 }
 
+const actionChips = [
+  "Organise ma journée de demain",
+  "Demain chantier 8h avec Martin, rappelle-moi 30 min avant",
+  "Rappelle-moi d'appeler le médecin à 16h30",
+  "Ajoute la tâche : acheter 2 coudes et 3 manchons",
+];
+
 export default function DashboardPage() {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [reminders, setReminders] = useState<Reminder[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const { data: session } = useSession();
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [reminders, setReminders] = useState<ReminderItem[]>([]);
+  const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
   const [greeting, setGreeting] = useState("Bonjour");
 
-  // Quick AI Direct Input state
+  // Direct AI Command Bar State
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
+  const [aiSteps, setAiSteps] = useState<AgentStep[]>([]);
+  const [aiAction, setAiAction] = useState<AIActionExecutionResult | null>(null);
+  const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
     const h = new Date().getHours();
@@ -98,493 +112,469 @@ export default function DashboardPage() {
       ]);
 
       const [evData, remData, taskData] = await Promise.all([
-        evRes.json(),
-        remRes.json(),
-        taskRes.json(),
+        evRes.ok ? evRes.json() : { events: [] },
+        remRes.ok ? remRes.json() : { reminders: [] },
+        taskRes.ok ? taskRes.json() : { tasks: [] },
       ]);
 
-      setEvents(evData.events ?? []);
-      setReminders(remData.reminders ?? []);
-      setTasks(taskData.tasks ?? []);
-    } catch {
-      // ignore
+      setEvents(evData.events || []);
+      setReminders(remData.reminders || []);
+      setTasks(taskData.tasks || []);
+    } catch (e) {
+      console.error("Dashboard data load error:", e);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  const handleQuickAISubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!aiPrompt.trim() || aiLoading) return;
+  const handleExecuteAI = async (textToRun?: string) => {
+    const text = (textToRun || aiPrompt).trim();
+    if (!text || aiLoading) return;
 
     setAiLoading(true);
     setAiFeedback(null);
+    setAiSteps([]);
+    setAiAction(null);
 
     try {
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: aiPrompt }),
+        body: JSON.stringify({ message: text }),
       });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Erreur de traitement");
+      }
+
       const data = await res.json();
-      setAiFeedback(data.reply || "Action exécutée avec succès !");
+      setAiFeedback(data.reply);
+      setAiSteps(data.steps || []);
+      setAiAction(data.action || null);
+
+      if (data.saved) {
+        loadDashboard();
+        window.dispatchEvent(new Event("ai-quota-updated"));
+      }
+
+      if (data.spokenReply) {
+        speakAIText(data.spokenReply);
+      }
+
       setAiPrompt("");
-      loadDashboard();
-    } catch {
-      setAiFeedback("Une erreur est survenue.");
+    } catch (err: unknown) {
+      setAiFeedback(err instanceof Error ? err.message : "Erreur de communication avec l'assistant.");
+    } finally {
+      setAiLoading(false);
     }
-    setAiLoading(false);
   };
 
-  const todayEvents = events.filter((e) => isToday(parseISO(e.startAt)));
-  const tomorrowEvents = events.filter((e) => isTomorrow(parseISO(e.startAt)));
-  const nextEvents = events.filter(
-    (e) => !isToday(parseISO(e.startAt)) && !isTomorrow(parseISO(e.startAt))
-  );
+  const toggleVoice = () => {
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-  const now = new Date();
-  const nextReminder = reminders.find((r) => new Date(r.fireAt) > now);
+    if (!SpeechRecognition) {
+      alert("Reconnaissance vocale non disponible sur ce navigateur.");
+      return;
+    }
+
+    if (isListening) {
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "fr-FR";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+
+    recognition.onresult = (e: any) => {
+      const transcript = e.results[0][0].transcript;
+      if (transcript) {
+        setAiPrompt(transcript);
+        handleExecuteAI(transcript);
+      }
+    };
+
+    recognition.start();
+  };
+
+  const upcomingEvents = events.slice(0, 4);
+  const urgentTasks = tasks.slice(0, 5);
+  const pendingReminders = reminders.slice(0, 4);
 
   return (
-    <div className="dashboard-container">
-      {/* 3D Cyber Clock Hero with Volume & Depth */}
-      <DashboardClockHero
-        greeting={greeting}
-        onOpenAI={() => window.dispatchEvent(new Event("open-ai-assistant"))}
-        onNewEvent={() => setShowEventForm(true)}
-        nextReminderTitle={nextReminder?.title}
-        nextReminderTime={nextReminder ? formatTime(nextReminder.fireAt) : undefined}
-      />
+    <div style={{ padding: "24px 28px", maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
+      {/* Top Hero & Live Digital Clock */}
+      <div style={{ marginBottom: "24px" }}>
+        <DashboardClockHero />
+      </div>
 
-      {/* AI Quick Command Bar */}
-      <div className="glass-card animate-slide-up dashboard-ai-bar">
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
-          <Bot size={18} color="#38bdf8" />
-          <span style={{ fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Copilote Vocal Express
-          </span>
-          <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>
-            • Dictez ou écrivez n&apos;importe quelle consigne en français
-          </span>
+      {/* Central AI Command Bar (Brain & Hands Paradigm) */}
+      <div
+        style={{
+          background: "linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.7))",
+          border: "1px solid rgba(99, 102, 241, 0.35)",
+          borderRadius: "20px",
+          padding: "20px 24px",
+          boxShadow: "0 12px 36px rgba(0, 0, 0, 0.4)",
+          backdropFilter: "blur(16px)",
+          marginBottom: "28px",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+          <div
+            style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "8px",
+              background: "linear-gradient(135deg, #06b6d4, #6366f1)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#ffffff",
+            }}
+          >
+            <Sparkles size={16} />
+          </div>
+          <div>
+            <div style={{ fontSize: "16px", fontWeight: "800", color: "#f8fafc" }}>
+              {greeting}, {session?.user?.name?.split(" ")[0] || "Salem"} ! Que faisons-nous ?
+            </div>
+            <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+              Parlez naturellement. L&apos;assistant planifie vos rendez-vous, tâches et alarmes vocales en une phrase.
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleQuickAISubmit} className="dashboard-ai-form">
+        {/* Input Field */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            background: "rgba(255, 255, 255, 0.05)",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+            borderRadius: "14px",
+            padding: "8px 14px",
+          }}
+        >
+          <button
+            onClick={toggleVoice}
+            className={`btn btn-ghost btn-sm ${isListening ? "text-rose-400 animate-pulse" : "text-slate-400"}`}
+            style={{ padding: "6px" }}
+            title={isListening ? "Arrêter l'écoute" : "Dicter une action"}
+          >
+            {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+          </button>
+
           <input
             type="text"
             value={aiPrompt}
             onChange={(e) => setAiPrompt(e.target.value)}
-            placeholder="Ex: Mets-moi un rappel demain à 14h avec Marc pour signer les devis..."
-            className="form-input"
-            style={{ fontSize: "13px", padding: "10px 14px", flex: 1, minWidth: 0 }}
-          />
-          <button
-            type="submit"
-            disabled={aiLoading || !aiPrompt.trim()}
-            className="btn btn-primary dashboard-ai-submit"
-          >
-            {aiLoading ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Send size={15} />}
-            <span>Exécuter</span>
-          </button>
-        </form>
-
-        {aiFeedback && (
-          <div
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleExecuteAI();
+            }}
+            placeholder="Ex : « Demain chantier 8h, rappelle-moi d'aller chez le fournisseur avant et d'appeler Martin à 17h »"
             style={{
-              marginTop: "12px",
-              padding: "10px 14px",
+              flex: 1,
+              background: "transparent",
+              border: "none",
+              color: "#f8fafc",
+              fontSize: "14px",
+              outline: "none",
+            }}
+          />
+
+          <button
+            onClick={() => handleExecuteAI()}
+            disabled={aiLoading || !aiPrompt.trim()}
+            className="btn btn-primary"
+            style={{
+              padding: "8px 18px",
               borderRadius: "10px",
-              background: "rgba(16, 185, 129, 0.12)",
-              border: "1px solid rgba(16, 185, 129, 0.3)",
-              color: "#34d399",
-              fontSize: "12px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              animation: "fadeIn 0.3s ease-out",
+              background: "linear-gradient(135deg, #06b6d4, #6366f1)",
+              fontWeight: "700",
+              fontSize: "13px",
+              gap: "6px",
             }}
           >
-            <CheckCircle2 size={15} color="#34d399" />
-            <span>{aiFeedback}</span>
+            {aiLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+            <span>Exécuter</span>
+          </button>
+        </div>
+
+        {/* Suggestion Chips */}
+        <div style={{ display: "flex", gap: "8px", marginTop: "12px", overflowX: "auto", paddingBottom: "2px" }}>
+          {actionChips.map((chip, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleExecuteAI(chip)}
+              style={{
+                padding: "6px 12px",
+                borderRadius: "999px",
+                background: "rgba(255, 255, 255, 0.04)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                color: "#cbd5e1",
+                fontSize: "11px",
+                whiteSpace: "nowrap",
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+              }}
+              className="hover:border-indigo-400 hover:text-white"
+            >
+              ✨ {chip}
+            </button>
+          ))}
+        </div>
+
+        {/* AI Execution Feedback Area */}
+        {(aiFeedback || aiSteps.length > 0) && (
+          <div
+            style={{
+              marginTop: "16px",
+              padding: "14px 18px",
+              borderRadius: "14px",
+              background: "rgba(10, 15, 30, 0.8)",
+              border: "1px solid rgba(99, 102, 241, 0.25)",
+            }}
+          >
+            {aiFeedback && (
+              <div style={{ fontSize: "13px", color: "#f8fafc", lineHeight: "1.6", whiteSpace: "pre-wrap" }}>
+                {aiFeedback}
+              </div>
+            )}
+
+            {aiSteps.length > 0 && (
+              <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                {aiSteps.map((step) => (
+                  <AgentStepCard key={step.id} step={step} />
+                ))}
+              </div>
+            )}
+
+            {aiAction && (
+              <div style={{ marginTop: "10px" }}>
+                <ToolCallCard action={aiAction} />
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Stats Row */}
-      <div className="dashboard-stats-grid">
-        {[
-          { icon: Calendar, label: "Aujourd'hui", value: todayEvents.length, color: "#6366f1", sublabel: "rendez-vous" },
-          { icon: Bell, label: "Rappels actifs", value: reminders.length, color: "#a855f7", sublabel: "à venir" },
-          { icon: CheckSquare, label: "Tâches en cours", value: tasks.length, color: "#10b981", sublabel: "à réaliser" },
-          { icon: TrendingUp, label: "Cette semaine", value: events.length, color: "#38bdf8", sublabel: "activités" },
-        ].map(({ icon: Icon, label, value, color, sublabel }) => (
-          <div
-            key={label}
-            className="glass-card-interactive dashboard-stat-card"
-          >
-            <div
-              style={{
-                width: "44px",
-                height: "44px",
-                borderRadius: "12px",
-                background: `${color}20`,
-                border: `1px solid ${color}40`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <Icon size={20} color={color} />
-            </div>
-            <div>
-              <p style={{ fontSize: "22px", fontWeight: "800", color: "#ffffff", lineHeight: 1 }}>
-                {value}
-              </p>
-              <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "4px" }}>
-                {sublabel}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Main Grid */}
-      <div className="dashboard-main-grid">
-        {/* Left Column: Agenda */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          {/* Today */}
-          <section>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
-              <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#ffffff", display: "flex", alignItems: "center", gap: "8px" }}>
-                <Calendar size={17} color="#6366f1" />
-                Aujourd&apos;hui
-              </h2>
-              <Link href="/calendar" className="btn btn-ghost btn-sm" style={{ fontSize: "12px", gap: "4px", color: "var(--text-secondary)" }}>
-                <span>Voir l&apos;agenda</span>
-                <ArrowRight size={12} />
-              </Link>
-            </div>
-
-            {loading ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                {[1, 2].map((i) => (
-                  <div key={i} className="glass-card" style={{ height: "72px", opacity: 0.5 }} />
-                ))}
-              </div>
-            ) : todayEvents.length === 0 ? (
-              <div className="glass-card" style={{ textAlign: "center", padding: "36px 20px" }}>
-                <p style={{ color: "var(--text-muted)", fontSize: "14px" }}>Aucun rendez-vous aujourd&apos;hui</p>
-                <button
-                  onClick={() => setShowEventForm(true)}
-                  className="btn btn-secondary btn-sm"
-                  style={{ marginTop: "12px" }}
-                  id="dashboard-add-first-event"
-                >
-                  <Plus size={14} />
-                  <span>Ajouter un rendez-vous</span>
-                </button>
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {todayEvents.map((event) => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* Tomorrow */}
-          {tomorrowEvents.length > 0 && (
-            <section>
-              <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#ffffff", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <Clock size={17} color="#a855f7" />
-                Demain
-              </h2>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {tomorrowEvents.map((event) => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Upcoming */}
-          {nextEvents.length > 0 && (
-            <section>
-              <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#ffffff", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <Calendar size={17} color="var(--text-muted)" />
-                À venir
-              </h2>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {nextEvents.slice(0, 3).map((event) => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
-
-        {/* Right Column: Reminders & Tasks */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          {/* Next Reminder Highlight */}
-          {nextReminder && (
-            <div
-              className="glass-card"
-              style={{
-                background: "linear-gradient(135deg, rgba(99,102,241,0.18), rgba(168,85,247,0.12))",
-                border: "1px solid rgba(99,102,241,0.4)",
-                padding: "20px",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
-                <Volume2 size={16} color="#818cf8" />
-                <span style={{ fontSize: "11px", fontWeight: "700", color: "#818cf8", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                  Prochain rappel vocal
-                </span>
-              </div>
-              <p style={{ fontSize: "16px", fontWeight: "700", color: "#ffffff", marginBottom: "4px" }}>
-                {nextReminder.title}
-              </p>
-              <p style={{ fontSize: "13px", color: "var(--text-secondary)" }}>
-                {formatDate(nextReminder.fireAt)}
-              </p>
-            </div>
-          )}
-
-          {/* Tasks Widget */}
-          <section>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
-              <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#ffffff", display: "flex", alignItems: "center", gap: "8px" }}>
-                <CheckSquare size={17} color="#10b981" />
-                Tâches à faire
-              </h2>
-              <Link href="/tasks" className="btn btn-ghost btn-sm" style={{ fontSize: "12px", gap: "4px", color: "var(--text-secondary)" }}>
-                <span>Tout voir</span>
-                <ArrowRight size={12} />
-              </Link>
-            </div>
-
-            {loading ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="glass-card" style={{ height: "48px", opacity: 0.5 }} />
-                ))}
-              </div>
-            ) : tasks.length === 0 ? (
-              <div className="glass-card" style={{ textAlign: "center", padding: "24px" }}>
-                <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>Aucune tâche en attente</p>
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                {tasks.slice(0, 5).map((task) => (
-                  <TaskItem key={task.id} task={task} onToggle={loadDashboard} />
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* Upcoming Reminders */}
-          {reminders.length > 0 && (
-            <section>
-              <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#ffffff", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <Bell size={17} color="#f59e0b" />
-                Rappels programmés
-              </h2>
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                {reminders.slice(0, 4).map((rem) => (
-                  <div key={rem.id} className="glass-card" style={{ padding: "12px 14px", display: "flex", alignItems: "center", gap: "10px" }}>
-                    <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#f59e0b", flexShrink: 0 }} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {rem.title}
-                      </p>
-                      <p style={{ fontSize: "11px", color: "var(--text-secondary)" }}>
-                        {formatDate(rem.fireAt)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
-      </div>
-
-      {/* Event Form Modal */}
-      {showEventForm && (
-        <EventFormModal
-          onClose={() => setShowEventForm(false)}
-          onSaved={() => {
-            setShowEventForm(false);
-            loadDashboard();
-          }}
-        />
-      )}
-
-      <style>{`
-        @media (max-width: 900px) {
-          div[style*="grid-template-columns: 1fr 340px"] {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
-    </div>
-  );
-}
-
-function EventCard({ event }: { event: Event }) {
-  return (
-    <Link href={`/calendar?event=${event.id}`} style={{ textDecoration: "none" }}>
-      <div
-        className="glass-card-interactive"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "14px",
-          padding: "14px 18px",
-          cursor: "pointer",
-        }}
-      >
-        {/* Time block */}
-        <div style={{ minWidth: "56px", textAlign: "center", flexShrink: 0 }}>
-          <p style={{ fontSize: "15px", fontWeight: "800", color: "#ffffff" }}>
-            {formatTime(event.startAt)}
-          </p>
-          <p style={{ fontSize: "10px", color: "var(--text-secondary)", marginTop: "2px" }}>
-            {formatDateShort(event.startAt)}
-          </p>
-        </div>
-
-        {/* Separator */}
+      {/* Grid of Live Action Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "20px" }}>
+        {/* Card 1: Agenda & Prochains Rendez-vous */}
         <div
           style={{
-            width: "3px",
-            height: "36px",
-            borderRadius: "2px",
-            background: "linear-gradient(180deg, #38bdf8, #6366f1, #a855f7)",
-            flexShrink: 0,
+            background: "rgba(15, 23, 42, 0.7)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "18px",
+            padding: "20px",
+            backdropFilter: "blur(12px)",
+            display: "flex",
+            flexDirection: "column",
           }}
-        />
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div style={{ padding: "6px", borderRadius: "8px", background: "rgba(6, 182, 212, 0.15)", color: "#38bdf8" }}>
+                <Calendar size={18} />
+              </div>
+              <span style={{ fontWeight: "800", fontSize: "14px", color: "#f8fafc" }}>Prochains Rendez-vous</span>
+            </div>
+            <Link
+              href="/calendar"
+              style={{ fontSize: "12px", color: "#38bdf8", textDecoration: "none", fontWeight: "600", display: "flex", alignItems: "center", gap: "3px" }}
+            >
+              <span>Voir tout</span>
+              <ArrowRight size={12} />
+            </Link>
+          </div>
 
-        {/* Content */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p
-            style={{
-              fontSize: "14px",
-              fontWeight: "700",
-              color: "#f8fafc",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              marginBottom: "3px",
-            }}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+            {upcomingEvents.length > 0 ? (
+              upcomingEvents.map((ev) => {
+                const date = new Date(ev.startAt);
+                const timeStr = date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+                const dayStr = date.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+                return (
+                  <div
+                    key={ev.id}
+                    style={{
+                      padding: "10px 14px",
+                      borderRadius: "12px",
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid rgba(255, 255, 255, 0.06)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: "700", fontSize: "13px", color: "#f8fafc" }}>{ev.title}</div>
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+                        <span>{dayStr} à {timeStr}</span>
+                        {ev.location && (
+                          <span style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+                            <MapPin size={10} />
+                            <span>{ev.location}</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div style={{ textAlign: "center", padding: "24px 0", color: "var(--text-muted)", fontSize: "12px" }}>
+                Aucun rendez-vous sur les 7 prochains jours.
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => setShowEventForm(true)}
+            className="btn btn-outline btn-sm"
+            style={{ width: "100%", marginTop: "14px", fontSize: "12px", gap: "6px" }}
           >
-            {event.title}
-          </p>
-          {event.location && (
-            <p style={{ fontSize: "12px", color: "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              📍 {event.location}
-            </p>
-          )}
+            <Plus size={14} />
+            <span>Ajouter manuellement</span>
+          </button>
         </div>
 
-        {/* Badges */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px", flexShrink: 0 }}>
-          <span className={`badge ${getCategoryColor(event.category)}`} style={{ fontSize: "10px" }}>
-            {getCategoryLabel(event.category)}
-          </span>
-          {event.mode === "PROFESSIONAL" && (
-            <span style={{ fontSize: "10px", color: "#94a3b8" }}>
-              <Briefcase size={10} style={{ display: "inline", marginRight: "3px" }} />
-              Pro
-            </span>
-          )}
+        {/* Card 2: Tâches & Priorités */}
+        <div
+          style={{
+            background: "rgba(15, 23, 42, 0.7)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "18px",
+            padding: "20px",
+            backdropFilter: "blur(12px)",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div style={{ padding: "6px", borderRadius: "8px", background: "rgba(16, 185, 129, 0.15)", color: "#34d399" }}>
+                <CheckSquare size={18} />
+              </div>
+              <span style={{ fontWeight: "800", fontSize: "14px", color: "#f8fafc" }}>Tâches en Cours</span>
+            </div>
+            <Link
+              href="/tasks"
+              style={{ fontSize: "12px", color: "#34d399", textDecoration: "none", fontWeight: "600", display: "flex", alignItems: "center", gap: "3px" }}
+            >
+              <span>Voir tout</span>
+              <ArrowRight size={12} />
+            </Link>
+          </div>
+
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+            {urgentTasks.length > 0 ? (
+              urgentTasks.map((t) => (
+                <div
+                  key={t.id}
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: "12px",
+                    background: "rgba(255, 255, 255, 0.03)",
+                    border: "1px solid rgba(255, 255, 255, 0.06)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: t.priority === "URGENT" ? "#f43f5e" : "#10b981" }} />
+                    <span style={{ fontWeight: "600", fontSize: "13px", color: "#f8fafc" }}>{t.title}</span>
+                  </div>
+                  {t.priority === "URGENT" && (
+                    <span style={{ fontSize: "10px", fontWeight: "800", background: "rgba(244, 63, 94, 0.15)", color: "#fb7185", padding: "2px 6px", borderRadius: "4px" }}>
+                      URGENT
+                    </span>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div style={{ textAlign: "center", padding: "24px 0", color: "var(--text-muted)", fontSize: "12px" }}>
+                Toutes vos tâches sont accomplies !
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Card 3: Rappels & Alarmes Vocales */}
+        <div
+          style={{
+            background: "rgba(15, 23, 42, 0.7)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "18px",
+            padding: "20px",
+            backdropFilter: "blur(12px)",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div style={{ padding: "6px", borderRadius: "8px", background: "rgba(245, 158, 11, 0.15)", color: "#fbbf24" }}>
+                <Bell size={18} />
+              </div>
+              <span style={{ fontWeight: "800", fontSize: "14px", color: "#f8fafc" }}>Rappels Vocaux Actifs</span>
+            </div>
+            <Link
+              href="/reminders"
+              style={{ fontSize: "12px", color: "#fbbf24", textDecoration: "none", fontWeight: "600", display: "flex", alignItems: "center", gap: "3px" }}
+            >
+              <span>Voir tout</span>
+              <ArrowRight size={12} />
+            </Link>
+          </div>
+
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+            {pendingReminders.length > 0 ? (
+              pendingReminders.map((r) => {
+                const date = new Date(r.fireAt);
+                const timeStr = date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+                return (
+                  <div
+                    key={r.id}
+                    style={{
+                      padding: "10px 14px",
+                      borderRadius: "12px",
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid rgba(255, 255, 255, 0.06)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: "700", fontSize: "13px", color: "#f8fafc" }}>{r.title}</div>
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Prévu à {timeStr} ({r.method})</div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div style={{ textAlign: "center", padding: "24px 0", color: "var(--text-muted)", fontSize: "12px" }}>
+                Aucun rappel en attente.
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </Link>
-  );
-}
 
-function TaskItem({ task, onToggle }: { task: Task; onToggle: () => void }) {
-  const [checking, setChecking] = useState(false);
-
-  const toggle = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    setChecking(true);
-    try {
-      await fetch(`/api/tasks/${task.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isDone: !task.isDone }),
-      });
-      onToggle();
-    } catch {
-      // ok
-    }
-    setChecking(false);
-  };
-
-  const priorityColors: Record<string, string> = {
-    URGENT: "#ef4444",
-    HIGH: "#f59e0b",
-    NORMAL: "#6366f1",
-    LOW: "#64748b",
-  };
-
-  return (
-    <div
-      className="glass-card"
-      style={{
-        padding: "10px 14px",
-        display: "flex",
-        alignItems: "center",
-        gap: "10px",
-        opacity: task.isDone ? 0.5 : 1,
-        transition: "opacity 0.2s",
-      }}
-    >
-      <button
-        onClick={toggle}
-        disabled={checking}
-        style={{
-          width: "20px",
-          height: "20px",
-          borderRadius: "6px",
-          border: `2px solid ${task.isDone ? "#10b981" : "var(--border-default)"}`,
-          background: task.isDone ? "#10b981" : "transparent",
-          cursor: "pointer",
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "all 0.2s",
-        }}
-        id={`task-toggle-${task.id}`}
-      >
-        {task.isDone && <span style={{ color: "white", fontSize: "10px", fontWeight: "800" }}>✓</span>}
-      </button>
-      <p
-        style={{
-          flex: 1,
-          fontSize: "13px",
-          fontWeight: "500",
-          color: "#f8fafc",
-          textDecoration: task.isDone ? "line-through" : "none",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {task.title}
-      </p>
-      <div
-        style={{
-          width: "7px",
-          height: "7px",
-          borderRadius: "50%",
-          background: priorityColors[task.priority] ?? priorityColors.NORMAL,
-          flexShrink: 0,
-        }}
-      />
+      {showEventForm && (
+        <EventFormModal onClose={() => setShowEventForm(false)} />
+      )}
     </div>
   );
 }

@@ -13,19 +13,16 @@ import {
   Menu,
   Users,
   X,
-  Briefcase,
-  User,
   Volume2,
-  Sparkles,
   Phone,
   Crown,
   Bot,
   UserPlus,
-  ArrowRight,
 } from "lucide-react";
 import AlarmOverlay from "@/components/reminders/AlarmOverlay";
 import NotificationManager from "@/components/reminders/NotificationManager";
 import AIAssistantWidget from "@/components/ai/AIAssistantWidget";
+import QuotaIndicator from "@/components/ai/QuotaIndicator";
 import VoiceSettingsModal from "@/components/settings/VoiceSettingsModal";
 import PhoneSettingsModal from "@/components/settings/PhoneSettingsModal";
 import Logo from "@/components/brand/Logo";
@@ -35,11 +32,11 @@ import { useSubscription } from "@/lib/useSubscription";
 
 const navLinks = [
   { href: "/", icon: LayoutDashboard, label: "Tableau de bord" },
-  { href: "/agent", icon: Bot, label: "Agent & Discussion Vocale" },
-  { href: "/calendar", icon: Calendar, label: "Calendrier" },
-  { href: "/reminders", icon: Bell, label: "Rappels & Alarmes" },
-  { href: "/tasks", icon: CheckSquare, label: "Tâches" },
-  { href: "/contacts", icon: Users, label: "Contacts" },
+  { href: "/agent", icon: Bot, label: "Assistant & Copilote IA" },
+  { href: "/calendar", icon: Calendar, label: "Agenda & Calendrier" },
+  { href: "/reminders", icon: Bell, label: "Rappels & Alarmes Vocales" },
+  { href: "/tasks", icon: CheckSquare, label: "Tâches & Priorités" },
+  { href: "/contacts", icon: Users, label: "Contacts & Répertoire" },
 ];
 
 export default function DashboardLayout({
@@ -50,52 +47,36 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [mode, setMode] = useState<"PERSONAL" | "PROFESSIONAL">("PERSONAL");
   const [showVoiceSettings, setShowVoiceSettings] = useState(false);
   const [showPhoneSettings, setShowPhoneSettings] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [upgradeFeature, setUpgradeFeature] = useState("cette fonctionnalité");
+  const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>();
+  const { isPro, isDemoUser, isProMocked } = useSubscription();
 
-  const { subscription, isPro } = useSubscription();
-
-  const isDemoUser = session?.user?.email === "demo@alarmagenda.ai";
-
+  // Listen to open-upgrade-modal event
   useEffect(() => {
-    const saved = localStorage.getItem("aa-mode") as "PERSONAL" | "PROFESSIONAL" | null;
-    if (saved) setMode(saved);
-
-    const handleOpenUpgrade = (e: Event) => {
-      const customEvent = e as CustomEvent<{ feature?: string }>;
-      setUpgradeFeature(customEvent.detail?.feature || "cette option");
+    const handleOpenUpgrade = (e: CustomEvent<{ feature?: string }>) => {
+      setUpgradeFeature(e.detail?.feature);
       setShowUpgradeModal(true);
     };
 
-    window.addEventListener("open-upgrade-modal", handleOpenUpgrade);
-    return () => window.removeEventListener("open-upgrade-modal", handleOpenUpgrade);
+    window.addEventListener("open-upgrade-modal" as any, handleOpenUpgrade as EventListener);
+    return () => {
+      window.removeEventListener("open-upgrade-modal" as any, handleOpenUpgrade as EventListener);
+    };
   }, []);
 
-  const toggleMode = (newMode: "PERSONAL" | "PROFESSIONAL") => {
-    if (newMode === "PROFESSIONAL" && !isPro) {
-      setUpgradeFeature("l'espace Professionnel étanche");
-      setShowUpgradeModal(true);
-      return;
-    }
-
-    setMode(newMode);
-    localStorage.setItem("aa-mode", newMode);
-    window.dispatchEvent(new CustomEvent("mode-changed", { detail: newMode }));
-  };
-
   const handleOpenAI = () => {
-    window.dispatchEvent(new Event("open-ai-assistant"));
+    window.dispatchEvent(new CustomEvent("open-ai-assistant"));
   };
 
-  const handleExitDemoAndRegister = () => {
-    signOut({ callbackUrl: "/login" });
+  const handleExitDemoAndRegister = async () => {
+    await signOut({ redirect: false });
+    window.location.href = "/register";
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0b0f19", color: "#f8fafc" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-app)" }}>
       {/* Mobile Backdrop */}
       {sidebarOpen && (
         <div
@@ -103,250 +84,264 @@ export default function DashboardLayout({
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.65)",
+            background: "rgba(0, 0, 0, 0.7)",
+            zIndex: 40,
             backdropFilter: "blur(4px)",
-            zIndex: 39,
           }}
           className="mobile-backdrop"
         />
       )}
 
       {/* Sidebar */}
-      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        {/* Brand Logo */}
-        <div style={{ marginBottom: "28px" }}>
-          <Link
-            href="/"
-            style={{ textDecoration: "none", display: "inline-block" }}
+      <aside
+        style={{
+          width: "260px",
+          flexShrink: 0,
+          background: "#0a0f1d",
+          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+          display: "flex",
+          flexDirection: "column",
+          position: "sticky",
+          top: 0,
+          height: "100vh",
+          zIndex: 45,
+          transition: "transform 0.25s ease",
+        }}
+        className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}
+      >
+        {/* Brand Header */}
+        <div
+          style={{
+            padding: "20px 18px",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Logo size={28} showText={true} />
+          <button
             onClick={() => setSidebarOpen(false)}
+            className="btn btn-ghost"
+            style={{ padding: "4px", color: "var(--text-muted)" }}
+            id="sidebar-close-btn"
           >
-            <Logo size={36} animated={true} />
-          </Link>
+            <X size={18} />
+          </button>
         </div>
 
-        {/* Demo Account Badge & Exit Button inside sidebar */}
-        {isDemoUser && (
-          <div
-            style={{
-              marginBottom: "16px",
-              padding: "12px",
-              borderRadius: "14px",
-              background: "linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.15))",
-              border: "1px solid rgba(245, 158, 11, 0.4)",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
-              <Sparkles size={14} color="#f59e0b" />
-              <span style={{ fontSize: "11px", fontWeight: "800", color: "#fbbf24", textTransform: "uppercase" }}>
-                Mode Démo Actif
-              </span>
-            </div>
-            <p style={{ fontSize: "11px", color: "var(--text-secondary)", marginBottom: "8px", lineHeight: 1.4 }}>
-              Vous testez AlarmAgenda en mode aperçu.
-            </p>
-            <button
-              onClick={handleExitDemoAndRegister}
-              className="btn btn-primary btn-sm"
-              style={{
-                width: "100%",
-                justifyContent: "center",
-                fontSize: "11px",
-                fontWeight: "800",
-                background: "linear-gradient(135deg, #10b981, #06b6d4)",
-                gap: "5px",
-              }}
-              id="sidebar-create-real-account-btn"
-            >
-              <UserPlus size={13} />
-              <span>Créer mon compte</span>
-            </button>
-          </div>
-        )}
-
-        {/* AI Copilot Quick Launcher Button */}
-        <div style={{ marginBottom: "20px" }}>
+        {/* Quick AI Launch Button */}
+        <div style={{ padding: "14px 14px 6px" }}>
           <button
             onClick={handleOpenAI}
-            className="btn btn-primary"
             style={{
               width: "100%",
-              justifyContent: "center",
-              gap: "8px",
-              padding: "11px 14px",
+              padding: "10px 14px",
               borderRadius: "12px",
-              background: "linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #a855f7 100%)",
-              boxShadow: "0 4px 18px rgba(99, 102, 241, 0.4)",
-              fontSize: "13px",
+              background: "linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(99, 102, 241, 0.25))",
+              border: "1px solid rgba(99, 102, 241, 0.4)",
+              color: "#f8fafc",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
               fontWeight: "700",
+              fontSize: "13px",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
             }}
-            id="sidebar-ai-btn"
+            className="hover:scale-[1.02]"
           >
-            <Sparkles size={16} />
-            <span>Copilote Vocal</span>
+            <div
+              style={{
+                width: "28px",
+                height: "28px",
+                borderRadius: "8px",
+                background: "linear-gradient(135deg, #06b6d4, #6366f1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#ffffff",
+              }}
+            >
+              <Bot size={16} />
+            </div>
+            <div style={{ textAlign: "left", flex: 1 }}>
+              <div>Assistant IA</div>
+              <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: "500" }}>Commandes & Voix</div>
+            </div>
           </button>
         </div>
 
-        {/* Mode toggle */}
-        <div style={{ marginBottom: "20px" }}>
-          <p
+        {/* Navigation Links */}
+        <nav style={{ flex: 1, padding: "10px 12px", overflowY: "auto" }}>
+          <div
             style={{
-              fontSize: "11px",
-              fontWeight: "700",
-              color: "var(--text-muted)",
+              fontSize: "10px",
+              fontWeight: "800",
+              color: "#64748b",
               textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              marginBottom: "8px",
+              letterSpacing: "0.8px",
+              padding: "6px 12px",
+              marginBottom: "4px",
             }}
           >
-            Espace actif
-          </p>
-          <div className="mode-toggle">
-            <button
-              onClick={() => toggleMode("PERSONAL")}
-              className={`mode-toggle-btn ${mode === "PERSONAL" ? "active" : ""}`}
-              id="mode-personal"
-            >
-              <User size={12} style={{ display: "inline", marginRight: "4px" }} />
-              Personnel
-            </button>
-            <button
-              onClick={() => toggleMode("PROFESSIONAL")}
-              className={`mode-toggle-btn ${mode === "PROFESSIONAL" ? "active" : ""}`}
-              id="mode-professional"
-            >
-              <Briefcase size={12} style={{ display: "inline", marginRight: "4px" }} />
-              Professionnel
-            </button>
+            Plateforme
           </div>
-        </div>
 
-        {/* Main Navigation */}
-        <nav style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
-          <p
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setSidebarOpen(false)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: "10px 14px",
+                  borderRadius: "10px",
+                  marginBottom: "3px",
+                  fontSize: "13px",
+                  fontWeight: isActive ? "700" : "500",
+                  color: isActive ? "#ffffff" : "var(--text-secondary)",
+                  background: isActive ? "linear-gradient(90deg, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.1))" : "transparent",
+                  border: isActive ? "1px solid rgba(99, 102, 241, 0.3)" : "1px solid transparent",
+                  transition: "all 0.15s ease",
+                  textDecoration: "none",
+                }}
+                className={isActive ? "nav-link-active" : "hover:bg-slate-800/40"}
+              >
+                <Icon
+                  size={18}
+                  style={{
+                    color: isActive ? "#38bdf8" : "var(--text-muted)",
+                    flexShrink: 0,
+                  }}
+                />
+                <span>{link.label}</span>
+              </Link>
+            );
+          })}
+
+          <div
             style={{
-              fontSize: "11px",
-              fontWeight: "700",
-              color: "var(--text-muted)",
+              fontSize: "10px",
+              fontWeight: "800",
+              color: "#64748b",
               textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              marginBottom: "8px",
+              letterSpacing: "0.8px",
+              padding: "14px 12px 6px",
             }}
           >
-            Menu
-          </p>
-          {navLinks.map(({ href, icon: Icon, label }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setSidebarOpen(false)}
-              className={`sidebar-link ${pathname === href ? "active" : ""}`}
-              id={`nav-${href.replace("/", "") || "home"}`}
-            >
-              <Icon size={17} />
-              <span>{label}</span>
-            </Link>
-          ))}
-        </nav>
+            Paramètres
+          </div>
 
-        {/* Subscription Status Card */}
-        <div
-          style={{
-            marginTop: "16px",
-            marginBottom: "8px",
-            padding: "12px",
-            borderRadius: "14px",
-            background: isPro
-              ? "linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.2))"
-              : "rgba(255, 255, 255, 0.04)",
-            border: isPro
-              ? "1px solid rgba(99, 102, 241, 0.5)"
-              : "1px solid rgba(255, 255, 255, 0.08)",
-          }}
-        >
-          {isPro ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Crown size={18} color="#f59e0b" />
-              <div>
-                <div style={{ fontSize: "12px", fontWeight: "800", color: "#ffffff" }}>
-                  MEMBRE PRO ⭐
-                </div>
-                <div style={{ fontSize: "11px", color: "#34d399" }}>
-                  Toutes les options débloquées
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
-                <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase" }}>
-                  Plan Gratuit
-                </span>
-              </div>
-              <button
-                onClick={() => {
-                  setUpgradeFeature("l'accès illimité & alarmes vocales");
-                  setShowUpgradeModal(true);
-                }}
-                className="btn btn-primary btn-sm"
-                style={{
-                  width: "100%",
-                  justifyContent: "center",
-                  padding: "6px 10px",
-                  fontSize: "11px",
-                  fontWeight: "800",
-                  background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
-                }}
-              >
-                Passer en Pro (9,99 €)
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* System Settings & Logout */}
-        <div
-          style={{
-            borderTop: "1px solid var(--border-subtle)",
-            paddingTop: "14px",
-            marginTop: "12px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "2px",
-          }}
-        >
           <button
             onClick={() => setShowVoiceSettings(true)}
-            className="sidebar-link btn-ghost"
-            style={{ width: "100%", textAlign: "left", color: "#818cf8", cursor: "pointer" }}
-            id="voice-settings-btn"
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              padding: "9px 14px",
+              borderRadius: "10px",
+              fontSize: "13px",
+              fontWeight: "500",
+              color: "var(--text-secondary)",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              textAlign: "left",
+            }}
+            className="hover:bg-slate-800/40"
           >
-            <Volume2 size={16} />
-            <span>Voix & Synthèse Vocale</span>
+            <Volume2 size={18} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
+            <span>Voix & Synthèse</span>
           </button>
+
           <button
             onClick={() => setShowPhoneSettings(true)}
-            className="sidebar-link btn-ghost"
-            style={{ width: "100%", textAlign: "left", color: "#34d399", cursor: "pointer" }}
-            id="phone-settings-btn"
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              padding: "9px 14px",
+              borderRadius: "10px",
+              fontSize: "13px",
+              fontWeight: "500",
+              color: "var(--text-secondary)",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              textAlign: "left",
+            }}
+            className="hover:bg-slate-800/40"
           >
-            <Phone size={16} />
-            <span>Alertes Téléphone</span>
+            <Phone size={18} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
+            <span>Téléphonie & Alertes</span>
           </button>
+        </nav>
+
+        {/* Live Quota Indicator Box */}
+        <div style={{ padding: "10px 14px" }}>
+          <QuotaIndicator />
+        </div>
+
+        {/* User Footer */}
+        <div
+          style={{
+            padding: "14px 16px",
+            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            background: "rgba(10, 15, 30, 0.5)",
+          }}
+        >
+          <div
+            style={{
+              width: "34px",
+              height: "34px",
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #6366f1, #06b6d4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: "800",
+              fontSize: "13px",
+              color: "#ffffff",
+              flexShrink: 0,
+            }}
+          >
+            {session?.user?.name ? session.user.name[0].toUpperCase() : "U"}
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "#f8fafc", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {session?.user?.name || "Utilisateur"}
+            </div>
+            <div style={{ fontSize: "11px", color: isPro ? "#10b981" : "var(--text-muted)", fontWeight: isPro ? "700" : "500" }}>
+              {isPro ? "✓ Compte Pro" : "Compte Gratuit"}
+            </div>
+          </div>
+
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="sidebar-link btn-ghost"
-            style={{ width: "100%", textAlign: "left", color: "#94a3b8", cursor: "pointer" }}
-            id="logout-btn"
+            className="btn btn-ghost"
+            style={{ padding: "6px", color: "var(--text-muted)" }}
+            title="Se déconnecter"
           >
             <LogOut size={16} />
-            <span>{isDemoUser ? "Quitter la Démo" : "Déconnexion"}</span>
           </button>
         </div>
       </aside>
 
-      {/* Main Area */}
-      <div className="main-content">
-        {/* Top Demo Banner across all pages when in demo mode */}
+      {/* Main Content Area */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+        {/* Demo banner if active */}
         {isDemoUser && (
           <div
             style={{
@@ -357,7 +352,6 @@ export default function DashboardLayout({
               alignItems: "center",
               justifyContent: "space-between",
               gap: "10px",
-              flexWrap: "wrap",
               fontSize: "12px",
               zIndex: 25,
             }}
@@ -367,34 +361,17 @@ export default function DashboardLayout({
                 MODE DÉMO
               </span>
               <span style={{ color: "#e2e8f0" }}>
-                Vous naviguez sur le compte d&apos;évaluation. Vos données de test ne sont pas sauvegardées.
+                Vous naviguez sur le compte d&apos;évaluation.
               </span>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <button
-                onClick={handleExitDemoAndRegister}
-                className="btn btn-primary btn-sm"
-                style={{
-                  padding: "5px 12px",
-                  fontSize: "11px",
-                  fontWeight: "800",
-                  background: "linear-gradient(135deg, #10b981, #06b6d4)",
-                  gap: "4px",
-                }}
-                id="banner-create-account-btn"
-              >
-                <UserPlus size={12} />
-                <span>Créer mon compte</span>
-              </button>
-              <button
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="btn btn-ghost btn-sm"
-                style={{ padding: "5px 10px", fontSize: "11px", color: "var(--text-muted)" }}
-                id="banner-exit-demo-btn"
-              >
-                <span>Quitter</span>
-              </button>
-            </div>
+            <button
+              onClick={handleExitDemoAndRegister}
+              className="btn btn-primary btn-sm"
+              style={{ padding: "5px 12px", fontSize: "11px", fontWeight: "800", background: "linear-gradient(135deg, #10b981, #06b6d4)" }}
+            >
+              <UserPlus size={12} />
+              <span>Créer mon compte</span>
+            </button>
           </div>
         )}
 
@@ -405,7 +382,7 @@ export default function DashboardLayout({
             alignItems: "center",
             padding: "10px 14px",
             borderBottom: "1px solid var(--border-subtle)",
-            background: "#0f1422",
+            background: "#0a0f1d",
             position: "sticky",
             top: 0,
             zIndex: 30,
@@ -416,51 +393,32 @@ export default function DashboardLayout({
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="btn btn-ghost"
             style={{ padding: "6px" }}
-            id="mobile-menu-btn"
           >
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
           <div style={{ marginLeft: "8px" }}>
-            <Logo size={26} showText={false} />
+            <Logo size={24} showText={false} />
           </div>
           <div style={{ flex: 1 }} />
-          {isDemoUser ? (
-            <button
-              onClick={handleExitDemoAndRegister}
-              className="btn btn-primary btn-sm"
-              style={{
-                padding: "6px 10px",
-                fontSize: "11px",
-                fontWeight: "800",
-                background: "linear-gradient(135deg, #10b981, #06b6d4)",
-                gap: "4px",
-              }}
-              id="mobile-create-account-btn"
-            >
-              <UserPlus size={12} />
-              <span>Créer compte</span>
-            </button>
-          ) : (
-            <button
-              onClick={handleOpenAI}
-              className="btn btn-primary btn-sm"
-              style={{
-                padding: "6px 10px",
-                gap: "5px",
-                fontSize: "12px",
-                background: "linear-gradient(135deg, #06b6d4, #6366f1)",
-              }}
-            >
-              <Bot size={14} />
-              <span>Assistant</span>
-            </button>
-          )}
+          <button
+            onClick={handleOpenAI}
+            className="btn btn-primary btn-sm"
+            style={{
+              padding: "6px 12px",
+              gap: "6px",
+              fontSize: "12px",
+              background: "linear-gradient(135deg, #06b6d4, #6366f1)",
+            }}
+          >
+            <Bot size={14} />
+            <span>Assistant</span>
+          </button>
         </div>
 
         {children}
       </div>
 
-      {/* Overlays */}
+      {/* Persistent Global Overlays */}
       <PaymentSuccessToast />
       <AlarmOverlay />
       <NotificationManager />
@@ -487,6 +445,13 @@ export default function DashboardLayout({
         }
         @media (max-width: 768px) {
           .mobile-topbar { display: flex !important; }
+          .sidebar {
+            position: fixed !important;
+            transform: translateX(-100%);
+          }
+          .sidebar-open {
+            transform: translateX(0) !important;
+          }
         }
       `}</style>
     </div>
