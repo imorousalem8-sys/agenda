@@ -73,7 +73,7 @@ export async function getUserSubscriptionDetails(userId: string): Promise<UserSu
           canUsePersistentAlarm: false,
           canUseProfessionalMode: false,
           canUseUnlimitedVoice: false,
-          maxActiveEvents: 15,
+          maxActiveEvents: 5,
           hasPrioritySupport: false,
         },
       };
@@ -97,7 +97,7 @@ export async function getUserSubscriptionDetails(userId: string): Promise<UserSu
         canUsePersistentAlarm: isPro,
         canUseProfessionalMode: isPro,
         canUseUnlimitedVoice: isPro,
-        maxActiveEvents: isPro ? 9999 : 15,
+        maxActiveEvents: isPro ? 9999 : 5,
         hasPrioritySupport: isPro,
       },
     };
@@ -111,7 +111,7 @@ export async function getUserSubscriptionDetails(userId: string): Promise<UserSu
         canUsePersistentAlarm: false,
         canUseProfessionalMode: false,
         canUseUnlimitedVoice: false,
-        maxActiveEvents: 15,
+        maxActiveEvents: 5,
         hasPrioritySupport: false,
       },
     };

@@ -81,9 +81,12 @@ export default function EventFormModal({ onClose, onSaved, initialDate, eventToE
 
   const mode = watch("mode");
 
+  const [isLimitReached, setIsLimitReached] = useState(false);
+
   const onSubmit = async (data: EventInput) => {
     setLoading(true);
     setError("");
+    setIsLimitReached(false);
 
     try {
       const url = eventToEdit ? `/api/events/${eventToEdit.id}` : "/api/events";
@@ -99,6 +102,9 @@ export default function EventFormModal({ onClose, onSaved, initialDate, eventToE
 
       if (!res.ok) {
         setError(json.error ?? "Erreur lors de la sauvegarde");
+        if (json.limitReached) {
+          setIsLimitReached(true);
+        }
         setLoading(false);
         return;
       }
@@ -108,6 +114,15 @@ export default function EventFormModal({ onClose, onSaved, initialDate, eventToE
       setError("Erreur de connexion");
       setLoading(false);
     }
+  };
+
+  const handleOpenUpgradeFromModal = () => {
+    onClose();
+    window.dispatchEvent(
+      new CustomEvent("open-upgrade-modal", {
+        detail: { feature: "l'ajout illimité de rendez-vous" },
+      })
+    );
   };
 
   return (
@@ -142,15 +157,34 @@ export default function EventFormModal({ onClose, onSaved, initialDate, eventToE
             {error && (
               <div
                 style={{
-                  background: "rgba(239,68,68,0.1)",
-                  border: "1px solid rgba(239,68,68,0.3)",
-                  borderRadius: "10px",
-                  padding: "12px",
-                  color: "#ef4444",
+                  background: isLimitReached ? "rgba(245, 158, 11, 0.12)" : "rgba(239,68,68,0.1)",
+                  border: isLimitReached ? "1px solid rgba(245, 158, 11, 0.4)" : "1px solid rgba(239,68,68,0.3)",
+                  borderRadius: "12px",
+                  padding: "14px",
+                  color: isLimitReached ? "#fbbf24" : "#ef4444",
                   fontSize: "13px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
                 }}
               >
-                {error}
+                <div>{error}</div>
+                {isLimitReached && (
+                  <button
+                    type="button"
+                    onClick={handleOpenUpgradeFromModal}
+                    className="btn btn-primary btn-sm"
+                    style={{
+                      background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
+                      color: "#ffffff",
+                      fontWeight: "800",
+                      alignSelf: "flex-start",
+                      padding: "8px 14px",
+                    }}
+                  >
+                    👑 Passer à Pro (9,99 €)
+                  </button>
+                )}
               </div>
             )}
 

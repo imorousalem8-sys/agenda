@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, CheckCircle2, Shield, X, Zap, Crown, ArrowRight, CreditCard, Lock } from "lucide-react";
+import { Sparkles, CheckCircle2, Shield, X, Zap, Crown, ArrowRight, CreditCard, Lock, ExternalLink, KeyRound } from "lucide-react";
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -18,38 +18,58 @@ export default function UpgradeModal({
 }: UpgradeModalProps) {
   const [loading, setLoading] = useState(false);
   const [loadingTrial, setLoadingTrial] = useState(false);
+  const [loadingInstant, setLoadingInstant] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [showCodeInput, setShowCodeInput] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
 
   if (!isOpen) return null;
 
-  // 1. Redirection vers Stripe Checkout sécurisé
-  const handleStripeCheckout = async () => {
+  // 1. Redirection vers la page de paiement sécurisée Gumroad
+  const handlePaymentCheckout = () => {
     setLoading(true);
+    // Gumroad direct product URL
+    const gumroadUrl = "https://imorousalem.gumroad.com/l/ulato";
+    
+    // Ouvrir la page de paiement dans un nouvel onglet
+    window.open(gumroadUrl, "_blank", "noopener,noreferrer");
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+  };
+
+  // 2. Activation directe Pro (immédiate)
+  const handleDirectActivate = async () => {
+    setLoadingInstant(true);
     try {
-      const res = await fetch("/api/checkout/stripe", {
+      const res = await fetch("/api/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          returnUrl: window.location.pathname,
-        }),
+        body: JSON.stringify({ action: "ACTIVATE_PRO" }),
       });
-
       const data = await res.json();
 
-      if (res.ok && data.url) {
-        // Redirection vers la page de paiement officielle Stripe
-        window.location.href = data.url;
+      if (res.ok && data.success) {
+        setSuccessMsg(data.message || "Félicitations ! Votre compte PRO est maintenant actif.");
+        window.dispatchEvent(new CustomEvent("subscription-updated", { detail: data.subscription }));
+        setTimeout(() => {
+          setLoadingInstant(false);
+          setSuccessMsg("");
+          if (onSuccess) onSuccess();
+          onClose();
+        }, 1200);
       } else {
-        alert(data.error || "Impossible d'ouvrir la page de paiement");
-        setLoading(false);
+        alert(data.error || "Erreur lors de l'activation");
+        setLoadingInstant(false);
       }
     } catch {
-      alert("Erreur réseau lors de la connexion à Stripe");
-      setLoading(false);
+      alert("Erreur réseau");
+      setLoadingInstant(false);
     }
   };
 
-  // 2. Essai gratuit 7 jours
+  // 3. Essai gratuit 7 jours
   const handleStartTrial = async () => {
     setLoadingTrial(true);
     try {
@@ -61,7 +81,7 @@ export default function UpgradeModal({
       const data = await res.json();
 
       if (res.ok && data.success) {
-        setSuccessMsg(data.message);
+        setSuccessMsg(data.message || "Votre période d'essai Pro de 7 jours est activée !");
         window.dispatchEvent(new CustomEvent("subscription-updated", { detail: data.subscription }));
         setTimeout(() => {
           setLoadingTrial(false);
@@ -84,7 +104,7 @@ export default function UpgradeModal({
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(0, 0, 0, 0.85)",
+        background: "rgba(0, 0, 0, 0.88)",
         backdropFilter: "blur(14px)",
         WebkitBackdropFilter: "blur(14px)",
         display: "flex",
@@ -105,11 +125,13 @@ export default function UpgradeModal({
           boxShadow: "0 25px 70px rgba(0, 0, 0, 0.95), 0 0 50px rgba(99, 102, 241, 0.25)",
           borderRadius: "24px",
           width: "100%",
-          maxWidth: "780px",
+          maxWidth: "800px",
           padding: "36px 32px",
           position: "relative",
           color: "#ffffff",
           animation: "scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+          maxHeight: "90vh",
+          overflowY: "auto",
         }}
       >
         {/* Close Button */}
@@ -136,7 +158,7 @@ export default function UpgradeModal({
         </button>
 
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "28px" }}>
+        <div style={{ textAlign: "center", marginBottom: "24px" }}>
           <div
             style={{
               display: "inline-flex",
@@ -153,14 +175,14 @@ export default function UpgradeModal({
             }}
           >
             <Crown size={14} color="#f59e0b" />
-            <span>PASSERELLES STRIPE SÉCURISÉE</span>
+            <span>PAIEMENT SÉCURISÉ CB & PAYPAL</span>
           </div>
 
           <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#ffffff", letterSpacing: "-0.02em" }}>
-            Rejoignez AlarmAgenda Pro
+            Passez à AlarmAgenda PRO
           </h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginTop: "6px", maxWidth: "540px", margin: "6px auto 0" }}>
-            Débloquez <strong>{featureName}</strong>, l&apos;assistant vocal illimité et les alarmes inratables.
+          <p style={{ color: "#94a3b8", fontSize: "14px", marginTop: "6px", maxWidth: "560px", margin: "6px auto 0" }}>
+            Débloquez <strong>{featureName}</strong>, vos rendez-vous en illimité et les alarmes vocales inratables.
           </p>
         </div>
 
@@ -219,11 +241,11 @@ export default function UpgradeModal({
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", color: "#94a3b8", fontSize: "12px", marginTop: "10px", flex: 1 }}>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span>✓</span>
-                <span>Calendrier standard</span>
+                <span>Maximum 5 rendez-vous</span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span>✓</span>
-                <span>Espace Personnel</span>
+                <span>Espace Personnel standard</span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px", color: "#ef4444" }}>
                 <span>✕</span>
@@ -231,13 +253,13 @@ export default function UpgradeModal({
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px", color: "#ef4444" }}>
                 <span>✕</span>
-                <span>Dictée vocale bridée</span>
+                <span>Espace Pro verrouillé</span>
               </li>
             </ul>
 
             <button
               onClick={handleStartTrial}
-              disabled={loadingTrial || loading}
+              disabled={loadingTrial || loading || loadingInstant}
               style={{
                 marginTop: "16px",
                 padding: "10px",
@@ -255,7 +277,7 @@ export default function UpgradeModal({
             </button>
           </div>
 
-          {/* Card 2: Pro (Stripe Checkout) */}
+          {/* Card 2: Pro */}
           <div
             style={{
               background: "linear-gradient(180deg, rgba(30, 41, 72, 0.95) 0%, rgba(17, 24, 48, 0.95) 100%)",
@@ -301,15 +323,15 @@ export default function UpgradeModal({
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", color: "#e2e8f0", fontSize: "12px", marginTop: "10px", flex: 1 }}>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <CheckCircle2 size={14} color="#34d399" />
-                <span><strong>Dictée vocale & IA Copilote illimités</strong></span>
+                <span><strong>Rendez-vous & Événements 100% ILLIMITÉS</strong></span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <CheckCircle2 size={14} color="#34d399" />
-                <span><strong>Alarmes vocales persistantes inratables</strong></span>
+                <span><strong>Alarmes vocales & réveil inratable</strong></span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <CheckCircle2 size={14} color="#34d399" />
-                <span><strong>Double espace Pro & Perso</strong> étanche</span>
+                <span><strong>Double espace Pro & Perso étanche</strong></span>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <CheckCircle2 size={14} color="#34d399" />
@@ -318,8 +340,8 @@ export default function UpgradeModal({
             </ul>
 
             <button
-              onClick={handleStripeCheckout}
-              disabled={loading || loadingTrial}
+              onClick={handlePaymentCheckout}
+              disabled={loading || loadingTrial || loadingInstant}
               className="btn btn-primary"
               style={{
                 marginTop: "16px",
@@ -331,10 +353,30 @@ export default function UpgradeModal({
                 fontSize: "14px",
                 background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
                 boxShadow: "0 8px 20px rgba(99, 102, 241, 0.4)",
+                cursor: "pointer",
               }}
             >
               <CreditCard size={18} />
-              {loading ? "Redirection Stripe..." : "S'abonner avec Stripe (9,99 €)"}
+              {loading ? "Ouverture du paiement..." : "Payer par CB / Apple Pay / PayPal (9,99 €)"}
+              <ExternalLink size={14} />
+            </button>
+
+            {/* Quick direct activation button for buyer validation */}
+            <button
+              onClick={handleDirectActivate}
+              disabled={loadingInstant || loading || loadingTrial}
+              style={{
+                marginTop: "8px",
+                background: "transparent",
+                border: "none",
+                color: "#94a3b8",
+                fontSize: "11px",
+                textDecoration: "underline",
+                cursor: "pointer",
+                padding: "4px",
+              }}
+            >
+              {loadingInstant ? "Activation en cours..." : "✓ Vous avez déjà réglé ? Cliquez ici pour activer votre accès PRO"}
             </button>
           </div>
         </div>
@@ -342,7 +384,7 @@ export default function UpgradeModal({
         {/* Footer Guarantee */}
         <div style={{ textAlign: "center", fontSize: "12px", color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center", gap: "16px" }}>
           <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-            <Lock size={12} color="#34d399" /> Paiement 100% sécurisé par Stripe
+            <Lock size={12} color="#34d399" /> Paiement 100% sécurisé (CB, Apple Pay, PayPal)
           </span>
           <span>•</span>
           <span>Sans engagement • Résiliation en 1 clic</span>
@@ -351,3 +393,4 @@ export default function UpgradeModal({
     </div>
   );
 }
+

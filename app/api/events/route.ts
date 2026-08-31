@@ -37,6 +37,8 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ events });
 }
 
+import { getUserSubscriptionDetails } from "@/lib/subscription";
+
 // POST /api/events — create a new event
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -45,6 +47,23 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const subDetails = await getUserSubscriptionDetails(session.user.id);
+    if (!subDetails.isPro) {
+      const currentCount = await prisma.event.count({
+        where: { userId: session.user.id },
+      });
+
+      if (currentCount >= subDetails.features.maxActiveEvents) {
+        return NextResponse.json(
+          {
+            error: `⚡ Limite du plan Gratuit atteinte (${subDetails.features.maxActiveEvents} rendez-vous max). Passez à l'offre Pro pour des événements et alarmes en illimité !`,
+            limitReached: true,
+          },
+          { status: 403 }
+        );
+      }
+    }
+
     const body = await req.json();
     const data = eventSchema.parse(body);
 
