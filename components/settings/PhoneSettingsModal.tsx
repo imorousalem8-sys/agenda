@@ -123,8 +123,17 @@ export default function PhoneSettingsModal({ onClose }: PhoneSettingsModalProps)
           </button>
         </div>
 
-        {/* Content */}
-        <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "18px" }}>
+        {/* Content Body with clean scroll */}
+        <div
+          style={{
+            padding: "24px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            overflowY: "auto",
+            flex: 1,
+          }}
+        >
           {/* Phone input */}
           <div className="form-group">
             <label className="form-label">

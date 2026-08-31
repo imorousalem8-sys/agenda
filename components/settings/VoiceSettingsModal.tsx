@@ -116,7 +116,18 @@ export default function VoiceSettingsModal({ onClose }: VoiceSettingsModalProps)
         </div>
 
         {/* Content */}
-        <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div
+          style={{
+            padding: "24px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            overflowY: "auto",
+            flex: 1,
+            maxHeight: "calc(85vh - 140px)",
+          }}
+        >
+
           {/* Voice Gender Selection */}
           <div>
             <label className="form-label" style={{ marginBottom: "10px" }}>
