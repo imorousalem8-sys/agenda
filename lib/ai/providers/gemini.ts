@@ -40,7 +40,7 @@ export class GeminiProvider implements AIProvider {
         role: "user",
         parts: [{ text: systemPrompt }],
       },
-      ...history.slice(-8).map((msg) => ({
+      ...history.slice(-APP_CONFIG.AGENT.MAX_HISTORY_MESSAGES).map((msg) => ({
         role: msg.role === "assistant" ? "model" : "user",
         parts: [{ text: msg.content }],
       })),

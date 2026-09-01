@@ -53,10 +53,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Message requis" }, { status: 400 });
     }
 
+    const trimmedMessage = message.trim();
+    if (trimmedMessage.length > APP_CONFIG.AGENT.MAX_INPUT_CHARS) {
+      return NextResponse.json(
+        {
+          error: `Le message est trop long (${trimmedMessage.length} caractères). La limite maximale autorisée est de ${APP_CONFIG.AGENT.MAX_INPUT_CHARS} caractères par message.`,
+        },
+        { status: 400 }
+      );
+    }
+
+    // Tronquage strict de l'historique pour limiter le volume de tokens
+    const sanitizedHistory = (history || []).slice(-APP_CONFIG.AGENT.MAX_HISTORY_MESSAGES);
+
     const response = await processUserAIMessage(
       userId,
-      message,
-      history || [],
+      trimmedMessage,
+      sanitizedHistory,
       activeTarget || undefined
     );
 
