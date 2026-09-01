@@ -16,10 +16,15 @@ export async function executeLocalContextualAgent(
 
   // 1. GREETING / CHAT
   const isGreeting =
-    /^(bonjour|salut|hello|coucou|bonsoir|hey|hi|yo)[\s!.,?]*$/i.test(text) ||
-    textLower === "ça va ?" ||
-    textLower === "comment vas tu" ||
-    textLower === "comment ça va";
+    /^(bonjour|salut|hello|coucou|cc|bonsoir|hey|hi|yo)[\s!.,?/]*$/i.test(text) ||
+    textLower.includes("ça va") ||
+    textLower.includes("comment vas-tu") ||
+    textLower.includes("comment vas tu") ||
+    textLower.includes("comment tu vas") ||
+    textLower.includes("comment allez-vous") ||
+    textLower.includes("comment allez vous") ||
+    textLower.includes("qui es-tu") ||
+    textLower.includes("qui es tu");
 
   if (isGreeting) {
     const name = context.userName ? ` ${context.userName.split(" ")[0]}` : "";
