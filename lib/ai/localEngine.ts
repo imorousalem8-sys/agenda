@@ -14,7 +14,7 @@ export async function executeLocalContextualAgent(
   const textLower = text.toLowerCase();
   const now = new Date();
 
-  // 1. GREETING / CHAT
+  // 1. GREETING / CHAT / CONVERSATION / EMPATHY
   const isGreeting =
     /^(bonjour|salut|hello|coucou|cc|bonsoir|hey|hi|yo)[\s!.,?/]*$/i.test(text) ||
     textLower.includes("ça va") ||
@@ -24,9 +24,25 @@ export async function executeLocalContextualAgent(
     textLower.includes("comment allez-vous") ||
     textLower.includes("comment allez vous") ||
     textLower.includes("qui es-tu") ||
-    textLower.includes("qui es tu");
+    textLower.includes("qui es tu") ||
+    textLower.includes("que peux-tu faire") ||
+    textLower.includes("que sais-tu faire") ||
+    textLower.includes("fatigué") ||
+    textLower.includes("crevé") ||
+    textLower.includes("épuisé") ||
+    textLower.includes("en train de travailler") ||
+    textLower.includes("je travaille");
 
   if (isGreeting) {
+    if (textLower.includes("fatigué") || textLower.includes("crevé") || textLower.includes("épuisé")) {
+      const reply = "Prenez soin de vous et accordez-vous une pause si nécessaire. Je reste à votre écoute si vous souhaitez ajuster votre planning ou déléguer des rappels.";
+      return { reply, spokenReply: reply, action: null, executed: true };
+    }
+    if (textLower.includes("travaille") || textLower.includes("en train de travailler")) {
+      const reply = "Bon courage pour votre travail ! Je reste en veille pour noter vos tâches ou rendez-vous dès que vous en aurez besoin.";
+      return { reply, spokenReply: reply, action: null, executed: true };
+    }
+
     const name = context.userName ? ` ${context.userName.split(" ")[0]}` : "";
     const todayEvents = context.eventsSummary.filter((e) => {
       const d = new Date(e.startAt);
@@ -64,8 +80,23 @@ export async function executeLocalContextualAgent(
     return { reply, spokenReply: reply, action: null, executed: true };
   }
 
-  // 2. QUERY TODAY / WEEK
+  // 1.1 AMBIGUOUS REQUESTS (Zero action, ask clarification)
+  const isAmbiguous =
+    textLower.includes("fais le truc") ||
+    textLower.includes("le truc de") ||
+    textLower.includes("fais quelque chose") ||
+    textLower.includes("occupe-toi de mes trucs") ||
+    textLower.includes("gère le machin");
+
+  if (isAmbiguous) {
+    const reply = "Bien sûr, je veux bien vous aider ! Pouvez-vous préciser ce que vous souhaitez faire (consulter l'agenda, créer un rappel ou enregistrer une tâche) ?";
+    return { reply, spokenReply: reply, action: null, executed: true };
+  }
+
+  // 2. QUERY TODAY / TOMORROW / WEEK
+  const isTomorrowQuery = textLower.includes("demain") && (textLower.includes("quoi") || textLower.includes("qu'est-ce") || textLower.includes("programme") || textLower.includes("planning") || textLower.includes("rdv") || textLower.includes("rendez-vous"));
   const isQuery =
+    isTomorrowQuery ||
     (textLower.includes("aujourd'hui") && (textLower.includes("prévu") || textLower.includes("planning") || textLower.includes("programme") || textLower.includes("agenda") || textLower.includes("quoi"))) ||
     textLower.includes("mes tâches") ||
     textLower.includes("mon planning") ||
@@ -75,7 +106,9 @@ export async function executeLocalContextualAgent(
     textLower.includes("cette semaine");
 
   if (isQuery) {
-    const actionResult = await executeAITool("list_today_events", {}, context);
+    const actionResult = isTomorrowQuery 
+      ? await executeAITool("search_events", { dateFrom: formatISO(addDays(now, 1)), dateTo: formatISO(addDays(now, 1)) }, context)
+      : await executeAITool("list_today_events", {}, context);
     return {
       reply: actionResult.notes || "Rien de prévu.",
       spokenReply: (actionResult.notes || "").replace(/[*•📅✅🔔⚠️]/g, "").replace(/\n+/g, " "),

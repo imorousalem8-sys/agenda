@@ -2,16 +2,102 @@ import { prisma } from "@/lib/prisma";
 import { AIActionExecutionResult, AIUserContext } from "./types";
 import { logAgentAction } from "./logger";
 import { parseISO, addMinutes, formatISO, startOfDay, endOfDay, addDays } from "date-fns";
+import { z } from "zod";
+
+// ==========================================
+// SCHÉMAS DE VALIDATION ZOD STRICTS
+// ==========================================
+
+export const CreateEventSchema = z.object({
+  title: z.string().min(1, "Le titre du rendez-vous est obligatoire"),
+  startAt: z.string().min(1, "La date/heure ISO de début est obligatoire"),
+  location: z.string().optional(),
+  description: z.string().optional(),
+  contactName: z.string().optional(),
+  priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]).optional().default("NORMAL"),
+  category: z.enum(["HEALTH", "FAMILY", "WORK", "ADMIN", "EDUCATION", "SHOPPING", "TRAVEL", "OTHER"]).optional().default("OTHER"),
+  reminderMinutesBefore: z.number().optional().default(15),
+});
+
+export const UpdateEventSchema = z.object({
+  eventId: z.string().optional(),
+  eventTitleQuery: z.string().optional(),
+  newTitle: z.string().optional(),
+  newStartAt: z.string().optional(),
+  newLocation: z.string().optional(),
+  newDescription: z.string().optional(),
+});
+
+export const DeleteEventSchema = z.object({
+  eventId: z.string().optional(),
+  eventTitleQuery: z.string().optional(),
+  confirmed: z.boolean().optional().default(false),
+});
+
+export const CreateTaskSchema = z.object({
+  title: z.string().min(1, "Le titre de la tâche est obligatoire"),
+  dueAt: z.string().optional(),
+  notes: z.string().optional(),
+  contactName: z.string().optional(),
+  priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]).optional().default("NORMAL"),
+  reminderAt: z.string().optional(),
+});
+
+export const CompleteTaskSchema = z.object({
+  taskId: z.string().optional(),
+  taskTitleQuery: z.string().optional(),
+});
+
+export const DeleteTaskSchema = z.object({
+  taskId: z.string().optional(),
+  taskTitleQuery: z.string().optional(),
+  confirmed: z.boolean().optional().default(false),
+});
+
+export const CreateReminderSchema = z.object({
+  title: z.string().min(1, "L'objet du rappel est obligatoire"),
+  fireAt: z.string().min(1, "L'heure de déclenchement est obligatoire"),
+  customSpokenMessage: z.string().optional(),
+  method: z.enum(["VOICE", "ALARM", "NOTIFICATION"]).optional().default("VOICE"),
+});
+
+export const CreateContactSchema = z.object({
+  firstName: z.string().min(1, "Le prénom est obligatoire"),
+  lastName: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email("Format d'email invalide").optional().or(z.literal("")),
+  company: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+export const SearchEventsSchema = z.object({
+  query: z.string().optional(),
+  dateFrom: z.string().optional(),
+  dateTo: z.string().optional(),
+});
+
+export const OrganizeDaySchema = z.object({
+  targetDate: z.string().optional(),
+});
+
+export const SaveUserPreferenceSchema = z.object({
+  key: z.string().min(1, "La clé de préférence est obligatoire"),
+  value: z.string().min(1, "La valeur de préférence est obligatoire"),
+});
+
+// ==========================================
+// DÉFINITIONS DES OUTILS (POUR LE LLM)
+// ==========================================
 
 export const AI_TOOL_DEFINITIONS = [
   {
     name: "create_event",
-    description: "Crée un nouveau rendez-vous ou événement dans l'agenda de l'utilisateur avec rappel automatique.",
+    description: "À utiliser UNIQUEMENT lorsque l'utilisateur demande explicitement d'ajouter ou planifier un rendez-vous / événement dans son calendrier. Ne jamais appeler pour une simple salutation ou discussion.",
     parameters: {
       type: "object",
       properties: {
-        title: { type: "string", description: "Intitulé clair du rendez-vous" },
-        startAt: { type: "string", description: "Date et heure de début au format ISO 8601" },
+        title: { type: "string", description: "Intitulé précis du rendez-vous" },
+        startAt: { type: "string", description: "Date et heure de début au format ISO 8601 (ex: 2026-09-02T14:00:00)" },
         location: { type: "string", description: "Lieu du rendez-vous (optionnel)" },
         description: { type: "string", description: "Notes ou détails complémentaires" },
         contactName: { type: "string", description: "Nom de la personne concernée si mentionnée" },
@@ -24,7 +110,7 @@ export const AI_TOOL_DEFINITIONS = [
   },
   {
     name: "update_event",
-    description: "Modifie ou décale un rendez-vous existant.",
+    description: "Modifie ou décale un rendez-vous existant à la demande expresse de l'utilisateur.",
     parameters: {
       type: "object",
       properties: {
@@ -40,20 +126,20 @@ export const AI_TOOL_DEFINITIONS = [
   },
   {
     name: "delete_event",
-    description: "Supprime un rendez-vous (nécessite confirmation).",
+    description: "Supprime un rendez-vous de l'agenda. Nécessite obligatoirement une confirmation utilisateur.",
     parameters: {
       type: "object",
       properties: {
         eventId: { type: "string", description: "ID de l'événement" },
         eventTitleQuery: { type: "string", description: "Titre de l'événement" },
-        confirmed: { type: "boolean", description: "True si confirmé par l'utilisateur" },
+        confirmed: { type: "boolean", description: "True si l'utilisateur a explicitement confirmé la suppression" },
       },
       required: [],
     },
   },
   {
     name: "create_task",
-    description: "Crée une nouvelle tâche avec priorité et échéance.",
+    description: "À utiliser UNIQUEMENT lorsque l'utilisateur demande explicitement d'ajouter ou créer une tâche à faire. Ne jamais appeler pour une simple salutation ou discussion.",
     parameters: {
       type: "object",
       properties: {
@@ -69,7 +155,7 @@ export const AI_TOOL_DEFINITIONS = [
   },
   {
     name: "complete_task",
-    description: "Marque une tâche comme terminée.",
+    description: "Marque une tâche existante comme terminée.",
     parameters: {
       type: "object",
       properties: {
@@ -81,25 +167,25 @@ export const AI_TOOL_DEFINITIONS = [
   },
   {
     name: "delete_task",
-    description: "Supprime une tâche (nécessite confirmation).",
+    description: "Supprime une tâche. Nécessite obligatoirement confirmation.",
     parameters: {
       type: "object",
       properties: {
         taskId: { type: "string", description: "ID de la tâche" },
         taskTitleQuery: { type: "string", description: "Titre de la tâche" },
-        confirmed: { type: "boolean", description: "True si confirmé" },
+        confirmed: { type: "boolean", description: "True si l'utilisateur a explicitement confirmé" },
       },
       required: [],
     },
   },
   {
     name: "create_reminder",
-    description: "Programme un rappel avec message vocal.",
+    description: "À utiliser UNIQUEMENT lorsque l'utilisateur demande explicitement de lui rappeler quelque chose à une date/heure précise. Ne jamais appeler pour une simple salutation ou discussion.",
     parameters: {
       type: "object",
       properties: {
         title: { type: "string", description: "Objet du rappel" },
-        fireAt: { type: "string", description: "Date/heure de déclenchement ISO 8601" },
+        fireAt: { type: "string", description: "Date et heure de déclenchement au format ISO 8601 (ex: 2026-09-02T08:00:00)" },
         customSpokenMessage: { type: "string", description: "Texte vocal à énoncer" },
         method: { type: "string", enum: ["VOICE", "ALARM", "NOTIFICATION"] },
       },
@@ -124,7 +210,7 @@ export const AI_TOOL_DEFINITIONS = [
   },
   {
     name: "search_events",
-    description: "Recherche des événements par titre, date ou mot-clé dans l'agenda.",
+    description: "Recherche et consulte les rendez-vous ou événements par titre, date ou mot-clé dans l'agenda.",
     parameters: {
       type: "object",
       properties: {
@@ -137,17 +223,17 @@ export const AI_TOOL_DEFINITIONS = [
   },
   {
     name: "list_today_events",
-    description: "Liste tous les événements, tâches et rappels d'aujourd'hui.",
+    description: "Consulte et liste tous les événements, tâches et rappels d'aujourd'hui.",
     parameters: { type: "object", properties: {}, required: [] },
   },
   {
     name: "list_week_events",
-    description: "Liste tous les événements de la semaine en cours.",
+    description: "Consulte et liste tous les événements de la semaine en cours.",
     parameters: { type: "object", properties: {}, required: [] },
   },
   {
     name: "organize_day",
-    description: "Analyse l'agenda, les tâches et rappels d'une journée et propose un planning optimisé.",
+    description: "À utiliser UNIQUEMENT lorsque l'utilisateur demande explicitement d'analyser, organiser ou faire le point sur son planning d'une journée.",
     parameters: {
       type: "object",
       properties: {
@@ -158,7 +244,7 @@ export const AI_TOOL_DEFINITIONS = [
   },
   {
     name: "save_user_preference",
-    description: "Mémorise une préférence de l'utilisateur pour les futures interactions.",
+    description: "Mémorise une préférence durable explicite exprimée par l'utilisateur (information uniquement, ne crée pas d'action).",
     parameters: {
       type: "object",
       properties: {
@@ -170,7 +256,7 @@ export const AI_TOOL_DEFINITIONS = [
   },
   {
     name: "retrieve_user_preferences",
-    description: "Récupère toutes les préférences mémorisées de l'utilisateur.",
+    description: "Récupère les préférences mémorisées de l'utilisateur.",
     parameters: { type: "object", properties: {}, required: [] },
   },
 ];

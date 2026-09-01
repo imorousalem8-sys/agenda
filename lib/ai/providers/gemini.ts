@@ -97,8 +97,10 @@ export class GeminiProvider implements AIProvider {
             }
           }
 
-          const textPart = parts.find((p: { text?: string }) => p.text);
-          const text = textPart?.text || "";
+          const text = parts
+            .filter((p: { text?: string; thought?: boolean }) => p.text && !p.thought)
+            .map((p: { text?: string }) => p.text)
+            .join("\n") || parts.find((p: { text?: string }) => p.text)?.text || "";
 
           return {
             text,
