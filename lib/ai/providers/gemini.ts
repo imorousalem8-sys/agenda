@@ -11,8 +11,8 @@ export class GeminiProvider implements AIProvider {
 
   constructor(apiKey?: string, model?: string) {
     this.apiKey = apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
-    this.primaryModel = model || process.env.GEMINI_MODEL || APP_CONFIG.AI.PRIMARY_MODEL || "gemini-2.5-flash";
-    this.fallbackModels = (process.env.GEMINI_FALLBACK_MODELS || "gemini-2.0-flash,gemini-1.5-flash,gemini-flash-latest")
+    this.primaryModel = model || process.env.GEMINI_MODEL || APP_CONFIG.AI.PRIMARY_MODEL || "gemini-3.7-flash";
+    this.fallbackModels = (process.env.GEMINI_FALLBACK_MODELS || APP_CONFIG.AI.FALLBACK_MODELS.join(","))
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);

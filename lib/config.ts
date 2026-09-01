@@ -19,8 +19,8 @@ export const APP_CONFIG = {
 
   // AI Models & Fallback Chain
   AI: {
-    PRIMARY_MODEL: process.env.AI_PRIMARY_MODEL || "gemini-2.5-flash",
-    FALLBACK_MODELS: (process.env.AI_FALLBACK_MODELS || "gemini-2.0-flash,gemini-1.5-flash,gemini-flash-latest").split(",").map((s) => s.trim()),
+    PRIMARY_MODEL: process.env.AI_PRIMARY_MODEL || "gemini-3.7-flash",
+    FALLBACK_MODELS: (process.env.AI_FALLBACK_MODELS || "gemini-3.6-flash,gemini-flash-latest,gemini-3.5-flash").split(",").map((s) => s.trim()),
     TEMPERATURE: 0.2,
     MAX_OUTPUT_TOKENS: 800,
   },
