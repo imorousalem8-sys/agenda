@@ -42,7 +42,8 @@ export async function PUT(req: NextRequest, { params }: Params) {
   // Full update
   try {
     const data = taskSchema.parse(body);
-    const dueAtDate = data.dueAt ? parseISO(data.dueAt) : null;
+    const parsedDate = data.dueAt && data.dueAt.trim() ? parseISO(data.dueAt.trim()) : null;
+    const dueAtDate = parsedDate && !isNaN(parsedDate.getTime()) ? parsedDate : null;
 
     const task = await prisma.task.update({
       where: { id },

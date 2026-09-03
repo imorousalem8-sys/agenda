@@ -6,24 +6,16 @@ const CURRENT_VERSION_KEY = "alarm_agenda_build_version";
 
 export default function AutoUpdater() {
   useEffect(() => {
-    // 1. Service Worker auto-update listener
+    // 1. Service Worker background registration & update
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         for (const reg of registrations) {
           reg.update().catch(() => {});
         }
       });
-
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
-        }
-      });
     }
 
-    // 2. Automatic version check & cache bust
+    // 2. Background version check without interrupting active user forms
     const checkVersion = async () => {
       try {
         const res = await fetch(`/api/version?_t=${Date.now()}`, {
@@ -36,48 +28,17 @@ export default function AutoUpdater() {
         const serverVersion = data.version;
         const localVersion = localStorage.getItem(CURRENT_VERSION_KEY);
 
-        if (serverVersion && localVersion && serverVersion !== localVersion) {
-          console.log(`[AutoUpdater] New version detected (${serverVersion} vs ${localVersion}). Refreshing in background...`);
-          localStorage.setItem(CURRENT_VERSION_KEY, serverVersion);
-
-          // Clear all client caches
-          if ("caches" in window) {
-            const keys = await caches.keys();
-            await Promise.all(keys.map((key) => caches.delete(key)));
-          }
-
-          // Force clean reload
-          window.location.reload();
-        } else if (serverVersion && !localVersion) {
+        if (serverVersion && serverVersion !== localVersion) {
           localStorage.setItem(CURRENT_VERSION_KEY, serverVersion);
         }
       } catch (e) {
-        console.warn("[AutoUpdater] Version check failed:", e);
+        // Non-blocking
       }
     };
 
-    // Run check on mount
     checkVersion();
-
-    // Run check when window gains focus, becomes visible or comes online
-    const handleFocus = () => checkVersion();
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") checkVersion();
-    };
-    window.addEventListener("focus", handleFocus);
-    window.addEventListener("online", handleFocus);
-    document.addEventListener("visibilitychange", handleVisibility);
-
-    // Fast periodic check every 15 seconds for real-time fleet synchronization
-    const interval = setInterval(checkVersion, 15000);
-
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-      window.removeEventListener("online", handleFocus);
-      document.removeEventListener("visibilitychange", handleVisibility);
-      clearInterval(interval);
-    };
   }, []);
 
   return null;
 }
+

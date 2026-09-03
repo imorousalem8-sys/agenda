@@ -93,17 +93,31 @@ export async function executeLocalContextualAgent(
     return { reply, spokenReply: reply, action: null, executed: true };
   }
 
-  // 2. QUERY TODAY / TOMORROW / WEEK
-  const isTomorrowQuery = textLower.includes("demain") && (textLower.includes("quoi") || textLower.includes("qu'est-ce") || textLower.includes("programme") || textLower.includes("planning") || textLower.includes("rdv") || textLower.includes("rendez-vous"));
+  // 2. QUERY TODAY / TOMORROW / WEEK (Information Only)
+  const isActionIntent =
+    textLower.includes("ajoute") || textLower.includes("crée") || textLower.includes("creer") ||
+    textLower.includes("programme") || textLower.includes("planifie") || textLower.includes("bloque") ||
+    textLower.includes("mets") || textLower.includes("rappelle") || textLower.includes("réveille") ||
+    textLower.includes("reveille") || textLower.includes("alarme") || textLower.includes("note ");
+
+  const isTomorrowQuery =
+    !isActionIntent &&
+    textLower.includes("demain") &&
+    (textLower.includes("quoi") || textLower.includes("qu'est-ce") || textLower.includes("programme") || textLower.includes("planning") || textLower.includes("prévu") || textLower.includes("rdv") || textLower.includes("rendez-vous"));
+
   const isQuery =
-    isTomorrowQuery ||
-    (textLower.includes("aujourd'hui") && (textLower.includes("prévu") || textLower.includes("planning") || textLower.includes("programme") || textLower.includes("agenda") || textLower.includes("quoi"))) ||
-    textLower.includes("mes tâches") ||
-    textLower.includes("mon planning") ||
-    textLower.includes("fais le point") ||
-    textLower.includes("mes rendez-vous") ||
-    textLower.includes("mes rdv") ||
-    textLower.includes("cette semaine");
+    !isActionIntent &&
+    (isTomorrowQuery ||
+      (textLower.includes("aujourd'hui") && (textLower.includes("prévu") || textLower.includes("planning") || textLower.includes("programme") || textLower.includes("agenda") || textLower.includes("quoi"))) ||
+      textLower.includes("mes tâches") ||
+      textLower.includes("mon planning") ||
+      textLower.includes("fais le point") ||
+      textLower.includes("mes rendez-vous") ||
+      textLower.includes("mes rdv") ||
+      textLower.includes("cette semaine") ||
+      textLower.startsWith("consulte") ||
+      textLower.startsWith("affiche") ||
+      textLower.startsWith("liste"));
 
   if (isQuery) {
     const actionResult = isTomorrowQuery 
@@ -181,28 +195,36 @@ export async function executeLocalContextualAgent(
     return { reply: action.title, spokenReply: action.title, action, saved: true, executed: true };
   }
 
-  // 7. EXPLICIT SCHEDULING
+  // 7. EXPLICIT SCHEDULING & ALARMS / TASKS
   const isExplicitScheduling =
-    textLower.startsWith("mets") || textLower.startsWith("ajoute") || textLower.startsWith("crée") ||
-    textLower.startsWith("programme") || textLower.startsWith("planifie") || textLower.startsWith("bloque") ||
-    textLower.startsWith("rappelle-moi") || textLower.startsWith("rappelle moi") ||
-    textLower.includes("rendez-vous") || textLower.includes("rdv");
+    textLower.includes("mets") || textLower.includes("ajoute") || textLower.includes("crée") || textLower.includes("creer") ||
+    textLower.includes("programme") || textLower.includes("planifie") || textLower.includes("bloque") ||
+    textLower.includes("rappelle-moi") || textLower.includes("rappelle moi") || textLower.includes("rappel") ||
+    textLower.includes("réveille") || textLower.includes("reveille") || textLower.includes("réveil") || textLower.includes("reveil") ||
+    textLower.includes("alarme") || textLower.includes("sonne") || textLower.includes("tâche") || textLower.includes("tache") ||
+    textLower.includes("rendez-vous") || textLower.includes("rdv") || textLower.includes("note ");
 
   if (!isExplicitScheduling) {
-    const reply = "Je suis à votre écoute. Vous pouvez me dicter un rendez-vous, une tâche, me demander d'organiser votre journée ou consulter votre planning.";
+    const reply = "Je suis à votre écoute. Vous pouvez me dicter un rendez-vous, une tâche, une alarme réveil ou me demander de consulter votre planning.";
     return { reply, spokenReply: reply, action: null, executed: true };
   }
 
-  // Check if clarification needed when time is vague (Rule 4: Zero hallucination)
+  // Detect Wake-up / Alarm intent
+  const isWakeUp =
+    textLower.includes("réveil") || textLower.includes("reveil") ||
+    textLower.includes("réveille") || textLower.includes("reveille") ||
+    textLower.includes("alarme") || textLower.includes("sonne");
+
+  // Check if clarification needed when time is vague (Rule: Zero hallucination, but smart default for wake-up if not specified)
   const hasTimeKeyword = /(\d{1,2})[h:H](\d{2})?/i.test(text) || textLower.includes("ce soir") || textLower.includes("ce midi") || textLower.includes("dans ");
-  if (!hasTimeKeyword && (textLower.startsWith("rappelle-moi") || textLower.startsWith("rappelle moi") || textLower.includes("mets un rdv demain") || textLower.includes("demain matin"))) {
+  if (!hasTimeKeyword && !isWakeUp && (textLower.includes("rappelle-moi") || textLower.includes("mets un rdv demain") || textLower.includes("demain matin"))) {
     return { reply: `À quelle heure précise souhaitez-vous programmer cette activité ? (Par exemple : *« À 14h30 »* ou *« À 8h »*)`, spokenReply: "À quelle heure précise ?", action: null, executed: true };
   }
 
   // Extract Time & Date
   const timeMatch = text.match(/(?:à|vers|pour)?\s*(\d{1,2})[h:H](\d{2})?/i);
-  let hours = now.getHours();
-  let minutes = now.getMinutes() + 15;
+  let hours = isWakeUp ? 7 : now.getHours();
+  let minutes = 0;
   let hasExplicitTime = false;
 
   if (timeMatch) {
@@ -239,35 +261,42 @@ export async function executeLocalContextualAgent(
     }
   }
 
-  if (hasExplicitTime && timeMatch) {
+  if (hasExplicitTime || isWakeUp) {
     targetDate = setMinutes(setHours(targetDate, hours), minutes);
     if (targetDate < now && !dayMentioned) targetDate = addDays(targetDate, 1);
   } else if (!hasExplicitTime && !dayMentioned) {
     targetDate = now.getHours() >= 20 ? setMinutes(setHours(addDays(now, 1), 9), 0) : addHours(now, 1);
   }
 
-  const contactMatch = text.match(/(?:avec|chez|pour|de la part de|dr|docteur|m\.|mr|mme)\s+([A-ZÀ-Ý][a-zà-ÿ]+(?:\s+[A-ZÀ-Ý][a-zà-ÿ]+)?)/i);
+  const contactMatch = text.match(/(?:avec|de la part de|m\.|mr|mme)\s+([A-ZÀ-Ý][a-zà-ÿ]+(?:\s+[A-ZÀ-Ý][a-zà-ÿ]+)?)/i);
   let contactName = contactMatch ? contactMatch[1].trim() : undefined;
-  if (contactName && ["Demain", "Aujourd", "Midi", "Soir", "Moi", "Lui", "Cette", "Une", "Un", "Le", "La"].includes(contactName)) {
-    contactName = undefined;
+  if (contactName) {
+    const ignoredContacts = ["demain", "aujourd'hui", "ce soir", "midi", "moi", "lui", "cette", "une", "un", "le", "la", "mon", "ma", "alarme", "reveil", "réveil", "tache", "tâche", "rendez-vous", "rdv"];
+    if (ignoredContacts.includes(contactName.toLowerCase())) {
+      contactName = undefined;
+    }
   }
 
   const isEvent = textLower.includes("rdv") || textLower.includes("rendez-vous") || textLower.includes("réunion") || textLower.includes("docteur") || textLower.includes("dentiste") || textLower.includes("chantier");
-  const isTask = !isEvent && (textLower.includes("tâche") || textLower.includes("faire") || textLower.includes("acheter") || textLower.includes("payer") || textLower.includes("finir"));
+  const isTask = !isEvent && (isWakeUp || textLower.includes("tâche") || textLower.includes("tache") || textLower.includes("faire") || textLower.includes("acheter") || textLower.includes("payer") || textLower.includes("finir"));
 
   let cleanTitle = text
     .replace(/^(?:bonjour|salut|hey|dis|peux[-\s]tu|s'il te plaît|stp)?\s*/i, "")
-    .replace(/^(?:je veux que tu|je voudrais|il faut que|j'aimerais|merci de|n'oublie pas de|ajoute[-\s]moi|mets[-\s]moi|crée[-\s]moi|programme[-\s]moi)\s*/i, "")
-    .replace(/^(?:la tâche|le rdv|le rendez-vous|le rappel|une tâche|un rdv|un rendez-vous|un rappel)\s*/i, "")
+    .replace(/^(?:moi\s+)?(?:je\s+)?(?:veux\s+que\s+tu\s+|voudrais\s+|aimerais\s+|peux[-\s]tu\s+|merci\s+de\s+|n'oublie\s+pas\s+de\s+|ajoute[-\s]moi\s+|mets[-\s]moi\s+|crée[-\s]moi\s+|programme[-\s]moi\s+)?/i, "")
+    .replace(/^(?:un\s+|une\s+|le\s+|la\s+|les\s+|mon\s+|ma\s+|mes\s+)?(?:rendez-vous|rdv|tâche|tache|rappel|alarme|réveil|reveil)(?:\s+qui\s+va\s+me\s+réveiller|\s+pour\s+me\s+réveiller|\s+pour|\s+de|\s+d')?\s+/i, "")
     .replace(/(?:à|vers|pour)?\s*\d{1,2}[h:H]\d{0,2}/gi, "")
     .replace(/\b(demain|après-demain|apres demain|ce soir|aujourd'hui|ce midi|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\b/gi, "")
-    .replace(/\bdans \d+ (?:min|minutes|h|heure|heures)\b/gi, "")
-    .replace(/(?:urgent|très important|important|prioritaire)/gi, "")
+    .replace(/\bdans\s+\d+\s*(?:min|minutes|h|heure|heures)\b/gi, "")
+    .replace(/\b(urgent|très important|important|prioritaire)\b/gi, "")
+    .replace(/\s+/g, " ")
     .trim();
 
-  if (!cleanTitle || cleanTitle.length < 3 || cleanTitle.toLowerCase() === "rendez-vous" || cleanTitle.toLowerCase() === "rdv") {
-    return { reply: `Précisez le motif du rendez-vous (ex: *« Rdv dentiste »*).`, spokenReply: "Précisez le motif.", action: null, executed: true };
+  if (isWakeUp && (!cleanTitle || cleanTitle.length < 3 || cleanTitle.toLowerCase().includes("réveill") || cleanTitle.toLowerCase().includes("reveill") || cleanTitle.toLowerCase() === "alarme")) {
+    cleanTitle = "Réveil & Début de journée";
+  } else if (!cleanTitle || cleanTitle.length < 2 || cleanTitle.toLowerCase() === "rendez-vous" || cleanTitle.toLowerCase() === "rdv") {
+    cleanTitle = isEvent ? "Rendez-vous" : "Tâche programmée";
   }
+
   cleanTitle = cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1);
 
   const isUrgent = textLower.includes("urgent") || textLower.includes("important") || textLower.includes("prioritaire");

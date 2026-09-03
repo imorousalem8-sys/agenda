@@ -45,7 +45,8 @@ export async function PUT(req: NextRequest, { params }: Params) {
     const body = await req.json();
     const data = eventSchema.parse(body);
     const startAt = parseISO(data.startAt);
-    const endAt = data.endAt ? parseISO(data.endAt) : undefined;
+    const parsedEnd = data.endAt && data.endAt.trim() ? parseISO(data.endAt.trim()) : null;
+    const endAt = parsedEnd && !isNaN(parsedEnd.getTime()) ? parsedEnd : undefined;
 
     // Delete old reminders and recreate
     await prisma.reminder.deleteMany({ where: { eventId: id } });

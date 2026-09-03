@@ -185,7 +185,12 @@ export default function AgentPage() {
       });
 
       const data = await res.json();
-      const replyText = data.reply || "J'ai bien pris en compte votre message.";
+
+      if (!res.ok) {
+        throw new Error(data.error || "Une erreur est survenue lors de la communication avec l'assistant.");
+      }
+
+      const replyText = data.reply || "Je suis à votre écoute. Que puis-je faire pour vous ?";
 
       if (data.activeTarget) {
         setActiveTarget(data.activeTarget);
@@ -214,16 +219,20 @@ export default function AgentPage() {
       }
 
       // Refresh other dashboard widgets
-      window.dispatchEvent(new Event("task-updated"));
-      window.dispatchEvent(new Event("reminder-updated"));
-      window.dispatchEvent(new Event("event-updated"));
-    } catch {
+      if (data.saved) {
+        window.dispatchEvent(new Event("task-updated"));
+        window.dispatchEvent(new Event("reminder-updated"));
+        window.dispatchEvent(new Event("event-updated"));
+      }
+      window.dispatchEvent(new Event("ai-quota-updated"));
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : "Une erreur est survenue lors de la communication avec l'assistant.";
       setMessages((prev) => [
         ...prev,
         {
           id: `err-${Date.now()}`,
           sender: "ai",
-          text: "Une erreur est survenue lors de la communication avec l'assistant.",
+          text: `⚠️ ${errorMsg}`,
         },
       ]);
     }

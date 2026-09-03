@@ -420,6 +420,7 @@ function TaskRow({
 
 function TaskFormModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [items, setItems] = useState<{ label: string; qty: string; done: boolean }[]>([]);
   const [newItem, setNewItem] = useState("");
 
@@ -436,13 +437,26 @@ function TaskFormModal({ onClose, onSaved }: { onClose: () => void; onSaved: () 
 
   const onSubmit = async (data: TaskInput) => {
     setLoading(true);
-    const res = await fetch("/api/tasks", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...data, items: items.length > 0 ? items : undefined }),
-    });
-    setLoading(false);
-    if (res.ok) onSaved();
+    setError("");
+    try {
+      const res = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, items: items.length > 0 ? items : undefined }),
+      });
+      const resData = await res.json().catch(() => ({}));
+      if (res.ok) {
+        window.dispatchEvent(new Event("task-updated"));
+        window.dispatchEvent(new Event("reminder-updated"));
+        onSaved();
+      } else {
+        setError(resData.error || "Erreur lors de la création de la tâche.");
+      }
+    } catch {
+      setError("Erreur de communication réseau.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -457,6 +471,11 @@ function TaskFormModal({ onClose, onSaved }: { onClose: () => void; onSaved: () 
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px", maxHeight: "70vh", overflowY: "auto" }}>
+            {error && (
+              <div style={{ padding: "10px 14px", borderRadius: "10px", background: "rgba(239, 68, 68, 0.12)", border: "1px solid rgba(239, 68, 68, 0.3)", color: "#fca5a5", fontSize: "13px", fontWeight: 600 }}>
+                {error}
+              </div>
+            )}
             {/* Mode */}
             <div>
               <label className="form-label">Type</label>

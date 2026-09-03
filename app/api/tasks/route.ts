@@ -36,7 +36,8 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const data = taskSchema.parse(body);
-    const dueAtDate = data.dueAt ? parseISO(data.dueAt) : null;
+    const parsedDate = data.dueAt && data.dueAt.trim() ? parseISO(data.dueAt.trim()) : null;
+    const dueAtDate = parsedDate && !isNaN(parsedDate.getTime()) ? parsedDate : null;
 
     const task = await prisma.task.create({
       data: {

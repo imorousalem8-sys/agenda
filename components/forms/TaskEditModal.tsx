@@ -58,6 +58,8 @@ export default function TaskEditModal({ task, onClose, onSaved, onDeleted }: Tas
     },
   });
 
+  const [error, setError] = useState("");
+
   const addItem = () => {
     if (!newItem.trim()) return;
     setItems((prev) => [...prev, { label: newItem.trim(), qty: "", done: false }]);
@@ -70,6 +72,7 @@ export default function TaskEditModal({ task, onClose, onSaved, onDeleted }: Tas
 
   const onSubmit = async (data: TaskInput) => {
     setLoading(true);
+    setError("");
     try {
       const res = await fetch(`/api/tasks/${task.id}`, {
         method: "PUT",
@@ -80,13 +83,20 @@ export default function TaskEditModal({ task, onClose, onSaved, onDeleted }: Tas
         }),
       });
 
+      const resData = await res.json().catch(() => ({}));
+
       if (res.ok) {
+        window.dispatchEvent(new Event("task-updated"));
+        window.dispatchEvent(new Event("reminder-updated"));
         onSaved();
+      } else {
+        setError(resData.error || "Erreur lors de la mise à jour");
       }
-    } catch (e) {
-      console.error(e);
+    } catch {
+      setError("Erreur de communication réseau");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleDelete = async () => {
@@ -147,6 +157,11 @@ export default function TaskEditModal({ task, onClose, onSaved, onDeleted }: Tas
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px", maxHeight: "70vh", overflowY: "auto" }}>
+            {error && (
+              <div style={{ padding: "10px 14px", borderRadius: "10px", background: "rgba(239, 68, 68, 0.12)", border: "1px solid rgba(239, 68, 68, 0.3)", color: "#fca5a5", fontSize: "13px", fontWeight: 600 }}>
+                {error}
+              </div>
+            )}
             {/* Mode toggle */}
             <div>
               <label className="form-label">Type</label>

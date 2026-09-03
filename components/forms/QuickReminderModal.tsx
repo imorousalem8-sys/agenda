@@ -13,7 +13,7 @@ interface QuickReminderModalProps {
 }
 
 export default function QuickReminderModal({ onClose, onSaved }: QuickReminderModalProps) {
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const defaultFireAt = format(addMinutes(new Date(), 10), "yyyy-MM-dd'T'HH:mm");
 
@@ -50,19 +50,25 @@ export default function QuickReminderModal({ onClose, onSaved }: QuickReminderMo
 
   const onSubmit = async (data: ReminderInput) => {
     setLoading(true);
+    setError("");
     try {
       const res = await fetch("/api/reminders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      const resData = await res.json().catch(() => ({}));
       if (res.ok) {
+        window.dispatchEvent(new Event("reminder-updated"));
         onSaved();
+      } else {
+        setError(resData.error || "Erreur lors de la programmation du rappel.");
       }
-    } catch (e) {
-      console.error(e);
+    } catch {
+      setError("Erreur de communication réseau.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const currentMethod = watch("method");
@@ -110,6 +116,11 @@ export default function QuickReminderModal({ onClose, onSaved }: QuickReminderMo
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
+            {error && (
+              <div style={{ padding: "10px 14px", borderRadius: "10px", background: "rgba(239, 68, 68, 0.12)", border: "1px solid rgba(239, 68, 68, 0.3)", color: "#fca5a5", fontSize: "13px", fontWeight: 600 }}>
+                {error}
+              </div>
+            )}
             {/* Quick Presets */}
             <div>
               <label className="form-label" style={{ display: "flex", alignItems: "center", gap: "4px" }}>

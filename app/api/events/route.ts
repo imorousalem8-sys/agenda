@@ -68,7 +68,8 @@ export async function POST(req: NextRequest) {
     const data = eventSchema.parse(body);
 
     const startAt = parseISO(data.startAt);
-    const endAt = data.endAt ? parseISO(data.endAt) : undefined;
+    const parsedEnd = data.endAt && data.endAt.trim() ? parseISO(data.endAt.trim()) : null;
+    const endAt = parsedEnd && !isNaN(parsedEnd.getTime()) ? parsedEnd : undefined;
 
     const event = await prisma.event.create({
       data: {

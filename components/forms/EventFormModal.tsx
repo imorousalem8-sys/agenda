@@ -109,6 +109,8 @@ export default function EventFormModal({ onClose, onSaved, initialDate, eventToE
         return;
       }
 
+      window.dispatchEvent(new Event("event-updated"));
+      window.dispatchEvent(new Event("reminder-updated"));
       onSaved();
     } catch {
       setError("Erreur de connexion");
