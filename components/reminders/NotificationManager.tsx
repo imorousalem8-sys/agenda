@@ -76,43 +76,60 @@ export default function NotificationManager() {
 
   return (
     <div
-      className="permission-banner animate-slide-down"
-      style={{ position: "fixed", bottom: "24px", left: "50%", transform: "translateX(-50%)", maxWidth: "480px", width: "calc(100% - 32px)", zIndex: 100 }}
+      className="animate-slide-down"
+      style={{
+        position: "fixed",
+        bottom: "24px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        maxWidth: "500px",
+        width: "calc(100% - 32px)",
+        zIndex: 100,
+        background: "var(--bg-card)",
+        border: "1px solid var(--border-strong)",
+        borderRadius: "12px",
+        padding: "12px 16px",
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.6)",
+      }}
     >
       <div
         style={{
           width: "36px",
           height: "36px",
-          background: "rgba(99,102,241,0.2)",
-          borderRadius: "10px",
+          background: "rgba(56, 189, 248, 0.15)",
+          borderRadius: "8px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           flexShrink: 0,
         }}
       >
-        <Bell size={18} color="var(--accent-primary)" />
+        <Bell size={18} color="#38bdf8" />
       </div>
       <div style={{ flex: 1 }}>
-        <p style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)", marginBottom: "2px" }}>
-          Activer les notifications
+        <p style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc", marginBottom: "2px" }}>
+          Activer les rappels en arrière-plan & sur mobile
         </p>
-        <p style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
-          Pour recevoir vos rappels même quand l&apos;app est en arrière-plan
+        <p style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: "1.4" }}>
+          Recevez vos alertes et réveils même lorsque l&apos;écran est verrouillé ou sur iPhone/Android.
         </p>
       </div>
-      <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+      <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
         <button
           onClick={requestPermission}
           className="btn btn-primary btn-sm"
+          style={{ padding: "6px 12px", fontSize: "12px", fontWeight: "600" }}
           id="enable-notifications"
         >
           Activer
         </button>
         <button
           onClick={() => setShowBanner(false)}
-          className="btn btn-ghost"
-          style={{ padding: "6px" }}
+          className="btn btn-ghost btn-sm"
+          style={{ padding: "6px", color: "var(--text-muted)" }}
           id="dismiss-notification-banner"
         >
           <X size={14} />

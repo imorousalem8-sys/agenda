@@ -275,6 +275,23 @@ export default function AgentPage() {
 
         {/* Action Controls */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("open-voice-live-modal"))}
+            className="btn btn-secondary btn-sm"
+            style={{
+              padding: "5px 12px",
+              fontSize: "12px",
+              fontWeight: "600",
+              gap: "6px",
+              color: "#38bdf8",
+              borderColor: "rgba(56, 189, 248, 0.3)",
+            }}
+            title="Lancer le dialogue vocal continu avec visualiseur d'onde et Orb"
+          >
+            <Mic size={14} />
+            <span>Mode Vocal Live (Orb)</span>
+          </button>
+
           {isSpeaking && (
             <button
               onClick={stopSpeaking}

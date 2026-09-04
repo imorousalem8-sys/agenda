@@ -37,19 +37,19 @@ export default function QuotaIndicator({ compact = false }: { compact?: boolean 
         style={{
           display: "inline-flex",
           alignItems: "center",
-          gap: "6px",
-          padding: "3px 8px",
-          borderRadius: "999px",
-          background: isLow ? "rgba(239, 68, 68, 0.15)" : "rgba(99, 102, 241, 0.12)",
-          border: `1px solid ${isLow ? "rgba(239, 68, 68, 0.4)" : "rgba(99, 102, 241, 0.3)"}`,
-          fontSize: "11px",
+          gap: "5px",
+          padding: "2px 7px",
+          borderRadius: "6px",
+          background: isLow ? "rgba(239, 68, 68, 0.15)" : "rgba(255, 255, 255, 0.05)",
+          border: `1px solid ${isLow ? "rgba(239, 68, 68, 0.35)" : "var(--border-subtle)"}`,
+          fontSize: "10px",
           fontWeight: "600",
-          color: isLow ? "#f87171" : "#a5b4fc",
+          color: isLow ? "#f87171" : "#94a3b8",
         }}
         title={`Quota IA : ${quota.used}/${quota.limit} ce mois`}
       >
-        <Sparkles size={11} />
-        <span>{quota.remaining} IA dispo</span>
+        <Sparkles size={10} color={isLow ? "#f87171" : "#38bdf8"} />
+        <span>{quota.remaining} dispo</span>
       </div>
     );
   }
@@ -57,29 +57,28 @@ export default function QuotaIndicator({ compact = false }: { compact?: boolean 
   return (
     <div
       style={{
-        padding: "12px",
-        borderRadius: "12px",
-        background: "rgba(15, 23, 42, 0.7)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
-        backdropFilter: "blur(10px)",
+        padding: "12px 14px",
+        borderRadius: "8px",
+        background: "var(--bg-card)",
+        border: "1px solid var(--border-subtle)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: "700", color: "#e2e8f0" }}>
-          <Sparkles size={13} style={{ color: "#6366f1" }} />
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: "600", color: "#f8fafc" }}>
+          <Sparkles size={12} style={{ color: "#38bdf8" }} />
           <span>Quota Assistant IA</span>
         </div>
         <span
           style={{
-            fontSize: "10px",
-            fontWeight: "800",
+            fontSize: "9px",
+            fontWeight: "700",
             padding: "2px 6px",
-            borderRadius: "6px",
-            background: quota.plan === "PRO" ? "linear-gradient(135deg, #f59e0b, #ec4899)" : "rgba(255, 255, 255, 0.1)",
+            borderRadius: "4px",
+            background: quota.plan === "PRO" ? "#10b981" : "rgba(255, 255, 255, 0.06)",
             color: "#ffffff",
           }}
         >
-          {quota.plan === "PRO" ? "PLAN PRO" : "PLAN GRATUIT"}
+          {quota.plan === "PRO" ? "PRO" : "GRATUIT"}
         </span>
       </div>
 
@@ -87,8 +86,8 @@ export default function QuotaIndicator({ compact = false }: { compact?: boolean 
       <div
         style={{
           width: "100%",
-          height: "6px",
-          background: "rgba(255, 255, 255, 0.1)",
+          height: "4px",
+          background: "rgba(255, 255, 255, 0.06)",
           borderRadius: "999px",
           overflow: "hidden",
           marginBottom: "6px",
@@ -98,14 +97,14 @@ export default function QuotaIndicator({ compact = false }: { compact?: boolean 
           style={{
             width: `${percentage}%`,
             height: "100%",
-            background: isLow ? "linear-gradient(90deg, #f59e0b, #ef4444)" : "linear-gradient(90deg, #6366f1, #06b6d4)",
+            background: isLow ? "#ef4444" : "#38bdf8",
             transition: "width 0.3s ease",
           }}
         />
       </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "var(--text-muted)" }}>
-        <span>{quota.used} / {quota.limit} requêtes</span>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "var(--text-muted)" }}>
+        <span>{quota.used} / {quota.limit} req</span>
         <span style={{ color: isLow ? "#f87171" : "#38bdf8", fontWeight: "600" }}>
           {quota.remaining} restante{quota.remaining > 1 ? "s" : ""}
         </span>
@@ -117,16 +116,15 @@ export default function QuotaIndicator({ compact = false }: { compact?: boolean 
           className="btn btn-primary btn-sm"
           style={{
             width: "100%",
-            marginTop: "10px",
-            padding: "6px",
+            marginTop: "8px",
+            padding: "5px",
             fontSize: "11px",
-            fontWeight: "700",
-            background: "linear-gradient(135deg, #6366f1, #a855f7)",
+            fontWeight: "600",
             gap: "5px",
           }}
         >
           <Crown size={12} />
-          <span>Passer à 1000 requêtes</span>
+          <span>Débloquer 1000 requêtes</span>
         </button>
       )}
     </div>

@@ -47,3 +47,5 @@ dev.db
 _tmp_init/
 scratch/
 
+
+.vercel

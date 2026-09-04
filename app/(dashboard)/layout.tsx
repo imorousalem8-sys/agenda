@@ -25,6 +25,7 @@ import AIAssistantWidget from "@/components/ai/AIAssistantWidget";
 import QuotaIndicator from "@/components/ai/QuotaIndicator";
 import VoiceSettingsModal from "@/components/settings/VoiceSettingsModal";
 import PhoneSettingsModal from "@/components/settings/PhoneSettingsModal";
+import VoiceConversationModal from "@/components/ai/VoiceConversationModal";
 import Logo from "@/components/brand/Logo";
 import UpgradeModal from "@/components/subscription/UpgradeModal";
 import PaymentSuccessToast from "@/components/subscription/PaymentSuccessToast";
@@ -50,10 +51,11 @@ export default function DashboardLayout({
   const [showVoiceSettings, setShowVoiceSettings] = useState(false);
   const [showPhoneSettings, setShowPhoneSettings] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showVoiceLiveModal, setShowVoiceLiveModal] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>();
   const { isPro, isDemoUser, isProMocked } = useSubscription();
 
-  // Listen to open-upgrade-modal event
+  // Listen to open-upgrade-modal & open-voice-live-modal events
   useEffect(() => {
     const handleOpenUpgrade = (e: CustomEvent<{ feature?: string }>) => {
       setShowVoiceSettings(false);
@@ -62,9 +64,15 @@ export default function DashboardLayout({
       setShowUpgradeModal(true);
     };
 
+    const handleOpenVoiceLive = () => {
+      setShowVoiceLiveModal(true);
+    };
+
     window.addEventListener("open-upgrade-modal" as any, handleOpenUpgrade as EventListener);
+    window.addEventListener("open-voice-live-modal" as any, handleOpenVoiceLive as EventListener);
     return () => {
       window.removeEventListener("open-upgrade-modal" as any, handleOpenUpgrade as EventListener);
+      window.removeEventListener("open-voice-live-modal" as any, handleOpenVoiceLive as EventListener);
     };
   }, []);
 
@@ -476,6 +484,11 @@ export default function DashboardLayout({
       {showPhoneSettings && (
         <PhoneSettingsModal onClose={() => setShowPhoneSettings(false)} />
       )}
+
+      <VoiceConversationModal
+        isOpen={showVoiceLiveModal}
+        onClose={() => setShowVoiceLiveModal(false)}
+      />
 
       <style>{`
         @media (min-width: 769px) {
