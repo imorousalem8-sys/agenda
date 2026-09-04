@@ -4,6 +4,8 @@ import { processUserAIMessage } from "@/lib/ai/engine";
 import { AIChatMessage } from "@/lib/ai/types";
 import { APP_CONFIG } from "@/lib/config";
 
+export const dynamic = "force-dynamic";
+
 // In-memory sliding rate limiter per user (e.g. 10 req / minute)
 const rateLimitMap = new Map<string, number[]>();
 

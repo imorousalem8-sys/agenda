@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { eventSchema } from "@/lib/validations";
 import { addDays, subDays, parseISO } from "date-fns";
+import { getUserSubscriptionDetails } from "@/lib/subscription";
 
 // GET /api/events — list all events for the logged-in user
 export async function GET(req: NextRequest) {
@@ -36,8 +37,6 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ events });
 }
-
-import { getUserSubscriptionDetails } from "@/lib/subscription";
 
 // POST /api/events — create a new event
 export async function POST(req: NextRequest) {
