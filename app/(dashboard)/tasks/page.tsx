@@ -95,13 +95,15 @@ export default function TasksPage() {
   };
 
   return (
-    <div style={{ padding: "32px", maxWidth: "860px" }}>
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+    <div style={{ padding: "32px 36px", maxWidth: "1280px", margin: "0 auto", width: "100%" }}>
+      {/* Header Pro */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "16px", paddingBottom: "20px", borderBottom: "1px solid var(--border-subtle)" }}>
         <div>
-          <h1 className="page-title">Tâches & Rappels</h1>
-          <p className="page-subtitle">
-            {pendingTasks.length} tâche{pendingTasks.length > 1 ? "s" : ""} en attente • Cliquez sur une tâche pour la modifier
+          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "#f8fafc", letterSpacing: "-0.02em" }}>
+            Gestionnaire de Tâches & Priorités
+          </h1>
+          <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
+            {pendingTasks.length} tâche{pendingTasks.length > 1 ? "s" : ""} active{pendingTasks.length > 1 ? "s" : ""} • Cliquez sur une ligne pour inspecter ou modifier
           </p>
         </div>
         <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
@@ -109,103 +111,116 @@ export default function TasksPage() {
             onClick={() => handleTestAICall()}
             className="btn btn-secondary"
             id="tasks-test-call"
-            style={{ gap: "6px" }}
+            style={{ gap: "6px", fontSize: "12px", padding: "8px 14px" }}
           >
-            <PhoneCall size={15} color="var(--accent-primary)" />
-            Tester l&apos;appel vocal IA
+            <PhoneCall size={14} color="#38bdf8" />
+            <span>Tester l&apos;appel vocal IA</span>
           </button>
           <button
             onClick={() => setShowForm(true)}
             className="btn btn-primary"
             id="tasks-new"
+            style={{ gap: "6px", fontSize: "12px", padding: "8px 16px" }}
           >
-            <Plus size={16} />
-            Nouvelle tâche
+            <Plus size={15} />
+            <span>Nouvelle tâche</span>
           </button>
         </div>
       </div>
 
-      {/* Info banner on voice reminder */}
+      {/* Info banner - Sobre & Epuré */}
       <div
         style={{
-          background: "rgba(99, 102, 241, 0.08)",
-          border: "1px solid rgba(99, 102, 241, 0.2)",
-          borderRadius: "14px",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: "10px",
           padding: "12px 16px",
-          marginBottom: "20px",
+          marginBottom: "24px",
           display: "flex",
           alignItems: "center",
           gap: "12px",
         }}
       >
-        <Phone size={18} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
+        <Phone size={16} color="#38bdf8" style={{ flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
-          <p style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>
-            Rappels vocaux automatiques
-          </p>
-          <p style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
-            Toute tâche avec une échéance déclenche automatiquement un appel vocal de l&apos;IA pour vous rappeler son exécution.
-          </p>
+          <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>
+            Rappels vocaux automatiques :{" "}
+          </span>
+          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+            Chaque tâche programmée avec une échéance déclenche un appel vocal de l&apos;IA pour vous assister.
+          </span>
         </div>
       </div>
 
-      {/* Show done toggle */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={showDone}
-            onChange={(e) => setShowDone(e.target.checked)}
-            id="show-done-tasks"
-          />
-          <span className="toggle-slider" />
-        </label>
-        <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>
-          Afficher les tâches terminées
-        </span>
+      {/* Filter Bar */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={showDone}
+              onChange={(e) => setShowDone(e.target.checked)}
+              id="show-done-tasks"
+            />
+            <span className="toggle-slider" />
+          </label>
+          <span style={{ fontSize: "13px", color: "var(--text-secondary)", fontWeight: "500" }}>
+            Afficher l&apos;historique des tâches terminées
+          </span>
+        </div>
+
+        <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+          Total : <strong style={{ color: "#f8fafc" }}>{tasks.length}</strong> éléments
+        </div>
       </div>
 
-      {/* Task list */}
+      {/* Structured Table */}
       {loading ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {[1, 2, 3].map((i) => <div key={i} className="skeleton" style={{ height: "70px" }} />)}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {[1, 2, 3, 4].map((i) => <div key={i} className="skeleton" style={{ height: "48px", borderRadius: "8px" }} />)}
         </div>
-      ) : pendingTasks.length === 0 && !showDone ? (
-        <div className="empty-state">
-          <div className="empty-state-icon"><CheckSquare size={28} /></div>
-          <p style={{ color: "var(--text-secondary)", fontSize: "15px", fontWeight: "500" }}>
-            Aucune tâche en attente
+      ) : tasks.length === 0 ? (
+        <div className="empty-state" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "12px", padding: "40px" }}>
+          <div className="empty-state-icon" style={{ background: "rgba(255, 255, 255, 0.04)" }}><CheckSquare size={24} /></div>
+          <p style={{ color: "var(--text-secondary)", fontSize: "14px", fontWeight: "500" }}>
+            Aucune tâche enregistrée
           </p>
-          <button onClick={() => setShowForm(true)} className="btn btn-primary" id="tasks-add-first">
-            <Plus size={15} />
-            Ajouter une tâche
+          <button onClick={() => setShowForm(true)} className="btn btn-primary btn-sm" id="tasks-add-first" style={{ marginTop: "12px" }}>
+            <Plus size={14} />
+            <span>Créer ma première tâche</span>
           </button>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          {/* Pending */}
-          {pendingTasks.map((task) => (
-            <TaskRow
-              key={task.id}
-              task={task}
-              onClick={() => setEditingTask(task)}
-              onToggle={(e) => toggleTask(task.id, task.isDone, e)}
-              onDelete={(e) => deleteTask(task.id, e)}
-              onTestCall={(e) => handleTestAICall(task, e)}
-              deleting={deleting === task.id}
-              priorityColors={priorityColors}
-            />
-          ))}
+        <div className="data-table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th className="data-th" style={{ width: "40px", textAlign: "center" }}>✓</th>
+                <th className="data-th">Titre & Détails</th>
+                <th className="data-th" style={{ width: "130px" }}>Type</th>
+                <th className="data-th" style={{ width: "110px" }}>Priorité</th>
+                <th className="data-th" style={{ width: "180px" }}>Échéance</th>
+                <th className="data-th" style={{ width: "120px", textAlign: "right" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Pending Tasks */}
+              {pendingTasks.map((task) => (
+                <TaskTableRow
+                  key={task.id}
+                  task={task}
+                  onClick={() => setEditingTask(task)}
+                  onToggle={(e) => toggleTask(task.id, task.isDone, e)}
+                  onDelete={(e) => deleteTask(task.id, e)}
+                  onTestCall={(e) => handleTestAICall(task, e)}
+                  deleting={deleting === task.id}
+                  priorityColors={priorityColors}
+                />
+              ))}
 
-          {/* Done */}
-          {showDone && doneTasks.length > 0 && (
-            <>
-              <div className="divider" style={{ margin: "8px 0" }} />
-              <p style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.06em", padding: "0 4px" }}>
-                Terminées ({doneTasks.length})
-              </p>
-              {doneTasks.map((task) => (
-                <TaskRow
+              {/* Done Tasks */}
+              {showDone && doneTasks.map((task) => (
+                <TaskTableRow
                   key={task.id}
                   task={task}
                   onClick={() => setEditingTask(task)}
@@ -217,8 +232,8 @@ export default function TasksPage() {
                   done
                 />
               ))}
-            </>
-          )}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -249,7 +264,7 @@ export default function TasksPage() {
   );
 }
 
-function TaskRow({
+function TaskTableRow({
   task,
   onClick,
   onToggle,
@@ -271,150 +286,205 @@ function TaskRow({
   const items = task.items ? JSON.parse(task.items) : null;
 
   return (
-    <div
+    <tr
       onClick={onClick}
-      className="card task-hover-card"
+      className="data-tr"
       style={{
-        padding: "14px 16px",
-        display: "flex",
-        alignItems: "flex-start",
-        gap: "12px",
-        opacity: done ? 0.6 : 1,
-        transition: "all 0.2s",
+        opacity: done ? 0.5 : 1,
         cursor: "pointer",
-        position: "relative",
+        transition: "background 0.15s ease",
       }}
       id={`task-row-${task.id}`}
     >
-      {/* Checkbox */}
-      <button
-        onClick={onToggle}
-        style={{
-          width: "22px",
-          height: "22px",
-          borderRadius: "6px",
-          border: `2px solid ${done ? "#10b981" : "var(--border-default)"}`,
-          background: done ? "#10b981" : "transparent",
-          cursor: "pointer",
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "all 0.2s",
-          marginTop: "2px",
-        }}
-        id={`task-cb-${task.id}`}
-        title={done ? "Marquer non terminé" : "Marquer terminé"}
-      >
-        {done && <span style={{ color: "white", fontSize: "11px", fontWeight: "700" }}>✓</span>}
-      </button>
+      {/* 1. Checkbox */}
+      <td className="data-td" style={{ textAlign: "center", width: "40px" }} onClick={(e) => e.stopPropagation()}>
+        <button
+          onClick={onToggle}
+          style={{
+            width: "18px",
+            height: "18px",
+            borderRadius: "4px",
+            border: `1.5px solid ${done ? "#10b981" : "var(--border-strong)"}`,
+            background: done ? "#10b981" : "transparent",
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.15s ease",
+          }}
+          id={`task-cb-${task.id}`}
+          title={done ? "Marquer non terminé" : "Marquer terminé"}
+        >
+          {done && <span style={{ color: "white", fontSize: "10px", fontWeight: "700" }}>✓</span>}
+        </button>
+      </td>
 
-      {/* Content */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "3px" }}>
-          <p
-            style={{
-              fontSize: "14px",
-              fontWeight: "600",
-              color: "var(--text-primary)",
-              textDecoration: done ? "line-through" : "none",
-            }}
-          >
-            {task.title}
-          </p>
-          {task.mode === "PROFESSIONAL" && (
-            <Briefcase size={12} color="var(--text-muted)" />
-          )}
-          <div
-            style={{
-              width: "7px",
-              height: "7px",
-              borderRadius: "50%",
-              background: priorityColors[task.priority] ?? "#6366f1",
-              flexShrink: 0,
-            }}
-            title={getPriorityLabel(task.priority)}
-          />
-        </div>
-
-        {task.notes && (
-          <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "6px", lineHeight: "1.4" }}>
-            {task.notes}
-          </p>
-        )}
-
-        {task.dueAt && (
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "4px" }}>
-            <Clock size={12} color="var(--accent-primary)" />
-            <span style={{ fontSize: "12px", color: "var(--accent-primary)", fontWeight: "500" }}>
-              {formatDate(task.dueAt)}
+      {/* 2. Titre & Détails */}
+      <td className="data-td">
+        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span
+              style={{
+                fontSize: "13px",
+                fontWeight: "600",
+                color: done ? "var(--text-muted)" : "#f8fafc",
+                textDecoration: done ? "line-through" : "none",
+              }}
+            >
+              {task.title}
             </span>
           </div>
-        )}
 
-        {/* Shopping list items */}
-        {items && items.length > 0 && (
-          <div style={{ marginTop: "8px", display: "flex", flexWrap: "wrap", gap: "5px" }}>
-            {items.map((item: { label: string; qty?: string; done: boolean }, idx: number) => (
-              <span
-                key={idx}
-                style={{
-                  fontSize: "11px",
-                  padding: "2px 8px",
-                  background: "var(--bg-elevated)",
-                  borderRadius: "20px",
-                  color: "var(--text-secondary)",
-                  textDecoration: item.done ? "line-through" : "none",
-                }}
-              >
-                {item.qty ? `${item.qty}× ` : ""}{item.label}
-              </span>
-            ))}
+          {task.notes && (
+            <div style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: "1.4", maxWidth: "450px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {task.notes}
+            </div>
+          )}
+
+          {items && items.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginTop: "3px" }}>
+              {items.map((item: { label: string; qty?: string; done: boolean }, idx: number) => (
+                <span
+                  key={idx}
+                  style={{
+                    fontSize: "10px",
+                    padding: "1px 6px",
+                    background: "rgba(255, 255, 255, 0.04)",
+                    border: "1px solid var(--border-subtle)",
+                    borderRadius: "4px",
+                    color: "var(--text-muted)",
+                    textDecoration: item.done ? "line-through" : "none",
+                  }}
+                >
+                  {item.qty ? `${item.qty}× ` : ""}{item.label}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </td>
+
+      {/* 3. Mode / Type */}
+      <td className="data-td">
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "5px",
+            fontSize: "11px",
+            fontWeight: "500",
+            padding: "2px 8px",
+            borderRadius: "4px",
+            background: "rgba(255, 255, 255, 0.03)",
+            border: "1px solid var(--border-subtle)",
+            color: "var(--text-secondary)",
+          }}
+        >
+          {task.mode === "PROFESSIONAL" ? (
+            <>
+              <Briefcase size={11} color="var(--text-muted)" />
+              <span>Pro</span>
+            </>
+          ) : (
+            <>
+              <User size={11} color="var(--text-muted)" />
+              <span>Perso</span>
+            </>
+          )}
+        </span>
+      </td>
+
+      {/* 4. Priorité */}
+      <td className="data-td">
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "5px",
+            fontSize: "11px",
+            fontWeight: "600",
+            padding: "2px 8px",
+            borderRadius: "4px",
+            background:
+              task.priority === "URGENT"
+                ? "rgba(244, 63, 94, 0.12)"
+                : task.priority === "HIGH"
+                ? "rgba(245, 158, 11, 0.12)"
+                : "rgba(255, 255, 255, 0.03)",
+            border:
+              task.priority === "URGENT"
+                ? "1px solid rgba(244, 63, 94, 0.3)"
+                : task.priority === "HIGH"
+                ? "1px solid rgba(245, 158, 11, 0.3)"
+                : "1px solid var(--border-subtle)",
+            color:
+              task.priority === "URGENT"
+                ? "#fb7185"
+                : task.priority === "HIGH"
+                ? "#fbbf24"
+                : "var(--text-secondary)",
+          }}
+        >
+          <span
+            style={{
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              background: priorityColors[task.priority] ?? "#94a3b8",
+            }}
+          />
+          <span>{getPriorityLabel(task.priority)}</span>
+        </span>
+      </td>
+
+      {/* 5. Échéance */}
+      <td className="data-td">
+        {task.dueAt ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "#38bdf8", fontWeight: "500" }}>
+            <Clock size={12} />
+            <span>{formatDate(task.dueAt)}</span>
           </div>
+        ) : (
+          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>—</span>
         )}
-      </div>
+      </td>
 
-      {/* Action Buttons */}
-      <div style={{ display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }}>
-        <button
-          onClick={onTestCall}
-          className="btn btn-ghost btn-sm"
-          style={{ padding: "6px", color: "var(--accent-primary)" }}
-          title="Tester l'appel vocal IA pour cette tâche"
-          id={`call-task-${task.id}`}
-        >
-          <PhoneCall size={14} />
-        </button>
+      {/* 6. Actions */}
+      <td className="data-td" style={{ textAlign: "right" }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: "2px" }}>
+          <button
+            onClick={onTestCall}
+            className="btn btn-ghost btn-sm"
+            style={{ padding: "4px 6px", color: "#38bdf8" }}
+            title="Tester l'appel vocal IA pour cette tâche"
+            id={`call-task-${task.id}`}
+          >
+            <PhoneCall size={13} />
+          </button>
 
-        <button
-          onClick={(e) => { e.stopPropagation(); onClick(); }}
-          className="btn btn-ghost btn-sm"
-          style={{ padding: "6px", color: "var(--text-muted)" }}
-          title="Modifier"
-          id={`edit-task-${task.id}`}
-        >
-          <Edit2 size={13} />
-        </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onClick(); }}
+            className="btn btn-ghost btn-sm"
+            style={{ padding: "4px 6px", color: "var(--text-muted)" }}
+            title="Modifier"
+            id={`edit-task-${task.id}`}
+          >
+            <Edit2 size={13} />
+          </button>
 
-        <button
-          onClick={onDelete}
-          disabled={deleting}
-          className="btn btn-ghost btn-sm"
-          style={{ padding: "6px", color: "var(--text-muted)" }}
-          title="Supprimer"
-          id={`delete-task-${task.id}`}
-        >
-          {deleting ? <Loader2 size={13} style={{ animation: "spin 1s linear infinite" }} /> : <Trash2 size={13} />}
-        </button>
-      </div>
-
-      <style>{`
-        .task-hover-card:hover {
-          border-color: rgba(99, 102, 241, 0.4);
-          transform: translateY(-1px);
-        }
-      `}</style>
-    </div>
+          <button
+            onClick={onDelete}
+            disabled={deleting}
+            className="btn btn-ghost btn-sm"
+            style={{ padding: "4px 6px", color: "var(--text-muted)" }}
+            title="Supprimer"
+            id={`delete-task-${task.id}`}
+          >
+            {deleting ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+          </button>
+        </div>
+      </td>
+    </tr>
   );
 }
 

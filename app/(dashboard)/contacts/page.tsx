@@ -75,141 +75,159 @@ export default function ContactsPage() {
   };
 
   return (
-    <div style={{ padding: "32px", maxWidth: "960px" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "28px", flexWrap: "wrap", gap: "12px" }}>
+    <div style={{ padding: "32px 36px", maxWidth: "1280px", margin: "0 auto", width: "100%" }}>
+      {/* Header Pro */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "16px", paddingBottom: "20px", borderBottom: "1px solid var(--border-subtle)" }}>
         <div>
-          <h1 className="page-title">Contacts</h1>
-          <p className="page-subtitle">
-            {contacts.length} contact{contacts.length > 1 ? "s" : ""} enregistré{contacts.length > 1 ? "s" : ""} • Cliquez pour modifier ou appeler
+          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "#f8fafc", letterSpacing: "-0.02em" }}>
+            Contacts & Répertoire
+          </h1>
+          <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
+            {contacts.length} contact{contacts.length > 1 ? "s" : ""} enregistré{contacts.length > 1 ? "s" : ""} • Synchronisé avec vos rendez-vous et vos rappels vocaux
           </p>
         </div>
-        <button onClick={() => setShowForm(true)} className="btn btn-primary" id="contacts-new">
-          <Plus size={16} />
-          Ajouter un contact
+        <button onClick={() => setShowForm(true)} className="btn btn-primary" id="contacts-new" style={{ gap: "6px", fontSize: "12px", padding: "8px 16px" }}>
+          <Plus size={15} />
+          <span>Ajouter un contact</span>
         </button>
       </div>
 
       {loading ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "14px" }}>
-          {[1, 2, 3].map((i) => <div key={i} className="skeleton" style={{ height: "120px" }} />)}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {[1, 2, 3, 4].map((i) => <div key={i} className="skeleton" style={{ height: "48px", borderRadius: "8px" }} />)}
         </div>
       ) : contacts.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon"><Users size={28} /></div>
-          <p style={{ color: "var(--text-secondary)", fontSize: "15px", fontWeight: "500" }}>Aucun contact</p>
-          <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>Ajoutez des contacts pour les lier à vos rendez-vous et vos rappels</p>
+        <div className="empty-state" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "12px", padding: "40px" }}>
+          <div className="empty-state-icon" style={{ background: "rgba(255, 255, 255, 0.04)" }}><Users size={24} /></div>
+          <p style={{ color: "var(--text-secondary)", fontSize: "14px", fontWeight: "500" }}>Aucun contact enregistré</p>
+          <p style={{ color: "var(--text-muted)", fontSize: "12px" }}>Ajoutez vos premiers contacts pour enrichir vos rappels et votre agenda.</p>
+          <button onClick={() => setShowForm(true)} className="btn btn-primary btn-sm" style={{ marginTop: "12px" }}>
+            <Plus size={14} />
+            <span>Créer un contact</span>
+          </button>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "14px" }}>
-          {contacts.map((contact) => (
-            <div
-              key={contact.id}
-              onClick={() => setEditingContact(contact)}
-              className="card contact-hover-card"
-              style={{
-                textAlign: "left",
-                cursor: "pointer",
-                padding: "16px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                transition: "all 0.2s",
-                position: "relative",
-              }}
-              id={`contact-${contact.id}`}
-            >
-              <div>
-                {/* Avatar & Name */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div className="data-table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th className="data-th" style={{ width: "40px", textAlign: "center" }}>Avatar</th>
+                <th className="data-th">Nom & Entreprise</th>
+                <th className="data-th" style={{ width: "180px" }}>Téléphone</th>
+                <th className="data-th" style={{ width: "220px" }}>Email</th>
+                <th className="data-th">Adresse & Notes</th>
+                <th className="data-th" style={{ width: "130px", textAlign: "right" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contacts.map((contact) => (
+                <tr
+                  key={contact.id}
+                  onClick={() => setEditingContact(contact)}
+                  className="data-tr"
+                  style={{ cursor: "pointer" }}
+                  id={`contact-${contact.id}`}
+                >
+                  {/* Avatar */}
+                  <td className="data-td" style={{ textAlign: "center", width: "40px" }}>
                     <div
                       style={{
-                        width: "42px",
-                        height: "42px",
-                        borderRadius: "50%",
-                        background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-                        display: "flex",
+                        width: "30px",
+                        height: "30px",
+                        borderRadius: "6px",
+                        background: "linear-gradient(135deg, #1e293b, #334155)",
+                        border: "1px solid var(--border-subtle)",
+                        display: "inline-flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: "16px",
+                        fontSize: "12px",
                         fontWeight: "700",
-                        color: "white",
-                        flexShrink: 0,
+                        color: "#ffffff",
                       }}
                     >
                       {contact.firstName[0]}{contact.lastName?.[0] ?? ""}
                     </div>
-                    <div>
-                      <p style={{ fontSize: "15px", fontWeight: "700", color: "var(--text-primary)" }}>
+                  </td>
+
+                  {/* Name & Company */}
+                  <td className="data-td">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                      <span style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc" }}>
                         {contact.firstName} {contact.lastName ?? ""}
-                      </p>
+                      </span>
                       {contact.company && (
-                        <p style={{ fontSize: "12px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px" }}>
+                        <span style={{ fontSize: "11px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px" }}>
                           <Building size={11} /> {contact.company}
-                        </p>
+                        </span>
                       )}
                     </div>
-                  </div>
+                  </td>
 
-                  <div style={{ display: "flex", gap: "4px" }}>
-                    <button
-                      onClick={(e) => handleTestContactCall(contact, e)}
-                      className="btn btn-ghost btn-sm"
-                      style={{ padding: "6px", color: "var(--accent-primary)" }}
-                      title="Tester le rappel vocal IA pour ce contact"
-                    >
-                      <PhoneCall size={14} />
-                    </button>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setEditingContact(contact); }}
-                      className="btn btn-ghost btn-sm"
-                      style={{ padding: "6px", color: "var(--text-muted)" }}
-                      title="Modifier le contact"
-                    >
-                      <Edit2 size={13} />
-                    </button>
-                    <button
-                      onClick={(e) => deleteContact(contact.id, e)}
-                      disabled={deletingId === contact.id}
-                      className="btn btn-ghost btn-sm"
-                      style={{ padding: "6px", color: "var(--text-muted)" }}
-                      title="Supprimer le contact"
-                    >
-                      {deletingId === contact.id ? <Loader2 size={13} style={{ animation: "spin 1s linear infinite" }} /> : <Trash2 size={13} />}
-                    </button>
-                  </div>
-                </div>
+                  {/* Phone */}
+                  <td className="data-td">
+                    {contact.phone ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "var(--text-secondary)" }}>
+                        <Phone size={12} color="var(--text-muted)" />
+                        <span>{contact.phone}</span>
+                      </div>
+                    ) : (
+                      <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>—</span>
+                    )}
+                  </td>
 
-                {/* Details */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                  {contact.phone && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      <Phone size={12} color="var(--text-muted)" />
-                      <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{contact.phone}</span>
-                    </div>
-                  )}
-                  {contact.email && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      <Mail size={12} color="var(--text-muted)" />
-                      <span style={{ fontSize: "13px", color: "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{contact.email}</span>
-                    </div>
-                  )}
-                  {contact.address && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      <MapPin size={12} color="var(--text-muted)" />
-                      <span style={{ fontSize: "12px", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{contact.address}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+                  {/* Email */}
+                  <td className="data-td">
+                    {contact.email ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        <Mail size={12} color="var(--text-muted)" />
+                        <span>{contact.email}</span>
+                      </div>
+                    ) : (
+                      <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>—</span>
+                    )}
+                  </td>
 
-              {contact.notes && (
-                <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "10px", borderTop: "1px solid var(--border-subtle)", paddingTop: "8px" }}>
-                  {contact.notes}
-                </p>
-              )}
-            </div>
-          ))}
+                  {/* Address & Notes */}
+                  <td className="data-td">
+                    <div style={{ fontSize: "11px", color: "var(--text-muted)", maxWidth: "250px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {contact.address || contact.notes || "—"}
+                    </div>
+                  </td>
+
+                  {/* Actions */}
+                  <td className="data-td" style={{ textAlign: "right" }} onClick={(e) => e.stopPropagation()}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      <button
+                        onClick={(e) => handleTestContactCall(contact, e)}
+                        className="btn btn-ghost btn-sm"
+                        style={{ padding: "4px 6px", color: "#38bdf8" }}
+                        title="Tester le rappel vocal IA pour ce contact"
+                      >
+                        <PhoneCall size={13} />
+                      </button>
+                      <button
+                        onClick={() => setEditingContact(contact)}
+                        className="btn btn-ghost btn-sm"
+                        style={{ padding: "4px 6px", color: "var(--text-muted)" }}
+                        title="Modifier le contact"
+                      >
+                        <Edit2 size={13} />
+                      </button>
+                      <button
+                        onClick={(e) => deleteContact(contact.id, e)}
+                        disabled={deletingId === contact.id}
+                        className="btn btn-ghost btn-sm"
+                        style={{ padding: "4px 6px", color: "var(--text-muted)" }}
+                        title="Supprimer le contact"
+                      >
+                        {deletingId === contact.id ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -218,8 +236,8 @@ export default function ContactsPage() {
         <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowForm(false)}>
           <div className="modal animate-scale-in" style={{ maxWidth: "520px" }}>
             <div style={{ padding: "20px 24px", borderBottom: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <h2 style={{ fontSize: "17px", fontWeight: "700", color: "var(--text-primary)" }}>Nouveau contact</h2>
-              <button onClick={() => setShowForm(false)} className="btn btn-ghost" style={{ padding: "6px" }}><X size={18} /></button>
+              <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#f8fafc" }}>Nouveau contact</h2>
+              <button onClick={() => setShowForm(false)} className="btn btn-ghost" style={{ padding: "4px" }}><X size={18} /></button>
             </div>
             <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "14px" }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
@@ -256,7 +274,7 @@ export default function ContactsPage() {
             <div style={{ padding: "16px 24px", borderTop: "1px solid var(--border-subtle)", display: "flex", gap: "12px", justifyContent: "flex-end" }}>
               <button onClick={() => setShowForm(false)} className="btn btn-secondary">Annuler</button>
               <button onClick={saveContact} disabled={saving || !formData.firstName.trim()} className="btn btn-primary" id="contact-save">
-                {saving && <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />}
+                {saving && <Loader2 size={14} className="animate-spin" />}
                 {saving ? "Enregistrement..." : "Ajouter le contact"}
               </button>
             </div>
@@ -273,15 +291,6 @@ export default function ContactsPage() {
           onDeleted={() => { setEditingContact(null); load(); }}
         />
       )}
-
-      <style>{`
-        .contact-hover-card:hover {
-          border-color: rgba(99, 102, 241, 0.4);
-          transform: translateY(-2px);
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @media (max-width: 768px) { div[style*="padding: 32px"] { padding: 16px !important; } }
-      `}</style>
     </div>
   );
 }

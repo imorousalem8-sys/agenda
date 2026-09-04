@@ -242,34 +242,34 @@ export default function AgentPage() {
   return (
     <div
       style={{
-        maxWidth: "880px",
+        maxWidth: "960px",
         margin: "0 auto",
         height: "calc(100vh - 44px)",
         display: "flex",
         flexDirection: "column",
-        padding: "16px 20px 20px",
+        padding: "24px 28px 24px",
+        width: "100%",
       }}
     >
-      {/* Top Header */}
+      {/* Top Header Pro */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           padding: "12px 18px",
-          borderRadius: "16px",
-          background: "rgba(17, 24, 39, 0.7)",
-          backdropFilter: "blur(16px)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRadius: "10px",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-subtle)",
           marginBottom: "16px",
         }}
       >
         <div>
           <h1 style={{ fontSize: "16px", fontWeight: "700", color: "#ffffff", letterSpacing: "-0.01em" }}>
-            Copilote IA & Agenda
+            Console Copilote IA
           </h1>
-          <p style={{ fontSize: "11px", color: "var(--text-secondary)" }}>
-            Échanges naturels • Planification et rappels connectés
+          <p style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+            Contrôle vocal et textuel connecté à vos événements, tâches et alertes
           </p>
         </div>
 
@@ -280,16 +280,16 @@ export default function AgentPage() {
               onClick={stopSpeaking}
               className="btn btn-sm"
               style={{
-                background: "rgba(239, 68, 68, 0.2)",
+                background: "rgba(239, 68, 68, 0.15)",
                 color: "#fca5a5",
-                border: "1px solid rgba(239, 68, 68, 0.4)",
+                border: "1px solid rgba(239, 68, 68, 0.3)",
                 gap: "6px",
-                fontSize: "12px",
-                padding: "6px 12px",
-                borderRadius: "20px",
+                fontSize: "11px",
+                padding: "4px 10px",
+                borderRadius: "6px",
               }}
             >
-              <StopCircle size={14} />
+              <StopCircle size={13} />
               <span>Arrêter la voix</span>
             </button>
           )}
@@ -303,7 +303,7 @@ export default function AgentPage() {
               }
             }}
             className="btn btn-ghost btn-sm"
-            style={{ padding: "6px 10px", color: voiceEnabled ? "#818cf8" : "var(--text-muted)" }}
+            style={{ padding: "6px 8px", color: voiceEnabled ? "#38bdf8" : "var(--text-muted)" }}
             title={voiceEnabled ? "Désactiver la lecture vocale" : "Activer la lecture vocale"}
           >
             {voiceEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
@@ -323,7 +323,7 @@ export default function AgentPage() {
               setActiveTarget(null);
             }}
             className="btn btn-ghost btn-sm"
-            style={{ padding: "6px" }}
+            style={{ padding: "6px 8px" }}
             title="Effacer la conversation"
           >
             <RotateCcw size={15} />
@@ -333,13 +333,13 @@ export default function AgentPage() {
 
       {/* Main Chat Container */}
       <div
-        className="glass-card"
         style={{
           flex: 1,
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          borderRadius: "20px",
+          borderRadius: "12px",
+          background: "var(--bg-card)",
           border: "1px solid var(--border-subtle)",
         }}
       >
@@ -347,9 +347,9 @@ export default function AgentPage() {
         {isListening && (
           <div
             style={{
-              padding: "10px 18px",
-              background: "rgba(239, 68, 68, 0.15)",
-              borderBottom: "1px solid rgba(239, 68, 68, 0.3)",
+              padding: "8px 16px",
+              background: "rgba(239, 68, 68, 0.12)",
+              borderBottom: "1px solid rgba(239, 68, 68, 0.25)",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -358,8 +358,8 @@ export default function AgentPage() {
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <span
                 style={{
-                  width: "8px",
-                  height: "8px",
+                  width: "7px",
+                  height: "7px",
                   borderRadius: "50%",
                   background: "#ef4444",
                   display: "inline-block",
@@ -367,7 +367,7 @@ export default function AgentPage() {
                 className="animate-pulse"
               />
               <span style={{ fontSize: "12px", fontWeight: "600", color: "#fca5a5" }}>
-                À votre écoute... Parlez maintenant, l&apos;IA traitera votre phrase dès que vous aurez fini.
+                À votre écoute... Énoncez votre consigne.
               </span>
             </div>
 
@@ -389,8 +389,8 @@ export default function AgentPage() {
             padding: "20px",
             display: "flex",
             flexDirection: "column",
-            gap: "14px",
-            background: "rgba(10, 14, 23, 0.95)",
+            gap: "12px",
+            background: "var(--bg-app)",
           }}
         >
           {messages.map((msg) => (
@@ -408,55 +408,55 @@ export default function AgentPage() {
               <div
                 style={{
                   maxWidth: "80%",
-                  padding: "12px 16px",
-                  borderRadius: msg.sender === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+                  padding: "10px 14px",
+                  borderRadius: msg.sender === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
                   background: msg.sender === "user"
-                    ? "linear-gradient(135deg, #6366f1, #4f46e5)"
-                    : "rgba(24, 32, 51, 0.9)",
-                  color: msg.sender === "user" ? "#ffffff" : "#f1f5f9",
-                  fontSize: "14px",
-                  lineHeight: "1.55",
-                  border: msg.sender === "ai" ? "1px solid rgba(255, 255, 255, 0.08)" : "none",
+                    ? "var(--accent-primary)"
+                    : "var(--bg-card)",
+                  color: "#ffffff",
+                  fontSize: "13px",
+                  lineHeight: "1.5",
+                  border: msg.sender === "ai" ? "1px solid var(--border-subtle)" : "none",
                   whiteSpace: "pre-wrap",
                 }}
               >
                 {msg.text}
               </div>
 
-              {/* Action Card (Only if a real action occurred) */}
+              {/* Action Card */}
               {msg.action && (
                 <div
                   style={{
                     width: "80%",
-                    background: "rgba(99, 102, 241, 0.08)",
-                    border: "1px solid rgba(99, 102, 241, 0.35)",
-                    borderRadius: "14px",
-                    padding: "12px 16px",
+                    background: "var(--bg-card)",
+                    border: "1px solid var(--border-subtle)",
+                    borderRadius: "8px",
+                    padding: "10px 14px",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
-                    <span className="badge badge-glow-purple" style={{ fontSize: "10px" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
+                    <span style={{ fontSize: "10px", fontWeight: "600", color: "#38bdf8", textTransform: "uppercase" }}>
                       {msg.action.type === "EVENT" ? "Rendez-vous" : msg.action.type === "TASK" ? "Tâche" : "Rappel"}
                     </span>
-                    <span style={{ fontSize: "11px", color: "#34d399", fontWeight: "700", display: "flex", alignItems: "center", gap: "4px" }}>
-                      <CheckCircle2 size={13} />
+                    <span style={{ fontSize: "11px", color: "#10b981", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
+                      <CheckCircle2 size={12} />
                       Enregistré
                     </span>
                   </div>
 
-                  <p style={{ fontSize: "13px", fontWeight: "700", color: "#ffffff", marginBottom: "3px" }}>
+                  <p style={{ fontSize: "13px", fontWeight: "600", color: "#ffffff", marginBottom: "2px" }}>
                     {msg.action.title}
                   </p>
 
                   {msg.action.contactName && (
-                    <p style={{ fontSize: "11px", color: "#38bdf8", marginBottom: "3px" }}>
+                    <p style={{ fontSize: "11px", color: "var(--text-muted)", marginBottom: "2px" }}>
                       👤 Contact : {msg.action.contactName}
                     </p>
                   )}
 
                   {msg.action.dateTime && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", color: "#a5b4fc" }}>
-                      <Clock size={12} />
+                    <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "#38bdf8" }}>
+                      <Clock size={11} />
                       {formatDate(msg.action.dateTime)}
                     </div>
                   )}
@@ -466,22 +466,22 @@ export default function AgentPage() {
           ))}
 
           {loading && (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#94a3b8", fontSize: "13px", padding: "6px" }}>
-              <Loader2 size={16} style={{ animation: "spin 1s linear infinite", color: "#6366f1" }} />
-              <span>Réflexion en cours...</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-muted)", fontSize: "12px", padding: "4px" }}>
+              <Loader2 size={14} className="animate-spin" style={{ color: "var(--accent-primary)" }} />
+              <span>Traitement de votre demande...</span>
             </div>
           )}
           <div ref={chatBottomRef} />
         </div>
 
         {/* Input Bar */}
-        <div style={{ padding: "14px 18px", borderTop: "1px solid var(--border-subtle)", background: "var(--bg-secondary)" }}>
+        <div style={{ padding: "12px 16px", borderTop: "1px solid var(--border-subtle)", background: "var(--bg-card)" }}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSendMessage();
             }}
-            style={{ display: "flex", alignItems: "center", gap: "10px" }}
+            style={{ display: "flex", alignItems: "center", gap: "8px" }}
           >
             <input
               type="text"
@@ -490,7 +490,7 @@ export default function AgentPage() {
               placeholder="Écrivez ou dictez votre consigne..."
               className="form-input"
               id="agent-chat-input"
-              style={{ fontSize: "14px", padding: "12px 16px", flex: 1 }}
+              style={{ fontSize: "13px", padding: "8px 12px", flex: 1 }}
             />
 
             <button
@@ -499,19 +499,19 @@ export default function AgentPage() {
                 if (isListening) stopListening();
                 else startListening();
               }}
-              className={`btn ${isListening ? "btn-danger listening-pulse" : "btn-secondary"}`}
+              className={`btn ${isListening ? "btn-danger" : "btn-secondary"}`}
               style={{
-                padding: "12px 16px",
+                padding: "8px 14px",
                 flexShrink: 0,
-                fontSize: "13px",
+                fontSize: "12px",
                 gap: "6px",
                 borderColor: isListening ? "#ef4444" : undefined,
-                color: isListening ? "#ffffff" : "#818cf8",
+                color: isListening ? "#ffffff" : "#38bdf8",
               }}
               title={isListening ? "Arrêter d'écouter" : "Parler au micro"}
               id="agent-mic-btn"
             >
-              {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+              {isListening ? <MicOff size={15} /> : <Mic size={15} />}
               <span>{isListening ? "Écoute..." : "Micro"}</span>
             </button>
 
@@ -519,10 +519,10 @@ export default function AgentPage() {
               type="submit"
               disabled={loading || !inputMessage.trim()}
               className="btn btn-primary"
-              style={{ padding: "12px 20px", flexShrink: 0, fontSize: "13px" }}
+              style={{ padding: "8px 16px", flexShrink: 0, fontSize: "12px" }}
               id="agent-send-btn"
             >
-              <Send size={15} />
+              <Send size={14} />
               <span>Envoyer</span>
             </button>
           </form>

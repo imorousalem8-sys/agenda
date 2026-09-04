@@ -122,9 +122,9 @@ export default function DashboardLayout({
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0, 0, 0, 0.7)",
+            background: "rgba(0, 0, 0, 0.8)",
             zIndex: 40,
-            backdropFilter: "blur(4px)",
+            backdropFilter: "blur(6px)",
           }}
           className="mobile-backdrop"
         />
@@ -135,15 +135,15 @@ export default function DashboardLayout({
         style={{
           width: "260px",
           flexShrink: 0,
-          background: "#0a0f1d",
-          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "var(--bg-sidebar)",
+          borderRight: "1px solid var(--border-subtle)",
           display: "flex",
           flexDirection: "column",
           position: "sticky",
           top: 0,
           height: "100vh",
           zIndex: 45,
-          transition: "transform 0.25s ease",
+          transition: "transform 0.2s ease",
         }}
         className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}
       >
@@ -151,7 +151,7 @@ export default function DashboardLayout({
         <div
           style={{
             padding: "20px 18px",
-            borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+            borderBottom: "1px solid var(--border-subtle)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -175,37 +175,38 @@ export default function DashboardLayout({
             style={{
               width: "100%",
               padding: "10px 14px",
-              borderRadius: "12px",
-              background: "linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(99, 102, 241, 0.25))",
-              border: "1px solid rgba(99, 102, 241, 0.4)",
-              color: "#f8fafc",
+              borderRadius: "10px",
+              background: "var(--bg-card)",
+              border: "1px solid var(--border-strong)",
+              color: "var(--text-primary)",
               display: "flex",
               alignItems: "center",
               gap: "10px",
-              fontWeight: "700",
+              fontWeight: "600",
               fontSize: "13px",
               cursor: "pointer",
-              transition: "all 0.2s ease",
+              transition: "all 0.15s ease",
             }}
-            className="hover:scale-[1.02]"
+            className="hover:border-slate-500"
           >
             <div
               style={{
                 width: "28px",
                 height: "28px",
                 borderRadius: "8px",
-                background: "linear-gradient(135deg, #06b6d4, #6366f1)",
+                background: "linear-gradient(135deg, #2563eb, #06b6d4)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "#ffffff",
+                boxShadow: "0 0 12px rgba(37, 99, 235, 0.3)",
               }}
             >
               <Bot size={16} />
             </div>
             <div style={{ textAlign: "left", flex: 1 }}>
-              <div>Assistant IA</div>
-              <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: "500" }}>Commandes & Voix</div>
+              <div style={{ color: "#f8fafc" }}>Assistant IA</div>
+              <div style={{ fontSize: "10px", color: "var(--text-muted)", fontWeight: "500" }}>Commandes & Voix</div>
             </div>
           </button>
         </div>
@@ -215,8 +216,8 @@ export default function DashboardLayout({
           <div
             style={{
               fontSize: "10px",
-              fontWeight: "800",
-              color: "#64748b",
+              fontWeight: "700",
+              color: "var(--text-muted)",
               textTransform: "uppercase",
               letterSpacing: "0.8px",
               padding: "6px 12px",
@@ -238,21 +239,21 @@ export default function DashboardLayout({
                   display: "flex",
                   alignItems: "center",
                   gap: "12px",
-                  padding: "10px 14px",
-                  borderRadius: "10px",
+                  padding: "9px 12px",
+                  borderRadius: "8px",
                   marginBottom: "3px",
                   fontSize: "13px",
-                  fontWeight: isActive ? "700" : "500",
+                  fontWeight: isActive ? "600" : "500",
                   color: isActive ? "#ffffff" : "var(--text-secondary)",
-                  background: isActive ? "linear-gradient(90deg, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.1))" : "transparent",
-                  border: isActive ? "1px solid rgba(99, 102, 241, 0.3)" : "1px solid transparent",
+                  background: isActive ? "rgba(255, 255, 255, 0.06)" : "transparent",
+                  border: isActive ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid transparent",
                   transition: "all 0.15s ease",
                   textDecoration: "none",
                 }}
                 className={isActive ? "nav-link-active" : "hover:bg-slate-800/40"}
               >
                 <Icon
-                  size={18}
+                  size={17}
                   style={{
                     color: isActive ? "#38bdf8" : "var(--text-muted)",
                     flexShrink: 0,
@@ -266,8 +267,8 @@ export default function DashboardLayout({
           <div
             style={{
               fontSize: "10px",
-              fontWeight: "800",
-              color: "#64748b",
+              fontWeight: "700",
+              color: "var(--text-muted)",
               textTransform: "uppercase",
               letterSpacing: "0.8px",
               padding: "14px 12px 6px",
@@ -283,8 +284,8 @@ export default function DashboardLayout({
               display: "flex",
               alignItems: "center",
               gap: "12px",
-              padding: "9px 14px",
-              borderRadius: "10px",
+              padding: "8px 12px",
+              borderRadius: "8px",
               fontSize: "13px",
               fontWeight: "500",
               color: "var(--text-secondary)",
@@ -295,7 +296,7 @@ export default function DashboardLayout({
             }}
             className="hover:bg-slate-800/40"
           >
-            <Volume2 size={18} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
+            <Volume2 size={17} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
             <span>Voix & Synthèse</span>
           </button>
 
@@ -306,8 +307,8 @@ export default function DashboardLayout({
               display: "flex",
               alignItems: "center",
               gap: "12px",
-              padding: "9px 14px",
-              borderRadius: "10px",
+              padding: "8px 12px",
+              borderRadius: "8px",
               fontSize: "13px",
               fontWeight: "500",
               color: "var(--text-secondary)",
@@ -318,10 +319,9 @@ export default function DashboardLayout({
             }}
             className="hover:bg-slate-800/40"
           >
-            <Phone size={18} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
+            <Phone size={17} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
             <span>Téléphonie & Alertes</span>
           </button>
-
         </nav>
 
         {/* Live Quota Indicator Box */}
@@ -332,24 +332,25 @@ export default function DashboardLayout({
         {/* User Footer */}
         <div
           style={{
-            padding: "14px 16px",
-            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+            padding: "12px 14px",
+            borderTop: "1px solid var(--border-subtle)",
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            background: "rgba(10, 15, 30, 0.5)",
+            background: "rgba(0, 0, 0, 0.3)",
           }}
         >
           <div
             style={{
-              width: "34px",
-              height: "34px",
-              borderRadius: "50%",
-              background: "linear-gradient(135deg, #6366f1, #06b6d4)",
+              width: "32px",
+              height: "32px",
+              borderRadius: "8px",
+              background: "linear-gradient(135deg, #1e293b, #334155)",
+              border: "1px solid var(--border-subtle)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontWeight: "800",
+              fontWeight: "700",
               fontSize: "13px",
               color: "#ffffff",
               flexShrink: 0,
@@ -359,10 +360,10 @@ export default function DashboardLayout({
           </div>
 
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "13px", fontWeight: "700", color: "#f8fafc", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <div style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {session?.user?.name || "Utilisateur"}
             </div>
-            <div style={{ fontSize: "11px", color: isPro ? "#10b981" : "var(--text-muted)", fontWeight: isPro ? "700" : "500" }}>
+            <div style={{ fontSize: "11px", color: isPro ? "#10b981" : "var(--text-muted)", fontWeight: isPro ? "600" : "500" }}>
               {isPro ? "✓ Compte Pro" : "Compte Gratuit"}
             </div>
           </div>
@@ -384,8 +385,8 @@ export default function DashboardLayout({
         {isDemoUser && (
           <div
             style={{
-              background: "linear-gradient(90deg, #1e1b4b, #31104b, #1e1b4b)",
-              borderBottom: "1px solid rgba(168, 85, 247, 0.4)",
+              background: "#111827",
+              borderBottom: "1px solid var(--border-subtle)",
               padding: "8px 16px",
               display: "flex",
               alignItems: "center",
@@ -396,17 +397,17 @@ export default function DashboardLayout({
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span style={{ background: "#f59e0b", color: "#000000", fontWeight: "900", padding: "2px 7px", borderRadius: "6px", fontSize: "10px" }}>
+              <span style={{ background: "#f59e0b", color: "#000000", fontWeight: "800", padding: "2px 7px", borderRadius: "4px", fontSize: "10px" }}>
                 MODE DÉMO
               </span>
-              <span style={{ color: "#e2e8f0" }}>
+              <span style={{ color: "#94a3b8" }}>
                 Vous naviguez sur le compte d&apos;évaluation.
               </span>
             </div>
             <button
               onClick={handleExitDemoAndRegister}
               className="btn btn-primary btn-sm"
-              style={{ padding: "5px 12px", fontSize: "11px", fontWeight: "800", background: "linear-gradient(135deg, #10b981, #06b6d4)" }}
+              style={{ padding: "4px 10px", fontSize: "11px", fontWeight: "600" }}
             >
               <UserPlus size={12} />
               <span>Créer mon compte</span>
@@ -421,7 +422,7 @@ export default function DashboardLayout({
             alignItems: "center",
             padding: "10px 14px",
             borderBottom: "1px solid var(--border-subtle)",
-            background: "#0a0f1d",
+            background: "var(--bg-sidebar)",
             position: "sticky",
             top: 0,
             zIndex: 30,
@@ -446,7 +447,6 @@ export default function DashboardLayout({
               padding: "6px 12px",
               gap: "6px",
               fontSize: "12px",
-              background: "linear-gradient(135deg, #06b6d4, #6366f1)",
             }}
           >
             <Bot size={14} />

@@ -101,211 +101,256 @@ export default function RemindersPage() {
   };
 
   return (
-    <div style={{ padding: "32px", maxWidth: "960px" }}>
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+    <div style={{ padding: "32px 36px", maxWidth: "1280px", margin: "0 auto", width: "100%" }}>
+      {/* Header Pro */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "16px", paddingBottom: "20px", borderBottom: "1px solid var(--border-subtle)" }}>
         <div>
-          <h1 className="page-title">Rappels & Alarmes</h1>
-          <p className="page-subtitle">Gérez et programmez tous vos rappels intelligents et appels vocaux IA</p>
+          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "#f8fafc", letterSpacing: "-0.02em" }}>
+            Rappels & Alarmes Vocales
+          </h1>
+          <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
+            Programmation et supervision de vos alertes directes et appels vocaux IA
+          </p>
         </div>
         <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
           <button
             onClick={() => handleTestCall()}
             className="btn btn-secondary"
             id="reminders-test-call"
-            style={{ gap: "6px" }}
+            style={{ gap: "6px", fontSize: "12px", padding: "8px 14px" }}
           >
-            <PhoneCall size={15} color="var(--accent-primary)" />
-            Tester l&apos;appel vocal IA
+            <PhoneCall size={14} color="#38bdf8" />
+            <span>Tester l&apos;appel vocal IA</span>
           </button>
           <button
             onClick={() => setShowQuickModal(true)}
             className="btn btn-primary"
             id="reminders-new"
+            style={{ gap: "6px", fontSize: "12px", padding: "8px 16px" }}
           >
-            <Plus size={16} />
-            Nouveau rappel direct
+            <Plus size={15} />
+            <span>Nouveau rappel</span>
           </button>
         </div>
       </div>
 
-      {/* Platform info banner */}
+      {/* Info banner - Sobre & Epuré */}
       <div
         style={{
-          background: "rgba(99,102,241,0.08)",
-          border: "1px solid rgba(99,102,241,0.2)",
-          borderRadius: "14px",
-          padding: "14px 18px",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: "10px",
+          padding: "12px 16px",
           marginBottom: "24px",
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: "center",
           gap: "12px",
         }}
       >
-        <PhoneCall size={18} color="var(--accent-primary)" style={{ marginTop: "2px", flexShrink: 0 }} />
-        <div>
-          <p style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)", marginBottom: "4px" }}>
-            Comment fonctionne le rappel vocal IA
-          </p>
-          <p style={{ fontSize: "12px", color: "var(--text-secondary)", lineHeight: "1.5" }}>
-            📞 <strong>Appel vocal IA interactif :</strong> Dès l&apos;échéance, votre téléphone/navigateur sonne comme un vrai smartphone. En décrochant, l&apos;IA vous énonce vocalement en français le titre et les consignes du rappel, et attend votre confirmation.
-          </p>
+        <PhoneCall size={16} color="#38bdf8" style={{ flexShrink: 0 }} />
+        <div style={{ flex: 1 }}>
+          <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>
+            Appel vocal IA interactif :{" "}
+          </span>
+          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+            À l&apos;heure programmée, l&apos;IA émet une alarme ou un appel vocal interactif pour vous communiquer les détails du rappel.
+          </span>
         </div>
       </div>
 
-      {/* Filters */}
-      <div style={{ display: "flex", gap: "8px", marginBottom: "20px", flexWrap: "wrap" }}>
-        <Filter size={14} color="var(--text-muted)" style={{ alignSelf: "center" }} />
-        {(["ALL", "PENDING", "FIRED", "DISMISSED"] as const).map((s) => (
-          <button
-            key={s}
-            onClick={() => setFilter(s)}
-            className={`btn btn-sm ${filter === s ? "btn-primary" : "btn-secondary"}`}
-            id={`filter-${s.toLowerCase()}`}
-          >
-            {s === "ALL" ? "Tous" : STATUS_LABELS[s]}
-          </button>
-        ))}
+      {/* Filters Bar */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+          <Filter size={13} color="var(--text-muted)" />
+          {(["ALL", "PENDING", "FIRED", "DISMISSED"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setFilter(s)}
+              className={`btn btn-sm ${filter === s ? "btn-primary" : "btn-secondary"}`}
+              style={{ fontSize: "11px", padding: "4px 10px" }}
+              id={`filter-${s.toLowerCase()}`}
+            >
+              {s === "ALL" ? "Tous les statuts" : STATUS_LABELS[s]}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+          Total : <strong style={{ color: "#f8fafc" }}>{reminders.length}</strong> rappels
+        </div>
       </div>
 
-      {/* List */}
+      {/* Structured Table */}
       {loading ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {[1, 2, 3].map((i) => <div key={i} className="skeleton" style={{ height: "80px" }} />)}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {[1, 2, 3, 4].map((i) => <div key={i} className="skeleton" style={{ height: "48px", borderRadius: "8px" }} />)}
         </div>
       ) : reminders.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">
-            <Bell size={28} />
+        <div className="empty-state" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "12px", padding: "40px" }}>
+          <div className="empty-state-icon" style={{ background: "rgba(255, 255, 255, 0.04)" }}>
+            <Bell size={24} />
           </div>
-          <p style={{ color: "var(--text-secondary)", fontSize: "15px", fontWeight: "500" }}>
+          <p style={{ color: "var(--text-secondary)", fontSize: "14px", fontWeight: "500" }}>
             Aucun rappel{filter !== "ALL" ? ` avec le statut "${STATUS_LABELS[filter]}"` : ""}
           </p>
-          <p style={{ color: "var(--text-muted)", fontSize: "13px", marginBottom: "12px" }}>
-            Créez un rappel direct ou une tâche pour recevoir un appel vocal IA
-          </p>
-          <button onClick={() => setShowQuickModal(true)} className="btn btn-primary">
-            <Plus size={15} />
-            Programmer un rappel
+          <button onClick={() => setShowQuickModal(true)} className="btn btn-primary btn-sm" style={{ marginTop: "12px" }}>
+            <Plus size={14} />
+            <span>Créer un premier rappel</span>
           </button>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {reminders.map((reminder) => (
-            <div
-              key={reminder.id}
-              className="card reminder-hover-card"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                padding: "16px 18px",
-                borderLeft: `4px solid ${STATUS_COLORS[reminder.status] ?? "#5a6a8a"}`,
-                transition: "all 0.2s",
-              }}
-            >
-              {/* Icon */}
-              <div style={{ fontSize: "24px", flexShrink: 0 }}>
-                {methodIcon(reminder.method)}
-              </div>
+        <div className="data-table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th className="data-th" style={{ width: "40px", textAlign: "center" }}>Type</th>
+                <th className="data-th">Titre & Consignes</th>
+                <th className="data-th" style={{ width: "120px" }}>Statut</th>
+                <th className="data-th" style={{ width: "180px" }}>Déclenchement</th>
+                <th className="data-th" style={{ width: "150px", textAlign: "right" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reminders.map((reminder) => (
+                <tr key={reminder.id} className="data-tr">
+                  {/* Icon */}
+                  <td className="data-td" style={{ textAlign: "center", fontSize: "16px" }}>
+                    {methodIcon(reminder.method)}
+                  </td>
 
-              {/* Content */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px", flexWrap: "wrap" }}>
-                  <p style={{ fontSize: "15px", fontWeight: "700", color: "var(--text-primary)" }}>
-                    {reminder.title}
-                  </p>
-                  {reminder.isVeille && (
-                    <span className="badge" style={{ background: "rgba(99,102,241,0.15)", color: "var(--accent-primary)", border: "1px solid rgba(99,102,241,0.3)", fontSize: "10px" }}>
-                      Veille
+                  {/* Title & Body */}
+                  <td className="data-td">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc" }}>
+                          {reminder.title}
+                        </span>
+                        {reminder.isVeille && (
+                          <span style={{ fontSize: "10px", fontWeight: "600", padding: "1px 6px", borderRadius: "4px", background: "rgba(56, 189, 248, 0.12)", color: "#38bdf8", border: "1px solid rgba(56, 189, 248, 0.3)" }}>
+                            Veille
+                          </span>
+                        )}
+                      </div>
+
+                      {reminder.body && (
+                        <div style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: "1.4" }}>
+                          {reminder.body}
+                        </div>
+                      )}
+
+                      {(reminder.task || reminder.event) && (
+                        <div style={{ fontSize: "11px", color: "#38bdf8", marginTop: "2px" }}>
+                          {reminder.task ? `Lié à : ${reminder.task.title}` : `RDV : ${reminder.event?.title}`}
+                        </div>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Status */}
+                  <td className="data-td">
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        fontSize: "11px",
+                        fontWeight: "600",
+                        padding: "2px 8px",
+                        borderRadius: "4px",
+                        background:
+                          reminder.status === "PENDING"
+                            ? "rgba(245, 158, 11, 0.12)"
+                            : reminder.status === "FIRED"
+                            ? "rgba(244, 63, 94, 0.12)"
+                            : "rgba(255, 255, 255, 0.03)",
+                        border:
+                          reminder.status === "PENDING"
+                            ? "1px solid rgba(245, 158, 11, 0.3)"
+                            : reminder.status === "FIRED"
+                            ? "1px solid rgba(244, 63, 94, 0.3)"
+                            : "1px solid var(--border-subtle)",
+                        color:
+                          reminder.status === "PENDING"
+                            ? "#fbbf24"
+                            : reminder.status === "FIRED"
+                            ? "#fb7185"
+                            : "var(--text-muted)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: "6px",
+                          height: "6px",
+                          borderRadius: "50%",
+                          background: STATUS_COLORS[reminder.status] ?? "#94a3b8",
+                        }}
+                      />
+                      <span>{STATUS_LABELS[reminder.status] || reminder.status}</span>
                     </span>
-                  )}
-                  <span
-                    className="badge"
-                    style={{
-                      background: `${STATUS_COLORS[reminder.status]}22`,
-                      color: STATUS_COLORS[reminder.status],
-                      border: `1px solid ${STATUS_COLORS[reminder.status]}44`,
-                      fontSize: "10px",
-                    }}
-                  >
-                    {STATUS_LABELS[reminder.status]}
-                  </span>
-                </div>
+                  </td>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <Clock size={12} color="var(--text-muted)" />
-                  <span style={{ fontSize: "12px", color: "var(--text-secondary)", fontWeight: "500" }}>
-                    {formatDate(reminder.fireAt)}
-                  </span>
-                </div>
+                  {/* Fire Date */}
+                  <td className="data-td">
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "#38bdf8", fontWeight: "500" }}>
+                      <Clock size={12} />
+                      <span>{formatDate(reminder.fireAt)}</span>
+                    </div>
+                  </td>
 
-                {reminder.body && (
-                  <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "3px" }}>
-                    {reminder.body}
-                  </p>
-                )}
+                  {/* Actions */}
+                  <td className="data-td" style={{ textAlign: "right" }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      <button
+                        onClick={() => handleTestCall(reminder)}
+                        className="btn btn-ghost btn-sm"
+                        style={{ padding: "4px 6px", color: "#38bdf8" }}
+                        title="Tester l'appel IA pour ce rappel"
+                        id={`test-call-${reminder.id}`}
+                      >
+                        <PhoneCall size={13} />
+                      </button>
 
-                {reminder.task && (
-                  <p style={{ fontSize: "11px", color: "var(--accent-primary)", marginTop: "2px" }}>
-                    Lié à la tâche : {reminder.task.title}
-                  </p>
-                )}
-                {reminder.event && (
-                  <p style={{ fontSize: "11px", color: "var(--accent-primary)", marginTop: "2px" }}>
-                    Lié au rendez-vous : {reminder.event.title}
-                  </p>
-                )}
-              </div>
+                      {reminder.status === "PENDING" && (
+                        <>
+                          <button
+                            onClick={() => snooze(reminder.id)}
+                            disabled={dismissing === reminder.id}
+                            className="btn btn-ghost btn-sm"
+                            style={{ padding: "4px 6px", color: "var(--text-muted)" }}
+                            title="Reporter 10 min"
+                            id={`snooze-${reminder.id}`}
+                          >
+                            <RotateCcw size={13} />
+                          </button>
+                          <button
+                            onClick={() => dismiss(reminder.id)}
+                            disabled={dismissing === reminder.id}
+                            className="btn btn-ghost btn-sm"
+                            style={{ padding: "4px 6px", color: "#10b981" }}
+                            title="Marquer comme terminé"
+                            id={`dismiss-${reminder.id}`}
+                          >
+                            <CheckCircle size={13} />
+                          </button>
+                        </>
+                      )}
 
-              {/* Actions */}
-              <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
-                <button
-                  onClick={() => handleTestCall(reminder)}
-                  className="btn btn-ghost btn-sm"
-                  title="Tester l'appel IA pour ce rappel"
-                  style={{ color: "var(--accent-primary)" }}
-                  id={`test-call-${reminder.id}`}
-                >
-                  <PhoneCall size={14} />
-                </button>
-
-                {reminder.status === "PENDING" && (
-                  <>
-                    <button
-                      onClick={() => snooze(reminder.id)}
-                      disabled={dismissing === reminder.id}
-                      className="btn btn-secondary btn-sm"
-                      title="Reporter 10 min"
-                      id={`snooze-${reminder.id}`}
-                    >
-                      <RotateCcw size={13} />
-                    </button>
-                    <button
-                      onClick={() => dismiss(reminder.id)}
-                      disabled={dismissing === reminder.id}
-                      className="btn btn-ghost btn-sm"
-                      title="Marquer comme terminé"
-                      id={`dismiss-${reminder.id}`}
-                    >
-                      <CheckCircle size={13} />
-                    </button>
-                  </>
-                )}
-
-                <button
-                  onClick={() => deleteReminder(reminder.id)}
-                  disabled={deletingId === reminder.id}
-                  className="btn btn-ghost btn-sm"
-                  title="Supprimer ce rappel"
-                  style={{ color: "var(--text-muted)" }}
-                  id={`delete-reminder-${reminder.id}`}
-                >
-                  {deletingId === reminder.id ? <Loader2 size={13} style={{ animation: "spin 1s linear infinite" }} /> : <Trash2 size={13} />}
-                </button>
-              </div>
-            </div>
-          ))}
+                      <button
+                        onClick={() => deleteReminder(reminder.id)}
+                        disabled={deletingId === reminder.id}
+                        className="btn btn-ghost btn-sm"
+                        style={{ padding: "4px 6px", color: "var(--text-muted)" }}
+                        title="Supprimer ce rappel"
+                        id={`delete-reminder-${reminder.id}`}
+                      >
+                        {deletingId === reminder.id ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 

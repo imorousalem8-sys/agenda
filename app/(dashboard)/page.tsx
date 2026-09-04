@@ -214,8 +214,8 @@ export default function DashboardPage() {
   const pendingReminders = reminders.slice(0, 4);
 
   return (
-    <div style={{ padding: "28px 32px", maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
-      {/* 1. Professional Executive Header */}
+    <div style={{ padding: "32px 36px", maxWidth: "1440px", margin: "0 auto", width: "100%" }}>
+      {/* 1. Header Pro */}
       <div
         style={{
           display: "flex",
@@ -225,58 +225,58 @@ export default function DashboardPage() {
           gap: "16px",
           marginBottom: "28px",
           paddingBottom: "20px",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+          borderBottom: "1px solid var(--border-subtle)",
         }}
       >
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
             <span
               style={{
                 fontSize: "12px",
                 fontWeight: "600",
-                color: "#94a3b8",
+                color: "var(--text-muted)",
                 textTransform: "capitalize",
               }}
             >
               {todayFormatted}
             </span>
           </div>
-          <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#f8fafc", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "#f8fafc", letterSpacing: "-0.02em" }}>
             {greeting}, {session?.user?.name || "Alexandre"}
           </h1>
           <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
-            Voici la synthèse de vos activités et de votre planning aujourd&apos;hui.
+            Synthèse de votre activité, vos priorités et vos alertes du jour.
           </p>
         </div>
 
         {/* Quick Metrics & Actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
           <div
             style={{
               display: "flex",
               alignItems: "center",
               gap: "12px",
-              padding: "8px 16px",
-              borderRadius: "12px",
-              background: "rgba(15, 23, 42, 0.6)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              padding: "7px 14px",
+              borderRadius: "8px",
+              background: "var(--bg-card)",
+              border: "1px solid var(--border-subtle)",
               fontSize: "12px",
               fontWeight: "600",
-              color: "#cbd5e1",
+              color: "var(--text-secondary)",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#38bdf8" }} />
+              <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#38bdf8" }} />
               <span>{events.length} RDV</span>
             </div>
-            <div style={{ width: "1px", height: "14px", background: "rgba(255, 255, 255, 0.1)" }} />
+            <div style={{ width: "1px", height: "14px", background: "var(--border-subtle)" }} />
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#34d399" }} />
+              <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#10b981" }} />
               <span>{tasks.length} Tâches</span>
             </div>
-            <div style={{ width: "1px", height: "14px", background: "rgba(255, 255, 255, 0.1)" }} />
+            <div style={{ width: "1px", height: "14px", background: "var(--border-subtle)" }} />
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#fbbf24" }} />
+              <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#f59e0b" }} />
               <span>{reminders.length} Alertes</span>
             </div>
           </div>
@@ -285,10 +285,10 @@ export default function DashboardPage() {
             onClick={() => setShowEventForm(true)}
             className="btn btn-primary"
             style={{
-              padding: "8px 16px",
-              borderRadius: "10px",
+              padding: "7px 14px",
+              borderRadius: "8px",
               fontSize: "13px",
-              fontWeight: "700",
+              fontWeight: "600",
               gap: "6px",
             }}
           >
@@ -298,39 +298,38 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 2. Professional AI Action Bar */}
+      {/* 2. Direct AI Action Bar */}
       <div
         style={{
-          background: "#0f172a",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
-          borderRadius: "16px",
-          padding: "20px 24px",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: "12px",
+          padding: "18px 20px",
           marginBottom: "32px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <div
               style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "8px",
-                background: "linear-gradient(135deg, #38bdf8, #6366f1)",
+                width: "28px",
+                height: "28px",
+                borderRadius: "6px",
+                background: "linear-gradient(135deg, #2563eb, #06b6d4)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "#ffffff",
               }}
             >
-              <Bot size={18} />
+              <Bot size={16} />
             </div>
             <div>
-              <div style={{ fontSize: "14px", fontWeight: "700", color: "#f8fafc" }}>
-                Assistant IA d&apos;Action
+              <div style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc" }}>
+                Assistant & Copilote IA
               </div>
-              <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
-                Écrivez ou dictez vos consignes en langage naturel.
+              <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                Exécutez vos actions en langage naturel ou par commande vocale.
               </div>
             </div>
           </div>
@@ -342,19 +341,19 @@ export default function DashboardPage() {
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            background: "rgba(255, 255, 255, 0.04)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            borderRadius: "12px",
-            padding: "8px 14px",
+            background: "var(--bg-app)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "8px",
+            padding: "6px 12px",
           }}
         >
           <button
             onClick={toggleVoice}
             className={`btn btn-ghost btn-sm ${isListening ? "text-rose-400" : "text-slate-400"}`}
-            style={{ padding: "6px" }}
+            style={{ padding: "4px" }}
             title={isListening ? "Arrêter l'écoute" : "Dicter une consigne"}
           >
-            {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+            {isListening ? <MicOff size={16} /> : <Mic size={16} />}
           </button>
 
           <input
@@ -380,9 +379,9 @@ export default function DashboardPage() {
             disabled={aiLoading || !aiPrompt.trim()}
             className="btn btn-primary"
             style={{
-              padding: "8px 16px",
-              borderRadius: "8px",
-              fontWeight: "700",
+              padding: "6px 14px",
+              borderRadius: "6px",
+              fontWeight: "600",
               fontSize: "12px",
               gap: "6px",
             }}
@@ -393,17 +392,17 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Suggestion Chips */}
-        <div style={{ display: "flex", gap: "8px", marginTop: "12px", overflowX: "auto" }}>
+        <div style={{ display: "flex", gap: "6px", marginTop: "10px", overflowX: "auto" }}>
           {quickActions.map((action, idx) => (
             <button
               key={idx}
               onClick={() => handleExecuteAI(action)}
               style={{
-                padding: "5px 12px",
-                borderRadius: "8px",
+                padding: "4px 10px",
+                borderRadius: "6px",
                 background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                color: "#94a3b8",
+                border: "1px solid var(--border-subtle)",
+                color: "var(--text-muted)",
                 fontSize: "11px",
                 fontWeight: "500",
                 whiteSpace: "nowrap",
@@ -421,11 +420,11 @@ export default function DashboardPage() {
         {(aiFeedback || aiSteps.length > 0) && (
           <div
             style={{
-              marginTop: "16px",
-              padding: "14px 18px",
-              borderRadius: "12px",
-              background: "rgba(15, 23, 42, 0.9)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              marginTop: "14px",
+              padding: "14px 16px",
+              borderRadius: "8px",
+              background: "var(--bg-app)",
+              border: "1px solid var(--border-subtle)",
             }}
           >
             {aiFeedback && (
@@ -451,34 +450,34 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* 3. High-End SaaS 3-Column Grid */}
+      {/* 3. High-End 3-Column Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "20px" }}>
         {/* Column 1: Rendez-vous */}
         <div
           style={{
-            background: "#0f172a",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: "16px",
-            padding: "20px",
+            background: "var(--bg-card)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "12px",
+            padding: "18px",
             display: "flex",
             flexDirection: "column",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Calendar size={18} style={{ color: "#38bdf8" }} />
-              <span style={{ fontWeight: "700", fontSize: "14px", color: "#f8fafc" }}>Prochains Rendez-vous</span>
+              <Calendar size={16} style={{ color: "#38bdf8" }} />
+              <span style={{ fontWeight: "600", fontSize: "13px", color: "#f8fafc" }}>Prochains Rendez-vous</span>
             </div>
             <Link
               href="/calendar"
-              style={{ fontSize: "12px", color: "#38bdf8", textDecoration: "none", fontWeight: "600", display: "flex", alignItems: "center", gap: "3px" }}
+              style={{ fontSize: "12px", color: "#38bdf8", textDecoration: "none", fontWeight: "500", display: "flex", alignItems: "center", gap: "3px" }}
             >
               <span>Voir tout</span>
               <ArrowRight size={12} />
             </Link>
           </div>
 
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
             {upcomingEvents.length > 0 ? (
               upcomingEvents.map((ev) => {
                 const date = new Date(ev.startAt);
@@ -488,17 +487,17 @@ export default function DashboardPage() {
                   <div
                     key={ev.id}
                     style={{
-                      padding: "12px 14px",
-                      borderRadius: "10px",
+                      padding: "10px 12px",
+                      borderRadius: "8px",
                       background: "rgba(255, 255, 255, 0.02)",
-                      border: "1px solid rgba(255, 255, 255, 0.05)",
+                      border: "1px solid var(--border-subtle)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                     }}
                   >
                     <div>
-                      <div style={{ fontWeight: "600", fontSize: "13px", color: "#f8fafc" }}>{ev.title}</div>
+                      <div style={{ fontWeight: "500", fontSize: "13px", color: "#f8fafc" }}>{ev.title}</div>
                       <div style={{ fontSize: "11px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
                         <span>{dayStr} à {timeStr}</span>
                         {ev.location && (
@@ -513,7 +512,7 @@ export default function DashboardPage() {
                 );
               })
             ) : (
-              <div style={{ textAlign: "center", padding: "28px 0", color: "var(--text-muted)", fontSize: "12px" }}>
+              <div style={{ textAlign: "center", padding: "24px 0", color: "var(--text-muted)", fontSize: "12px" }}>
                 Aucun rendez-vous sur les 7 prochains jours.
               </div>
             )}
@@ -523,56 +522,56 @@ export default function DashboardPage() {
         {/* Column 2: Tâches */}
         <div
           style={{
-            background: "#0f172a",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: "16px",
-            padding: "20px",
+            background: "var(--bg-card)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "12px",
+            padding: "18px",
             display: "flex",
             flexDirection: "column",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <CheckSquare size={18} style={{ color: "#34d399" }} />
-              <span style={{ fontWeight: "700", fontSize: "14px", color: "#f8fafc" }}>Tâches Prioritaires</span>
+              <CheckSquare size={16} style={{ color: "#10b981" }} />
+              <span style={{ fontWeight: "600", fontSize: "13px", color: "#f8fafc" }}>Tâches Prioritaires</span>
             </div>
             <Link
               href="/tasks"
-              style={{ fontSize: "12px", color: "#34d399", textDecoration: "none", fontWeight: "600", display: "flex", alignItems: "center", gap: "3px" }}
+              style={{ fontSize: "12px", color: "#10b981", textDecoration: "none", fontWeight: "500", display: "flex", alignItems: "center", gap: "3px" }}
             >
               <span>Voir tout</span>
               <ArrowRight size={12} />
             </Link>
           </div>
 
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
             {urgentTasks.length > 0 ? (
               urgentTasks.map((t) => (
                 <div
                   key={t.id}
                   style={{
-                    padding: "12px 14px",
-                    borderRadius: "10px",
+                    padding: "10px 12px",
+                    borderRadius: "8px",
                     background: "rgba(255, 255, 255, 0.02)",
-                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    border: "1px solid var(--border-subtle)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: t.priority === "URGENT" ? "#f43f5e" : "#10b981" }} />
-                    <span style={{ fontWeight: "600", fontSize: "13px", color: "#f8fafc" }}>{t.title}</span>
+                    <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: t.priority === "URGENT" ? "#f43f5e" : "#10b981" }} />
+                    <span style={{ fontWeight: "500", fontSize: "13px", color: "#f8fafc" }}>{t.title}</span>
                   </div>
                   {t.priority === "URGENT" && (
-                    <span style={{ fontSize: "10px", fontWeight: "700", background: "rgba(244, 63, 94, 0.15)", color: "#fb7185", padding: "2px 6px", borderRadius: "4px" }}>
+                    <span style={{ fontSize: "10px", fontWeight: "600", background: "rgba(244, 63, 94, 0.15)", color: "#fb7185", padding: "2px 6px", borderRadius: "4px" }}>
                       URGENT
                     </span>
                   )}
                 </div>
               ))
             ) : (
-              <div style={{ textAlign: "center", padding: "28px 0", color: "var(--text-muted)", fontSize: "12px" }}>
+              <div style={{ textAlign: "center", padding: "24px 0", color: "var(--text-muted)", fontSize: "12px" }}>
                 Toutes vos tâches sont accomplies.
               </div>
             )}
@@ -582,29 +581,29 @@ export default function DashboardPage() {
         {/* Column 3: Rappels & Alertes */}
         <div
           style={{
-            background: "#0f172a",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: "16px",
-            padding: "20px",
+            background: "var(--bg-card)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "12px",
+            padding: "18px",
             display: "flex",
             flexDirection: "column",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Bell size={18} style={{ color: "#fbbf24" }} />
-              <span style={{ fontWeight: "700", fontSize: "14px", color: "#f8fafc" }}>Rappels Vocaux</span>
+              <Bell size={16} style={{ color: "#f59e0b" }} />
+              <span style={{ fontWeight: "600", fontSize: "13px", color: "#f8fafc" }}>Rappels Vocaux</span>
             </div>
             <Link
               href="/reminders"
-              style={{ fontSize: "12px", color: "#fbbf24", textDecoration: "none", fontWeight: "600", display: "flex", alignItems: "center", gap: "3px" }}
+              style={{ fontSize: "12px", color: "#f59e0b", textDecoration: "none", fontWeight: "500", display: "flex", alignItems: "center", gap: "3px" }}
             >
               <span>Voir tout</span>
               <ArrowRight size={12} />
             </Link>
           </div>
 
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
             {pendingReminders.length > 0 ? (
               pendingReminders.map((r) => {
                 const date = new Date(r.fireAt);
@@ -613,24 +612,24 @@ export default function DashboardPage() {
                   <div
                     key={r.id}
                     style={{
-                      padding: "12px 14px",
-                      borderRadius: "10px",
+                      padding: "10px 12px",
+                      borderRadius: "8px",
                       background: "rgba(255, 255, 255, 0.02)",
-                      border: "1px solid rgba(255, 255, 255, 0.05)",
+                      border: "1px solid var(--border-subtle)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                     }}
                   >
                     <div>
-                      <div style={{ fontWeight: "600", fontSize: "13px", color: "#f8fafc" }}>{r.title}</div>
-                      <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Prévu à {timeStr} ({r.method})</div>
+                      <div style={{ fontWeight: "500", fontSize: "13px", color: "#f8fafc" }}>{r.title}</div>
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "2px" }}>Prévu à {timeStr} ({r.method})</div>
                     </div>
                   </div>
                 );
               })
             ) : (
-              <div style={{ textAlign: "center", padding: "28px 0", color: "var(--text-muted)", fontSize: "12px" }}>
+              <div style={{ textAlign: "center", padding: "24px 0", color: "var(--text-muted)", fontSize: "12px" }}>
                 Aucun rappel en attente.
               </div>
             )}
