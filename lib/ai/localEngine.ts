@@ -14,7 +14,7 @@ export async function executeLocalContextualAgent(
   const textLower = text.toLowerCase();
   const now = new Date();
 
-  // 1. GREETING / CHAT / CONVERSATION / EMPATHY
+  // 1. GREETING / CHAT / CONVERSATION / EMPATHY / QUESTIONS
   const isGreeting =
     /^(bonjour|salut|hello|coucou|cc|bonsoir|hey|hi|yo)[\s!.,?/]*$/i.test(text) ||
     textLower.includes("ça va") ||
@@ -23,10 +23,6 @@ export async function executeLocalContextualAgent(
     textLower.includes("comment tu vas") ||
     textLower.includes("comment allez-vous") ||
     textLower.includes("comment allez vous") ||
-    textLower.includes("qui es-tu") ||
-    textLower.includes("qui es tu") ||
-    textLower.includes("que peux-tu faire") ||
-    textLower.includes("que sais-tu faire") ||
     textLower.includes("fatigué") ||
     textLower.includes("crevé") ||
     textLower.includes("épuisé") ||
@@ -65,6 +61,29 @@ export async function executeLocalContextualAgent(
     return {
       reply: greeting,
       spokenReply: greeting.replace(/\*\*/g, ""),
+      action: null,
+      executed: true,
+    };
+  }
+
+  // 1.05 CAPABILITIES & SYSTEM HELP
+  const isHelpOrCapabilities =
+    textLower.includes("qui es-tu") ||
+    textLower.includes("qui es tu") ||
+    textLower.includes("que peux-tu faire") ||
+    textLower.includes("que sais-tu faire") ||
+    textLower.includes("comment ça marche") ||
+    textLower.includes("comment ca marche") ||
+    textLower.includes("comment tu fonctionnes") ||
+    textLower.includes("aide") ||
+    textLower.includes("help") ||
+    textLower.includes("fonctionnalité");
+
+  if (isHelpOrCapabilities) {
+    const reply = `Je suis votre **Copilote & Agence d'Action d'AlarmAgenda**.\n\nVoici ce que je peux accomplir pour vous en temps réel :\n• **Planifier vos rendez-vous** (ex: *« Rendez-vous dentiste mardi à 15h »*)\n• **Créer vos tâches & priorités** (ex: *« Tâche urgente acheter fournitures »*)\n• **Programmer des alarmes & rappels vocaux** (ex: *« Réveille-moi demain à 7h »*)\n• **Organiser votre journée** (ex: *« Organise ma journée de demain »*)\n• **Consulter votre planning** (ex: *« Qu'ai-je de prévu demain ? »*)\n\nVous pouvez me donner vos instructions par écrit ou me parler directement via le micro ou le Mode Vocal Live.`;
+    return {
+      reply,
+      spokenReply: "Je suis votre copilote personnel d'AlarmAgenda. Je gère vos rendez-vous, tâches, alarmes et plannings par simple consigne textuelle ou vocale.",
       action: null,
       executed: true,
     };
@@ -277,6 +296,17 @@ export async function executeLocalContextualAgent(
     }
   }
 
+  // If no action intent and no explicit date/time, provide polite guidance rather than creating a random reminder
+  if (!isActionIntent && !hasExplicitTime && !dayMentioned && !isWakeUp) {
+    const reply = "Je suis à votre écoute ! Que souhaitez-vous planifier ou organiser ? Vous pouvez par exemple me demander d'ajouter un rendez-vous, une tâche urgente, un réveil ou de résumer votre journée.";
+    return {
+      reply,
+      spokenReply: "Je suis à votre écoute. Que souhaitez-vous planifier ou organiser ?",
+      action: null,
+      executed: true,
+    };
+  }
+
   const isEvent = textLower.includes("rdv") || textLower.includes("rendez-vous") || textLower.includes("réunion") || textLower.includes("docteur") || textLower.includes("dentiste") || textLower.includes("chantier");
   const isTask = !isEvent && (isWakeUp || textLower.includes("tâche") || textLower.includes("tache") || textLower.includes("faire") || textLower.includes("acheter") || textLower.includes("payer") || textLower.includes("finir"));
 
@@ -305,26 +335,39 @@ export async function executeLocalContextualAgent(
   let actionResult: AIActionExecutionResult;
   let reply = "";
 
-  if (isEvent) {
-    actionResult = await executeAITool("create_event", { title: cleanTitle, startAt: formatISO(targetDate), contactName, priority, reminderMinutesBefore: 15 }, context);
-    const dateFormatted = targetDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-    const timeFormatted = targetDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-    reply = `📅 Rendez-vous « **${cleanTitle}** » planifié pour le **${dateFormatted} à ${timeFormatted}**${contactName ? ` avec **${contactName}**` : ""}.`;
-  } else if (isTask) {
-    actionResult = await executeAITool("create_task", { title: cleanTitle, dueAt: formatISO(targetDate), contactName, priority, reminderAt: formatISO(targetDate) }, context);
-    const dateFormatted = targetDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-    const timeFormatted = targetDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-    reply = `✅ Tâche « **${cleanTitle}** » créée pour le **${dateFormatted} à ${timeFormatted}**${contactName ? ` avec **${contactName}**` : ""}.`;
-  } else {
-    actionResult = await executeAITool("create_reminder", { title: cleanTitle, fireAt: formatISO(targetDate) }, context);
-    const dateFormatted = targetDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-    const timeFormatted = targetDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-    reply = `🔔 Rappel « **${cleanTitle}** » programmé pour le **${dateFormatted} à ${timeFormatted}**.`;
-  }
+  try {
+    if (isEvent) {
+      actionResult = await executeAITool("create_event", { title: cleanTitle, startAt: formatISO(targetDate), contactName, priority, reminderMinutesBefore: 15 }, context);
+      const dateFormatted = targetDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+      const timeFormatted = targetDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+      reply = `📅 Rendez-vous « **${cleanTitle}** » planifié pour le **${dateFormatted} à ${timeFormatted}**${contactName ? ` avec **${contactName}**` : ""}.`;
+    } else if (isTask) {
+      actionResult = await executeAITool("create_task", { title: cleanTitle, dueAt: formatISO(targetDate), contactName, priority, reminderAt: formatISO(targetDate) }, context);
+      const dateFormatted = targetDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+      const timeFormatted = targetDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+      reply = `✅ Tâche « **${cleanTitle}** » créée pour le **${dateFormatted} à ${timeFormatted}**${contactName ? ` avec **${contactName}**` : ""}.`;
+    } else {
+      actionResult = await executeAITool("create_reminder", { title: cleanTitle, fireAt: formatISO(targetDate) }, context);
+      const dateFormatted = targetDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+      const timeFormatted = targetDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+      reply = `🔔 Rappel « **${cleanTitle}** » programmé pour le **${dateFormatted} à ${timeFormatted}**.`;
+    }
 
-  return {
-    reply, spokenReply: reply.replace(/\*\*/g, "").replace(/[📅✅🔔]/g, ""), action: actionResult,
-    activeTarget: { type: actionResult.type as "EVENT" | "TASK" | "REMINDER", id: actionResult.id || "", title: actionResult.title, scheduledAt: actionResult.dateTime },
-    saved: true, executed: true,
-  };
+    return {
+      reply,
+      spokenReply: reply.replace(/\*\*/g, "").replace(/[📅✅🔔]/g, ""),
+      action: actionResult,
+      activeTarget: { type: actionResult.type as "EVENT" | "TASK" | "REMINDER", id: actionResult.id || "", title: actionResult.title, scheduledAt: actionResult.dateTime },
+      saved: true,
+      executed: true,
+    };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return {
+      reply: `Je n'ai pas pu enregistrer cette entrée (${errorMsg}). Pouvez-vous préciser l'heure ou la date ?`,
+      spokenReply: "Je n'ai pas pu enregistrer cette entrée. Pouvez-vous préciser l'horaire ?",
+      action: null,
+      executed: false,
+    };
+  }
 }

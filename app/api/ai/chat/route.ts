@@ -78,9 +78,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(response);
   } catch (error) {
     console.error("AI Chat Route Error:", error);
-    return NextResponse.json(
-      { error: "Erreur lors du traitement par l'assistant IA" },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      reply: "Je suis à votre écoute. Je n'ai pas pu finaliser cette action pour le moment, mais je reste prêt pour vos prochaines consignes.",
+      spokenReply: "Je suis à votre écoute.",
+      action: null,
+      executed: false,
+    });
   }
 }

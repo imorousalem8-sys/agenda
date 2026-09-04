@@ -9,7 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from "@/lib/validations";
 import {
   Sparkles,
-  Bot,
   Volume2,
   Bell,
   Calendar,

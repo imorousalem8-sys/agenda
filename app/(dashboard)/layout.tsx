@@ -16,7 +16,7 @@ import {
   Volume2,
   Phone,
   Crown,
-  Bot,
+  Sparkles,
   UserPlus,
 } from "lucide-react";
 import AlarmOverlay from "@/components/reminders/AlarmOverlay";
@@ -33,7 +33,7 @@ import { useSubscription } from "@/lib/useSubscription";
 
 const navLinks = [
   { href: "/", icon: LayoutDashboard, label: "Tableau de bord" },
-  { href: "/agent", icon: Bot, label: "Assistant & Copilote IA" },
+  { href: "/agent", icon: Sparkles, label: "Assistant & Copilote IA" },
   { href: "/calendar", icon: Calendar, label: "Agenda & Calendrier" },
   { href: "/reminders", icon: Bell, label: "Rappels & Alarmes Vocales" },
   { href: "/tasks", icon: CheckSquare, label: "Tâches & Priorités" },
@@ -210,7 +210,7 @@ export default function DashboardLayout({
                 boxShadow: "0 0 12px rgba(37, 99, 235, 0.3)",
               }}
             >
-              <Bot size={16} />
+              <Sparkles size={16} />
             </div>
             <div style={{ textAlign: "left", flex: 1 }}>
               <div style={{ color: "#f8fafc" }}>Assistant IA</div>
@@ -457,7 +457,7 @@ export default function DashboardLayout({
               fontSize: "12px",
             }}
           >
-            <Bot size={14} />
+            <Sparkles size={14} />
             <span>Assistant</span>
           </button>
         </div>

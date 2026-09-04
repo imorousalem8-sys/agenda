@@ -10,7 +10,6 @@ import {
   Plus,
   ArrowRight,
   Sparkles,
-  Bot,
   Send,
   Loader2,
   Mic,
@@ -322,7 +321,7 @@ export default function DashboardPage() {
                 color: "#ffffff",
               }}
             >
-              <Bot size={16} />
+              <Sparkles size={16} />
             </div>
             <div>
               <div style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc" }}>

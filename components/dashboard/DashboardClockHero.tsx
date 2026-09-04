@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, Bot, Clock, Bell, Plus, Calendar } from "lucide-react";
+import { Sparkles, Clock, Bell, Plus, Calendar, Mic } from "lucide-react";
 
 interface DashboardClockHeroProps {
   greeting: string;
@@ -100,7 +100,7 @@ export default function DashboardClockHero({
             style={{ color: "#38bdf8", borderColor: "rgba(56, 189, 248, 0.3)" }}
             id="hero-copilot-btn"
           >
-            <Bot size={15} color="#38bdf8" />
+            <Mic size={15} color="#38bdf8" />
             <span>Assistant Vocal</span>
           </button>
         </div>

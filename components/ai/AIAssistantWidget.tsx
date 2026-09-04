@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import {
-  Bot,
   Mic,
   MicOff,
   Send,
@@ -214,7 +213,7 @@ export default function AIAssistantWidget() {
               color: "#ffffff",
             }}
           >
-            <Bot size={14} />
+            <Sparkles size={14} />
           </div>
           <span>Copilote IA</span>
           <QuotaIndicator compact />
@@ -266,7 +265,7 @@ export default function AIAssistantWidget() {
                   color: "#ffffff",
                 }}
               >
-                <Bot size={17} />
+                <Sparkles size={17} />
               </div>
               <div>
                 <div style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc" }}>

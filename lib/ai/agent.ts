@@ -44,10 +44,10 @@ export async function processUserAIMessage(
     }
   }
 
-  // If even the fallback chain failed entirely (should never happen with LocalEngineProvider)
+  // Safe universal fallback
   return {
-    reply: "Désolé, une erreur technique temporaire est survenue. Veuillez réessayer dans quelques instants.",
-    spokenReply: "Une erreur technique temporaire est survenue.",
+    reply: "Je suis à votre disposition. Que souhaitez-vous planifier ou organiser dans votre agenda ?",
+    spokenReply: "Je suis à votre écoute. Que souhaitez-vous organiser ?",
     action: null,
     executed: false,
     quota: { used: quotaStatus.used, limit: quotaStatus.limit, remaining: quotaStatus.remaining },

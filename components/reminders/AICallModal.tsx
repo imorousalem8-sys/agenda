@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Phone, PhoneOff, PhoneCall, Volume2, Clock, CheckCircle2, Bot, RotateCcw, AlertTriangle, Play, Sparkles } from "lucide-react";
+import { Phone, PhoneOff, PhoneCall, Volume2, Clock, CheckCircle2, RotateCcw, AlertTriangle, Play, Sparkles } from "lucide-react";
 import { getStoredVoiceSettings, speakAIText, playAlertChime, type VoiceGender, type AlertMode } from "@/lib/voice";
 
 export interface AICallData {
