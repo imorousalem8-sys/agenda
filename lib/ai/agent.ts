@@ -152,6 +152,16 @@ ${
   const maxSteps = APP_CONFIG.AGENT.MAX_STEPS_PER_REQUEST;
   let executedCount = 0;
 
+  if (response.directAction) {
+    actionResults.push(response.directAction);
+    steps.push({
+      id: "step-1",
+      label: response.directAction.title || "Action effectuée",
+      status: "done",
+      detail: response.directAction.notes,
+    });
+  }
+
   // Execute returned tool calls sequentially (Multi-step agent loop)
   for (const toolCall of response.toolCalls) {
     if (executedCount >= maxSteps) break;

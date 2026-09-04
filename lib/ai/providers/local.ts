@@ -24,6 +24,7 @@ export class LocalEngineProvider implements AIProvider {
       toolCalls: [], // Local engine executes tools internally
       providerName: this.name,
       modelUsed: "alarmagenda-deterministic-rules-v1",
+      directAction: res.action,
       usage: {
         promptTokens: 0,
         completionTokens: 0,

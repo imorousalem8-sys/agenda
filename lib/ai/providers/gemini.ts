@@ -52,7 +52,7 @@ export class GeminiProvider implements AIProvider {
 
     const toolsDeclaration = [
       {
-        function_declarations: tools.map((t) => ({
+        functionDeclarations: tools.map((t) => ({
           name: t.name,
           description: t.description,
           parameters: t.parameters,

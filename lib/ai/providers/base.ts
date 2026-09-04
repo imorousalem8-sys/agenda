@@ -1,4 +1,4 @@
-import { AIChatMessage, AIUserContext } from "../types";
+import { AIChatMessage, AIUserContext, AIActionExecutionResult } from "../types";
 
 /**
  * Universal Normalized Tool Definition
@@ -36,6 +36,7 @@ export interface ProviderResponse {
   toolCalls: NormalizedToolCall[];
   providerName: string;
   modelUsed: string;
+  directAction?: AIActionExecutionResult | null;
   usage?: {
     promptTokens?: number;
     completionTokens?: number;
