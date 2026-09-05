@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { storeOtp, generateFreshOtp } from "@/lib/otpStore";
 import { sendOtpEmail } from "@/lib/email";
-import { sendSupabasePasswordReset, getDynamicBaseUrl } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +14,6 @@ export async function POST(req: NextRequest) {
     const normalizedEmail = email.toLowerCase().trim();
 
     // Vérifier si l'utilisateur existe
-    let userExists = true;
     let userName = "Utilisateur";
     try {
       const user = await prisma.user.findUnique({
@@ -28,38 +26,22 @@ export async function POST(req: NextRequest) {
       console.warn("[Forgot Password] DB user check notice:", e);
     }
 
-    // 1. Générer le code OTP de réinitialisation
+    // 1. Générer le code OTP de réinitialisation à 6 chiffres
     const resetOtp = generateFreshOtp();
     await storeOtp(normalizedEmail, resetOtp, userName, undefined, "RESET_PASSWORD");
 
-    // 2. Extraire l'URL dynamique du site (zéro localhost en dur)
-    const baseUrl = getDynamicBaseUrl(req);
-    const dynamicRedirectUrl = `${baseUrl}/login?tab=RESET&email=${encodeURIComponent(normalizedEmail)}`;
-
-    // 3. Envoyer l'email avec le code OTP de réinitialisation via le mailer
+    // 2. Envoyer UNIQUEMENT le code à 6 chiffres par email (zéro lien de redirection externe)
     const emailRes = await sendOtpEmail({
       to: normalizedEmail,
       name: userName,
       code: resetOtp,
     });
 
-    // 4. Déclencher également la procédure de récupération Supabase Auth avec le lien dynamique
-    let supabaseRecoverSent = false;
-    try {
-      const sbRecoverRes = await sendSupabasePasswordReset(normalizedEmail, dynamicRedirectUrl);
-      if (sbRecoverRes.ok) {
-        supabaseRecoverSent = true;
-      }
-    } catch (sbErr) {
-      console.warn("[Forgot Password] Supabase recover notice:", sbErr);
-    }
-
-    console.log(`[Forgot Password] Reset request for ${normalizedEmail} | OTP generated: ${resetOtp} | Mailer: ${emailRes.success} | Supabase: ${supabaseRecoverSent}`);
+    console.log(`[Forgot Password] Reset request for ${normalizedEmail} | OTP: ${resetOtp} | Mailer: ${emailRes.success}`);
 
     return NextResponse.json({
       success: true,
-      message: `Si un compte est associé à cette adresse email, vous recevrez un code de réinitialisation dans quelques instants.`,
-      redirectUrl: dynamicRedirectUrl,
+      message: `Si un compte est associé à cette adresse email, vous recevrez un code de confirmation à 6 chiffres dans quelques instants.`,
       code: resetOtp,
     });
   } catch (error) {
