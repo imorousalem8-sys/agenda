@@ -51,7 +51,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: `Si un compte est associé à cette adresse email, vous recevrez un code de confirmation dans quelques instants.`,
-      code: resetOtp,
     });
   } catch (error) {
     console.error("[Forgot Password] Error:", error);

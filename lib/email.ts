@@ -4,8 +4,8 @@ export interface SendOtpEmailParams {
   code: string;
 }
 
-// Resend API key from environment
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
+const RESEND_FROM = process.env.RESEND_FROM || "AlarmAgenda <onboarding@resend.dev>";
 
 export async function sendOtpEmail({ to, name, code }: SendOtpEmailParams) {
   const recipientEmail = to.toLowerCase().trim();

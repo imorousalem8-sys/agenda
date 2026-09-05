@@ -61,9 +61,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Votre code de validation a été généré et envoyé à ${normalizedEmail}.`,
+      message: `Votre code de validation a été envoyé par email à ${normalizedEmail}.`,
       sentViaDirectMailer: emailResult.success,
-      code: otpCode,
     });
   } catch (error) {
     console.error("OTP send error:", error);

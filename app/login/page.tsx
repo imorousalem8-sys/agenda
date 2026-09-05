@@ -121,9 +121,7 @@ export default function LandingPage() {
         return;
       }
 
-      if (json.code) {
-        setOtpCode(json.code);
-      }
+      setOtpCode("");
       setResendSuccess("Nouveau code généré et envoyé à votre adresse email !");
       setResendCooldown(30);
       setLoading(false);
@@ -186,9 +184,7 @@ export default function LandingPage() {
       }
 
       setPendingRegData(data);
-      if (json.code) {
-        setOtpCode(json.code);
-      }
+      setOtpCode("");
       setOtpStep(true);
       setLoading(false);
     } catch {
@@ -260,10 +256,8 @@ export default function LandingPage() {
         return;
       }
 
-      if (data.code) {
-        setResetCode(data.code);
-      }
-      setForgotSuccess("Un code de réinitialisation vous a été envoyé par email !");
+      setResetCode("");
+      setForgotSuccess("Un code de confirmation vous a été envoyé par email !");
       setAuthTab("RESET");
       setLoading(false);
     } catch {
@@ -1358,9 +1352,9 @@ export default function LandingPage() {
                   </span>
                 </div>
 
-                <div style={{ background: "rgba(52, 211, 153, 0.08)", border: "1px solid rgba(52, 211, 153, 0.25)", borderRadius: "8px", padding: "10px 12px", fontSize: "11.5px", color: "#34d399", display: "flex", alignItems: "center", gap: "7px" }}>
-                  <CheckCircle2 size={15} style={{ flexShrink: 0 }} />
-                  <span>Code à 6 chiffres synchronisé et pré-rempli pour un accès immédiat.</span>
+                <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", padding: "10px 12px", fontSize: "11.5px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "7px" }}>
+                  <ShieldCheck size={15} style={{ flexShrink: 0, color: "#34d399" }} />
+                  <span>Entrez le code de vérification à 6 chiffres reçu dans votre boîte email.</span>
                 </div>
 
                 <div>
