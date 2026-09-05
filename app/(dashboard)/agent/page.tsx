@@ -13,6 +13,12 @@ import {
   User,
   Loader2,
   StopCircle,
+  Bot,
+  Brain,
+  Bell,
+  Sparkles,
+  Calendar,
+  Terminal,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { getStoredVoiceSettings, speakAIText } from "@/lib/voice";
@@ -40,7 +46,7 @@ export default function AgentPage() {
     {
       id: "welcome-init",
       sender: "ai",
-      text: "Bonjour. Je suis votre copilote IA connecté à votre agenda.\n\nVous pouvez discuter librement avec moi par écrit ou cliquer sur le micro pour me parler.",
+      text: "Bonjour. Je suis votre Agence IA Personnelle & Copilote d'Action.\n\nJe gère vos rendez-vous, structure vos chantiers et priorités, et déclenche vos alarmes vocales persistantes. Comment puis-je vous aider ?",
     },
   ]);
 
@@ -80,7 +86,7 @@ export default function AgentPage() {
     };
   }, []);
 
-  // Standard, reliable Speech Recognition (SINGLE SHOT, NEVER LOOPS)
+  // Standard, reliable Speech Recognition
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
@@ -91,7 +97,7 @@ export default function AgentPage() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const recognition = new (SpeechRecognition as any)();
         recognition.lang = "fr-FR";
-        recognition.continuous = false; // Strictly single phrase
+        recognition.continuous = false;
         recognition.interimResults = false;
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -123,7 +129,6 @@ export default function AgentPage() {
       alert("La reconnaissance vocale nécessite Google Chrome, Edge ou Safari.");
       return;
     }
-    // Stop any AI talking immediately
     window.speechSynthesis?.cancel();
     setIsSpeaking(false);
 
@@ -154,7 +159,6 @@ export default function AgentPage() {
     const text = (textToSend || inputMessage).trim();
     if (!text) return;
 
-    // Stop speaking immediately
     stopSpeaking();
     stopListening();
 
@@ -187,7 +191,7 @@ export default function AgentPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Une erreur est survenue lors de la communication avec l'assistant.");
+        throw new Error(data.error || "Une erreur est survenue lors de la communication avec l'Agence IA.");
       }
 
       const replyText = data.reply || "Je suis à votre écoute. Que puis-je faire pour vous ?";
@@ -206,7 +210,7 @@ export default function AgentPage() {
 
       setMessages((prev) => [...prev, aiMsg]);
 
-      // Spoken response (if voice is enabled)
+      // Spoken response
       if (voiceEnabled) {
         setIsSpeaking(true);
         const settings = getStoredVoiceSettings();
@@ -226,7 +230,7 @@ export default function AgentPage() {
       }
       window.dispatchEvent(new Event("ai-quota-updated"));
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Une erreur est survenue lors de la communication avec l'assistant.";
+      const errorMsg = err instanceof Error ? err.message : "Une erreur est survenue lors de la communication avec l'Agence IA.";
       setMessages((prev) => [
         ...prev,
         {
@@ -247,66 +251,80 @@ export default function AgentPage() {
         height: "calc(100vh - 44px)",
         display: "flex",
         flexDirection: "column",
-        padding: "24px 28px 24px",
+        padding: "16px clamp(10px, 3vw, 24px)",
         width: "100%",
+        boxSizing: "border-box",
       }}
     >
-      {/* Top Header Pro */}
+      {/* Top Header Pro - Agence IA Command Center */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "12px 18px",
-          borderRadius: "10px",
+          padding: "12px 16px",
+          borderRadius: "12px",
           background: "var(--bg-card)",
           border: "1px solid var(--border-subtle)",
-          marginBottom: "16px",
+          marginBottom: "12px",
+          flexWrap: "wrap",
+          gap: "10px",
         }}
       >
-        <div>
-          <h1 style={{ fontSize: "16px", fontWeight: "700", color: "#ffffff", letterSpacing: "-0.01em" }}>
-            Console Copilote IA
-          </h1>
-          <p style={{ fontSize: "11px", color: "var(--text-muted)" }}>
-            Contrôle vocal et textuel connecté à vos événements, tâches et alertes
-          </p>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(52, 211, 153, 0.12)", border: "1px solid rgba(52, 211, 153, 0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Bot size={18} color="#34d399" />
+          </div>
+          <div>
+            <h1 style={{ fontSize: "15px", fontWeight: "700", color: "#ffffff", letterSpacing: "-0.01em", margin: 0 }}>
+              Agence IA Personnelle • Copilote Exécutif
+            </h1>
+            <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>
+              Gestion autonome de vos rendez-vous, alertes persistantes et chantiers
+            </p>
+          </div>
         </div>
 
         {/* Action Controls */}
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <button
             onClick={() => window.dispatchEvent(new CustomEvent("open-voice-live-modal"))}
-            className="btn btn-secondary btn-sm"
             style={{
               padding: "5px 12px",
-              fontSize: "12px",
+              fontSize: "11.5px",
               fontWeight: "600",
-              gap: "6px",
               color: "#38bdf8",
-              borderColor: "rgba(56, 189, 248, 0.3)",
+              background: "rgba(56, 189, 248, 0.08)",
+              border: "1px solid rgba(56, 189, 248, 0.3)",
+              borderRadius: "6px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
             }}
-            title="Lancer le dialogue vocal continu avec visualiseur d'onde et Orb"
+            title="Lancer le mode vocal continu en direct"
           >
-            <Mic size={14} />
-            <span>Mode Vocal Live (Orb)</span>
+            <Mic size={13} />
+            <span>Mode Vocal Live</span>
           </button>
 
           {isSpeaking && (
             <button
               onClick={stopSpeaking}
-              className="btn btn-sm"
               style={{
                 background: "rgba(239, 68, 68, 0.15)",
                 color: "#fca5a5",
                 border: "1px solid rgba(239, 68, 68, 0.3)",
-                gap: "6px",
+                gap: "5px",
                 fontSize: "11px",
-                padding: "4px 10px",
+                padding: "4px 8px",
                 borderRadius: "6px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              <StopCircle size={13} />
+              <StopCircle size={12} />
               <span>Arrêter la voix</span>
             </button>
           )}
@@ -319,11 +337,17 @@ export default function AgentPage() {
                 stopSpeaking();
               }
             }}
-            className="btn btn-ghost btn-sm"
-            style={{ padding: "6px 8px", color: voiceEnabled ? "#38bdf8" : "var(--text-muted)" }}
+            style={{
+              background: "transparent",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: "6px",
+              padding: "5px 8px",
+              color: voiceEnabled ? "#38bdf8" : "var(--text-muted)",
+              cursor: "pointer",
+            }}
             title={voiceEnabled ? "Désactiver la lecture vocale" : "Activer la lecture vocale"}
           >
-            {voiceEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            {voiceEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
           </button>
 
           <button
@@ -334,18 +358,53 @@ export default function AgentPage() {
                 {
                   id: `reset-${Date.now()}`,
                   sender: "ai",
-                  text: "Discussion réinitialisée. Comment puis-je vous aider ?",
+                  text: "Discussion réinitialisée. Comment l'Agence IA peut-elle vous aider ?",
                 },
               ]);
               setActiveTarget(null);
             }}
-            className="btn btn-ghost btn-sm"
-            style={{ padding: "6px 8px" }}
+            style={{
+              background: "transparent",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: "6px",
+              padding: "5px 8px",
+              color: "#94a3b8",
+              cursor: "pointer",
+            }}
             title="Effacer la conversation"
           >
-            <RotateCcw size={15} />
+            <RotateCcw size={14} />
           </button>
         </div>
+      </div>
+
+      {/* Quick Executive Agency Chips */}
+      <div style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "8px", marginBottom: "8px" }}>
+        {[
+          { label: "Fais le point sur ma journée", prompt: "Fais le point complet sur ma journée d'aujourd'hui et mes priorités." },
+          { label: "Optimise mes créneaux demain", prompt: "Organise ma journée de demain et planifie les urgences." },
+          { label: "Planifier un rendez-vous", prompt: "Ajoute un rendez-vous important demain à 14h." },
+          { label: "Programmer une alarme vocale", prompt: "Rappelle-moi dans 30 minutes de vérifier les devis urgents." },
+        ].map((item, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => handleSendMessage(item.prompt)}
+            style={{
+              background: "rgba(255, 255, 255, 0.04)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              borderRadius: "6px",
+              padding: "4px 10px",
+              color: "#cbd5e1",
+              fontSize: "11px",
+              whiteSpace: "nowrap",
+              cursor: "pointer",
+              transition: "all 0.15s ease",
+            }}
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
 
       {/* Main Chat Container */}
@@ -364,7 +423,7 @@ export default function AgentPage() {
         {isListening && (
           <div
             style={{
-              padding: "8px 16px",
+              padding: "8px 14px",
               background: "rgba(239, 68, 68, 0.12)",
               borderBottom: "1px solid rgba(239, 68, 68, 0.25)",
               display: "flex",
@@ -384,14 +443,13 @@ export default function AgentPage() {
                 className="animate-pulse"
               />
               <span style={{ fontSize: "12px", fontWeight: "600", color: "#fca5a5" }}>
-                À votre écoute... Énoncez votre consigne.
+                À votre écoute... Parlez naturellement.
               </span>
             </div>
 
             <button
               onClick={stopListening}
-              className="btn btn-ghost btn-sm"
-              style={{ padding: "2px 8px", fontSize: "11px", color: "#fca5a5" }}
+              style={{ background: "none", border: "none", padding: "2px 8px", fontSize: "11px", color: "#fca5a5", cursor: "pointer" }}
             >
               Annuler
             </button>
@@ -403,11 +461,11 @@ export default function AgentPage() {
           style={{
             flex: 1,
             overflowY: "auto",
-            padding: "20px",
+            padding: "16px",
             display: "flex",
             flexDirection: "column",
             gap: "12px",
-            background: "var(--bg-app)",
+            background: "#07080b",
           }}
         >
           {messages.map((msg) => (
@@ -424,58 +482,48 @@ export default function AgentPage() {
               {/* Bubble */}
               <div
                 style={{
-                  maxWidth: "80%",
+                  maxWidth: "85%",
                   padding: "10px 14px",
                   borderRadius: msg.sender === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
                   background: msg.sender === "user"
-                    ? "var(--accent-primary)"
-                    : "var(--bg-card)",
-                  color: "#ffffff",
+                    ? "#ffffff"
+                    : "#11141d",
+                  color: msg.sender === "user" ? "#000000" : "#f8fafc",
                   fontSize: "13px",
+                  fontWeight: msg.sender === "user" ? "600" : "400",
                   lineHeight: "1.5",
-                  border: msg.sender === "ai" ? "1px solid var(--border-subtle)" : "none",
+                  border: msg.sender === "ai" ? "1px solid rgba(255, 255, 255, 0.08)" : "none",
                   whiteSpace: "pre-wrap",
                 }}
               >
                 {msg.text}
               </div>
 
-              {/* Action Card */}
+              {/* Action Result Card */}
               {msg.action && (
                 <div
                   style={{
-                    width: "80%",
-                    background: "var(--bg-card)",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: "8px",
+                    width: "min(400px, 90%)",
+                    background: "#0e111a",
+                    border: "1px solid rgba(52, 211, 153, 0.3)",
+                    borderRadius: "10px",
                     padding: "10px 14px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
-                    <span style={{ fontSize: "10px", fontWeight: "600", color: "#38bdf8", textTransform: "uppercase" }}>
-                      {msg.action.type === "EVENT" ? "Rendez-vous" : msg.action.type === "TASK" ? "Tâche" : "Rappel"}
-                    </span>
-                    <span style={{ fontSize: "11px", color: "#10b981", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
-                      <CheckCircle2 size={12} />
-                      Enregistré
-                    </span>
+                  <CheckCircle2 size={16} color="#34d399" style={{ flexShrink: 0 }} />
+                  <div style={{ flex: 1, fontSize: "12px" }}>
+                    <div style={{ fontWeight: "700", color: "#ffffff" }}>{msg.action.title}</div>
+                    {msg.action.dateTime && (
+                      <div style={{ color: "#94a3b8", fontSize: "11px" }}>{msg.action.dateTime}</div>
+                    )}
                   </div>
-
-                  <p style={{ fontSize: "13px", fontWeight: "600", color: "#ffffff", marginBottom: "2px" }}>
-                    {msg.action.title}
-                  </p>
-
-                  {msg.action.contactName && (
-                    <p style={{ fontSize: "11px", color: "var(--text-muted)", marginBottom: "2px" }}>
-                      👤 Contact : {msg.action.contactName}
-                    </p>
-                  )}
-
-                  {msg.action.dateTime && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "#38bdf8" }}>
-                      <Clock size={11} />
-                      {formatDate(msg.action.dateTime)}
-                    </div>
+                  {msg.saved && (
+                    <span style={{ fontSize: "10px", background: "rgba(52, 211, 153, 0.15)", color: "#34d399", padding: "2px 6px", borderRadius: "4px", fontWeight: "700" }}>
+                      SYNCHRONISÉ
+                    </span>
                   )}
                 </div>
               )}
@@ -483,66 +531,91 @@ export default function AgentPage() {
           ))}
 
           {loading && (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-muted)", fontSize: "12px", padding: "4px" }}>
-              <Loader2 size={14} className="animate-spin" style={{ color: "var(--accent-primary)" }} />
-              <span>Traitement de votre demande...</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: "#11141d", borderRadius: "8px", width: "fit-content", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+              <Loader2 size={14} className="animate-spin" color="#34d399" />
+              <span style={{ fontSize: "12px", color: "#94a3b8" }}>L&apos;Agence IA analyse et exécute votre consigne...</span>
             </div>
           )}
+
           <div ref={chatBottomRef} />
         </div>
 
         {/* Input Bar */}
-        <div style={{ padding: "12px 16px", borderTop: "1px solid var(--border-subtle)", background: "var(--bg-card)" }}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendMessage();
+        <div
+          style={{
+            padding: "10px 14px",
+            background: "var(--bg-card)",
+            borderTop: "1px solid var(--border-subtle)",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <button
+            type="button"
+            onClick={isListening ? stopListening : startListening}
+            style={{
+              background: isListening ? "#ef4444" : "rgba(255, 255, 255, 0.06)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "8px",
+              width: "36px",
+              height: "36px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: isListening ? "#ffffff" : "#38bdf8",
+              cursor: "pointer",
+              flexShrink: 0,
             }}
-            style={{ display: "flex", alignItems: "center", gap: "8px" }}
+            title={isListening ? "Arrêter la dictée" : "Parler à l'Agence IA"}
           >
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Écrivez ou dictez votre consigne..."
-              className="form-input"
-              id="agent-chat-input"
-              style={{ fontSize: "13px", padding: "8px 12px", flex: 1 }}
-            />
+            {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+          </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                if (isListening) stopListening();
-                else startListening();
-              }}
-              className={`btn ${isListening ? "btn-danger" : "btn-secondary"}`}
-              style={{
-                padding: "8px 14px",
-                flexShrink: 0,
-                fontSize: "12px",
-                gap: "6px",
-                borderColor: isListening ? "#ef4444" : undefined,
-                color: isListening ? "#ffffff" : "#38bdf8",
-              }}
-              title={isListening ? "Arrêter d'écouter" : "Parler au micro"}
-              id="agent-mic-btn"
-            >
-              {isListening ? <MicOff size={15} /> : <Mic size={15} />}
-              <span>{isListening ? "Écoute..." : "Micro"}</span>
-            </button>
+          <input
+            type="text"
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            placeholder="Dictez ou écrivez à votre Agence IA (ex: Bloque 15h demain pour la réunion)..."
+            style={{
+              flex: 1,
+              background: "#000000",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              borderRadius: "8px",
+              padding: "9px 12px",
+              color: "#ffffff",
+              fontSize: "13px",
+              outline: "none",
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
+          />
 
-            <button
-              type="submit"
-              disabled={loading || !inputMessage.trim()}
-              className="btn btn-primary"
-              style={{ padding: "8px 16px", flexShrink: 0, fontSize: "12px" }}
-              id="agent-send-btn"
-            >
-              <Send size={14} />
-              <span>Envoyer</span>
-            </button>
-          </form>
+          <button
+            type="button"
+            onClick={() => handleSendMessage()}
+            disabled={loading || !inputMessage.trim()}
+            style={{
+              background: "#ffffff",
+              color: "#000000",
+              border: "none",
+              borderRadius: "8px",
+              width: "36px",
+              height: "36px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              flexShrink: 0,
+              opacity: !inputMessage.trim() ? 0.5 : 1,
+            }}
+          >
+            <Send size={15} />
+          </button>
         </div>
       </div>
     </div>
