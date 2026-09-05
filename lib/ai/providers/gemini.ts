@@ -36,10 +36,6 @@ export class GeminiProvider implements AIProvider {
     const candidateModels = [this.primaryModel, ...this.fallbackModels].filter(Boolean);
 
     const contents = [
-      {
-        role: "user",
-        parts: [{ text: systemPrompt }],
-      },
       ...history.slice(-APP_CONFIG.AGENT.MAX_HISTORY_MESSAGES).map((msg) => ({
         role: msg.role === "assistant" ? "model" : "user",
         parts: [{ text: msg.content }],
@@ -61,6 +57,9 @@ export class GeminiProvider implements AIProvider {
     ];
 
     const payload = {
+      systemInstruction: {
+        parts: [{ text: systemPrompt }],
+      },
       contents,
       tools: toolsDeclaration,
       generationConfig: {
