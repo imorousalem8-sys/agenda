@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/register", "/api/auth"];
+const PUBLIC_PATHS = ["/", "/login", "/register", "/api/auth", "/api/version"];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -17,8 +17,8 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow public paths
-  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+  // Allow public paths (including landing page)
+  if (pathname === "/" || PUBLIC_PATHS.some((p) => p !== "/" && pathname.startsWith(p))) {
     return NextResponse.next();
   }
 
