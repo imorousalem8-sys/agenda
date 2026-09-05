@@ -2,10 +2,12 @@ import { prisma } from "@/lib/prisma";
 import { AIUserContext } from "./types";
 import { getQuotaStatus } from "./quotas";
 import { addDays, subHours } from "date-fns";
+import { resolveDbUserId } from "@/lib/dbUser";
 
 export async function buildUserAIContext(
-  userId: string
+  rawUserId: string
 ): Promise<AIUserContext> {
+  const userId = await resolveDbUserId(rawUserId);
   const now = new Date();
   const nextWeek = addDays(now, 7);
   const pastHours = subHours(now, 12);

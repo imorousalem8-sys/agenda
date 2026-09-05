@@ -49,20 +49,12 @@ export async function POST(req: NextRequest) {
       passwordHash = await bcrypt.hash(cleanPassword || "DefaultPass123!", 10);
     }
 
-    // 0. Stockage prioritaire en mémoire pour authentification immédiate sans délai
-    saveMemoryUser({
-      email: normalizedEmail,
-      name: finalName,
-      passwordHash,
-      plan: "PRO",
-      subscriptionStatus: "TRIAL",
-    });
-
     const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    let dbUserId: string | undefined = undefined;
 
-    // 1. Enregistrement Prisma
+    // 1. Enregistrement Prisma prioritaire
     try {
-      await prisma.user.upsert({
+      const dbUser = await prisma.user.upsert({
         where: { email: normalizedEmail },
         update: {
           name: finalName,
@@ -82,9 +74,20 @@ export async function POST(req: NextRequest) {
           trialEndsAt,
         },
       });
+      dbUserId = dbUser.id;
     } catch (prismaErr) {
       console.warn("[OTP Verify] Prisma upsert notice:", prismaErr);
     }
+
+    // 2. Stockage en mémoire avec l'identifiant exact de base de données
+    saveMemoryUser({
+      id: dbUserId,
+      email: normalizedEmail,
+      name: finalName,
+      passwordHash,
+      plan: "PRO",
+      subscriptionStatus: "TRIAL",
+    });
 
     // 2. Enregistrement de secours Supabase REST API HTTPS (Port 443)
     try {

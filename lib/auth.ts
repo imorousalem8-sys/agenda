@@ -4,6 +4,7 @@ import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { getMemoryUser } from "@/lib/userStore";
+import { resolveDbUserId } from "@/lib/dbUser";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://olcvcfselpcebqgrwkly.supabase.co";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -31,8 +32,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         // 1. Compte Démo instantané
         if (email === "demo@alarmagenda.ai" && password === "Demo1234!") {
+          let demoDbUser = await prisma.user.upsert({
+            where: { email: "demo@alarmagenda.ai" },
+            update: { plan: "PRO", subscriptionStatus: "ACTIVE" },
+            create: {
+              id: "demo_usr_1",
+              email: "demo@alarmagenda.ai",
+              name: "Utilisateur Démo",
+              password: await bcrypt.hash("Demo1234!", 10),
+              plan: "PRO",
+              subscriptionStatus: "ACTIVE",
+            },
+          }).catch(() => null);
+
           return {
-            id: "demo_usr_1",
+            id: demoDbUser?.id || "demo_usr_1",
             email: "demo@alarmagenda.ai",
             name: "Utilisateur Démo",
             plan: "PRO",
@@ -42,20 +56,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         let user: any = null;
 
-        // 2. Recherche prioritaire dans le store mémoire (utilisateur venant de valider l'OTP)
-        const memUser = getMemoryUser(email);
-        if (memUser) {
-          user = {
-            id: memUser.id,
-            email: memUser.email,
-            name: memUser.name,
-            password: memUser.passwordHash,
-            plan: memUser.plan,
-            subscriptionStatus: memUser.subscriptionStatus,
-          };
+        // 2. Recherche prioritaire dans Prisma DB
+        try {
+          user = await prisma.user.findUnique({
+            where: { email },
+          });
+        } catch (dbError) {
+          console.warn("[Auth] Prisma DB search exception:", dbError);
         }
 
-        // 3. Recherche via Supabase REST API HTTPS (Port 443)
+        // 3. Recherche dans le store mémoire (utilisateur venant de valider l'OTP)
+        if (!user) {
+          const memUser = getMemoryUser(email);
+          if (memUser) {
+            user = {
+              id: memUser.id,
+              email: memUser.email,
+              name: memUser.name,
+              password: memUser.passwordHash,
+              plan: memUser.plan,
+              subscriptionStatus: memUser.subscriptionStatus,
+            };
+          }
+        }
+
+        // 4. Recherche via Supabase REST API HTTPS (Port 443)
         if (!user && supabaseServiceKey) {
           try {
             const res = await fetch(`${supabaseUrl}/rest/v1/User?email=eq.${encodeURIComponent(email)}&select=*`, {
@@ -73,24 +98,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
         }
 
-        // 4. Recherche via Prisma DB
-        if (!user) {
-          try {
-            user = await prisma.user.findUnique({
-              where: { email },
-            });
-          } catch (dbError) {
-            console.warn("[Auth] Prisma DB search exception:", dbError);
-          }
-        }
-
         if (!user || !user.password) return null;
 
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) return null;
 
+        // Assure que l'ID retourné existe en base PostgreSQL
+        const guaranteedUserId = await resolveDbUserId(user.id, user.email, user.name);
+
         return {
-          id: user.id || `usr_${Date.now()}`,
+          id: guaranteedUserId,
           email: user.email,
           name: user.name || "Utilisateur",
           image: user.image,

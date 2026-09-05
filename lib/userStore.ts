@@ -11,6 +11,7 @@ export interface MemoryUser {
 const memoryUsers = new Map<string, MemoryUser>();
 
 export function saveMemoryUser(user: {
+  id?: string;
   email: string;
   name?: string;
   passwordHash: string;
@@ -20,7 +21,7 @@ export function saveMemoryUser(user: {
   const normalizedEmail = user.email.toLowerCase().trim();
   const existing = memoryUsers.get(normalizedEmail);
   const memoryUser: MemoryUser = {
-    id: existing?.id || `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+    id: user.id || existing?.id || `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     email: normalizedEmail,
     name: user.name || existing?.name || "Utilisateur",
     passwordHash: user.passwordHash,

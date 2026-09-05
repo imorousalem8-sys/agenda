@@ -4,6 +4,7 @@ import { AIToolDefinition } from "./providers/base";
 import { logAgentAction } from "./logger";
 import { parseISO, addMinutes, formatISO, startOfDay, endOfDay, addDays } from "date-fns";
 import { z } from "zod";
+import { resolveDbUserId } from "@/lib/dbUser";
 
 // ==========================================
 // SCHÉMAS DE VALIDATION ZOD STRICTS
@@ -305,7 +306,7 @@ async function executeToolInternal(
   args: Record<string, unknown>,
   context: AIUserContext
 ): Promise<AIActionExecutionResult> {
-  const userId = context.userId;
+  const userId = await resolveDbUserId(context.userId);
 
   switch (toolName) {
     case "create_event": {
@@ -324,15 +325,19 @@ async function executeToolInternal(
 
       let contactId: string | undefined = undefined;
       if (contactName) {
-        let contact = await prisma.contact.findFirst({
-          where: { userId, firstName: { contains: contactName, mode: "insensitive" } },
-        });
-        if (!contact) {
-          contact = await prisma.contact.create({
-            data: { userId, firstName: contactName, notes: "Créé automatiquement par l'IA." },
+        try {
+          let contact = await prisma.contact.findFirst({
+            where: { userId, firstName: { contains: contactName, mode: "insensitive" } },
           });
+          if (!contact) {
+            contact = await prisma.contact.create({
+              data: { userId, firstName: contactName, notes: "Créé automatiquement par l'IA." },
+            });
+          }
+          contactId = contact.id;
+        } catch (contactErr) {
+          console.warn("Contact resolution notice in create_event:", contactErr);
         }
-        contactId = contact.id;
       }
 
       const event = await prisma.event.create({
@@ -353,17 +358,21 @@ async function executeToolInternal(
       const fireAt = reminderTime > new Date() ? reminderTime : startAt;
       const timeStr = startAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 
-      await prisma.reminder.create({
-        data: {
-          userId,
-          eventId: event.id,
-          title: `Rendez-vous : ${title}`,
-          body: `Votre rendez-vous ${contactName ? `avec ${contactName}` : ""} est prévu à ${timeStr}.${location ? ` Lieu : ${location}.` : ""}`,
-          fireAt,
-          method: "VOICE",
-          status: "PENDING",
-        },
-      });
+      try {
+        await prisma.reminder.create({
+          data: {
+            userId,
+            eventId: event.id,
+            title: `Rendez-vous : ${title}`,
+            body: `Votre rendez-vous ${contactName ? `avec ${contactName}` : ""} est prévu à ${timeStr}.${location ? ` Lieu : ${location}.` : ""}`,
+            fireAt,
+            method: "VOICE",
+            status: "PENDING",
+          },
+        });
+      } catch (remErr) {
+        console.warn("Reminder create notice in create_event:", remErr);
+      }
 
       return {
         id: event.id,
@@ -477,14 +486,18 @@ async function executeToolInternal(
 
       const reminderAtRaw = args.reminderAt || dueAtRaw;
       if (reminderAtRaw) {
-        const fireAt = parseSmartDate(reminderAtRaw, context.currentTime);
-        const timeStr = fireAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-        await prisma.reminder.create({
-          data: {
-            userId, taskId: task.id, title: `Tâche : ${title}`,
-            body: `Tâche « ${title} » programmée à ${timeStr}.`, fireAt, method: "VOICE", status: "PENDING",
-          },
-        });
+        try {
+          const fireAt = parseSmartDate(reminderAtRaw, context.currentTime);
+          const timeStr = fireAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+          await prisma.reminder.create({
+            data: {
+              userId, taskId: task.id, title: `Tâche : ${title}`,
+              body: `Tâche « ${title} » programmée à ${timeStr}.`, fireAt, method: "VOICE", status: "PENDING",
+            },
+          });
+        } catch (remErr) {
+          console.warn("Reminder create notice in create_task:", remErr);
+        }
       }
 
       return { id: task.id, type: "TASK", title: task.title, notes: task.notes || undefined, dateTime: task.dueAt ? formatISO(task.dueAt) : undefined, contactName, priority, mode, level: 1 };

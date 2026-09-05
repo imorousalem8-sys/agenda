@@ -5,6 +5,7 @@ import { checkAndIncrementQuota } from "./quotas";
 import { getAvailableAIProviders } from "./providers/factory";
 import { AIProvider, ProviderResponse } from "./providers/base";
 import { APP_CONFIG } from "@/lib/config";
+import { resolveDbUserId } from "@/lib/dbUser";
 
 export async function processUserAIMessage(
   userId: string,
@@ -12,8 +13,11 @@ export async function processUserAIMessage(
   conversationHistory: AIChatMessage[] = [],
   activeTarget?: AIUserContext["activeTarget"]
 ): Promise<AIEngineResponse> {
+  // 0. Ensure user exists in database with valid foreign key target
+  const validUserId = await resolveDbUserId(userId);
+
   // 1. Check & increment user quota (1 user prompt = 1 request debit)
-  const quotaStatus = await checkAndIncrementQuota(userId);
+  const quotaStatus = await checkAndIncrementQuota(validUserId);
   if (quotaStatus.isExceeded) {
     return {
       reply: `Vous avez atteint votre limite de **${quotaStatus.limit} requêtes IA** ce mois-ci. Passez au plan **Pro** pour continuer sans interruption avec 1000 requêtes/mois.`,
@@ -25,7 +29,7 @@ export async function processUserAIMessage(
   }
 
   // 2. Build Rich User Context
-  const context = await buildUserAIContext(userId);
+  const context = await buildUserAIContext(validUserId);
   if (activeTarget) {
     context.activeTarget = activeTarget;
   }
