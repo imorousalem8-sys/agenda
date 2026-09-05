@@ -1365,11 +1365,11 @@ export default function LandingPage() {
 
                 <div>
                   <label style={{ display: "block", fontSize: "12.5px", fontWeight: "600", color: "#cbd5e1", marginBottom: "5px", textAlign: "center" }}>
-                    Code de confirmation à 6 chiffres
+                    Code de confirmation de sécurité
                   </label>
                   <input
                     type="text"
-                    maxLength={6}
+                    maxLength={8}
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
                     placeholder="123456"
@@ -1499,11 +1499,11 @@ export default function LandingPage() {
               <form onSubmit={onResetSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "12.5px", fontWeight: "600", color: "#cbd5e1", marginBottom: "5px" }}>
-                    Code à 6 chiffres reçu
+                    Code de sécurité reçu
                   </label>
                   <input
                     type="text"
-                    maxLength={6}
+                    maxLength={8}
                     value={resetCode}
                     onChange={(e) => setResetCode(e.target.value.replace(/\D/g, ""))}
                     placeholder="123456"

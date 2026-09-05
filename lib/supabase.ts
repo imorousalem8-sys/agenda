@@ -52,31 +52,41 @@ export function getDynamicBaseUrl(req?: NextRequest | Request): string {
 }
 
 /**
- * Envoie un code OTP à 6 chiffres via Supabase Auth
- * avec URL de redirection dynamique en ligne (Zéro localhost)
+ * Génère le code officiel OTP Supabase Auth via l'API Admin
+ * (ZÉRO email envoyé par Supabase, ZÉRO lien magique, 100% sécurisé)
  */
-export async function sendSupabaseOtp(email: string, redirectTo?: string) {
+export async function generateOfficialSupabaseOtp(
+  email: string,
+  password?: string,
+  type: "signup" | "recovery" = "signup"
+): Promise<{ ok: boolean; otp?: string; user?: any; error?: string }> {
   try {
-    const res = await fetch(`${supabaseUrl}/auth/v1/otp`, {
+    const normalizedEmail = email.toLowerCase().trim();
+    const res = await fetch(`${supabaseUrl}/auth/v1/admin/generate_link`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "apikey": supabaseAnonKey,
-        "Authorization": `Bearer ${supabaseServiceKey || supabaseAnonKey}`,
+        "apikey": supabaseServiceKey,
+        "Authorization": `Bearer ${supabaseServiceKey}`,
       },
       body: JSON.stringify({
-        email: email.toLowerCase().trim(),
-        create_user: true,
-        options: redirectTo ? { emailRedirectTo: redirectTo } : undefined,
-        data: redirectTo ? { redirect_to: redirectTo } : undefined,
+        type,
+        email: normalizedEmail,
+        password: password || undefined,
       }),
     });
 
     const data = await res.json().catch(() => ({}));
-    return { ok: res.ok, status: res.status, data };
-  } catch (err) {
-    console.warn("Supabase OTP send warning:", err);
-    return { ok: false, error: err };
+    if (res.ok && data) {
+      const otp = data.email_otp || data.properties?.email_otp;
+      if (otp) {
+        return { ok: true, otp: String(otp), user: data };
+      }
+    }
+    return { ok: false, error: data?.msg || data?.message || "Erreur Supabase OTP" };
+  } catch (err: unknown) {
+    console.warn("[Supabase Admin OTP] notice:", err);
+    return { ok: false, error: String(err) };
   }
 }
 

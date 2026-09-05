@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { storeOtp, generateFreshOtp } from "@/lib/otpStore";
+import { generateOfficialSupabaseOtp } from "@/lib/supabase";
 import { sendOtpEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
@@ -26,11 +27,19 @@ export async function POST(req: NextRequest) {
       console.warn("[Forgot Password] DB user check notice:", e);
     }
 
-    // 1. Générer le code OTP de réinitialisation à 6 chiffres
-    const resetOtp = generateFreshOtp();
+    // 1. Générer le code OTP OFFICIEL de récupération auprès de Supabase
+    let resetOtp = "";
+    const sbResult = await generateOfficialSupabaseOtp(normalizedEmail, undefined, "recovery");
+    if (sbResult.ok && sbResult.otp) {
+      resetOtp = sbResult.otp;
+      console.log(`[Forgot Password] Recovery OTP officiel généré par Supabase pour ${normalizedEmail}: ${resetOtp}`);
+    } else {
+      resetOtp = generateFreshOtp();
+    }
+
     await storeOtp(normalizedEmail, resetOtp, userName, undefined, "RESET_PASSWORD");
 
-    // 2. Envoyer UNIQUEMENT le code à 6 chiffres par email (zéro lien de redirection externe)
+    // 2. Envoyer UNIQUEMENT notre email propre contenant le code (zéro lien de redirection)
     const emailRes = await sendOtpEmail({
       to: normalizedEmail,
       name: userName,
@@ -41,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Si un compte est associé à cette adresse email, vous recevrez un code de confirmation à 6 chiffres dans quelques instants.`,
+      message: `Si un compte est associé à cette adresse email, vous recevrez un code de confirmation dans quelques instants.`,
       code: resetOtp,
     });
   } catch (error) {

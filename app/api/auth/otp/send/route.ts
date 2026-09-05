@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { storeOtp, generateFreshOtp } from "@/lib/otpStore";
+import { generateOfficialSupabaseOtp } from "@/lib/supabase";
 import { sendOtpEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
@@ -33,27 +34,36 @@ export async function POST(req: NextRequest) {
       console.warn("DB check warning:", e);
     }
 
-    // 1. Générer le code OTP à 6 chiffres
-    const otpCode = generateFreshOtp();
+    // 1. Génération du code OTP OFFICIEL auprès de Supabase Auth (ZÉRO lien magique, ZÉRO email envoyé par Supabase)
+    let otpCode = "";
+    const sbResult = await generateOfficialSupabaseOtp(normalizedEmail, password, "signup");
+    if (sbResult.ok && sbResult.otp) {
+      otpCode = sbResult.otp;
+      console.log(`[OTP Send] Code officiel généré par Supabase pour ${normalizedEmail}: ${otpCode}`);
+    } else {
+      otpCode = generateFreshOtp();
+      console.log(`[OTP Send] Fallback OTP généré en local pour ${normalizedEmail}: ${otpCode}`);
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 2. Stocker le code OTP pour l'inscription (validité 15 minutes)
+    // 2. Stocker le code OTP pour l'inscription (synchronisé en base locale & mémoire)
     await storeOtp(normalizedEmail, otpCode, name || "Utilisateur", hashedPassword, "REGISTER");
 
-    // 3. Envoyer UNIQUEMENT le code à 6 chiffres par email direct (zéro lien magique)
+    // 3. Envoyer UNIQUEMENT notre email propre contenant le code (zéro lien de redirection)
     const emailResult = await sendOtpEmail({
       to: normalizedEmail,
       name: name || "Utilisateur",
       code: otpCode,
     });
 
-    console.log(`[OTP Send] Email: ${normalizedEmail} | Code: ${otpCode} | Email Sent: ${emailResult.success ? "OK" : "NO"}`);
+    console.log(`[OTP Send] Email: ${normalizedEmail} | Code: ${otpCode} | Direct Mailer: ${emailResult.success ? "OK" : "NO"}`);
 
     return NextResponse.json({
       success: true,
-      message: `Un code de confirmation à 6 chiffres a été envoyé à ${normalizedEmail}.`,
+      message: `Votre code de validation a été généré et envoyé à ${normalizedEmail}.`,
       sentViaDirectMailer: emailResult.success,
-      code: otpCode, // Code synchronisé pour accès immédiat sans blocage
+      code: otpCode,
     });
   } catch (error) {
     console.error("OTP send error:", error);
