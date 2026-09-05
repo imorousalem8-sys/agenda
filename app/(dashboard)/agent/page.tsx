@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { getStoredVoiceSettings, speakAIText } from "@/lib/voice";
+import VoiceRecordingBubble from "@/components/ai/VoiceRecordingBubble";
 
 interface ChatMessage {
   id: string;
@@ -51,6 +52,7 @@ export default function AgentPage() {
   ]);
 
   const [inputMessage, setInputMessage] = useState("");
+  const [liveTranscript, setLiveTranscript] = useState("");
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -86,7 +88,7 @@ export default function AgentPage() {
     };
   }, []);
 
-  // Standard, reliable Speech Recognition
+  // Standard, reliable Speech Recognition with Real-Time Interim Results
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
@@ -97,18 +99,17 @@ export default function AgentPage() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const recognition = new (SpeechRecognition as any)();
         recognition.lang = "fr-FR";
-        recognition.continuous = false;
-        recognition.interimResults = false;
+        recognition.continuous = true;
+        recognition.interimResults = true;
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         recognition.onresult = (event: any) => {
-          setIsListening(false);
-          const transcript = event.results[0][0].transcript;
-
-          if (transcript && transcript.trim().length >= 2) {
-            setInputMessage(transcript);
-            handleSendMessage(transcript);
+          let currentText = "";
+          for (let i = 0; i < event.results.length; i++) {
+            currentText += event.results[i][0].transcript;
           }
+          setLiveTranscript(currentText);
+          setInputMessage(currentText);
         };
 
         recognition.onerror = () => {
@@ -131,6 +132,7 @@ export default function AgentPage() {
     }
     window.speechSynthesis?.cancel();
     setIsSpeaking(false);
+    setLiveTranscript("");
 
     try {
       recognitionRef.current.start();
@@ -149,6 +151,20 @@ export default function AgentPage() {
     }
     setIsListening(false);
   }, []);
+
+  const stopListeningAndSend = useCallback(() => {
+    stopListening();
+    const text = liveTranscript.trim() || inputMessage.trim();
+    if (text) {
+      handleSendMessage(text);
+      setLiveTranscript("");
+    }
+  }, [liveTranscript, inputMessage]);
+
+  const cancelListening = useCallback(() => {
+    stopListening();
+    setLiveTranscript("");
+  }, [stopListening]);
 
   const stopSpeaking = () => {
     window.speechSynthesis?.cancel();
@@ -618,6 +634,14 @@ export default function AgentPage() {
           </button>
         </div>
       </div>
+
+      {/* Floating Animated Voice Recording Bubble HUD */}
+      <VoiceRecordingBubble
+        isListening={isListening}
+        transcript={liveTranscript}
+        onStop={stopListeningAndSend}
+        onCancel={cancelListening}
+      />
     </div>
   );
 }

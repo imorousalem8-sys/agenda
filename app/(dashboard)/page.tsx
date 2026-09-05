@@ -24,6 +24,7 @@ import AgentStepCard from "@/components/ai/AgentStepCard";
 import ToolCallCard from "@/components/ai/ToolCallCard";
 import { AgentStep, AIActionExecutionResult } from "@/lib/ai/types";
 import { speakAIText } from "@/lib/voice";
+import VoiceRecordingBubble from "@/components/ai/VoiceRecordingBubble";
 
 interface EventItem {
   id: string;
@@ -68,6 +69,7 @@ export default function DashboardPage() {
 
   // Direct AI Command Bar State
   const [aiPrompt, setAiPrompt] = useState("");
+  const [liveTranscript, setLiveTranscript] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
   const [aiSteps, setAiSteps] = useState<AgentStep[]>([]);
@@ -177,28 +179,49 @@ export default function DashboardPage() {
     }
 
     if (isListening) {
-      setIsListening(false);
+      stopListeningAndSend();
       return;
     }
 
     const recognition = new SpeechRecognition();
     recognition.lang = "fr-FR";
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.continuous = true;
+    recognition.interimResults = true;
 
-    recognition.onstart = () => setIsListening(true);
+    recognition.onstart = () => {
+      setIsListening(true);
+      setLiveTranscript("");
+    };
     recognition.onend = () => setIsListening(false);
     recognition.onerror = () => setIsListening(false);
 
     recognition.onresult = (e: any) => {
-      const transcript = e.results[0][0].transcript;
-      if (transcript) {
-        setAiPrompt(transcript);
-        handleExecuteAI(transcript);
+      let currentText = "";
+      for (let i = 0; i < e.results.length; i++) {
+        currentText += e.results[i][0].transcript;
       }
+      setLiveTranscript(currentText);
+      setAiPrompt(currentText);
     };
 
+    (window as any).__dashboardRecognition = recognition;
     recognition.start();
+  };
+
+  const stopListeningAndSend = () => {
+    (window as any).__dashboardRecognition?.stop();
+    setIsListening(false);
+    const text = liveTranscript.trim() || aiPrompt.trim();
+    if (text) {
+      handleExecuteAI(text);
+      setLiveTranscript("");
+    }
+  };
+
+  const cancelListening = () => {
+    (window as any).__dashboardRecognition?.stop();
+    setIsListening(false);
+    setLiveTranscript("");
   };
 
   const todayFormatted = new Date().toLocaleDateString("fr-FR", {
@@ -645,6 +668,14 @@ export default function DashboardPage() {
           }}
         />
       )}
+
+      {/* Floating Animated Voice Recording Bubble HUD */}
+      <VoiceRecordingBubble
+        isListening={isListening}
+        transcript={liveTranscript}
+        onStop={stopListeningAndSend}
+        onCancel={cancelListening}
+      />
     </div>
   );
 }

@@ -17,6 +17,7 @@ import { speakAIText } from "@/lib/voice";
 import AgentStepCard from "./AgentStepCard";
 import ToolCallCard from "./ToolCallCard";
 import QuotaIndicator from "./QuotaIndicator";
+import VoiceRecordingBubble from "./VoiceRecordingBubble";
 import { AgentStep, AIActionExecutionResult } from "@/lib/ai/types";
 
 interface ChatMessage {
@@ -38,6 +39,7 @@ const quickPrompts = [
 export default function AIAssistantWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
+  const [liveTranscript, setLiveTranscript] = useState("");
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -139,8 +141,7 @@ export default function AIAssistantWidget() {
 
   const toggleVoiceInput = () => {
     if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
+      stopListeningAndSend();
       return;
     }
 
@@ -154,23 +155,43 @@ export default function AIAssistantWidget() {
 
     const recognition = new SpeechRecognition();
     recognition.lang = "fr-FR";
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.continuous = true;
+    recognition.interimResults = true;
 
-    recognition.onstart = () => setIsListening(true);
+    recognition.onstart = () => {
+      setIsListening(true);
+      setLiveTranscript("");
+    };
     recognition.onend = () => setIsListening(false);
     recognition.onerror = () => setIsListening(false);
 
     recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      if (transcript) {
-        setInputMessage(transcript);
-        handleSendMessage(transcript);
+      let currentText = "";
+      for (let i = 0; i < event.results.length; i++) {
+        currentText += event.results[i][0].transcript;
       }
+      setLiveTranscript(currentText);
+      setInputMessage(currentText);
     };
 
     recognitionRef.current = recognition;
     recognition.start();
+  };
+
+  const stopListeningAndSend = () => {
+    recognitionRef.current?.stop();
+    setIsListening(false);
+    const text = liveTranscript.trim() || inputMessage.trim();
+    if (text) {
+      handleSendMessage(text);
+      setLiveTranscript("");
+    }
+  };
+
+  const cancelListening = () => {
+    recognitionRef.current?.stop();
+    setIsListening(false);
+    setLiveTranscript("");
   };
 
   return (
@@ -449,6 +470,14 @@ export default function AIAssistantWidget() {
           </div>
         </div>
       )}
+
+      {/* Floating Animated Voice Recording Bubble HUD */}
+      <VoiceRecordingBubble
+        isListening={isListening}
+        transcript={liveTranscript}
+        onStop={stopListeningAndSend}
+        onCancel={cancelListening}
+      />
     </>
   );
 }
