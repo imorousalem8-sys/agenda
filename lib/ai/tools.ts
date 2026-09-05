@@ -262,6 +262,23 @@ export const AI_TOOL_DEFINITIONS: AIToolDefinition[] = [
   },
 ];
 
+function parseSmartDate(input?: unknown, referenceIso?: string): Date {
+  if (input && typeof input === "string" && input.trim().length >= 3 && input !== "undefined" && input !== "null") {
+    try {
+      const parsed = parseISO(input.trim());
+      if (!isNaN(parsed.getTime())) return parsed;
+      const parsedNative = new Date(input.trim());
+      if (!isNaN(parsedNative.getTime())) return parsedNative;
+    } catch {}
+  }
+  
+  // Fallback to reference time or tomorrow morning 09:00
+  const base = referenceIso ? new Date(referenceIso) : new Date();
+  const fallback = addDays(base, 1);
+  fallback.setHours(9, 0, 0, 0);
+  return fallback;
+}
+
 export async function executeAITool(
   toolName: string,
   args: Record<string, unknown>,
@@ -292,12 +309,12 @@ async function executeToolInternal(
 
   switch (toolName) {
     case "create_event": {
-      const title = String(args.title || "Rendez-vous");
-      const startAtStr = String(args.startAt);
-      const startAt = parseISO(startAtStr);
+      const title = String(args.title || args.name || "Rendez-vous");
+      const rawStart = args.startAt || args.startTime || args.start || args.date || args.dueAt || args.dateTime;
+      const startAt = parseSmartDate(rawStart, context.currentTime);
       const location = args.location ? String(args.location) : undefined;
       const description = args.description ? String(args.description) : undefined;
-      const contactName = args.contactName ? String(args.contactName) : undefined;
+      const contactName = (args.contactName || args.contact || args.with) ? String(args.contactName || args.contact || args.with) : undefined;
       const priority = (args.priority as "LOW" | "NORMAL" | "HIGH" | "URGENT") || "NORMAL";
       const category = String(args.category || "OTHER");
       const reminderMinutes = typeof args.reminderMinutesBefore === "number" ? args.reminderMinutesBefore : 15;
@@ -443,11 +460,11 @@ async function executeToolInternal(
     }
 
     case "create_task": {
-      const title = String(args.title || "Tâche");
-      const dueAtStr = args.dueAt ? String(args.dueAt) : undefined;
-      const dueAt = dueAtStr ? parseISO(dueAtStr) : undefined;
+      const title = String(args.title || args.name || "Tâche");
+      const dueAtRaw = args.dueAt || args.dueDate || args.dueTime || args.date || args.startAt || args.startTime;
+      const dueAt = dueAtRaw ? parseSmartDate(dueAtRaw, context.currentTime) : undefined;
       const notes = args.notes ? String(args.notes) : undefined;
-      const contactName = args.contactName ? String(args.contactName) : undefined;
+      const contactName = (args.contactName || args.contact || args.with) ? String(args.contactName || args.contact || args.with) : undefined;
       const priority = (args.priority as "LOW" | "NORMAL" | "HIGH" | "URGENT") || "NORMAL";
       const mode = detectMode(title, notes);
 
@@ -458,9 +475,9 @@ async function executeToolInternal(
         data: { userId, title, notes: finalNotes || "Tâche créée par l'assistant.", dueAt, priority, mode, isDone: false },
       });
 
-      const reminderAtStr = args.reminderAt ? String(args.reminderAt) : dueAtStr;
-      if (reminderAtStr) {
-        const fireAt = parseISO(reminderAtStr);
+      const reminderAtRaw = args.reminderAt || dueAtRaw;
+      if (reminderAtRaw) {
+        const fireAt = parseSmartDate(reminderAtRaw, context.currentTime);
         const timeStr = fireAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
         await prisma.reminder.create({
           data: {
@@ -513,8 +530,9 @@ async function executeToolInternal(
     }
 
     case "create_reminder": {
-      const title = String(args.title || "Rappel");
-      const fireAt = parseISO(String(args.fireAt));
+      const title = String(args.title || args.name || "Rappel");
+      const rawFireAt = args.fireAt || args.dueTime || args.dueAt || args.time || args.dateTime || args.date;
+      const fireAt = parseSmartDate(rawFireAt, context.currentTime);
       const customMessage = args.customSpokenMessage ? String(args.customSpokenMessage) : undefined;
       const method = (args.method as "VOICE" | "ALARM" | "NOTIFICATION") || "VOICE";
       const timeStr = fireAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
@@ -528,7 +546,7 @@ async function executeToolInternal(
     }
 
     case "create_contact": {
-      const firstName = String(args.firstName || "Contact");
+      const firstName = String(args.firstName || args.name || args.contactName || "Contact");
       const contact = await prisma.contact.create({
         data: {
           userId, firstName,
