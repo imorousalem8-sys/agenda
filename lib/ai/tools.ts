@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { AIActionExecutionResult, AIUserContext } from "./types";
+import { AIToolDefinition } from "./providers/base";
 import { logAgentAction } from "./logger";
 import { parseISO, addMinutes, formatISO, startOfDay, endOfDay, addDays } from "date-fns";
 import { z } from "zod";
@@ -89,7 +90,7 @@ export const SaveUserPreferenceSchema = z.object({
 // DÉFINITIONS DES OUTILS (POUR LE LLM)
 // ==========================================
 
-export const AI_TOOL_DEFINITIONS = [
+export const AI_TOOL_DEFINITIONS: AIToolDefinition[] = [
   {
     name: "create_event",
     description: "À utiliser UNIQUEMENT lorsque l'utilisateur demande explicitement d'ajouter ou planifier un rendez-vous / événement dans son calendrier. Ne jamais appeler pour une simple salutation ou discussion.",
@@ -556,7 +557,7 @@ async function executeToolInternal(
       }
 
       const results = await prisma.event.findMany({
-        where: where as Parameters<typeof prisma.event.findMany>[0]["where"],
+        where: where as any,
         orderBy: { startAt: "asc" },
         take: 10,
       });

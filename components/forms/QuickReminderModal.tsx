@@ -13,6 +13,7 @@ interface QuickReminderModalProps {
 }
 
 export default function QuickReminderModal({ onClose, onSaved }: QuickReminderModalProps) {
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const defaultFireAt = format(addMinutes(new Date(), 10), "yyyy-MM-dd'T'HH:mm");

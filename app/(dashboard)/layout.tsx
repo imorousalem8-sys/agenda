@@ -53,7 +53,8 @@ export default function DashboardLayout({
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showVoiceLiveModal, setShowVoiceLiveModal] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>();
-  const { isPro, isDemoUser, isProMocked } = useSubscription();
+  const { isPro } = useSubscription();
+  const isDemoUser = session?.user?.email === "demo@alarmagenda.fr";
 
   // Listen to open-upgrade-modal & open-voice-live-modal events
   useEffect(() => {

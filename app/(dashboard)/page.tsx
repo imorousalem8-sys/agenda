@@ -637,7 +637,13 @@ export default function DashboardPage() {
       </div>
 
       {showEventForm && (
-        <EventFormModal onClose={() => setShowEventForm(false)} />
+        <EventFormModal
+          onClose={() => setShowEventForm(false)}
+          onSaved={() => {
+            setShowEventForm(false);
+            loadDashboard();
+          }}
+        />
       )}
     </div>
   );

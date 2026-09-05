@@ -22,42 +22,42 @@ export default function CyberGridBackground() {
     };
     window.addEventListener("resize", handleResize);
 
-    const gridSize = 38;
+    const gridSize = 44;
 
-    // Glowing energy pulse beams travelling on grid lines
+    // Monochrome & Emerald Developer Pulses
     interface Pulse {
       axis: "x" | "y";
-      fixedPos: number; // the line coordinate
-      currentPos: number; // position along the line
+      fixedPos: number;
+      currentPos: number;
       speed: number;
       length: number;
       color: string;
       glowSize: number;
     }
 
-    const colors = [
-      "rgba(56, 189, 248, ", // Cyan
-      "rgba(99, 102, 241, ", // Indigo
-      "rgba(168, 85, 247, ", // Purple
-      "rgba(236, 72, 153, ", // Pink
+    const devColors = [
+      "rgba(255, 255, 255, ", // Pure white
+      "rgba(148, 163, 184, ", // Slate / Steel
+      "rgba(52, 211, 153, ",  // Emerald
+      "rgba(56, 189, 248, ",  // Cyan tech
     ];
 
     const pulses: Pulse[] = [];
-    const maxPulses = 24;
+    const maxPulses = 18;
 
     const createPulse = (): Pulse => {
       const isHorizontal = Math.random() > 0.5;
-      const color = colors[Math.floor(Math.random() * colors.length)];
+      const color = devColors[Math.floor(Math.random() * devColors.length)];
       if (isHorizontal) {
         const gridIndex = Math.floor(Math.random() * (height / gridSize));
         return {
           axis: "y",
           fixedPos: gridIndex * gridSize,
           currentPos: Math.random() * width,
-          speed: (Math.random() * 1.6 + 0.9) * (Math.random() > 0.5 ? 1 : -1),
-          length: Math.random() * 100 + 60,
+          speed: (Math.random() * 1.4 + 0.6) * (Math.random() > 0.5 ? 1 : -1),
+          length: Math.random() * 80 + 40,
           color,
-          glowSize: Math.random() * 3.5 + 2,
+          glowSize: Math.random() * 2.5 + 1.5,
         };
       } else {
         const gridIndex = Math.floor(Math.random() * (width / gridSize));
@@ -65,10 +65,10 @@ export default function CyberGridBackground() {
           axis: "x",
           fixedPos: gridIndex * gridSize,
           currentPos: Math.random() * height,
-          speed: (Math.random() * 1.6 + 0.9) * (Math.random() > 0.5 ? 1 : -1),
-          length: Math.random() * 100 + 60,
+          speed: (Math.random() * 1.4 + 0.6) * (Math.random() > 0.5 ? 1 : -1),
+          length: Math.random() * 80 + 40,
           color,
-          glowSize: Math.random() * 3.5 + 2,
+          glowSize: Math.random() * 2.5 + 1.5,
         };
       }
     };
@@ -77,7 +77,7 @@ export default function CyberGridBackground() {
       pulses.push(createPulse());
     }
 
-    // Floating micro-nodes at intersections
+    // Micro grid points
     interface Node {
       x: number;
       y: number;
@@ -86,138 +86,151 @@ export default function CyberGridBackground() {
       color: string;
     }
     const nodes: Node[] = [];
-    const nodeCount = 40;
+    const nodeCount = 32;
     for (let i = 0; i < nodeCount; i++) {
       const gx = Math.floor(Math.random() * (width / gridSize)) * gridSize;
       const gy = Math.floor(Math.random() * (height / gridSize)) * gridSize;
       nodes.push({
         x: gx,
         y: gy,
-        alpha: Math.random() * 0.8,
-        targetAlpha: Math.random() * 0.9 + 0.1,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: Math.random() * 0.6,
+        targetAlpha: Math.random() * 0.7 + 0.1,
+        color: devColors[Math.floor(Math.random() * devColors.length)],
       });
     }
 
-    let lastTime = performance.now();
+    let frame = 0;
 
-    const render = (time: number) => {
-      const dt = Math.min((time - lastTime) / 1000, 0.1);
-      lastTime = time;
-
+    const render = () => {
+      frame++;
       ctx.clearRect(0, 0, width, height);
 
-      // Draw crisp cyber grid lines
+      // Deep dark developer background
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, width, height);
+
+      // Subtle Developer Matrix Grid
       ctx.lineWidth = 1;
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.065)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
 
       ctx.beginPath();
-      // Vertical lines
       for (let x = 0; x <= width; x += gridSize) {
-        ctx.moveTo(x + 0.5, 0);
-        ctx.lineTo(x + 0.5, height);
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
       }
-      // Horizontal lines
       for (let y = 0; y <= height; y += gridSize) {
-        ctx.moveTo(0, y + 0.5);
-        ctx.lineTo(width, y + 0.5);
+        ctx.moveTo(y, y); // fixed
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
       }
       ctx.stroke();
 
-      // Render glowing intersection nodes
+      // Draw subtle grid intersection crosshairs
+      ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+      for (let x = gridSize; x < width; x += gridSize * 3) {
+        for (let y = gridSize; y < height; y += gridSize * 3) {
+          ctx.fillRect(x - 1, y - 1, 2, 2);
+        }
+      }
+
+      // Draw pulses
+      pulses.forEach((pulse, idx) => {
+        pulse.currentPos += pulse.speed;
+
+        if (pulse.axis === "y") {
+          if (pulse.currentPos > width + pulse.length || pulse.currentPos < -pulse.length) {
+            pulses[idx] = createPulse();
+            return;
+          }
+
+          const grad = ctx.createLinearGradient(
+            pulse.currentPos - (pulse.speed > 0 ? pulse.length : 0),
+            pulse.fixedPos,
+            pulse.currentPos + (pulse.speed < 0 ? pulse.length : 0),
+            pulse.fixedPos
+          );
+          grad.addColorStop(0, "rgba(255, 255, 255, 0)");
+          grad.addColorStop(0.7, pulse.color + "0.65)");
+          grad.addColorStop(1, pulse.color + "0.95)");
+
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(pulse.currentPos - (pulse.speed > 0 ? pulse.length : -pulse.length), pulse.fixedPos);
+          ctx.lineTo(pulse.currentPos, pulse.fixedPos);
+          ctx.stroke();
+
+          // Head dot
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(pulse.currentPos, pulse.fixedPos, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          if (pulse.currentPos > height + pulse.length || pulse.currentPos < -pulse.length) {
+            pulses[idx] = createPulse();
+            return;
+          }
+
+          const grad = ctx.createLinearGradient(
+            pulse.fixedPos,
+            pulse.currentPos - (pulse.speed > 0 ? pulse.length : 0),
+            pulse.fixedPos,
+            pulse.currentPos + (pulse.speed < 0 ? pulse.length : 0)
+          );
+          grad.addColorStop(0, "rgba(255, 255, 255, 0)");
+          grad.addColorStop(0.7, pulse.color + "0.65)");
+          grad.addColorStop(1, pulse.color + "0.95)");
+
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(pulse.fixedPos, pulse.currentPos - (pulse.speed > 0 ? pulse.length : -pulse.length));
+          ctx.lineTo(pulse.fixedPos, pulse.currentPos);
+          ctx.stroke();
+
+          // Head dot
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(pulse.fixedPos, pulse.currentPos, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
+      // Draw subtle intersection nodes
       nodes.forEach((node) => {
-        node.alpha += (node.targetAlpha - node.alpha) * 0.02;
+        node.alpha += (node.targetAlpha - node.alpha) * 0.03;
         if (Math.abs(node.targetAlpha - node.alpha) < 0.05) {
-          node.targetAlpha = Math.random() > 0.3 ? Math.random() * 0.85 : 0;
+          node.targetAlpha = Math.random() > 0.4 ? Math.random() * 0.6 + 0.2 : 0;
         }
 
-        if (node.alpha > 0.02) {
-          ctx.save();
-          ctx.shadowColor = node.color + "0.9)";
-          ctx.shadowBlur = 10;
+        if (node.alpha > 0.05) {
           ctx.fillStyle = node.color + `${node.alpha})`;
           ctx.beginPath();
           ctx.arc(node.x, node.y, 2, 0, Math.PI * 2);
           ctx.fill();
-          ctx.restore();
         }
       });
 
-      // Update and draw travelling luminous pulses
-      pulses.forEach((p, idx) => {
-        p.currentPos += p.speed * 60 * dt;
+      // Subtle top/center white & steel ambient spotlight
+      const radialGlow = ctx.createRadialGradient(
+        width / 2,
+        height * 0.15,
+        0,
+        width / 2,
+        height * 0.15,
+        width * 0.5
+      );
+      radialGlow.addColorStop(0, "rgba(255, 255, 255, 0.04)");
+      radialGlow.addColorStop(0.5, "rgba(148, 163, 184, 0.015)");
+      radialGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
 
-        // Wrap around boundaries
-        if (p.axis === "y") {
-          if (p.speed > 0 && p.currentPos - p.length > width) {
-            pulses[idx] = createPulse();
-            pulses[idx].currentPos = -pulses[idx].length;
-          } else if (p.speed < 0 && p.currentPos + p.length < 0) {
-            pulses[idx] = createPulse();
-            pulses[idx].currentPos = width + pulses[idx].length;
-          }
-        } else {
-          if (p.speed > 0 && p.currentPos - p.length > height) {
-            pulses[idx] = createPulse();
-            pulses[idx].currentPos = -pulses[idx].length;
-          } else if (p.speed < 0 && p.currentPos + p.length < 0) {
-            pulses[idx] = createPulse();
-            pulses[idx].currentPos = height + pulses[idx].length;
-          }
-        }
-
-        // Draw the laser pulse
-        ctx.save();
-        ctx.shadowColor = p.color + "0.9)";
-        ctx.shadowBlur = 12;
-        ctx.lineWidth = p.glowSize;
-
-        const grad =
-          p.axis === "y"
-            ? ctx.createLinearGradient(
-                p.currentPos - (p.speed > 0 ? p.length : -p.length),
-                p.fixedPos,
-                p.currentPos,
-                p.fixedPos
-              )
-            : ctx.createLinearGradient(
-                p.fixedPos,
-                p.currentPos - (p.speed > 0 ? p.length : -p.length),
-                p.fixedPos,
-                p.currentPos
-              );
-
-        grad.addColorStop(0, p.color + "0)");
-        grad.addColorStop(0.7, p.color + "0.7)");
-        grad.addColorStop(1, p.color + "1)");
-
-        ctx.strokeStyle = grad;
-        ctx.beginPath();
-        if (p.axis === "y") {
-          ctx.moveTo(p.currentPos - (p.speed > 0 ? p.length : -p.length), p.fixedPos);
-          ctx.lineTo(p.currentPos, p.fixedPos);
-        } else {
-          ctx.moveTo(p.fixedPos, p.currentPos - (p.speed > 0 ? p.length : -p.length));
-          ctx.lineTo(p.fixedPos, p.currentPos);
-        }
-        ctx.stroke();
-
-        // Tip glowing particle
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        if (p.axis === "y") {
-          ctx.arc(p.currentPos, p.fixedPos, 2, 0, Math.PI * 2);
-        } else {
-          ctx.arc(p.fixedPos, p.currentPos, 2, 0, Math.PI * 2);
-        }
-        ctx.fill();
-        ctx.restore();
-      });
+      ctx.fillStyle = radialGlow;
+      ctx.fillRect(0, 0, width, height);
 
       animationFrameId = requestAnimationFrame(render);
     };
 
-    animationFrameId = requestAnimationFrame(render);
+    render();
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -230,12 +243,13 @@ export default function CyberGridBackground() {
       ref={canvasRef}
       style={{
         position: "fixed",
-        inset: 0,
+        top: 0,
+        left: 0,
         width: "100%",
         height: "100%",
         pointerEvents: "none",
         zIndex: 0,
-        opacity: 0.9,
+        background: "#000000",
       }}
     />
   );

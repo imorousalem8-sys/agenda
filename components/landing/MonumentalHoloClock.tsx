@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Clock, Shield, Sparkles, Zap, Radio, BellRing, Compass } from "lucide-react";
+import { Clock, Shield, Sparkles, Zap, Radio, BellRing, Volume2, CheckCircle2, Play, Terminal, Cpu } from "lucide-react";
+import Image from "next/image";
 
 export default function MonumentalHoloClock() {
   const [time, setTime] = useState<Date | null>(null);
@@ -10,10 +11,11 @@ export default function MonumentalHoloClock() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const [activeTab, setActiveTab] = useState<"LIVE_COCKPIT" | "HD_SYSTEM">("LIVE_COCKPIT");
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    // Initial sync
     setTime(new Date());
 
     const interval = setInterval(() => {
@@ -31,8 +33,8 @@ export default function MonumentalHoloClock() {
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
 
-    const tiltX = -(y / (rect.height / 2)) * 14; // max 14 deg
-    const tiltY = (x / (rect.width / 2)) * 14;
+    const tiltX = -(y / (rect.height / 2)) * 10;
+    const tiltY = (x / (rect.width / 2)) * 10;
     setTilt({ x: tiltX, y: tiltY });
   };
 
@@ -41,12 +43,28 @@ export default function MonumentalHoloClock() {
     setTilt({ x: 0, y: 0 });
   };
 
+  const playVoiceAlarmSample = () => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    setIsPlayingAudio(true);
+
+    const text = "Bonjour ! Alerte AlarmAgenda Pro. Il est l'heure de votre rendez-vous de 14 heures : Signature du contrat avec Marc. Veuillez confirmer votre prise en charge.";
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "fr-FR";
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+
+    utterance.onend = () => setIsPlayingAudio(false);
+    utterance.onerror = () => setIsPlayingAudio(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
+
   const hours = time ? time.getHours() : 0;
   const minutes = time ? time.getMinutes() : 0;
   const seconds = time ? time.getSeconds() : 0;
   const milliseconds = time ? time.getMilliseconds() : 0;
 
-  // Exact angles for smooth hands
   const secAngle = (seconds + milliseconds / 1000) * 6;
   const minAngle = (minutes + seconds / 60) * 6;
   const hourAngle = ((hours % 12) + minutes / 60) * 30;
@@ -65,7 +83,7 @@ export default function MonumentalHoloClock() {
     : "";
 
   if (!mounted) {
-    return <div style={{ minHeight: "460px", width: "100%" }} />;
+    return <div style={{ minHeight: "520px", width: "100%" }} />;
   }
 
   return (
@@ -76,517 +94,493 @@ export default function MonumentalHoloClock() {
       onMouseLeave={handleMouseLeave}
       style={{
         position: "relative",
-        maxWidth: "1080px",
+        maxWidth: "1140px",
         margin: "0 auto",
-        perspective: "1400px",
+        perspective: "1600px",
         transformStyle: "preserve-3d",
       }}
       className="select-none"
     >
-      {/* Dynamic 3D Wrapper */}
+      {/* 3D Wrapper */}
       <div
         style={{
           transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-          transition: isHovered ? "transform 0.1s ease-out" : "transform 0.5s ease-out",
+          transition: isHovered ? "transform 0.1s ease-out" : "transform 0.6s ease-out",
           transformStyle: "preserve-3d",
           position: "relative",
         }}
       >
-        {/* Background Deep Volumetric Ambient Glow */}
+        {/* Subtle monochrome ambient light behind the card */}
         <div
           style={{
             position: "absolute",
             top: "50%",
             left: "50%",
-            transform: "translate(-50%, -50%) translateZ(-80px)",
-            width: "min(680px, 95vw)",
-            height: "min(680px, 95vw)",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, rgba(6, 182, 212, 0.18) 40%, rgba(168, 85, 247, 0.1) 60%, transparent 75%)",
-            filter: "blur(50px)",
+            transform: "translate(-50%, -50%) translateZ(-50px)",
+            width: "min(720px, 95vw)",
+            height: "min(520px, 85vw)",
+            borderRadius: "40px",
+            background: "radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(52, 211, 153, 0.04) 45%, transparent 75%)",
+            filter: "blur(60px)",
             pointerEvents: "none",
             zIndex: 0,
           }}
         />
 
-        {/* Outer 3D Cyber Glass Chrono Container */}
+        {/* Outer Titanium & Glass Cockpit Container */}
         <div
-          className="chrono-container-pad"
           style={{
             position: "relative",
             zIndex: 1,
-            background: "linear-gradient(180deg, rgba(17, 24, 39, 0.85) 0%, rgba(8, 11, 18, 0.95) 100%)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            borderRadius: "32px",
-            border: "1px solid rgba(99, 102, 241, 0.3)",
+            background: "linear-gradient(180deg, #0d0d11 0%, #050507 100%)",
+            borderRadius: "24px",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
             boxShadow:
-              "0 40px 100px rgba(0, 0, 0, 0.85), 0 0 60px rgba(99, 102, 241, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
-            padding: "48px 36px",
+              "0 30px 90px rgba(0, 0, 0, 0.95), 0 0 1px 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+            padding: "28px 24px",
             overflow: "hidden",
           }}
         >
-          {/* Top Chrono Header Bar */}
+          {/* Top Window Bar - Developer IDE Style */}
           <div
-            className="chrono-header-bar"
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: "32px",
+              marginBottom: "24px",
               paddingBottom: "16px",
               borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-              transform: "translateZ(30px)",
+              flexWrap: "wrap",
+              gap: "12px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            {/* Window Dots & Identifier */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#ef4444", display: "inline-block" }} />
+                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#eab308", display: "inline-block" }} />
+                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
+              </div>
               <div
                 style={{
-                  width: "10px",
-                  height: "10px",
-                  borderRadius: "50%",
-                  background: "#10b981",
-                  boxShadow: "0 0 12px #10b981",
-                  animation: "pulseGlow 2s infinite alternate",
-                  flexShrink: 0,
-                }}
-              />
-              <span
-                style={{
-                  fontSize: "11px",
-                  fontWeight: "800",
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  color: "#38bdf8",
                   fontFamily: "monospace",
-                }}
-              >
-                MATRICE HORLOGE TEMPS RÉEL • UTC+2
-              </span>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span
-                style={{
-                  display: "inline-flex",
+                  fontSize: "12px",
+                  color: "#94a3b8",
+                  display: "flex",
                   alignItems: "center",
                   gap: "6px",
-                  padding: "4px 12px",
-                  borderRadius: "20px",
-                  background: "rgba(99, 102, 241, 0.15)",
-                  border: "1px solid rgba(99, 102, 241, 0.4)",
-                  color: "#c7d2fe",
-                  fontSize: "11px",
-                  fontWeight: "700",
                 }}
               >
-                <Radio size={12} color="#38bdf8" />
-                <span>SENTINELLE ACTIVE</span>
-              </span>
-            </div>
-          </div>
-
-          {/* MAIN CHRONO & DIGITAL CORE DISPLAY */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr auto 1fr",
-              alignItems: "center",
-              gap: "32px",
-              transform: "translateZ(40px)",
-            }}
-            className="chrono-grid"
-          >
-            {/* LEFT HUD: Live Voice Order & Anti-Forget Guarantee */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "16px",
-                transform: "translateZ(20px)",
-                width: "100%",
-                maxWidth: "420px",
-                margin: "0 auto",
-              }}
-            >
-              <div
-                style={{
-                  background: "rgba(13, 18, 30, 0.8)",
-                  borderRadius: "18px",
-                  padding: "18px",
-                  border: "1px solid rgba(56, 189, 248, 0.3)",
-                  boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-                  <BellRing size={16} color="#38bdf8" />
-                  <span style={{ fontSize: "11px", fontWeight: "800", color: "#38bdf8", letterSpacing: "0.08em" }}>
-                    DICTÉE VOCALE ULTRA-RAPIDE
-                  </span>
-                </div>
-                <p style={{ fontSize: "13px", color: "#f1f5f9", fontStyle: "italic", marginBottom: "8px" }}>
-                  &ldquo;Rappelle-moi demain 14h de signer le contrat avec Marc.&rdquo;
-                </p>
-                <div style={{ padding: "6px 10px", borderRadius: "8px", background: "rgba(16, 185, 129, 0.15)", border: "1px solid rgba(16, 185, 129, 0.35)", color: "#34d399", fontSize: "11px", fontWeight: "700" }}>
-                  ✓ Tâche créée en 0.4s • Alarme vocale activée
-                </div>
-              </div>
-
-              <div
-                style={{
-                  background: "rgba(13, 18, 30, 0.8)",
-                  borderRadius: "18px",
-                  padding: "18px",
-                  border: "1px solid rgba(168, 85, 247, 0.3)",
-                  boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-                  <Zap size={16} color="#c084fc" />
-                  <span style={{ fontSize: "11px", fontWeight: "800", color: "#c084fc", letterSpacing: "0.08em" }}>
-                    ALARME PERSISTANTE INRATABLE
-                  </span>
-                </div>
-                <div style={{ fontSize: "17px", fontWeight: "900", color: "#ffffff" }}>
-                  0 oubli garanti
-                </div>
-                <p style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
-                  Sonne comme un vrai réveil jusqu&apos;à ce que vous confirmiez.
-                </p>
+                <Terminal size={14} color="#34d399" />
+                <span style={{ color: "#e2e8f0", fontWeight: "600" }}>alarmagenda-core</span>
+                <span style={{ color: "#64748b" }}>// v2.4.0-stable</span>
               </div>
             </div>
 
-            {/* CENTER: COLOSSAL 3D HOLOGRAPHIC CHRONOMETER */}
+            {/* View Switcher Tabs */}
             <div
               style={{
-                position: "relative",
-                width: "min(320px, 80vw)",
-                height: "min(320px, 80vw)",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                transformStyle: "preserve-3d",
-                margin: "0 auto",
+                background: "rgba(255, 255, 255, 0.05)",
+                borderRadius: "10px",
+                padding: "3px",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
               }}
             >
-              {/* Outer Glowing Cyber Ring 1 (Slow Rotating Counter Clockwise) */}
-              <div
+              <button
+                type="button"
+                onClick={() => setActiveTab("LIVE_COCKPIT")}
                 style={{
-                  position: "absolute",
-                  inset: "-10px",
-                  borderRadius: "50%",
-                  border: "2px dashed rgba(56, 189, 248, 0.35)",
-                  animation: "spin 50s linear infinite reverse",
-                  transform: "translateZ(10px)",
-                }}
-              />
-
-              {/* Outer Orbit Ring 2 with glowing accents */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: "6px",
-                  borderRadius: "50%",
-                  border: "1px solid rgba(99, 102, 241, 0.4)",
-                  boxShadow: "0 0 30px rgba(99, 102, 241, 0.25), inset 0 0 30px rgba(99, 102, 241, 0.2)",
-                  transform: "translateZ(20px)",
-                }}
-              />
-
-              {/* Holographic Chrono SVG Dial */}
-              <svg
-                width="100%"
-                height="100%"
-                viewBox="0 0 340 340"
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  transform: "translateZ(25px)",
-                  overflow: "visible",
-                }}
-              >
-                <defs>
-                  <linearGradient id="chrono-grad" x1="0" y1="0" x2="340" y2="340" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stopColor="#38bdf8" />
-                    <stop offset="50%" stopColor="#6366f1" />
-                    <stop offset="100%" stopColor="#a855f7" />
-                  </linearGradient>
-                  <filter id="glow-3d" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#6366f1" floodOpacity="0.8" />
-                  </filter>
-                </defs>
-
-                {/* 60 Minute / Second Tick marks */}
-                {Array.from({ length: 60 }).map((_, i) => {
-                  const isHour = i % 5 === 0;
-                  const rad = (i * 6 * Math.PI) / 180;
-                  const outerR = 158;
-                  const innerR = isHour ? 142 : 150;
-                  const x1 = 170 + outerR * Math.sin(rad);
-                  const y1 = 170 - outerR * Math.cos(rad);
-                  const x2 = 170 + innerR * Math.sin(rad);
-                  const y2 = 170 - innerR * Math.cos(rad);
-                  return (
-                    <line
-                      key={i}
-                      x1={x1}
-                      y1={y1}
-                      x2={x2}
-                      y2={y2}
-                      stroke={isHour ? "#38bdf8" : "rgba(255, 255, 255, 0.25)"}
-                      strokeWidth={isHour ? 2.5 : 1}
-                      strokeLinecap="round"
-                    />
-                  );
-                })}
-
-                {/* 12 Hour Cardinal Numerals */}
-                <text x="170" y="44" fill="#ffffff" fontSize="16" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                  12
-                </text>
-                <text x="306" y="176" fill="#ffffff" fontSize="16" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                  03
-                </text>
-                <text x="170" y="308" fill="#ffffff" fontSize="16" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                  06
-                </text>
-                <text x="34" y="176" fill="#ffffff" fontSize="16" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                  09
-                </text>
-
-                {/* Hour Hand */}
-                <line
-                  x1="170"
-                  y1="170"
-                  x2={170 + 75 * Math.sin((hourAngle * Math.PI) / 180)}
-                  y2={170 - 75 * Math.cos((hourAngle * Math.PI) / 180)}
-                  stroke="#ffffff"
-                  strokeWidth="5"
-                  strokeLinecap="round"
-                  filter="url(#glow-3d)"
-                />
-
-                {/* Minute Hand */}
-                <line
-                  x1="170"
-                  y1="170"
-                  x2={170 + 110 * Math.sin((minAngle * Math.PI) / 180)}
-                  y2={170 - 110 * Math.cos((minAngle * Math.PI) / 180)}
-                  stroke="#38bdf8"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  filter="url(#glow-3d)"
-                />
-
-                {/* Sweeping Seconds Hand */}
-                <line
-                  x1={170 - 24 * Math.sin((secAngle * Math.PI) / 180)}
-                  y1={170 + 24 * Math.cos((secAngle * Math.PI) / 180)}
-                  x2={170 + 130 * Math.sin((secAngle * Math.PI) / 180)}
-                  y2={170 - 130 * Math.cos((secAngle * Math.PI) / 180)}
-                  stroke="#ec4899"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-
-                {/* Seconds Hand Tip Neon Orb */}
-                <circle
-                  cx={170 + 130 * Math.sin((secAngle * Math.PI) / 180)}
-                  cy={170 - 130 * Math.cos((secAngle * Math.PI) / 180)}
-                  r="4"
-                  fill="#ec4899"
-                  filter="url(#glow-3d)"
-                />
-
-                {/* Center Chrono Cap */}
-                <circle cx="170" cy="170" r="7" fill="#ffffff" />
-                <circle cx="170" cy="170" r="3.5" fill="#6366f1" />
-              </svg>
-
-              {/* Floating Holographic Center Info Plate */}
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "65px",
+                  background: activeTab === "LIVE_COCKPIT" ? "#1e293b" : "transparent",
+                  color: activeTab === "LIVE_COCKPIT" ? "#ffffff" : "#94a3b8",
+                  padding: "6px 14px",
+                  borderRadius: "7px",
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
                   display: "flex",
-                  flexDirection: "column",
                   alignItems: "center",
-                  transform: "translateZ(45px)",
-                  pointerEvents: "none",
+                  gap: "6px",
+                  border: activeTab === "LIVE_COCKPIT" ? "1px solid rgba(255, 255, 255, 0.15)" : "none",
                 }}
               >
+                <Cpu size={12} color="#34d399" />
+                Cockpit Temps Réel
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("HD_SYSTEM")}
+                style={{
+                  background: activeTab === "HD_SYSTEM" ? "#1e293b" : "transparent",
+                  color: activeTab === "HD_SYSTEM" ? "#ffffff" : "#94a3b8",
+                  padding: "6px 14px",
+                  borderRadius: "7px",
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  border: activeTab === "HD_SYSTEM" ? "1px solid rgba(255, 255, 255, 0.15)" : "none",
+                }}
+              >
+                <Sparkles size={12} color="#38bdf8" />
+                Vue HD Moteur
+              </button>
+            </div>
+
+            {/* Status Telemetry */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                 <span
                   style={{
-                    fontSize: "10px",
-                    fontWeight: "800",
-                    letterSpacing: "0.2em",
-                    color: "#a855f7",
-                    textTransform: "uppercase",
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    background: "#10b981",
+                    boxShadow: "0 0 10px #10b981",
                   }}
-                >
-                  QUANTUM CHRONO
+                />
+                <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#34d399", fontWeight: "700" }}>
+                  SYNC 100%
                 </span>
               </div>
             </div>
+          </div>
 
-            {/* RIGHT HUD: Audio Engine & System Health */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "16px",
-                transform: "translateZ(20px)",
-                width: "100%",
-                maxWidth: "420px",
-                margin: "0 auto",
-              }}
-            >
+          {activeTab === "LIVE_COCKPIT" ? (
+            /* Tab 1: Live Interactive Software Cockpit */
+            <div>
               <div
                 style={{
-                  background: "rgba(13, 18, 30, 0.75)",
-                  borderRadius: "18px",
-                  padding: "18px",
-                  border: "1px solid rgba(16, 185, 129, 0.25)",
-                  boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+                  display: "grid",
+                  gridTemplateColumns: "1fr auto 1fr",
+                  alignItems: "center",
+                  gap: "28px",
                 }}
+                className="chrono-grid"
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
-                  <Shield size={16} color="#34d399" />
-                  <span style={{ fontSize: "11px", fontWeight: "800", color: "#34d399", letterSpacing: "0.08em" }}>
-                    SYNTHÈSE VOCALE HD
-                  </span>
+                {/* Left Column: Voice Agent & Realtime Activity */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  {/* Voice input card */}
+                  <div
+                    style={{
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "16px",
+                      padding: "18px",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                      <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#94a3b8", fontWeight: "700" }}>
+                        DICTÉE VOCALE ANALYSÉE
+                      </span>
+                      <span style={{ fontSize: "10px", background: "rgba(52, 211, 153, 0.12)", color: "#34d399", padding: "2px 8px", borderRadius: "12px", border: "1px solid rgba(52, 211, 153, 0.3)" }}>
+                        0.4s
+                      </span>
+                    </div>
+                    <p style={{ fontSize: "13px", color: "#f8fafc", fontStyle: "italic", margin: "0 0 10px 0", lineHeight: "1.4" }}>
+                      &ldquo;Rappelle-moi demain 14h de signer le contrat avec Marc.&rdquo;
+                    </p>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#34d399" }}>
+                      <CheckCircle2 size={13} />
+                      <span>Événement créé • Alarme vocale armée</span>
+                    </div>
+                  </div>
+
+                  {/* Persistent Alarm Widget */}
+                  <div
+                    style={{
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "16px",
+                      padding: "18px",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                      <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#94a3b8", fontWeight: "700" }}>
+                        SENTINELLE D&apos;ALARME
+                      </span>
+                      <BellRing size={14} color="#f59e0b" />
+                    </div>
+                    <div style={{ fontSize: "15px", fontWeight: "700", color: "#ffffff", marginBottom: "4px" }}>
+                      0 Oubli Garanti
+                    </div>
+                    <p style={{ fontSize: "12px", color: "#94a3b8", margin: 0 }}>
+                      Sonnerie + voix continue jusqu&apos;à confirmation explicite.
+                    </p>
+                  </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "flex-end", gap: "4px", height: "24px", marginBottom: "8px" }}>
-                  {[40, 75, 55, 90, 60, 85, 45, 95, 70, 50, 80, 65].map((h, i) => (
+
+                {/* Center: Precision Dark Dial Clock */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "8px",
+                  }}
+                >
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "250px",
+                      height: "250px",
+                      borderRadius: "50%",
+                      background: "radial-gradient(circle, #141419 0%, #09090c 70%, #000000 100%)",
+                      border: "2px solid rgba(255, 255, 255, 0.15)",
+                      boxShadow: "0 0 35px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.8)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {/* Dial Ticks */}
+                    {[...Array(12)].map((_, i) => {
+                      const isQuarter = i % 3 === 0;
+                      return (
+                        <div
+                          key={i}
+                          style={{
+                            position: "absolute",
+                            top: "8px",
+                            left: "calc(50% - 1px)",
+                            width: isQuarter ? "2px" : "1px",
+                            height: isQuarter ? "12px" : "6px",
+                            background: isQuarter ? "#ffffff" : "rgba(255, 255, 255, 0.3)",
+                            transformOrigin: "bottom center",
+                            transform: `rotate(${i * 30}deg) translateY(0px)`,
+                          }}
+                        />
+                      );
+                    })}
+
+                    {/* Quarter Numbers */}
+                    <span style={{ position: "absolute", top: "20px", fontSize: "12px", fontWeight: "700", color: "#cbd5e1", fontFamily: "monospace" }}>12</span>
+                    <span style={{ position: "absolute", right: "20px", fontSize: "12px", fontWeight: "700", color: "#cbd5e1", fontFamily: "monospace" }}>03</span>
+                    <span style={{ position: "absolute", bottom: "20px", fontSize: "12px", fontWeight: "700", color: "#cbd5e1", fontFamily: "monospace" }}>06</span>
+                    <span style={{ position: "absolute", left: "20px", fontSize: "12px", fontWeight: "700", color: "#cbd5e1", fontFamily: "monospace" }}>09</span>
+
+                    {/* Hour Hand */}
                     <div
-                      key={i}
                       style={{
-                        flex: 1,
-                        background: "linear-gradient(to top, #38bdf8, #818cf8)",
-                        height: `${h}%`,
-                        borderRadius: "2px",
-                        animation: `pulseGlow ${0.8 + (i % 5) * 0.2}s infinite alternate`,
+                        position: "absolute",
+                        bottom: "50%",
+                        left: "calc(50% - 2px)",
+                        width: "4px",
+                        height: "55px",
+                        background: "#ffffff",
+                        borderRadius: "4px",
+                        transformOrigin: "bottom center",
+                        transform: `rotate(${hourAngle}deg)`,
+                        zIndex: 4,
+                        boxShadow: "0 0 8px rgba(255, 255, 255, 0.4)",
                       }}
                     />
-                  ))}
+
+                    {/* Minute Hand */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        bottom: "50%",
+                        left: "calc(50% - 1.5px)",
+                        width: "3px",
+                        height: "80px",
+                        background: "#cbd5e1",
+                        borderRadius: "3px",
+                        transformOrigin: "bottom center",
+                        transform: `rotate(${minAngle}deg)`,
+                        zIndex: 5,
+                      }}
+                    />
+
+                    {/* Second Hand (Emerald & Steel) */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        bottom: "40px",
+                        left: "calc(50% - 1px)",
+                        width: "2px",
+                        height: "100px",
+                        background: "#34d399",
+                        borderRadius: "2px",
+                        transformOrigin: "50% 85px",
+                        transform: `rotate(${secAngle}deg)`,
+                        zIndex: 6,
+                        boxShadow: "0 0 10px #34d399",
+                      }}
+                    />
+
+                    {/* Center Pivot */}
+                    <div
+                      style={{
+                        width: "12px",
+                        height: "12px",
+                        borderRadius: "50%",
+                        background: "#ffffff",
+                        border: "2px solid #34d399",
+                        zIndex: 10,
+                      }}
+                    />
+                  </div>
                 </div>
-                <p style={{ fontSize: "12px", color: "#94a3b8" }}>
-                  Énonciation vocale fluide • Voix HD naturelle
-                </p>
+
+                {/* Right Column: Real Voice Synthesis Tester & Calendar Sync */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  {/* Interactive Audio Voice Player */}
+                  <div
+                    style={{
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "16px",
+                      padding: "18px",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                      <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#94a3b8", fontWeight: "700" }}>
+                        SYNTHÈSE VOCALE HD
+                      </span>
+                      <Volume2 size={14} color="#38bdf8" />
+                    </div>
+
+                    {/* Audio Waveform visualizer */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "4px", height: "28px", marginBottom: "12px" }}>
+                      {[18, 28, 14, 34, 22, 16, 30, 24, 12, 32, 20, 26, 15, 30, 22, 18].map((h, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            flex: 1,
+                            height: isPlayingAudio ? `${Math.max(6, (h * (1 + Math.sin(i + (time?.getMilliseconds() || 0) * 0.01))))}px` : `${h}px`,
+                            background: isPlayingAudio ? "#34d399" : "rgba(255, 255, 255, 0.2)",
+                            borderRadius: "2px",
+                            transition: "height 0.1s ease, background 0.2s ease",
+                          }}
+                        />
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={playVoiceAlarmSample}
+                      style={{
+                        width: "100%",
+                        background: isPlayingAudio ? "#10b981" : "rgba(255, 255, 255, 0.08)",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        color: "#ffffff",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      <Play size={12} fill="#ffffff" />
+                      <span>{isPlayingAudio ? "Voix en cours de lecture..." : "Tester l'alarme vocale (Audio)"}</span>
+                    </button>
+                  </div>
+
+                  {/* Calendar Pipeline */}
+                  <div
+                    style={{
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "16px",
+                      padding: "18px",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                      <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#94a3b8", fontWeight: "700" }}>
+                        PIPELINE AUTOMATISÉ
+                      </span>
+                      <Zap size={14} color="#34d399" />
+                    </div>
+                    <div style={{ fontSize: "15px", fontWeight: "700", color: "#ffffff", marginBottom: "4px" }}>
+                      Double Espace Pro & Perso
+                    </div>
+                    <p style={{ fontSize: "12px", color: "#94a3b8", margin: 0 }}>
+                      Cloisonnement étanche et export d&apos;activité instantané.
+                    </p>
+                  </div>
+                </div>
               </div>
 
+              {/* Bottom Atomic Time Display */}
               <div
                 style={{
-                  background: "rgba(13, 18, 30, 0.75)",
-                  borderRadius: "18px",
-                  padding: "18px",
-                  border: "1px solid rgba(236, 72, 153, 0.25)",
-                  boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+                  marginTop: "28px",
+                  paddingTop: "20px",
+                  borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: "16px",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-                  <Sparkles size={16} color="#f472b6" />
-                  <span style={{ fontSize: "11px", fontWeight: "800", color: "#f472b6", letterSpacing: "0.08em" }}>
-                    CALENDRIER AUGMENTÉ
+                <div style={{ display: "flex", alignItems: "baseline", gap: "8px", fontFamily: "monospace" }}>
+                  <span style={{ fontSize: "36px", fontWeight: "900", color: "#ffffff", letterSpacing: "0.04em" }}>
+                    {formattedHours}:{formattedMinutes}:{formattedSeconds}
+                  </span>
+                  <span style={{ fontSize: "20px", fontWeight: "700", color: "#34d399" }}>
+                    .{ms}
                   </span>
                 </div>
-                <div style={{ fontSize: "17px", fontWeight: "800", color: "#ffffff" }}>
-                  100% Automatisé
+
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span style={{ fontSize: "13px", color: "#94a3b8", textTransform: "capitalize" }}>
+                    {formattedDate}
+                  </span>
+                  <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#475569" }} />
+                  <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#64748b" }}>
+                    HEURE ATOMIQUE DE RÉFÉRENCE
+                  </span>
                 </div>
-                <p style={{ fontSize: "12px", color: "#94a3b8", marginTop: "2px" }}>
-                  Compréhension sémantique de toutes vos consignes
-                </p>
               </div>
             </div>
-          </div>
-
-          {/* MONUMENTAL DIGITAL TIME DISPLAY AT BOTTOM WITH 3D DEPTH */}
-          <div
-            style={{
-              marginTop: "36px",
-              paddingTop: "24px",
-              borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-              textAlign: "center",
-              transform: "translateZ(50px)",
-            }}
-          >
-            {/* Monumental Digits */}
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "baseline",
-                justifyContent: "center",
-                gap: "6px",
-                fontFamily: "monospace",
-              }}
-            >
-              <div
-                suppressHydrationWarning
+          ) : (
+            /* Tab 2: High-Definition Software Architecture Mockup */
+            <div style={{ position: "relative", borderRadius: "16px", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+              <Image
+                src="/images/dark_software_hud.jpg"
+                alt="AlarmAgenda Software Interface Preview"
+                width={1200}
+                height={675}
                 style={{
-                  fontSize: "clamp(30px, 8.5vw, 76px)",
-                  fontWeight: "900",
-                  letterSpacing: "-0.04em",
-                  lineHeight: 1,
-                  background: "linear-gradient(135deg, #ffffff 30%, #c7d2fe 70%, #38bdf8 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  filter: "drop-shadow(0 4px 20px rgba(56, 189, 248, 0.4))",
+                  width: "100%",
+                  height: "auto",
+                  display: "block",
+                  borderRadius: "16px",
                 }}
-              >
-                {formattedHours}:{formattedMinutes}:{formattedSeconds}
-              </div>
-
+                priority
+              />
               <div
-                suppressHydrationWarning
                 style={{
-                  fontSize: "clamp(16px, 3.5vw, 32px)",
-                  fontWeight: "800",
-                  color: "#38bdf8",
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                .{ms}
-              </div>
-            </div>
-
-            {/* Date and Status Bar */}
-            <div
-              style={{
-                marginTop: "12px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "16px",
-                flexWrap: "wrap",
-              }}
-            >
-              <span
-                suppressHydrationWarning
-                style={{
-                  fontSize: "14px",
-                  fontWeight: "700",
+                  position: "absolute",
+                  bottom: "16px",
+                  right: "16px",
+                  background: "rgba(0, 0, 0, 0.75)",
+                  backdropFilter: "blur(8px)",
+                  padding: "6px 14px",
+                  borderRadius: "20px",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  fontSize: "11px",
+                  fontFamily: "monospace",
                   color: "#e2e8f0",
-                  textTransform: "capitalize",
-                  letterSpacing: "0.02em",
                 }}
               >
-                📅 {formattedDate}
-              </span>
-              <span style={{ color: "rgba(255, 255, 255, 0.2)" }}>•</span>
-              <span
-                style={{
-                  fontSize: "12px",
-                  fontWeight: "700",
-                  color: "#a78bfa",
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                }}
-              >
-                HEURE ATOMIQUE DE RÉFÉRENCE
-              </span>
+                Architecture Moteur v2.4 • Obsidian & Steel Engine
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
