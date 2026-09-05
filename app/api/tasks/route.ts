@@ -36,17 +36,32 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const data = taskSchema.parse(body);
-    const parsedDate = data.dueAt && data.dueAt.trim() ? parseISO(data.dueAt.trim()) : null;
-    const dueAtDate = parsedDate && !isNaN(parsedDate.getTime()) ? parsedDate : null;
+
+    let dueAtDate: Date | null = null;
+    if (data.dueAt && typeof data.dueAt === "string" && data.dueAt.trim().length > 3) {
+      try {
+        const parsed = parseISO(data.dueAt.trim());
+        if (!isNaN(parsed.getTime())) {
+          dueAtDate = parsed;
+        } else {
+          const nativeDate = new Date(data.dueAt.trim());
+          if (!isNaN(nativeDate.getTime())) {
+            dueAtDate = nativeDate;
+          }
+        }
+      } catch {
+        dueAtDate = null;
+      }
+    }
 
     const task = await prisma.task.create({
       data: {
         userId: session.user.id,
         title: data.title,
-        notes: data.notes,
+        notes: data.notes || null,
         dueAt: dueAtDate,
-        priority: data.priority,
-        mode: data.mode,
+        priority: data.priority || "NORMAL",
+        mode: data.mode || "PERSONAL",
         items: data.items ? JSON.stringify(data.items) : null,
       },
     });
@@ -58,7 +73,7 @@ export async function POST(req: NextRequest) {
           userId: session.user.id,
           taskId: task.id,
           title: task.title,
-          body: task.notes ? `Note: ${task.notes}` : "Échéance de votre tâche",
+          body: data.notes ? `Note: ${data.notes}` : "Échéance de votre tâche",
           fireAt: dueAtDate,
           method: "VOICE", // Default to AI Voice call reminder
           status: "PENDING",
@@ -67,11 +82,12 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ task }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Create task error:", error);
+    const message = error?.errors?.[0]?.message || error?.message || "Erreur lors de la création de la tâche";
     return NextResponse.json(
-      { error: "Erreur lors de la création de la tâche" },
-      { status: 500 }
+      { error: message },
+      { status: 400 }
     );
   }
 }

@@ -66,22 +66,39 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const data = eventSchema.parse(body);
 
-    const startAt = parseISO(data.startAt);
-    const parsedEnd = data.endAt && data.endAt.trim() ? parseISO(data.endAt.trim()) : null;
-    const endAt = parsedEnd && !isNaN(parsedEnd.getTime()) ? parsedEnd : undefined;
+    let startAt: Date;
+    try {
+      const parsed = parseISO(data.startAt);
+      startAt = !isNaN(parsed.getTime()) ? parsed : new Date(data.startAt);
+    } catch {
+      startAt = new Date(data.startAt);
+    }
+    if (isNaN(startAt.getTime())) {
+      startAt = new Date();
+    }
+
+    let endAt: Date | undefined = undefined;
+    if (data.endAt && typeof data.endAt === "string" && data.endAt.trim()) {
+      try {
+        const parsedEnd = parseISO(data.endAt.trim());
+        endAt = !isNaN(parsedEnd.getTime()) ? parsedEnd : new Date(data.endAt.trim());
+      } catch {
+        endAt = undefined;
+      }
+    }
 
     const event = await prisma.event.create({
       data: {
         userId: session.user.id,
         title: data.title,
-        description: data.description,
-        notes: data.notes,
+        description: data.description || null,
+        notes: data.notes || null,
         startAt,
         endAt,
-        location: data.location,
-        category: data.category,
-        priority: data.priority,
-        mode: data.mode,
+        location: data.location || null,
+        category: data.category || "OTHER",
+        priority: data.priority || "NORMAL",
+        mode: data.mode || "PERSONAL",
         contactId: data.contactId || null,
       },
     });
@@ -100,31 +117,35 @@ export async function POST(req: NextRequest) {
     // Reminder la veille (J-1 à la même heure)
     if (data.hasVeilleReminder) {
       const veilleDate = subDays(startAt, 1);
-      remindersToCreate.push({
-        userId: session.user.id,
-        eventId: event.id,
-        title: `Rappel demain : ${data.title}`,
-        body: data.description || "",
-        fireAt: veilleDate,
-        method: "NOTIFICATION",
-        isVeille: true,
-      });
+      if (veilleDate > new Date()) {
+        remindersToCreate.push({
+          userId: session.user.id,
+          eventId: event.id,
+          title: `Rappel veille : ${event.title}`,
+          body: `Votre rendez-vous « ${event.title} » est prévu demain.${event.location ? ` Lieu : ${event.location}.` : ""}`,
+          fireAt: veilleDate,
+          method: "NOTIFICATION",
+          isVeille: true,
+        });
+      }
     }
 
-    // Custom reminder X minutes before
-    if (data.reminderMinutesBefore && data.reminderMinutesBefore > 0) {
-      const reminderDate = new Date(
-        startAt.getTime() - data.reminderMinutesBefore * 60 * 1000
-      );
-      remindersToCreate.push({
-        userId: session.user.id,
-        eventId: event.id,
-        title: data.title,
-        body: data.description || "",
-        fireAt: reminderDate,
-        method: "ALARM",
-        isVeille: false,
-      });
+    // Reminder X minutes avant
+    const minutesBefore = data.reminderMinutesBefore ?? 15;
+    if (minutesBefore > 0) {
+      const reminderDate = new Date(startAt.getTime() - minutesBefore * 60 * 1000);
+      if (reminderDate > new Date()) {
+        const timeStr = startAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+        remindersToCreate.push({
+          userId: session.user.id,
+          eventId: event.id,
+          title: `Rappel : ${event.title}`,
+          body: `Votre rendez-vous « ${event.title} » commence à ${timeStr}.${event.location ? ` Lieu : ${event.location}.` : ""}`,
+          fireAt: reminderDate,
+          method: "VOICE", // Default to voice call for maximum anti-forget guarantee
+          isVeille: false,
+        });
+      }
     }
 
     if (remindersToCreate.length > 0) {
@@ -137,11 +158,12 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ event: fullEvent }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Create event error:", error);
+    const message = error?.errors?.[0]?.message || error?.message || "Erreur lors de la création de l'événement";
     return NextResponse.json(
-      { error: "Erreur lors de la création de l'événement" },
-      { status: 500 }
+      { error: message },
+      { status: 400 }
     );
   }
 }

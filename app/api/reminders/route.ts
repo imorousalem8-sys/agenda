@@ -39,24 +39,38 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const data = reminderSchema.parse(body);
 
+    let fireAtDate: Date;
+    try {
+      const parsed = parseISO(data.fireAt);
+      fireAtDate = !isNaN(parsed.getTime()) ? parsed : new Date(data.fireAt);
+    } catch {
+      fireAtDate = new Date(data.fireAt);
+    }
+
+    if (isNaN(fireAtDate.getTime())) {
+      fireAtDate = new Date();
+    }
+
     const reminder = await prisma.reminder.create({
       data: {
         userId: session.user.id,
         title: data.title,
-        body: data.body,
-        fireAt: parseISO(data.fireAt),
-        method: data.method,
+        body: data.body || null,
+        fireAt: fireAtDate,
+        method: data.method || "VOICE",
         eventId: data.eventId || null,
         taskId: data.taskId || null,
+        status: "PENDING",
       },
     });
 
     return NextResponse.json({ reminder }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Create reminder error:", error);
+    const message = error?.errors?.[0]?.message || error?.message || "Erreur lors de la création du rappel";
     return NextResponse.json(
-      { error: "Erreur lors de la création du rappel" },
-      { status: 500 }
+      { error: message },
+      { status: 400 }
     );
   }
 }

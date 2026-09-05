@@ -14,40 +14,41 @@ export const loginSchema = z.object({
 });
 
 export const eventSchema = z.object({
-  title: z.string().min(1, "Titre requis").max(100),
-  description: z.string().optional(),
-  notes: z.string().optional(),
+  title: z.string().min(1, "Titre requis").max(200),
+  description: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
   startAt: z.string().min(1, "Date de début requise"),
-  endAt: z.string().optional(),
-  location: z.string().optional(),
+  endAt: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
   category: z.enum([
     "HEALTH", "FAMILY", "WORK", "ADMIN", "EDUCATION", "SHOPPING", "TRAVEL", "OTHER"
-  ]).default("OTHER"),
-  priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]).default("NORMAL"),
-  mode: z.enum(["PERSONAL", "PROFESSIONAL"]).default("PERSONAL"),
-  contactId: z.string().optional(),
-  hasVeilleReminder: z.boolean().default(false),
-  reminderMinutesBefore: z.number().optional(),
+  ]).optional().default("OTHER"),
+  priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]).optional().default("NORMAL"),
+  mode: z.enum(["PERSONAL", "PROFESSIONAL"]).optional().default("PERSONAL"),
+  contactId: z.string().optional().nullable(),
+  hasVeilleReminder: z.boolean().optional().default(false),
+  reminderMinutesBefore: z.number().optional().nullable(),
 });
 
 export const taskSchema = z.object({
-  title: z.string().min(1, "Titre requis").max(100),
-  notes: z.string().optional(),
-  dueAt: z.string().optional(),
-  priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]).default("NORMAL"),
-  mode: z.enum(["PERSONAL", "PROFESSIONAL"]).default("PERSONAL"),
+  title: z.string().min(1, "Titre requis").max(200),
+  notes: z.string().optional().nullable(),
+  dueAt: z.string().optional().nullable(),
+  priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]).optional().default("NORMAL"),
+  mode: z.enum(["PERSONAL", "PROFESSIONAL"]).optional().default("PERSONAL"),
   items: z
-    .array(z.object({ label: z.string(), qty: z.string().optional(), done: z.boolean().default(false) }))
-    .optional(),
+    .array(z.object({ label: z.string(), qty: z.string().optional().nullable(), done: z.boolean().default(false) }))
+    .optional()
+    .nullable(),
 });
 
 export const reminderSchema = z.object({
-  title: z.string().min(1, "Titre requis"),
-  body: z.string().optional(),
+  title: z.string().min(1, "Titre requis").max(200),
+  body: z.string().optional().nullable(),
   fireAt: z.string().min(1, "Date/heure requise"),
-  method: z.enum(["NOTIFICATION", "ALARM", "EMAIL", "VOICE"]).default("NOTIFICATION"),
-  eventId: z.string().optional(),
-  taskId: z.string().optional(),
+  method: z.enum(["NOTIFICATION", "ALARM", "EMAIL", "VOICE"]).optional().default("VOICE"),
+  eventId: z.string().optional().nullable(),
+  taskId: z.string().optional().nullable(),
 });
 
 export const contactSchema = z.object({
