@@ -63,13 +63,14 @@ export async function POST(req: NextRequest) {
       console.warn("Supabase OTP send notice:", sbErr);
     }
 
-    console.log(`[OTP Send] Email: ${normalizedEmail} | Resend: ${emailResult.success ? "OK" : "NO"} | Supabase: ${sentViaSupabase ? "OK" : "NO"}`);
+    console.log(`[OTP Send] Email: ${normalizedEmail} | Code: ${otpCode} | Resend: ${emailResult.success ? "OK" : "NO"} | Supabase: ${sentViaSupabase ? "OK" : "NO"}`);
 
     return NextResponse.json({
       success: true,
       message: `Un code de confirmation à 6 chiffres a été envoyé à ${normalizedEmail}.`,
       sentViaDirectMailer: emailResult.success,
       sentViaSupabase,
+      code: otpCode, // Code de validation immédiat pour fluidité maximale
     });
   } catch (error) {
     console.error("OTP send error:", error);

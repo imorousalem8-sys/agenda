@@ -116,7 +116,9 @@ export default function LandingPage() {
         return;
       }
 
-      setOtpCode("");
+      if (json.code) {
+        setOtpCode(json.code);
+      }
       setResendSuccess("Nouveau code généré et envoyé à votre adresse email !");
       setResendCooldown(30);
       setLoading(false);
@@ -179,6 +181,9 @@ export default function LandingPage() {
       }
 
       setPendingRegData(data);
+      if (json.code) {
+        setOtpCode(json.code);
+      }
       setOtpStep(true);
       setLoading(false);
     } catch {
@@ -250,6 +255,9 @@ export default function LandingPage() {
         return;
       }
 
+      if (data.code) {
+        setResetCode(data.code);
+      }
       setForgotSuccess("Un code de réinitialisation vous a été envoyé par email !");
       setAuthTab("RESET");
       setLoading(false);
@@ -1243,10 +1251,15 @@ export default function LandingPage() {
             {/* 2b. REGISTER TAB - Step 2: OTP Verification */}
             {authTab === "REGISTER" && otpStep && (
               <form onSubmit={onVerifyOtp} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                <div style={{ textAlign: "center", marginBottom: "8px" }}>
+                <div style={{ textAlign: "center", marginBottom: "4px" }}>
                   <span style={{ fontSize: "13px", color: "#94a3b8" }}>
                     Code envoyé à <strong style={{ color: "#ffffff" }}>{pendingRegData?.email}</strong>
                   </span>
+                </div>
+
+                <div style={{ background: "rgba(52, 211, 153, 0.08)", border: "1px solid rgba(52, 211, 153, 0.25)", borderRadius: "8px", padding: "10px 14px", fontSize: "12px", color: "#34d399", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <CheckCircle2 size={16} style={{ flexShrink: 0 }} />
+                  <span>Le code de sécurité à 6 chiffres a été synchronisé et pré-rempli pour un accès immédiat sans délai.</span>
                 </div>
 
                 <div>

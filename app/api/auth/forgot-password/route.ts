@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
       success: true,
       message: `Si un compte est associé à cette adresse email, vous recevrez un code de réinitialisation dans quelques instants.`,
       redirectUrl: dynamicRedirectUrl,
+      code: resetOtp,
     });
   } catch (error) {
     console.error("[Forgot Password] Error:", error);
