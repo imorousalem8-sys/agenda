@@ -36,7 +36,7 @@ export async function sendOtpEmail({ to, name, code }: SendOtpEmailParams) {
           <div class="logo">
             ⚡ AlarmAgenda OS <span class="badge">VÉRIFICATION</span>
           </div>
-          <div class="title">Votre code de sécurité à 6 chiffres</div>
+          <div class="title">Votre code de sécurité</div>
           <div class="desc">
             Bonjour <strong>${displayName}</strong>,<br><br>
             Voici votre code de validation personnel à saisir dans l'application :

@@ -1366,7 +1366,7 @@ export default function LandingPage() {
                     maxLength={8}
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-                    placeholder="123456"
+                    placeholder="••••••••"
                     style={{
                       width: "100%",
                       background: "#000000",
@@ -1500,7 +1500,7 @@ export default function LandingPage() {
                     maxLength={8}
                     value={resetCode}
                     onChange={(e) => setResetCode(e.target.value.replace(/\D/g, ""))}
-                    placeholder="123456"
+                    placeholder="••••••••"
                     style={{
                       width: "100%",
                       background: "#000000",

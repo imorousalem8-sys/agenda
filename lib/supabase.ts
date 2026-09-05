@@ -58,11 +58,11 @@ export function getDynamicBaseUrl(req?: NextRequest | Request): string {
 export async function generateOfficialSupabaseOtp(
   email: string,
   password?: string,
-  type: "signup" | "recovery" = "signup"
+  type: "signup" | "recovery" | "magiclink" = "signup"
 ): Promise<{ ok: boolean; otp?: string; user?: any; error?: string }> {
   try {
     const normalizedEmail = email.toLowerCase().trim();
-    const res = await fetch(`${supabaseUrl}/auth/v1/admin/generate_link`, {
+    let res = await fetch(`${supabaseUrl}/auth/v1/admin/generate_link`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +76,25 @@ export async function generateOfficialSupabaseOtp(
       }),
     });
 
-    const data = await res.json().catch(() => ({}));
+    let data = await res.json().catch(() => ({}));
+
+    // Si l'utilisateur existe déjà dans Supabase Auth, générer le code via magiclink / recovery
+    if (!res.ok && data?.error_code === "email_exists" && type === "signup") {
+      res = await fetch(`${supabaseUrl}/auth/v1/admin/generate_link`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": supabaseServiceKey,
+          "Authorization": `Bearer ${supabaseServiceKey}`,
+        },
+        body: JSON.stringify({
+          type: "magiclink",
+          email: normalizedEmail,
+        }),
+      });
+      data = await res.json().catch(() => ({}));
+    }
+
     if (res.ok && data) {
       const otp = data.email_otp || data.properties?.email_otp;
       if (otp) {
