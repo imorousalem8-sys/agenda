@@ -17,6 +17,11 @@ import {
   MapPin,
   ChevronRight,
   SlidersHorizontal,
+  Volume2,
+  Zap,
+  PhoneCall,
+  ShieldCheck,
+  Check,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import EventFormModal from "@/components/forms/EventFormModal";
@@ -54,16 +59,29 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
+  const [currentTime, setCurrentTime] = useState("");
   const [greeting, setGreeting] = useState("Bonjour");
 
   const userName = session?.user?.name ? session.user.name.split(" ")[0] : "Salem";
 
   useEffect(() => {
-    const h = new Date().getHours();
-    if (h >= 5 && h < 12) setGreeting("Bonjour");
-    else if (h >= 12 && h < 18) setGreeting("Bon après-midi");
-    else setGreeting("Bonsoir");
+    const updateClock = () => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+      );
+      const h = now.getHours();
+      if (h >= 5 && h < 12) setGreeting("Bonjour");
+      else if (h >= 12 && h < 18) setGreeting("Bon après-midi");
+      else setGreeting("Bonsoir");
+    };
 
+    updateClock();
+    const interval = setInterval(updateClock, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     loadDashboard();
 
     const handleRefresh = () => {
@@ -112,59 +130,176 @@ export default function DashboardPage() {
     window.dispatchEvent(new CustomEvent("open-ai-assistant"));
   };
 
-  const completedTasksCount = tasks.filter((t) => t.isDone).length;
-  const totalTasksCount = Math.max(tasks.length, 5);
+  const handleOpenVoiceSettings = () => {
+    window.dispatchEvent(new CustomEvent("open-voice-settings"));
+  };
+
+  const handleToggleTask = async (id: string, currentStatus: boolean) => {
+    try {
+      await fetch(`/api/tasks/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isDone: !currentStatus }),
+      });
+      loadDashboard();
+    } catch (e) {
+      console.error("Error toggling task:", e);
+    }
+  };
+
+  const completedCount = tasks.filter((t) => t.isDone).length;
+  const taskCompletionRate = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 75;
 
   return (
-    <div style={{ padding: "28px 36px", maxWidth: "1500px", margin: "0 auto", width: "100%" }}>
-      {/* 1. Top Royal Sapphire Hero Greeting Banner */}
-      <div className="hero-banner">
-        <div className="hero-left">
+    <div style={{ padding: "28px 36px", maxWidth: "1550px", margin: "0 auto", width: "100%" }}>
+      {/* 1. Executive Royal Sapphire Command Banner */}
+      <div
+        style={{
+          background: "linear-gradient(135deg, #0d1b3e 0%, #1d4ed8 50%, #2563eb 100%)",
+          borderRadius: "22px",
+          padding: "26px 32px",
+          boxShadow: "0 15px 35px -5px rgba(37, 99, 235, 0.4), 0 0 30px rgba(56, 189, 248, 0.2)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          marginBottom: "26px",
+          position: "relative",
+          overflow: "hidden",
+          color: "#ffffff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "20px",
+        }}
+      >
+        {/* Background glow effects */}
+        <div
+          style={{
+            position: "absolute",
+            top: "-60px",
+            right: "-40px",
+            width: "280px",
+            height: "280px",
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(56, 189, 248, 0.35) 0%, transparent 70%)",
+            pointerEvents: "none",
+          }}
+        />
+
+        <div style={{ position: "relative", zIndex: 2 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-            <h1 style={{ fontSize: "28px", fontWeight: "800", color: "#ffffff", letterSpacing: "-0.02em" }}>
-              {greeting}, {userName} ! 👋
-            </h1>
+            <span
+              style={{
+                fontSize: "11.5px",
+                fontWeight: "700",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                background: "rgba(255, 255, 255, 0.2)",
+                padding: "3px 10px",
+                borderRadius: "20px",
+                color: "#e0f2fe",
+              }}
+            >
+              Cockpit Exécutif
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "#bae6fd" }}>
+              <Clock size={13} />
+              <span>{currentTime || "12:00:00"}</span>
+            </div>
           </div>
-          <p style={{ fontSize: "14px", color: "rgba(255, 255, 255, 0.9)", fontWeight: "500" }}>
-            Voici un aperçu de votre journée. Tout est sous contrôle !
+
+          <h1 style={{ fontSize: "28px", fontWeight: "800", letterSpacing: "-0.02em", color: "#ffffff", margin: 0 }}>
+            {greeting}, {userName} ! 👋
+          </h1>
+          <p style={{ fontSize: "14px", color: "#e0f2fe", marginTop: "4px", fontWeight: "500" }}>
+            Votre copilote IA gère votre agenda et vos alertes en temps réel.
           </p>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "18px", flexWrap: "wrap" }}>
-            <div className="hero-stat-pill">
-              <CalendarIcon size={15} style={{ color: "#93c5fd" }} />
-              <span>{events.length > 0 ? `${events.length} Rendez-vous aujourd'hui` : "3 Rendez-vous planifiés"}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "16px", flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "7px 14px",
+                borderRadius: "10px",
+                background: "rgba(0, 0, 0, 0.25)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                fontSize: "12.5px",
+                fontWeight: "600",
+              }}
+            >
+              <CalendarIcon size={14} style={{ color: "#38bdf8" }} />
+              <span>{events.length > 0 ? `${events.length} Rendez-vous planifiés` : "3 Rendez-vous planifiés"}</span>
             </div>
-            <div className="hero-stat-pill">
-              <Bell size={15} style={{ color: "#fde047" }} />
-              <span>{reminders.length > 0 ? `${reminders.length} Rappels actifs` : "2 Rappels actifs"}</span>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "7px 14px",
+                borderRadius: "10px",
+                background: "rgba(0, 0, 0, 0.25)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                fontSize: "12.5px",
+                fontWeight: "600",
+              }}
+            >
+              <Bell size={14} style={{ color: "#fbbf24" }} />
+              <span>{reminders.length > 0 ? `${reminders.length} Rappels actifs` : "2 Rappels vocaux actifs"}</span>
             </div>
-            <div className="hero-stat-pill">
-              <CheckSquare size={15} style={{ color: "#86efac" }} />
-              <span>{tasks.length > 0 ? `${tasks.length} Tâches en cours` : "5 Tâches en cours"}</span>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "7px 14px",
+                borderRadius: "10px",
+                background: "rgba(0, 0, 0, 0.25)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                fontSize: "12.5px",
+                fontWeight: "600",
+              }}
+            >
+              <ShieldCheck size={14} style={{ color: "#34d399" }} />
+              <span>Synthèse Vocale Active</span>
             </div>
           </div>
         </div>
 
-        <div style={{ textAlign: "right", maxWidth: "340px" }} className="hidden lg:block">
-          <div
+        {/* Quick Voice Assistant Trigger on Banner */}
+        <div style={{ position: "relative", zIndex: 2, display: "flex", gap: "12px", alignItems: "center" }}>
+          <button
+            onClick={handleOpenAI}
             style={{
-              padding: "12px 18px",
+              padding: "12px 22px",
               borderRadius: "14px",
-              background: "rgba(255, 255, 255, 0.12)",
-              backdropFilter: "blur(10px)",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              color: "#ffffff",
-              fontSize: "12.5px",
-              fontStyle: "italic",
-              lineHeight: "1.4",
+              background: "#ffffff",
+              color: "#1d4ed8",
+              fontWeight: "700",
+              fontSize: "13.5px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              border: "none",
+              cursor: "pointer",
+              boxShadow: "0 8px 25px rgba(0, 0, 0, 0.25)",
+              transition: "transform 0.15s ease",
             }}
+            className="hover:scale-105"
+            id="banner-ai-trigger"
           >
-            « Une bonne organisation aujourd&apos;hui, c&apos;est moins de stress demain. »
-          </div>
+            <Sparkles size={17} style={{ color: "#2563eb" }} />
+            <span>Parler à l&apos;IA</span>
+          </button>
         </div>
       </div>
 
-      {/* 2. Quick Action Grid (4 polished action cards) */}
+      {/* 2. Interactive Sapphire Quick-Action Strip (4 Modern Cards) */}
       <div
         style={{
           display: "grid",
@@ -173,26 +308,31 @@ export default function DashboardPage() {
           marginBottom: "28px",
         }}
       >
-        {/* Action 1: Nouveau rendez-vous */}
+        {/* Card 1: Nouveau RDV */}
         <button
           onClick={() => setShowEventForm(true)}
-          className="glass-card-interactive"
           style={{
             padding: "16px 20px",
+            borderRadius: "16px",
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-subtle)",
+            boxShadow: "var(--shadow-card)",
             display: "flex",
             alignItems: "center",
             gap: "14px",
             cursor: "pointer",
             textAlign: "left",
-            border: "1px solid #e2e8f0",
+            transition: "all 0.2s ease",
           }}
+          className="hover:border-blue-500 hover:shadow-lg"
+          id="action-new-event"
         >
           <div
             style={{
               width: "44px",
               height: "44px",
               borderRadius: "12px",
-              background: "#eff6ff",
+              background: "linear-gradient(135deg, #eff6ff, #dbeafe)",
               color: "#2563eb",
               display: "flex",
               alignItems: "center",
@@ -203,33 +343,40 @@ export default function DashboardPage() {
             <CalendarIcon size={22} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>Nouveau rendez-vous</div>
-            <div style={{ fontSize: "12px", color: "#64748b" }}>Ajouter un créneau rapidement</div>
+            <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--text-primary)" }}>
+              Nouveau rendez-vous
+            </div>
+            <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>Ajouter un créneau</div>
           </div>
           <ArrowRight size={16} style={{ color: "#94a3b8" }} />
         </button>
 
-        {/* Action 2: Créer un rappel */}
+        {/* Card 2: Nouveau Rappel */}
         <Link
           href="/reminders"
-          className="glass-card-interactive"
           style={{
             padding: "16px 20px",
+            borderRadius: "16px",
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-subtle)",
+            boxShadow: "var(--shadow-card)",
             display: "flex",
             alignItems: "center",
             gap: "14px",
             cursor: "pointer",
             textAlign: "left",
             textDecoration: "none",
-            border: "1px solid #e2e8f0",
+            transition: "all 0.2s ease",
           }}
+          className="hover:border-amber-500 hover:shadow-lg"
+          id="action-new-reminder"
         >
           <div
             style={{
               width: "44px",
               height: "44px",
               borderRadius: "12px",
-              background: "#fff7ed",
+              background: "linear-gradient(135deg, #fff7ed, #ffedd5)",
               color: "#ea580c",
               display: "flex",
               alignItems: "center",
@@ -240,33 +387,40 @@ export default function DashboardPage() {
             <Bell size={22} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>Créer un rappel</div>
-            <div style={{ fontSize: "12px", color: "#64748b" }}>Ne plus jamais oublier</div>
+            <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--text-primary)" }}>
+              Créer un rappel
+            </div>
+            <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>Alerte vocale & SMS</div>
           </div>
           <ArrowRight size={16} style={{ color: "#94a3b8" }} />
         </Link>
 
-        {/* Action 3: Ajouter une tâche */}
+        {/* Card 3: Nouvelle Tâche */}
         <Link
           href="/tasks"
-          className="glass-card-interactive"
           style={{
             padding: "16px 20px",
+            borderRadius: "16px",
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-subtle)",
+            boxShadow: "var(--shadow-card)",
             display: "flex",
             alignItems: "center",
             gap: "14px",
             cursor: "pointer",
             textAlign: "left",
             textDecoration: "none",
-            border: "1px solid #e2e8f0",
+            transition: "all 0.2s ease",
           }}
+          className="hover:border-emerald-500 hover:shadow-lg"
+          id="action-new-task"
         >
           <div
             style={{
               width: "44px",
               height: "44px",
               borderRadius: "12px",
-              background: "#f0fdf4",
+              background: "linear-gradient(135deg, #f0fdf4, #dcfce7)",
               color: "#16a34a",
               display: "flex",
               alignItems: "center",
@@ -277,33 +431,40 @@ export default function DashboardPage() {
             <CheckSquare size={22} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>Ajouter une tâche</div>
-            <div style={{ fontSize: "12px", color: "#64748b" }}>Organiser votre travail</div>
+            <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--text-primary)" }}>
+              Ajouter une tâche
+            </div>
+            <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>Suivi des priorités</div>
           </div>
           <ArrowRight size={16} style={{ color: "#94a3b8" }} />
         </Link>
 
-        {/* Action 4: Parler à l'IA */}
+        {/* Card 4: Assistant IA & Voix */}
         <button
           onClick={handleOpenAI}
-          className="glass-card-interactive"
           style={{
             padding: "16px 20px",
+            borderRadius: "16px",
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-subtle)",
+            boxShadow: "var(--shadow-card)",
             display: "flex",
             alignItems: "center",
             gap: "14px",
             cursor: "pointer",
             textAlign: "left",
-            border: "1px solid #e2e8f0",
+            transition: "all 0.2s ease",
           }}
+          className="hover:border-indigo-500 hover:shadow-lg"
+          id="action-ai-copilot"
         >
           <div
             style={{
               width: "44px",
               height: "44px",
               borderRadius: "12px",
-              background: "#faf5ff",
-              color: "#9333ea",
+              background: "linear-gradient(135deg, #faf5ff, #f3e8ff)",
+              color: "#7c3aed",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -313,14 +474,16 @@ export default function DashboardPage() {
             <Sparkles size={22} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>Parler à l&apos;IA</div>
-            <div style={{ fontSize: "12px", color: "#64748b" }}>Votre assistant intelligent</div>
+            <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--text-primary)" }}>
+              Copilote IA Vocal
+            </div>
+            <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>Automatisation 24/7</div>
           </div>
           <ArrowRight size={16} style={{ color: "#94a3b8" }} />
         </button>
       </div>
 
-      {/* 3. Three-Column Main Layout (Non-overlapping, airy, high contrast) */}
+      {/* 3. Main Cockpit Layout (3-Column Luxury Architecture) */}
       <div
         style={{
           display: "grid",
@@ -329,29 +492,55 @@ export default function DashboardPage() {
           alignItems: "start",
         }}
       >
-        {/* COLUMN 1: Prochains rendez-vous */}
-        <div className="glass-card" style={{ padding: "22px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "18px" }}>
-            <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>Prochains rendez-vous</h2>
+        {/* COLUMN 1: Prochains Rendez-vous (Timeline View) */}
+        <div
+          style={{
+            background: "var(--bg-surface)",
+            borderRadius: "20px",
+            border: "1px solid var(--border-subtle)",
+            boxShadow: "var(--shadow-card)",
+            padding: "24px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+            <div>
+              <h2 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.01em" }}>
+                Prochains rendez-vous
+              </h2>
+              <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+                Vos créneaux confirmés et synchronisés
+              </p>
+            </div>
             <Link
               href="/calendar"
-              style={{ fontSize: "13px", color: "#2563eb", fontWeight: "600", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}
+              style={{
+                fontSize: "12.5px",
+                color: "#2563eb",
+                fontWeight: "700",
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                background: "rgba(37, 99, 235, 0.08)",
+                padding: "6px 12px",
+                borderRadius: "8px",
+              }}
             >
-              <span>Voir tout</span>
-              <ArrowRight size={13} />
+              <span>Voir l&apos;agenda</span>
+              <ArrowRight size={12} />
             </Link>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {events.length === 0 ? (
-              // Clean default structured events from mockup
+              // Luxury sample items
               <>
                 <div
                   style={{
                     padding: "14px 16px",
-                    borderRadius: "12px",
-                    border: "1px solid #e2e8f0",
-                    background: "#f8fafc",
+                    borderRadius: "14px",
+                    border: "1px solid var(--border-subtle)",
+                    background: "var(--bg-hover)",
                     display: "flex",
                     alignItems: "center",
                     gap: "14px",
@@ -359,35 +548,41 @@ export default function DashboardPage() {
                 >
                   <div
                     style={{
-                      width: "42px",
-                      height: "46px",
+                      width: "44px",
+                      height: "48px",
                       borderRadius: "10px",
-                      background: "#2563eb",
+                      background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
                       color: "#ffffff",
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontWeight: "700",
+                      fontWeight: "800",
                       fontSize: "13px",
                       lineHeight: "1.1",
                       flexShrink: 0,
+                      boxShadow: "0 4px 12px rgba(37, 99, 235, 0.3)",
                     }}
                   >
-                    <span style={{ fontSize: "10px", opacity: 0.85 }}>MAR</span>
+                    <span style={{ fontSize: "9px", opacity: 0.85, letterSpacing: "0.05em" }}>MAR</span>
                     <span>09</span>
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>Rendez-vous avec Paul</div>
-                    <div style={{ fontSize: "12px", color: "#64748b" }}>10:00 · Atelier - Liège</div>
+                    <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--text-primary)" }}>
+                      Rendez-vous avec Paul
+                    </div>
+                    <div style={{ fontSize: "12px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+                      <Clock size={12} />
+                      <span>10:00 · Atelier - Liège</span>
+                    </div>
                   </div>
                   <span
                     style={{
                       fontSize: "11px",
-                      fontWeight: "600",
+                      fontWeight: "700",
                       color: "#16a34a",
-                      background: "#dcfce7",
-                      padding: "3px 8px",
+                      background: "rgba(22, 163, 74, 0.12)",
+                      padding: "4px 8px",
                       borderRadius: "6px",
                     }}
                   >
@@ -398,9 +593,9 @@ export default function DashboardPage() {
                 <div
                   style={{
                     padding: "14px 16px",
-                    borderRadius: "12px",
-                    border: "1px solid #e2e8f0",
-                    background: "#f8fafc",
+                    borderRadius: "14px",
+                    border: "1px solid var(--border-subtle)",
+                    background: "var(--bg-hover)",
                     display: "flex",
                     alignItems: "center",
                     gap: "14px",
@@ -408,35 +603,41 @@ export default function DashboardPage() {
                 >
                   <div
                     style={{
-                      width: "42px",
-                      height: "46px",
+                      width: "44px",
+                      height: "48px",
                       borderRadius: "10px",
-                      background: "#4f46e5",
+                      background: "linear-gradient(135deg, #4f46e5, #4338ca)",
                       color: "#ffffff",
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontWeight: "700",
+                      fontWeight: "800",
                       fontSize: "13px",
                       lineHeight: "1.1",
                       flexShrink: 0,
+                      boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
                     }}
                   >
-                    <span style={{ fontSize: "10px", opacity: 0.85 }}>MAR</span>
+                    <span style={{ fontSize: "9px", opacity: 0.85, letterSpacing: "0.05em" }}>MAR</span>
                     <span>09</span>
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>Rendez-vous dentiste</div>
-                    <div style={{ fontSize: "12px", color: "#64748b" }}>14:00 · Clinique - Liège</div>
+                    <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--text-primary)" }}>
+                      Consultation Dentiste
+                    </div>
+                    <div style={{ fontSize: "12px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+                      <Clock size={12} />
+                      <span>14:00 · Clinique Sainte-Rosalie</span>
+                    </div>
                   </div>
                   <span
                     style={{
                       fontSize: "11px",
-                      fontWeight: "600",
+                      fontWeight: "700",
                       color: "#16a34a",
-                      background: "#dcfce7",
-                      padding: "3px 8px",
+                      background: "rgba(22, 163, 74, 0.12)",
+                      padding: "4px 8px",
                       borderRadius: "6px",
                     }}
                   >
@@ -447,9 +648,9 @@ export default function DashboardPage() {
                 <div
                   style={{
                     padding: "14px 16px",
-                    borderRadius: "12px",
-                    border: "1px solid #e2e8f0",
-                    background: "#f8fafc",
+                    borderRadius: "14px",
+                    border: "1px solid var(--border-subtle)",
+                    background: "var(--bg-hover)",
                     display: "flex",
                     alignItems: "center",
                     gap: "14px",
@@ -457,39 +658,45 @@ export default function DashboardPage() {
                 >
                   <div
                     style={{
-                      width: "42px",
-                      height: "46px",
+                      width: "44px",
+                      height: "48px",
                       borderRadius: "10px",
-                      background: "#0284c7",
+                      background: "linear-gradient(135deg, #0284c7, #0369a1)",
                       color: "#ffffff",
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontWeight: "700",
+                      fontWeight: "800",
                       fontSize: "13px",
                       lineHeight: "1.1",
                       flexShrink: 0,
+                      boxShadow: "0 4px 12px rgba(2, 132, 199, 0.3)",
                     }}
                   >
-                    <span style={{ fontSize: "10px", opacity: 0.85 }}>MAR</span>
-                    <span>09</span>
+                    <span style={{ fontSize: "9px", opacity: 0.85, letterSpacing: "0.05em" }}>MER</span>
+                    <span>10</span>
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>Rendez-vous client</div>
-                    <div style={{ fontSize: "12px", color: "#64748b" }}>17:30 · Bureau - Liège</div>
+                    <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--text-primary)" }}>
+                      Point Client Stratégique
+                    </div>
+                    <div style={{ fontSize: "12px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+                      <Clock size={12} />
+                      <span>17:30 · Visioconférence</span>
+                    </div>
                   </div>
                   <span
                     style={{
                       fontSize: "11px",
-                      fontWeight: "600",
-                      color: "#16a34a",
-                      background: "#dcfce7",
-                      padding: "3px 8px",
+                      fontWeight: "700",
+                      color: "#2563eb",
+                      background: "rgba(37, 99, 235, 0.12)",
+                      padding: "4px 8px",
                       borderRadius: "6px",
                     }}
                   >
-                    À venir
+                    Demain
                   </span>
                 </div>
               </>
@@ -505,9 +712,9 @@ export default function DashboardPage() {
                     key={event.id}
                     style={{
                       padding: "14px 16px",
-                      borderRadius: "12px",
-                      border: "1px solid #e2e8f0",
-                      background: "#f8fafc",
+                      borderRadius: "14px",
+                      border: "1px solid var(--border-subtle)",
+                      background: "var(--bg-hover)",
                       display: "flex",
                       alignItems: "center",
                       gap: "14px",
@@ -515,41 +722,43 @@ export default function DashboardPage() {
                   >
                     <div
                       style={{
-                        width: "42px",
-                        height: "46px",
+                        width: "44px",
+                        height: "48px",
                         borderRadius: "10px",
-                        background: "#2563eb",
+                        background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
                         color: "#ffffff",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontWeight: "700",
+                        fontWeight: "800",
                         fontSize: "13px",
                         lineHeight: "1.1",
                         flexShrink: 0,
                       }}
                     >
-                      <span style={{ fontSize: "10px", opacity: 0.85 }}>{month}</span>
+                      <span style={{ fontSize: "9px", opacity: 0.85 }}>{month}</span>
                       <span>{day}</span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>{event.title}</div>
-                      <div style={{ fontSize: "12px", color: "#64748b" }}>
+                      <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--text-primary)" }}>
+                        {event.title}
+                      </div>
+                      <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
                         {time} {event.location ? `· ${event.location}` : ""} {event.contact ? `· ${event.contact.firstName}` : ""}
                       </div>
                     </div>
                     <span
                       style={{
                         fontSize: "11px",
-                        fontWeight: "600",
+                        fontWeight: "700",
                         color: "#16a34a",
-                        background: "#dcfce7",
-                        padding: "3px 8px",
+                        background: "rgba(22, 163, 74, 0.12)",
+                        padding: "4px 8px",
                         borderRadius: "6px",
                       }}
                     >
-                      À venir
+                      Confirmé
                     </span>
                   </div>
                 );
@@ -558,18 +767,32 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* COLUMN 2: Rappels du jour & Tâches en cours */}
+        {/* COLUMN 2: Rappels Intelligents & Tâches */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          {/* Rappels du jour */}
-          <div className="glass-card" style={{ padding: "22px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "18px" }}>
-              <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>Rappels du jour</h2>
+          {/* Rappels Vocaux Actifs */}
+          <div
+            style={{
+              background: "var(--bg-surface)",
+              borderRadius: "20px",
+              border: "1px solid var(--border-subtle)",
+              boxShadow: "var(--shadow-card)",
+              padding: "24px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "rgba(234, 88, 12, 0.15)", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Bell size={15} />
+                </div>
+                <h2 style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-primary)" }}>
+                  Rappels & Synthèse Vocale
+                </h2>
+              </div>
               <Link
                 href="/reminders"
-                style={{ fontSize: "13px", color: "#2563eb", fontWeight: "600", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}
+                style={{ fontSize: "12px", color: "#2563eb", fontWeight: "700", textDecoration: "none" }}
               >
-                <span>Voir tout</span>
-                <ArrowRight size={13} />
+                Gérer
               </Link>
             </div>
 
@@ -579,75 +802,58 @@ export default function DashboardPage() {
                   <div
                     style={{
                       padding: "12px 14px",
-                      borderRadius: "10px",
-                      border: "1px solid #e2e8f0",
-                      background: "#f8fafc",
+                      borderRadius: "12px",
+                      border: "1px solid var(--border-subtle)",
+                      background: "var(--bg-hover)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Bell size={14} />
+                      <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Volume2 size={16} />
                       </div>
                       <div>
-                        <div style={{ fontSize: "13.5px", fontWeight: "600", color: "#0f172a" }}>Acheter les pièces</div>
-                        <div style={{ fontSize: "11.5px", color: "#ea580c", fontWeight: "500" }}>18:00 · Priorité</div>
+                        <div style={{ fontSize: "13.5px", fontWeight: "700", color: "var(--text-primary)" }}>
+                          Acheter les pièces atelier
+                        </div>
+                        <div style={{ fontSize: "11.5px", color: "#ea580c", fontWeight: "600" }}>
+                          18:00 · Annonce vocale
+                        </div>
                       </div>
                     </div>
-                    <span style={{ fontSize: "11px", background: "#f1f5f9", padding: "3px 8px", borderRadius: "6px", color: "#475569" }}>
-                      Personnel
+                    <span style={{ fontSize: "11px", background: "rgba(37, 99, 235, 0.1)", color: "#2563eb", fontWeight: "600", padding: "3px 8px", borderRadius: "6px" }}>
+                      Actif
                     </span>
                   </div>
 
                   <div
                     style={{
                       padding: "12px 14px",
-                      borderRadius: "10px",
-                      border: "1px solid #e2e8f0",
-                      background: "#f8fafc",
+                      borderRadius: "12px",
+                      border: "1px solid var(--border-subtle)",
+                      background: "var(--bg-hover)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Bell size={14} />
+                      <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Volume2 size={16} />
                       </div>
                       <div>
-                        <div style={{ fontSize: "13.5px", fontWeight: "600", color: "#0f172a" }}>Appeler Jean</div>
-                        <div style={{ fontSize: "11.5px", color: "#ea580c", fontWeight: "500" }}>20:00 · Priorité</div>
+                        <div style={{ fontSize: "13.5px", fontWeight: "700", color: "var(--text-primary)" }}>
+                          Rappeler Jean (Urgent)
+                        </div>
+                        <div style={{ fontSize: "11.5px", color: "#ea580c", fontWeight: "600" }}>
+                          20:00 · Annonce vocale
+                        </div>
                       </div>
                     </div>
-                    <span style={{ fontSize: "11px", background: "#f1f5f9", padding: "3px 8px", borderRadius: "6px", color: "#475569" }}>
-                      Personnel
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      padding: "12px 14px",
-                      borderRadius: "10px",
-                      border: "1px solid #e2e8f0",
-                      background: "#f8fafc",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Bell size={14} />
-                      </div>
-                      <div>
-                        <div style={{ fontSize: "13.5px", fontWeight: "600", color: "#0f172a" }}>Vérifier facture</div>
-                        <div style={{ fontSize: "11.5px", color: "#2563eb", fontWeight: "500" }}>16:30 · Normal</div>
-                      </div>
-                    </div>
-                    <span style={{ fontSize: "11px", background: "#fef3c7", padding: "3px 8px", borderRadius: "6px", color: "#b45309" }}>
-                      Travail
+                    <span style={{ fontSize: "11px", background: "rgba(37, 99, 235, 0.1)", color: "#2563eb", fontWeight: "600", padding: "3px 8px", borderRadius: "6px" }}>
+                      Actif
                     </span>
                   </div>
                 </>
@@ -659,24 +865,28 @@ export default function DashboardPage() {
                       key={r.id}
                       style={{
                         padding: "12px 14px",
-                        borderRadius: "10px",
-                        border: "1px solid #e2e8f0",
-                        background: "#f8fafc",
+                        borderRadius: "12px",
+                        border: "1px solid var(--border-subtle)",
+                        background: "var(--bg-hover)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
                       }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                        <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          <Bell size={14} />
+                        <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Volume2 size={16} />
                         </div>
                         <div>
-                          <div style={{ fontSize: "13.5px", fontWeight: "600", color: "#0f172a" }}>{r.title}</div>
-                          <div style={{ fontSize: "11.5px", color: "#ea580c", fontWeight: "500" }}>{time} · Vocal</div>
+                          <div style={{ fontSize: "13.5px", fontWeight: "700", color: "var(--text-primary)" }}>
+                            {r.title}
+                          </div>
+                          <div style={{ fontSize: "11.5px", color: "#ea580c", fontWeight: "600" }}>
+                            {time} · Vocal
+                          </div>
                         </div>
                       </div>
-                      <span style={{ fontSize: "11px", background: "#f1f5f9", padding: "3px 8px", borderRadius: "6px", color: "#475569" }}>
+                      <span style={{ fontSize: "11px", background: "rgba(37, 99, 235, 0.1)", color: "#2563eb", fontWeight: "600", padding: "3px 8px", borderRadius: "6px" }}>
                         Actif
                       </span>
                     </div>
@@ -686,94 +896,147 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Tâches en cours (Mini progress card) */}
-          <div className="glass-card" style={{ padding: "20px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-              <div style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>Tâches en cours</div>
-              <span style={{ fontSize: "13px", fontWeight: "700", color: "#2563eb" }}>5 / 8</span>
+          {/* Tâches du Jour & Suivi */}
+          <div
+            style={{
+              background: "var(--bg-surface)",
+              borderRadius: "20px",
+              border: "1px solid var(--border-subtle)",
+              boxShadow: "var(--shadow-card)",
+              padding: "24px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+              <h2 style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-primary)" }}>
+                Progression des Tâches
+              </h2>
+              <span style={{ fontSize: "13px", fontWeight: "800", color: "#2563eb" }}>
+                {taskCompletionRate}%
+              </span>
             </div>
-            <div style={{ width: "100%", height: "8px", background: "#e2e8f0", borderRadius: "4px", overflow: "hidden" }}>
-              <div style={{ width: "62.5%", height: "100%", background: "#2563eb", borderRadius: "4px" }} />
+
+            <div style={{ width: "100%", height: "8px", background: "var(--border-subtle)", borderRadius: "4px", overflow: "hidden", marginBottom: "14px" }}>
+              <div style={{ width: `${taskCompletionRate}%`, height: "100%", background: "linear-gradient(90deg, #2563eb, #38bdf8)", borderRadius: "4px" }} />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  padding: "8px 10px",
+                  borderRadius: "8px",
+                  background: "var(--bg-hover)",
+                }}
+              >
+                <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff" }}>
+                  <Check size={11} />
+                </div>
+                <span style={{ fontSize: "13px", color: "var(--text-primary)", fontWeight: "500", textDecoration: "line-through", opacity: 0.7 }}>
+                  Vérifier les factures fournisseurs
+                </span>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  padding: "8px 10px",
+                  borderRadius: "8px",
+                  background: "var(--bg-hover)",
+                }}
+              >
+                <div style={{ width: "18px", height: "18px", borderRadius: "50%", border: "2px solid #cbd5e1" }} />
+                <span style={{ fontSize: "13px", color: "var(--text-primary)", fontWeight: "600" }}>
+                  Préparer la réunion de projet
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* COLUMN 3: Statistiques rapides & Activités */}
+        {/* COLUMN 3: Performance IA & Activités Récentes */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          {/* Statistiques rapides */}
-          <div className="glass-card" style={{ padding: "22px" }}>
-            <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#0f172a", marginBottom: "16px" }}>
-              Statistiques rapides
-            </h2>
+          {/* Efficacité & Gains de Temps */}
+          <div
+            style={{
+              background: "var(--bg-surface)",
+              borderRadius: "20px",
+              border: "1px solid var(--border-subtle)",
+              boxShadow: "var(--shadow-card)",
+              padding: "24px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+              <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "rgba(37, 99, 235, 0.15)", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Activity size={15} />
+              </div>
+              <h2 style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-primary)" }}>
+                Efficacité & Impact IA
+              </h2>
+            </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                  <span style={{ fontSize: "13px", color: "#64748b", fontWeight: "500" }}>Efficacité IA</span>
-                  <span style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a" }}>85%</span>
+                  <span style={{ fontSize: "12.5px", color: "var(--text-muted)", fontWeight: "600" }}>Précision Copilote IA</span>
+                  <span style={{ fontSize: "16px", fontWeight: "800", color: "#2563eb" }}>98.4%</span>
                 </div>
-                <div style={{ width: "100%", height: "6px", background: "#f1f5f9", borderRadius: "3px", overflow: "hidden" }}>
-                  <div style={{ width: "85%", height: "100%", background: "#2563eb", borderRadius: "3px" }} />
+                <div style={{ width: "100%", height: "6px", background: "var(--border-subtle)", borderRadius: "3px", overflow: "hidden" }}>
+                  <div style={{ width: "98.4%", height: "100%", background: "#2563eb", borderRadius: "3px" }} />
                 </div>
               </div>
 
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                  <span style={{ fontSize: "13px", color: "#64748b", fontWeight: "500" }}>Tâches complétées</span>
-                  <span style={{ fontSize: "18px", fontWeight: "800", color: "#16a34a" }}>100%</span>
+                  <span style={{ fontSize: "12.5px", color: "var(--text-muted)", fontWeight: "600" }}>Temps libre économisé</span>
+                  <span style={{ fontSize: "16px", fontWeight: "800", color: "#16a34a" }}>+4.5h / sem.</span>
                 </div>
-                <div style={{ width: "100%", height: "6px", background: "#f1f5f9", borderRadius: "3px", overflow: "hidden" }}>
-                  <div style={{ width: "100%", height: "100%", background: "#16a34a", borderRadius: "3px" }} />
-                </div>
-              </div>
-
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                  <span style={{ fontSize: "13px", color: "#64748b", fontWeight: "500" }}>Temps libre gagné</span>
-                  <span style={{ fontSize: "18px", fontWeight: "800", color: "#4f46e5" }}>+35%</span>
-                </div>
-                <div style={{ width: "100%", height: "6px", background: "#f1f5f9", borderRadius: "3px", overflow: "hidden" }}>
-                  <div style={{ width: "70%", height: "100%", background: "#4f46e5", borderRadius: "3px" }} />
+                <div style={{ width: "100%", height: "6px", background: "var(--border-subtle)", borderRadius: "3px", overflow: "hidden" }}>
+                  <div style={{ width: "82%", height: "100%", background: "#16a34a", borderRadius: "3px" }} />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Dernières activités */}
-          <div className="glass-card" style={{ padding: "22px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
-              <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>Dernières activités</h3>
-              <span style={{ fontSize: "12px", color: "#64748b" }}>Récents</span>
-            </div>
+          {/* Activités Récentes */}
+          <div
+            style={{
+              background: "var(--bg-surface)",
+              borderRadius: "20px",
+              border: "1px solid var(--border-subtle)",
+              boxShadow: "var(--shadow-card)",
+              padding: "24px",
+            }}
+          >
+            <h3 style={{ fontSize: "14px", fontWeight: "800", color: "var(--text-primary)", marginBottom: "14px" }}>
+              Dernières actions du copilote
+            </h3>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "rgba(37, 99, 235, 0.12)", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <CalendarIcon size={14} />
                 </div>
                 <div>
-                  <div style={{ fontSize: "12.5px", fontWeight: "600", color: "#0f172a" }}>Rendez-vous créé avec Paul</div>
-                  <div style={{ fontSize: "11px", color: "#94a3b8" }}>Aujourd&apos;hui à 09:24</div>
+                  <div style={{ fontSize: "12.5px", fontWeight: "700", color: "var(--text-primary)" }}>
+                    Rendez-vous créé avec Paul
+                  </div>
+                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Aujourd&apos;hui à 09:24</div>
                 </div>
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "rgba(234, 88, 12, 0.12)", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Bell size={14} />
                 </div>
                 <div>
-                  <div style={{ fontSize: "12.5px", fontWeight: "600", color: "#0f172a" }}>Rappel ajouté : Acheter les pièces</div>
-                  <div style={{ fontSize: "11px", color: "#94a3b8" }}>Aujourd&apos;hui à 08:45</div>
-                </div>
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <CheckCircle2 size={14} />
-                </div>
-                <div>
-                  <div style={{ fontSize: "12.5px", fontWeight: "600", color: "#0f172a" }}>Tâche terminée : Vérifier facture</div>
-                  <div style={{ fontSize: "11px", color: "#94a3b8" }}>Hier à 18:32</div>
+                  <div style={{ fontSize: "12.5px", fontWeight: "700", color: "var(--text-primary)" }}>
+                    Rappel vocal programmé : Pièces atelier
+                  </div>
+                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Aujourd&apos;hui à 08:45</div>
                 </div>
               </div>
             </div>
