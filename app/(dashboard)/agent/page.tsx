@@ -5,23 +5,19 @@ import {
   Mic,
   MicOff,
   Send,
-  Volume2,
-  VolumeX,
-  RotateCcw,
-  CheckCircle2,
-  Clock,
-  User,
-  Loader2,
-  StopCircle,
-  Bot,
-  Brain,
-  Bell,
   Sparkles,
   Calendar,
-  Terminal,
+  Bell,
+  CheckSquare,
+  Compass,
+  Clock,
+  Check,
+  RefreshCw,
+  Loader2,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
-import { formatDate } from "@/lib/utils";
-import { getStoredVoiceSettings, speakAIText } from "@/lib/voice";
+import { speakAIText } from "@/lib/voice";
 import VoiceRecordingBubble from "@/components/ai/VoiceRecordingBubble";
 
 interface ChatMessage {
@@ -33,21 +29,25 @@ interface ChatMessage {
     type: "TASK" | "EVENT" | "REMINDER" | "CONTACT" | "INFO" | "DELETE_CONFIRM";
     title: string;
     notes?: string;
-    contactName?: string;
     dateTime?: string;
-    priority?: string;
-    mode?: string;
     category?: string;
   } | null;
   saved?: boolean;
 }
+
+const quickPrompts = [
+  { label: "Créer un rendez-vous", prompt: "Prends rendez-vous demain à 14h avec Paul", icon: Calendar, color: "#2563eb", bg: "#eff6ff" },
+  { label: "Ajouter un rappel", prompt: "Rappelle-moi à 18h d'acheter les pièces", icon: Bell, color: "#ea580c", bg: "#fff7ed" },
+  { label: "Voir mes rendez-vous", prompt: "Quels sont mes rendez-vous demain ?", icon: Clock, color: "#4f46e5", bg: "#eef2ff" },
+  { label: "Organiser ma journée", prompt: "Organise ma journée de demain", icon: Compass, color: "#16a34a", bg: "#f0fdf4" },
+];
 
 export default function AgentPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome-init",
       sender: "ai",
-      text: "Bonjour. Je suis votre Agence IA Personnelle & Copilote d'Action.\n\nJe gère vos rendez-vous, structure vos chantiers et priorités, et déclenche vos alarmes vocales persistantes. Comment puis-je vous aider ?",
+      text: "Bonjour ! Je suis votre Copilote IA connecté à votre agenda, vos tâches et vos alarmes vocales. Que souhaitez-vous planifier ou organiser aujourd'hui ?",
     },
   ]);
 
@@ -55,54 +55,27 @@ export default function AgentPage() {
   const [liveTranscript, setLiveTranscript] = useState("");
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
-
-  const [activeTarget, setActiveTarget] = useState<{
-    type: "EVENT" | "TASK" | "REMINDER";
-    id: string;
-    title: string;
-    scheduledAt?: string;
-  } | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
   const chatBottomRef = useRef<HTMLDivElement | null>(null);
 
-  // Scroll to bottom
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // Clean up audio & speech when leaving the page
-  useEffect(() => {
-    return () => {
-      window.speechSynthesis?.cancel();
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch {
-          // ok
-        }
-      }
-    };
-  }, []);
-
-  // Standard, reliable Speech Recognition with Real-Time Interim Results
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
-        (window as unknown as { SpeechRecognition: unknown }).SpeechRecognition ||
-        (window as unknown as { webkitSpeechRecognition: unknown }).webkitSpeechRecognition;
+        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
       if (SpeechRecognition) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const recognition = new (SpeechRecognition as any)();
+        const recognition = new SpeechRecognition();
         recognition.lang = "fr-FR";
         recognition.continuous = true;
         recognition.interimResults = true;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         recognition.onresult = (event: any) => {
           let currentText = "";
           for (let i = 0; i < event.results.length; i++) {
@@ -112,14 +85,8 @@ export default function AgentPage() {
           setInputMessage(currentText);
         };
 
-        recognition.onerror = () => {
-          setIsListening(false);
-        };
-
-        recognition.onend = () => {
-          setIsListening(false);
-        };
-
+        recognition.onerror = () => setIsListening(false);
+        recognition.onend = () => setIsListening(false);
         recognitionRef.current = recognition;
       }
     }
@@ -130,10 +97,7 @@ export default function AgentPage() {
       alert("La reconnaissance vocale nécessite Google Chrome, Edge ou Safari.");
       return;
     }
-    window.speechSynthesis?.cancel();
-    setIsSpeaking(false);
     setLiveTranscript("");
-
     try {
       recognitionRef.current.start();
       setIsListening(true);
@@ -150,10 +114,6 @@ export default function AgentPage() {
       // ok
     }
     setIsListening(false);
-  }, []);
-
-  const stopListeningAndSend = useCallback(() => {
-    stopListening();
     const text = liveTranscript.trim() || inputMessage.trim();
     if (text) {
       handleSendMessage(text);
@@ -162,21 +122,19 @@ export default function AgentPage() {
   }, [liveTranscript, inputMessage]);
 
   const cancelListening = useCallback(() => {
-    stopListening();
+    if (!recognitionRef.current) return;
+    try {
+      recognitionRef.current.stop();
+    } catch {
+      // ok
+    }
+    setIsListening(false);
     setLiveTranscript("");
-  }, [stopListening]);
-
-  const stopSpeaking = () => {
-    window.speechSynthesis?.cancel();
-    setIsSpeaking(false);
-  };
+  }, []);
 
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
-    if (!text) return;
-
-    stopSpeaking();
-    stopListening();
+    if (!text || loading) return;
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
@@ -189,457 +147,363 @@ export default function AgentPage() {
     setLoading(true);
 
     try {
-      const historyPayload = messages.slice(-8).map((m) => ({
-        role: m.sender === "user" ? "user" : "assistant",
+      const history = [...messages, userMsg].slice(-8).map((m) => ({
+        role: (m.sender === "user" ? "user" : "assistant") as "user" | "assistant",
         content: m.text,
       }));
 
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: text,
-          history: historyPayload,
-          activeTarget,
-        }),
+        body: JSON.stringify({ message: text, history }),
       });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Erreur assistant");
+      }
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || "Une erreur est survenue lors de la communication avec l'Agence IA.");
-      }
-
-      const replyText = data.reply || "Je suis à votre écoute. Que puis-je faire pour vous ?";
-
-      if (data.activeTarget) {
-        setActiveTarget(data.activeTarget);
-      }
-
-      const aiMsg: ChatMessage = {
-        id: `ai-${Date.now()}`,
-        sender: "ai",
-        text: replyText,
-        action: data.action || null,
-        saved: data.saved || false,
-      };
-
-      setMessages((prev) => [...prev, aiMsg]);
-
-      // Spoken response
-      if (voiceEnabled) {
-        setIsSpeaking(true);
-        const settings = getStoredVoiceSettings();
-        speakAIText(replyText.replace(/[*•#]/g, ""), {
-          gender: settings.gender,
-          onStart: () => setIsSpeaking(true),
-          onEnd: () => setIsSpeaking(false),
-          onError: () => setIsSpeaking(false),
-        });
-      }
-
-      // Refresh other dashboard widgets
-      if (data.saved) {
-        window.dispatchEvent(new Event("task-updated"));
-        window.dispatchEvent(new Event("reminder-updated"));
-        window.dispatchEvent(new Event("event-updated"));
-      }
-      window.dispatchEvent(new Event("ai-quota-updated"));
-    } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Une erreur est survenue lors de la communication avec l'Agence IA.";
       setMessages((prev) => [
         ...prev,
         {
-          id: `err-${Date.now()}`,
+          id: `ai-${Date.now()}`,
           sender: "ai",
-          text: `⚠️ ${errorMsg}`,
+          text: data.reply,
+          action: data.action,
+          saved: data.saved,
         },
       ]);
+
+      if (data.saved) {
+        window.dispatchEvent(new Event("event-updated"));
+        window.dispatchEvent(new Event("task-updated"));
+        window.dispatchEvent(new Event("reminder-updated"));
+      }
+
+      if (voiceEnabled && data.spokenReply) {
+        speakAIText(data.spokenReply);
+      }
+    } catch (err: unknown) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `ai-${Date.now()}`,
+          sender: "ai",
+          text: err instanceof Error ? err.message : "Une erreur est survenue lors de l'appel à l'assistant.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <div
       style={{
-        maxWidth: "960px",
-        margin: "0 auto",
-        height: "calc(100vh - 44px)",
-        display: "flex",
-        flexDirection: "column",
-        padding: "16px clamp(10px, 3vw, 24px)",
-        width: "100%",
-        boxSizing: "border-box",
+        display: "grid",
+        gridTemplateColumns: "1fr 340px",
+        height: "calc(100vh - 64px)",
+        background: "#f8fafc",
+        overflow: "hidden",
       }}
     >
-      {/* Top Header Pro - Agence IA Command Center */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "12px 16px",
-          borderRadius: "12px",
-          background: "var(--bg-card)",
-          border: "1px solid var(--border-subtle)",
-          marginBottom: "12px",
-          flexWrap: "wrap",
-          gap: "10px",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(52, 211, 153, 0.12)", border: "1px solid rgba(52, 211, 153, 0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Bot size={18} color="#34d399" />
+      {/* 1. Main Chat Conversation Area */}
+      <div style={{ display: "flex", flexDirection: "column", height: "100%", borderRight: "1px solid #e2e8f0" }}>
+        {/* Chat Header */}
+        <div
+          style={{
+            padding: "16px 28px",
+            background: "#ffffff",
+            borderBottom: "1px solid #e2e8f0",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, #2563eb, #38bdf8)",
+                color: "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 4px 14px rgba(37, 99, 235, 0.3)",
+              }}
+            >
+              <Sparkles size={18} />
+            </div>
+            <div>
+              <h1 style={{ fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>Assistant IA</h1>
+              <p style={{ fontSize: "12px", color: "#64748b" }}>Votre assistant personnel intelligent</p>
+            </div>
           </div>
-          <div>
-            <h1 style={{ fontSize: "15px", fontWeight: "700", color: "#ffffff", letterSpacing: "-0.01em", margin: 0 }}>
-              Agence IA Personnelle • Copilote Exécutif
-            </h1>
-            <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>
-              Gestion autonome de vos rendez-vous, alertes persistantes et chantiers
-            </p>
-          </div>
-        </div>
 
-        {/* Action Controls */}
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <button
-            onClick={() => window.dispatchEvent(new CustomEvent("open-voice-live-modal"))}
+            onClick={() => setVoiceEnabled(!voiceEnabled)}
             style={{
-              padding: "5px 12px",
-              fontSize: "11.5px",
+              padding: "6px 12px",
+              borderRadius: "8px",
+              background: voiceEnabled ? "#eff6ff" : "#f1f5f9",
+              border: "1px solid",
+              borderColor: voiceEnabled ? "#bfdbfe" : "#e2e8f0",
+              color: voiceEnabled ? "#2563eb" : "#64748b",
+              fontSize: "12.5px",
               fontWeight: "600",
-              color: "#38bdf8",
-              background: "rgba(56, 189, 248, 0.08)",
-              border: "1px solid rgba(56, 189, 248, 0.3)",
-              borderRadius: "6px",
-              cursor: "pointer",
               display: "flex",
               alignItems: "center",
               gap: "6px",
-            }}
-            title="Lancer le mode vocal continu en direct"
-          >
-            <Mic size={13} />
-            <span>Mode Vocal Live</span>
-          </button>
-
-          {isSpeaking && (
-            <button
-              onClick={stopSpeaking}
-              style={{
-                background: "rgba(239, 68, 68, 0.15)",
-                color: "#fca5a5",
-                border: "1px solid rgba(239, 68, 68, 0.3)",
-                gap: "5px",
-                fontSize: "11px",
-                padding: "4px 8px",
-                borderRadius: "6px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <StopCircle size={12} />
-              <span>Arrêter la voix</span>
-            </button>
-          )}
-
-          <button
-            onClick={() => {
-              const newVal = !voiceEnabled;
-              setVoiceEnabled(newVal);
-              if (!newVal) {
-                stopSpeaking();
-              }
-            }}
-            style={{
-              background: "transparent",
-              border: "1px solid var(--border-subtle)",
-              borderRadius: "6px",
-              padding: "5px 8px",
-              color: voiceEnabled ? "#38bdf8" : "var(--text-muted)",
               cursor: "pointer",
             }}
-            title={voiceEnabled ? "Désactiver la lecture vocale" : "Activer la lecture vocale"}
           >
             {voiceEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
-          </button>
-
-          <button
-            onClick={() => {
-              stopSpeaking();
-              stopListening();
-              setMessages([
-                {
-                  id: `reset-${Date.now()}`,
-                  sender: "ai",
-                  text: "Discussion réinitialisée. Comment l'Agence IA peut-elle vous aider ?",
-                },
-              ]);
-              setActiveTarget(null);
-            }}
-            style={{
-              background: "transparent",
-              border: "1px solid var(--border-subtle)",
-              borderRadius: "6px",
-              padding: "5px 8px",
-              color: "#94a3b8",
-              cursor: "pointer",
-            }}
-            title="Effacer la conversation"
-          >
-            <RotateCcw size={14} />
+            <span>{voiceEnabled ? "Voix activée" : "Muet"}</span>
           </button>
         </div>
-      </div>
-
-      {/* Quick Executive Agency Chips */}
-      <div style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "8px", marginBottom: "8px" }}>
-        {[
-          { label: "Fais le point sur ma journée", prompt: "Fais le point complet sur ma journée d'aujourd'hui et mes priorités." },
-          { label: "Optimise mes créneaux demain", prompt: "Organise ma journée de demain et planifie les urgences." },
-          { label: "Planifier un rendez-vous", prompt: "Ajoute un rendez-vous important demain à 14h." },
-          { label: "Programmer une alarme vocale", prompt: "Rappelle-moi dans 30 minutes de vérifier les devis urgents." },
-        ].map((item, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => handleSendMessage(item.prompt)}
-            style={{
-              background: "rgba(255, 255, 255, 0.04)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              borderRadius: "6px",
-              padding: "4px 10px",
-              color: "#cbd5e1",
-              fontSize: "11px",
-              whiteSpace: "nowrap",
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-            }}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Main Chat Container */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          borderRadius: "12px",
-          background: "var(--bg-card)",
-          border: "1px solid var(--border-subtle)",
-        }}
-      >
-        {/* Active Listening indicator */}
-        {isListening && (
-          <div
-            style={{
-              padding: "8px 14px",
-              background: "rgba(239, 68, 68, 0.12)",
-              borderBottom: "1px solid rgba(239, 68, 68, 0.25)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span
-                style={{
-                  width: "7px",
-                  height: "7px",
-                  borderRadius: "50%",
-                  background: "#ef4444",
-                  display: "inline-block",
-                }}
-                className="animate-pulse"
-              />
-              <span style={{ fontSize: "12px", fontWeight: "600", color: "#fca5a5" }}>
-                À votre écoute... Parlez naturellement.
-              </span>
-            </div>
-
-            <button
-              onClick={stopListening}
-              style={{ background: "none", border: "none", padding: "2px 8px", fontSize: "11px", color: "#fca5a5", cursor: "pointer" }}
-            >
-              Annuler
-            </button>
-          </div>
-        )}
 
         {/* Messages Stream */}
         <div
           style={{
             flex: 1,
             overflowY: "auto",
-            padding: "16px",
+            padding: "24px 28px",
             display: "flex",
             flexDirection: "column",
-            gap: "12px",
-            background: "#07080b",
+            gap: "16px",
           }}
         >
-          {messages.map((msg) => (
+          {messages.map((m) => (
             <div
-              key={msg.id}
+              key={m.id}
               style={{
                 display: "flex",
                 flexDirection: "column",
-                alignItems: msg.sender === "user" ? "flex-end" : "flex-start",
-                gap: "6px",
-                maxWidth: "100%",
+                alignItems: m.sender === "user" ? "flex-end" : "flex-start",
               }}
             >
-              {/* Bubble */}
               <div
                 style={{
-                  maxWidth: "85%",
-                  padding: "10px 14px",
-                  borderRadius: msg.sender === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
-                  background: msg.sender === "user"
-                    ? "#ffffff"
-                    : "#11141d",
-                  color: msg.sender === "user" ? "#000000" : "#f8fafc",
-                  fontSize: "13px",
-                  fontWeight: msg.sender === "user" ? "600" : "400",
-                  lineHeight: "1.5",
-                  border: msg.sender === "ai" ? "1px solid rgba(255, 255, 255, 0.08)" : "none",
+                  maxWidth: "80%",
+                  padding: "14px 18px",
+                  borderRadius: m.sender === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+                  background:
+                    m.sender === "user"
+                      ? "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)"
+                      : "#ffffff",
+                  color: m.sender === "user" ? "#ffffff" : "#0f172a",
+                  fontSize: "14px",
+                  lineHeight: "1.55",
                   whiteSpace: "pre-wrap",
+                  border: m.sender === "user" ? "none" : "1px solid #e2e8f0",
+                  boxShadow: m.sender === "user" ? "0 4px 16px rgba(37, 99, 235, 0.25)" : "0 2px 10px rgba(0, 0, 0, 0.04)",
                 }}
               >
-                {msg.text}
-              </div>
+                {m.text}
 
-              {/* Action Result Card */}
-              {msg.action && (
-                <div
-                  style={{
-                    width: "min(400px, 90%)",
-                    background: "#0e111a",
-                    border: "1px solid rgba(52, 211, 153, 0.3)",
-                    borderRadius: "10px",
-                    padding: "10px 14px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                  }}
-                >
-                  <CheckCircle2 size={16} color="#34d399" style={{ flexShrink: 0 }} />
-                  <div style={{ flex: 1, fontSize: "12px" }}>
-                    <div style={{ fontWeight: "700", color: "#ffffff" }}>{msg.action.title}</div>
-                    {msg.action.dateTime && (
-                      <div style={{ color: "#94a3b8", fontSize: "11px" }}>{msg.action.dateTime}</div>
+                {/* Structured Action Confirmation Card */}
+                {m.action && (
+                  <div
+                    style={{
+                      marginTop: "12px",
+                      padding: "12px",
+                      borderRadius: "10px",
+                      background: "#f8fafc",
+                      border: "1px solid #e2e8f0",
+                      color: "#0f172a",
+                    }}
+                  >
+                    <div style={{ fontWeight: "700", fontSize: "13px" }}>
+                      {m.action.type === "EVENT" ? "📅 Rendez-vous confirmé" : "🔔 Action enregistrée"} : {m.action.title}
+                    </div>
+                    {m.action.dateTime && (
+                      <div style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>
+                        Horaire : {new Date(m.action.dateTime).toLocaleString("fr-FR")}
+                      </div>
                     )}
+                    <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
+                      <button
+                        onClick={() => (window.location.href = "/calendar")}
+                        style={{
+                          padding: "5px 12px",
+                          borderRadius: "6px",
+                          background: "#2563eb",
+                          color: "#ffffff",
+                          border: "none",
+                          fontSize: "12px",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Voir dans le calendrier
+                      </button>
+                    </div>
                   </div>
-                  {msg.saved && (
-                    <span style={{ fontSize: "10px", background: "rgba(52, 211, 153, 0.15)", color: "#34d399", padding: "2px 6px", borderRadius: "4px", fontWeight: "700" }}>
-                      SYNCHRONISÉ
-                    </span>
-                  )}
-                </div>
-              )}
+                )}
+              </div>
             </div>
           ))}
 
           {loading && (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: "#11141d", borderRadius: "8px", width: "fit-content", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
-              <Loader2 size={14} className="animate-spin" color="#34d399" />
-              <span style={{ fontSize: "12px", color: "#94a3b8" }}>L&apos;Agence IA analyse et exécute votre consigne...</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#2563eb", fontSize: "13px", padding: "10px 14px", background: "#eff6ff", borderRadius: "10px", width: "fit-content" }}>
+              <Loader2 size={16} className="animate-spin text-blue-600" />
+              <span>L&apos;IA réfléchit et prépare votre demande...</span>
             </div>
           )}
-
           <div ref={chatBottomRef} />
         </div>
 
         {/* Input Bar */}
         <div
           style={{
-            padding: "10px 14px",
-            background: "var(--bg-card)",
-            borderTop: "1px solid var(--border-subtle)",
+            padding: "16px 28px",
+            background: "#ffffff",
+            borderTop: "1px solid #e2e8f0",
             display: "flex",
             alignItems: "center",
-            gap: "8px",
+            gap: "10px",
           }}
         >
           <button
-            type="button"
             onClick={isListening ? stopListening : startListening}
             style={{
-              background: isListening ? "#ef4444" : "rgba(255, 255, 255, 0.06)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: "8px",
-              width: "36px",
-              height: "36px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: isListening ? "#ffffff" : "#38bdf8",
+              padding: "10px",
+              borderRadius: "10px",
+              background: isListening ? "#ffe4e6" : "#eff6ff",
+              color: isListening ? "#e11d48" : "#2563eb",
+              border: "1px solid",
+              borderColor: isListening ? "#fecdd3" : "#bfdbfe",
               cursor: "pointer",
-              flexShrink: 0,
             }}
-            title={isListening ? "Arrêter la dictée" : "Parler à l'Agence IA"}
+            title={isListening ? "Arrêter la dictée" : "Parler"}
           >
-            {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+            {isListening ? <MicOff size={18} /> : <Mic size={18} />}
           </button>
 
           <input
             type="text"
+            placeholder="Écrivez votre message..."
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="Dictez ou écrivez à votre Agence IA (ex: Bloque 15h demain pour la réunion)..."
-            style={{
-              flex: 1,
-              background: "#000000",
-              border: "1px solid rgba(255, 255, 255, 0.15)",
-              borderRadius: "8px",
-              padding: "9px 12px",
-              color: "#ffffff",
-              fontSize: "13px",
-              outline: "none",
-            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleSendMessage();
               }
             }}
+            style={{
+              flex: 1,
+              padding: "11px 16px",
+              borderRadius: "10px",
+              border: "1px solid #cbd5e1",
+              background: "#f8fafc",
+              fontSize: "14px",
+              color: "#0f172a",
+              outline: "none",
+            }}
           />
 
           <button
-            type="button"
             onClick={() => handleSendMessage()}
             disabled={loading || !inputMessage.trim()}
             style={{
-              background: "#ffffff",
-              color: "#000000",
+              padding: "11px 20px",
+              borderRadius: "10px",
+              background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+              color: "#ffffff",
               border: "none",
-              borderRadius: "8px",
-              width: "36px",
-              height: "36px",
+              fontSize: "13.5px",
+              fontWeight: "700",
+              cursor: "pointer",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              flexShrink: 0,
-              opacity: !inputMessage.trim() ? 0.5 : 1,
+              gap: "6px",
+              opacity: loading || !inputMessage.trim() ? 0.5 : 1,
             }}
           >
             <Send size={15} />
+            <span>Envoyer</span>
           </button>
         </div>
       </div>
 
-      {/* Floating Animated Voice Recording Bubble HUD */}
+      {/* 2. Right Side: Actions rapides & Contexte */}
+      <div style={{ padding: "24px 20px", background: "#ffffff", display: "flex", flexDirection: "column", gap: "20px", overflowY: "auto" }}>
+        <div>
+          <h2 style={{ fontSize: "15px", fontWeight: "700", color: "#0f172a", marginBottom: "12px" }}>
+            Actions rapides & Contexte
+          </h2>
+
+          {/* Status Card */}
+          <div
+            style={{
+              padding: "14px",
+              borderRadius: "12px",
+              background: "#f0fdf4",
+              border: "1px solid #bbf7d0",
+              marginBottom: "16px",
+            }}
+          >
+            <div style={{ fontSize: "12px", fontWeight: "700", color: "#166534", marginBottom: "4px" }}>Status</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#16a34a", boxShadow: "0 0 8px #16a34a" }} />
+              <span style={{ fontSize: "13px", fontWeight: "600", color: "#15803d" }}>Assistant IA : En ligne & connecté</span>
+            </div>
+          </div>
+
+          {/* Quick Action Prompt Buttons */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {quickPrompts.map((qp, idx) => {
+              const Icon = qp.icon;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => handleSendMessage(qp.prompt)}
+                  style={{
+                    padding: "12px 14px",
+                    borderRadius: "10px",
+                    background: "#ffffff",
+                    border: "1px solid #e2e8f0",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    transition: "all 0.15s ease",
+                  }}
+                  className="hover:border-blue-400 hover:shadow-sm"
+                >
+                  <div
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "8px",
+                      background: qp.bg,
+                      color: qp.color,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Icon size={16} />
+                  </div>
+                  <span style={{ fontSize: "13px", fontWeight: "600", color: "#0f172a" }}>{qp.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       <VoiceRecordingBubble
         isListening={isListening}
         transcript={liveTranscript}
-        onStop={stopListeningAndSend}
+        onStop={stopListening}
         onCancel={cancelListening}
       />
     </div>

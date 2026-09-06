@@ -15,9 +15,11 @@ import {
   X,
   Volume2,
   Phone,
-  Crown,
   Sparkles,
   UserPlus,
+  Search,
+  Moon,
+  Settings,
 } from "lucide-react";
 import AlarmOverlay from "@/components/reminders/AlarmOverlay";
 import NotificationManager from "@/components/reminders/NotificationManager";
@@ -32,12 +34,12 @@ import PaymentSuccessToast from "@/components/subscription/PaymentSuccessToast";
 import { useSubscription } from "@/lib/useSubscription";
 
 const navLinks = [
-  { href: "/", icon: LayoutDashboard, label: "Tableau de bord" },
-  { href: "/agent", icon: Sparkles, label: "Assistant & Copilote IA" },
-  { href: "/calendar", icon: Calendar, label: "Agenda & Calendrier" },
-  { href: "/reminders", icon: Bell, label: "Rappels & Alarmes Vocales" },
-  { href: "/tasks", icon: CheckSquare, label: "Tâches & Priorités" },
-  { href: "/contacts", icon: Users, label: "Contacts & Répertoire" },
+  { href: "/", icon: LayoutDashboard, label: "Accueil" },
+  { href: "/calendar", icon: Calendar, label: "Agenda" },
+  { href: "/reminders", icon: Bell, label: "Rappels" },
+  { href: "/tasks", icon: CheckSquare, label: "Tâches" },
+  { href: "/agent", icon: Sparkles, label: "Assistant IA", badge: "Nouveau" },
+  { href: "/contacts", icon: Users, label: "Contacts" },
 ];
 
 export default function DashboardLayout({
@@ -53,10 +55,12 @@ export default function DashboardLayout({
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showVoiceLiveModal, setShowVoiceLiveModal] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>();
+  const [searchQuery, setSearchQuery] = useState("");
   const { isPro } = useSubscription();
   const isDemoUser = session?.user?.email === "demo@alarmagenda.fr";
 
-  // Listen to open-upgrade-modal & open-voice-live-modal events
+  const userName = session?.user?.name || "Salem Imorou";
+
   useEffect(() => {
     const handleOpenUpgrade = (e: CustomEvent<{ feature?: string }>) => {
       setShowVoiceSettings(false);
@@ -77,7 +81,6 @@ export default function DashboardLayout({
     };
   }, []);
 
-  // Global Escape key listener to close modals
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -91,7 +94,6 @@ export default function DashboardLayout({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Prevent background scroll when any modal is active
   useEffect(() => {
     if (showVoiceSettings || showPhoneSettings || showUpgradeModal) {
       document.body.style.overflow = "hidden";
@@ -121,9 +123,8 @@ export default function DashboardLayout({
     window.location.href = "/register";
   };
 
-
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-app)" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "#f8fafc" }}>
       {/* Mobile Backdrop */}
       {sidebarOpen && (
         <div
@@ -131,7 +132,7 @@ export default function DashboardLayout({
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0, 0, 0, 0.8)",
+            background: "rgba(11, 21, 46, 0.7)",
             zIndex: 40,
             backdropFilter: "blur(6px)",
           }}
@@ -139,13 +140,13 @@ export default function DashboardLayout({
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar (Midnight Navy #0b152e) */}
       <aside
         style={{
-          width: "260px",
+          width: "250px",
           flexShrink: 0,
-          background: "var(--bg-sidebar)",
-          borderRight: "1px solid var(--border-subtle)",
+          background: "#0b152e",
+          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
           display: "flex",
           flexDirection: "column",
           position: "sticky",
@@ -159,8 +160,8 @@ export default function DashboardLayout({
         {/* Brand Header */}
         <div
           style={{
-            padding: "20px 18px",
-            borderBottom: "1px solid var(--border-subtle)",
+            padding: "22px 18px",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -170,72 +171,15 @@ export default function DashboardLayout({
           <button
             onClick={() => setSidebarOpen(false)}
             className="btn btn-ghost"
-            style={{ padding: "4px", color: "var(--text-muted)" }}
+            style={{ padding: "4px", color: "#94a3b8" }}
             id="sidebar-close-btn"
           >
             <X size={18} />
           </button>
         </div>
 
-        {/* Quick AI Launch Button */}
-        <div style={{ padding: "14px 14px 6px" }}>
-          <button
-            onClick={handleOpenAI}
-            style={{
-              width: "100%",
-              padding: "11px 14px",
-              borderRadius: "12px",
-              background: "linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%)",
-              border: "1px solid rgba(99, 102, 241, 0.4)",
-              color: "#ffffff",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              fontWeight: "600",
-              fontSize: "13px",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-            }}
-            className="hover:scale-[1.02] hover:border-indigo-400"
-          >
-            <div
-              style={{
-                width: "30px",
-                height: "30px",
-                borderRadius: "8px",
-                background: "linear-gradient(135deg, #38bdf8, #6366f1)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#ffffff",
-                boxShadow: "0 0 14px rgba(56, 189, 248, 0.4)",
-              }}
-            >
-              <Sparkles size={16} />
-            </div>
-            <div style={{ textAlign: "left", flex: 1 }}>
-              <div style={{ color: "#ffffff", fontWeight: "700" }}>Assistant IA</div>
-              <div style={{ fontSize: "10.5px", color: "#94a3b8", fontWeight: "500" }}>Commandes & Voix</div>
-            </div>
-          </button>
-        </div>
-
         {/* Navigation Links */}
-        <nav style={{ flex: 1, padding: "10px 12px", overflowY: "auto" }}>
-          <div
-            style={{
-              fontSize: "10px",
-              fontWeight: "700",
-              color: "var(--text-muted)",
-              textTransform: "uppercase",
-              letterSpacing: "0.8px",
-              padding: "6px 12px",
-              marginBottom: "4px",
-            }}
-          >
-            Plateforme
-          </div>
-
+        <nav style={{ flex: 1, padding: "14px 12px", overflowY: "auto" }}>
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
@@ -247,65 +191,73 @@ export default function DashboardLayout({
                 style={{
                   display: "flex",
                   alignItems: "center",
+                  justifyContent: "space-between",
                   gap: "12px",
-                  padding: "9px 12px",
-                  borderRadius: "8px",
-                  marginBottom: "3px",
-                  fontSize: "13px",
-                  fontWeight: isActive ? "600" : "500",
-                  color: isActive ? "#ffffff" : "var(--text-secondary)",
-                  background: isActive ? "rgba(255, 255, 255, 0.06)" : "transparent",
-                  border: isActive ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid transparent",
+                  padding: "10px 14px",
+                  borderRadius: "10px",
+                  marginBottom: "4px",
+                  fontSize: "13.5px",
+                  fontWeight: isActive ? "700" : "500",
+                  color: "#ffffff",
+                  background: isActive ? "#2563eb" : "transparent",
+                  boxShadow: isActive ? "0 4px 16px rgba(37, 99, 235, 0.4)" : "none",
                   transition: "all 0.15s ease",
                   textDecoration: "none",
                 }}
-                className={isActive ? "nav-link-active" : "hover:bg-slate-800/40"}
+                className={isActive ? "" : "hover:bg-slate-800/60"}
               >
-                <Icon
-                  size={17}
-                  style={{
-                    color: isActive ? "#38bdf8" : "var(--text-muted)",
-                    flexShrink: 0,
-                  }}
-                />
-                <span>{link.label}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <Icon
+                    size={18}
+                    style={{
+                      color: isActive ? "#ffffff" : "#94a3b8",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span>{link.label}</span>
+                </div>
+
+                {link.badge && (
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: "700",
+                      background: "#38bdf8",
+                      color: "#0f172a",
+                      padding: "2px 6px",
+                      borderRadius: "6px",
+                    }}
+                  >
+                    {link.badge}
+                  </span>
+                )}
               </Link>
             );
           })}
 
-          <div
-            style={{
-              fontSize: "10px",
-              fontWeight: "700",
-              color: "var(--text-muted)",
-              textTransform: "uppercase",
-              letterSpacing: "0.8px",
-              padding: "14px 12px 6px",
-            }}
-          >
-            Paramètres
-          </div>
+          <div style={{ height: "1px", background: "rgba(255, 255, 255, 0.08)", margin: "14px 4px" }} />
 
+          {/* Paramètres & Voix */}
           <button
             onClick={handleOpenVoiceSettings}
             style={{
               width: "100%",
               display: "flex",
               alignItems: "center",
-              gap: "12px",
-              padding: "8px 12px",
-              borderRadius: "8px",
+              gap: "10px",
+              padding: "9px 14px",
+              borderRadius: "10px",
               fontSize: "13px",
               fontWeight: "500",
-              color: "var(--text-secondary)",
+              color: "#94a3b8",
               background: "transparent",
               border: "none",
               cursor: "pointer",
               textAlign: "left",
             }}
-            className="hover:bg-slate-800/40"
+            className="hover:bg-slate-800/60 hover:text-white"
           >
-            <Volume2 size={17} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
+            <Volume2 size={17} style={{ color: "#94a3b8" }} />
             <span>Voix & Synthèse</span>
           </button>
 
@@ -315,72 +267,71 @@ export default function DashboardLayout({
               width: "100%",
               display: "flex",
               alignItems: "center",
-              gap: "12px",
-              padding: "8px 12px",
-              borderRadius: "8px",
+              gap: "10px",
+              padding: "9px 14px",
+              borderRadius: "10px",
               fontSize: "13px",
               fontWeight: "500",
-              color: "var(--text-secondary)",
+              color: "#94a3b8",
               background: "transparent",
               border: "none",
               cursor: "pointer",
               textAlign: "left",
             }}
-            className="hover:bg-slate-800/40"
+            className="hover:bg-slate-800/60 hover:text-white"
           >
-            <Phone size={17} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
-            <span>Téléphonie & Alertes</span>
+            <Settings size={17} style={{ color: "#94a3b8" }} />
+            <span>Paramètres</span>
           </button>
         </nav>
 
-        {/* Live Quota Indicator Box */}
+        {/* Live Quota Indicator */}
         <div style={{ padding: "10px 14px" }}>
           <QuotaIndicator />
         </div>
 
-        {/* User Footer */}
+        {/* User Footer (Salem Imorou / Compte Gratuit) */}
         <div
           style={{
-            padding: "12px 14px",
-            borderTop: "1px solid var(--border-subtle)",
+            padding: "14px",
+            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            background: "rgba(0, 0, 0, 0.3)",
+            background: "rgba(0, 0, 0, 0.2)",
           }}
         >
           <div
             style={{
-              width: "32px",
-              height: "32px",
-              borderRadius: "8px",
-              background: "linear-gradient(135deg, #1e293b, #334155)",
-              border: "1px solid var(--border-subtle)",
+              width: "34px",
+              height: "34px",
+              borderRadius: "9px",
+              background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+              color: "#ffffff",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontWeight: "700",
               fontSize: "13px",
-              color: "#ffffff",
               flexShrink: 0,
             }}
           >
-            {session?.user?.name ? session.user.name[0].toUpperCase() : "U"}
+            {userName[0]?.toUpperCase() || "S"}
           </div>
 
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {session?.user?.name || "Utilisateur"}
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "#ffffff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {userName}
             </div>
-            <div style={{ fontSize: "11px", color: isPro ? "#10b981" : "var(--text-muted)", fontWeight: isPro ? "600" : "500" }}>
-              {isPro ? "✓ Compte Pro" : "Compte Gratuit"}
+            <div style={{ fontSize: "11px", color: isPro ? "#10b981" : "#94a3b8", fontWeight: "500" }}>
+              {isPro ? "✓ Compte Pro" : "Utilisateur"}
             </div>
           </div>
 
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
             className="btn btn-ghost"
-            style={{ padding: "6px", color: "var(--text-muted)" }}
+            style={{ padding: "6px", color: "#94a3b8" }}
             title="Se déconnecter"
           >
             <LogOut size={16} />
@@ -389,79 +340,128 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content Area */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-        {/* Demo banner if active */}
-        {isDemoUser && (
-          <div
-            style={{
-              background: "#111827",
-              borderBottom: "1px solid var(--border-subtle)",
-              padding: "8px 16px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "10px",
-              fontSize: "12px",
-              zIndex: 25,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span style={{ background: "#f59e0b", color: "#000000", fontWeight: "800", padding: "2px 7px", borderRadius: "4px", fontSize: "10px" }}>
-                MODE DÉMO
-              </span>
-              <span style={{ color: "#94a3b8" }}>
-                Vous naviguez sur le compte d&apos;évaluation.
-              </span>
-            </div>
-            <button
-              onClick={handleExitDemoAndRegister}
-              className="btn btn-primary btn-sm"
-              style={{ padding: "4px 10px", fontSize: "11px", fontWeight: "600" }}
-            >
-              <UserPlus size={12} />
-              <span>Créer mon compte</span>
-            </button>
-          </div>
-        )}
-
-        {/* Mobile Topbar */}
-        <div
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, background: "#f8fafc" }}>
+        {/* Top Header Bar with Global Search & Quick Actions */}
+        <header
           style={{
+            height: "64px",
+            background: "#ffffff",
+            borderBottom: "1px solid #e2e8f0",
             display: "flex",
             alignItems: "center",
-            padding: "10px 14px",
-            borderBottom: "1px solid var(--border-subtle)",
-            background: "var(--bg-sidebar)",
+            justifyContent: "space-between",
+            padding: "0 36px",
             position: "sticky",
             top: 0,
             zIndex: 30,
           }}
-          className="mobile-topbar"
         >
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="btn btn-ghost"
-            style={{ padding: "6px" }}
-          >
-            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <div style={{ marginLeft: "8px" }}>
-            <Logo size={24} showText={false} />
+          {/* Global Search Input */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, maxWidth: "480px" }}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                background: "#f1f5f9",
+                border: "1px solid #e2e8f0",
+                borderRadius: "10px",
+                padding: "8px 14px",
+              }}
+            >
+              <Search size={16} style={{ color: "#94a3b8" }} />
+              <input
+                type="text"
+                placeholder="Rechercher un rendez-vous, une tâche, un contact..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  outline: "none",
+                  fontSize: "13px",
+                  color: "#0f172a",
+                  width: "100%",
+                }}
+              />
+            </div>
           </div>
-          <div style={{ flex: 1 }} />
-          <button
-            onClick={handleOpenAI}
-            className="btn btn-primary btn-sm"
-            style={{
-              padding: "6px 12px",
-              gap: "6px",
-              fontSize: "12px",
-            }}
-          >
-            <Sparkles size={14} />
-            <span>Assistant</span>
-          </button>
-        </div>
+
+          {/* Right Controls (Bell, Moon, Profile) */}
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <button
+              onClick={() => (window.location.href = "/reminders")}
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "9px",
+                background: "#f1f5f9",
+                border: "1px solid #e2e8f0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#64748b",
+                cursor: "pointer",
+                position: "relative",
+              }}
+              title="Notifications"
+            >
+              <Bell size={16} />
+              <span style={{ position: "absolute", top: "7px", right: "7px", width: "6px", height: "6px", background: "#ef4444", borderRadius: "50%" }} />
+            </button>
+
+            <button
+              onClick={handleOpenVoiceSettings}
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "9px",
+                background: "#f1f5f9",
+                border: "1px solid #e2e8f0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#64748b",
+                cursor: "pointer",
+              }}
+              title="Paramètres de voix"
+            >
+              <Moon size={16} />
+            </button>
+
+            {/* Profile Avatar Pill */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                padding: "4px 10px 4px 4px",
+                borderRadius: "20px",
+                background: "#f1f5f9",
+                border: "1px solid #e2e8f0",
+              }}
+            >
+              <div
+                style={{
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+                  color: "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "12px",
+                  fontWeight: "700",
+                }}
+              >
+                {userName[0]?.toUpperCase() || "S"}
+              </div>
+              <span style={{ fontSize: "13px", fontWeight: "600", color: "#0f172a" }}>{userName}</span>
+            </div>
+          </div>
+        </header>
 
         {children}
       </div>

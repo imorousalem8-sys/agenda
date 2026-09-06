@@ -136,33 +136,19 @@ export default function Logo({
                 color: "#ffffff",
               }}
             >
-              AlarmAgenda
-            </span>
-            <span
-              style={{
-                fontSize: "10px",
-                fontFamily: "monospace",
-                fontWeight: "700",
-                background: "rgba(255, 255, 255, 0.08)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
-                color: "#94a3b8",
-                padding: "1px 5px",
-                borderRadius: "4px",
-              }}
-            >
-              OS
+              Alamajonda
             </span>
           </div>
           <span
             style={{
               fontSize: `${Math.max(10, size * 0.24)}px`,
               fontWeight: "500",
-              color: "#64748b",
-              letterSpacing: "0.02em",
+              color: "#94a3b8",
+              letterSpacing: "0.01em",
               marginTop: "2px",
             }}
           >
-            Système Vocal & Calendrier Intelligent
+            Ton assistant, ton quotidien
           </span>
         </div>
       )}
