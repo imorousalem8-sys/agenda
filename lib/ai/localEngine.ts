@@ -308,6 +308,18 @@ export async function executeLocalContextualAgent(
   }
 
   const isEvent = textLower.includes("rdv") || textLower.includes("rendez-vous") || textLower.includes("réunion") || textLower.includes("docteur") || textLower.includes("dentiste") || textLower.includes("chantier");
+
+  // Si c'est un rendez-vous et qu'aucune date ni heure n'a été spécifiée, demander poliment la date et l'heure
+  if (isEvent && !hasExplicitTime && !dayMentioned) {
+    const reply = `Avec plaisir. Pour quel jour et à quelle heure souhaitez-vous planifier ce rendez-vous${contactName ? ` avec **${contactName}**` : ""} ? (Par exemple : *« Demain à 14h »* ou *« Vendredi à 10h30 »*)`;
+    return {
+      reply,
+      spokenReply: `Pour quel jour et à quelle heure souhaitez-vous planifier ce rendez-vous${contactName ? ` avec ${contactName}` : ""} ?`,
+      action: null,
+      executed: true,
+    };
+  }
+
   const isTask = !isEvent && (isWakeUp || textLower.includes("tâche") || textLower.includes("tache") || textLower.includes("faire") || textLower.includes("acheter") || textLower.includes("payer") || textLower.includes("finir"));
 
   let cleanTitle = text

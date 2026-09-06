@@ -8,10 +8,8 @@ import {
   X,
   Sparkles,
   Loader2,
-  Volume2,
-  RefreshCw,
-  Zap,
   Radio,
+  Minimize2,
 } from "lucide-react";
 import { speakAIText } from "@/lib/voice";
 import AgentStepCard from "./AgentStepCard";
@@ -30,10 +28,10 @@ interface ChatMessage {
 }
 
 const quickPrompts = [
-  "Demain chantier 8h, rappelle-moi d'aller chez le fournisseur avant et d'appeler Martin à 17h",
-  "Organise ma journée de demain",
+  "Prends rendez-vous demain à 14h avec Dominique",
   "Rappelle-moi d'appeler le médecin à 16h30",
-  "Ajoute la tâche : commander 2 coudes et 3 manchons",
+  "Ajoute la tâche : commander fournitures pour le chantier",
+  "Organise ma journée de demain",
 ];
 
 export default function AIAssistantWidget() {
@@ -46,7 +44,7 @@ export default function AIAssistantWidget() {
     {
       id: "welcome",
       sender: "ai",
-      text: "Bonjour. Je suis votre Copilote IA connecté à votre agenda et vos tâches. Écrivez votre consigne ou lancez le mode vocal pour dialoguer directement.",
+      text: "Bonjour. Je suis votre Copilote IA connecté à votre agenda, vos alarmes et vos tâches. Que souhaitez-vous planifier aujourd'hui ?",
     },
   ]);
 
@@ -196,7 +194,7 @@ export default function AIAssistantWidget() {
 
   return (
     <>
-      {/* Floating Trigger Button - Obsidian Pro Style */}
+      {/* Floating Trigger Button - Luxury Slate Style */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -205,58 +203,59 @@ export default function AIAssistantWidget() {
             bottom: "24px",
             right: "24px",
             zIndex: 40,
-            padding: "10px 16px",
-            borderRadius: "10px",
-            background: "var(--bg-card)",
-            border: "1px solid var(--border-strong)",
+            padding: "10px 18px",
+            borderRadius: "12px",
+            background: "linear-gradient(135deg, #152244 0%, #1c2d5a 100%)",
+            border: "1px solid rgba(99, 102, 241, 0.4)",
             color: "#ffffff",
             fontWeight: "600",
             fontSize: "13px",
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
+            boxShadow: "0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.2)",
             cursor: "pointer",
-            transition: "all 0.15s ease",
+            transition: "all 0.2s ease",
           }}
-          className="hover:border-slate-500"
+          className="hover:scale-105"
           id="floating-ai-btn"
         >
           <div
             style={{
-              width: "24px",
-              height: "24px",
-              borderRadius: "6px",
-              background: "linear-gradient(135deg, #2563eb, #06b6d4)",
+              width: "26px",
+              height: "26px",
+              borderRadius: "8px",
+              background: "linear-gradient(135deg, #38bdf8, #6366f1)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "#ffffff",
+              boxShadow: "0 0 12px rgba(56, 189, 248, 0.4)",
             }}
           >
-            <Sparkles size={14} />
+            <Sparkles size={15} />
           </div>
-          <span>Copilote IA</span>
+          <span style={{ color: "#ffffff", fontWeight: "700" }}>Copilote IA</span>
           <QuotaIndicator compact />
         </button>
       )}
 
-      {/* Slide-out Panel */}
+      {/* Solid Opaque Slide-out Panel (Zero Transparency Bleed) */}
       {isOpen && (
         <div
           style={{
             position: "fixed",
             bottom: "24px",
             right: "24px",
-            width: "420px",
+            width: "430px",
             maxWidth: "calc(100vw - 32px)",
             height: "620px",
             maxHeight: "calc(100vh - 48px)",
-            borderRadius: "14px",
-            background: "var(--bg-card)",
-            border: "1px solid var(--border-strong)",
-            boxShadow: "0 25px 50px rgba(0, 0, 0, 0.7)",
-            zIndex: 50,
+            borderRadius: "18px",
+            backgroundColor: "#152244",
+            border: "1px solid rgba(99, 102, 241, 0.45)",
+            boxShadow: "0 25px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(99, 102, 241, 0.25)",
+            zIndex: 100,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
@@ -266,8 +265,8 @@ export default function AIAssistantWidget() {
           <div
             style={{
               padding: "14px 18px",
-              borderBottom: "1px solid var(--border-subtle)",
-              background: "var(--bg-sidebar)",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+              backgroundColor: "#0f1a36",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -278,57 +277,70 @@ export default function AIAssistantWidget() {
                 style={{
                   width: "32px",
                   height: "32px",
-                  borderRadius: "8px",
-                  background: "linear-gradient(135deg, #2563eb, #06b6d4)",
+                  borderRadius: "9px",
+                  background: "linear-gradient(135deg, #38bdf8, #6366f1)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#ffffff",
+                  boxShadow: "0 0 15px rgba(99, 102, 241, 0.4)",
                 }}
               >
                 <Sparkles size={17} />
               </div>
               <div>
-                <div style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc" }}>
+                <div style={{ fontSize: "14px", fontWeight: "700", color: "#ffffff" }}>
                   Copilote IA d&apos;Action
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981" }} />
-                  <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>En ligne & connecté</span>
+                  <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#10b981", boxShadow: "0 0 8px #10b981" }} />
+                  <span style={{ fontSize: "11px", color: "#94a3b8", fontWeight: "500" }}>En ligne & connecté</span>
                 </div>
               </div>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <button
                 onClick={openVoiceLiveMode}
                 className="btn btn-secondary btn-sm"
                 style={{
-                  padding: "4px 8px",
+                  padding: "5px 10px",
                   fontSize: "11px",
                   fontWeight: "600",
-                  gap: "4px",
+                  gap: "5px",
                   color: "#38bdf8",
-                  borderColor: "rgba(56, 189, 248, 0.3)",
+                  borderColor: "rgba(56, 189, 248, 0.35)",
+                  background: "rgba(56, 189, 248, 0.1)",
                 }}
                 title="Passer en Mode Vocal Live (Orb)"
               >
-                <Radio size={12} />
-                <span>Mode Vocal Live</span>
+                <Radio size={13} />
+                <span>Mode Vocal</span>
               </button>
 
               <button
                 onClick={() => setIsOpen(false)}
                 className="btn btn-ghost btn-sm"
-                style={{ padding: "6px", color: "var(--text-muted)" }}
+                style={{ padding: "6px", color: "#94a3b8" }}
+                title="Fermer"
               >
-                <X size={17} />
+                <X size={18} />
               </button>
             </div>
           </div>
 
-          {/* Chat Messages */}
-          <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", background: "var(--bg-app)" }}>
+          {/* Chat Messages Area (Solid Dark Opaque Background) */}
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              backgroundColor: "#0b1329",
+            }}
+          >
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -341,14 +353,18 @@ export default function AIAssistantWidget() {
                 <div
                   style={{
                     maxWidth: "88%",
-                    padding: "10px 14px",
-                    borderRadius: m.sender === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
-                    background: m.sender === "user" ? "var(--accent-primary)" : "var(--bg-card)",
-                    color: "#f8fafc",
+                    padding: "11px 15px",
+                    borderRadius: m.sender === "user" ? "14px 14px 2px 14px" : "14px 14px 14px 2px",
+                    background:
+                      m.sender === "user"
+                        ? "linear-gradient(135deg, #38bdf8 0%, #2563eb 100%)"
+                        : "#1c2d5a",
+                    color: "#ffffff",
                     fontSize: "13px",
                     lineHeight: "1.5",
                     whiteSpace: "pre-wrap",
-                    border: m.sender === "user" ? "none" : "1px solid var(--border-subtle)",
+                    border: m.sender === "user" ? "none" : "1px solid rgba(255, 255, 255, 0.12)",
+                    boxShadow: "0 4px 15px rgba(0, 0, 0, 0.3)",
                   }}
                 >
                   {m.text}
@@ -373,23 +389,23 @@ export default function AIAssistantWidget() {
             ))}
 
             {loading && (
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-muted)", fontSize: "12px", padding: "6px" }}>
-                <Loader2 size={14} className="animate-spin text-sky-400" />
-                <span>Traitement de l&apos;action en cours...</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#38bdf8", fontSize: "12px", padding: "8px 12px", background: "rgba(56, 189, 248, 0.1)", borderRadius: "8px", width: "fit-content" }}>
+                <Loader2 size={15} className="animate-spin text-sky-400" />
+                <span>Traitement de votre demande...</span>
               </div>
             )}
             <div ref={chatBottomRef} />
           </div>
 
-          {/* Quick Prompts */}
+          {/* Quick Prompts Bar */}
           <div
             style={{
-              padding: "6px 12px",
+              padding: "8px 12px",
               display: "flex",
               gap: "6px",
               overflowX: "auto",
-              background: "var(--bg-card)",
-              borderTop: "1px solid var(--border-subtle)",
+              backgroundColor: "#152244",
+              borderTop: "1px solid rgba(255, 255, 255, 0.08)",
             }}
           >
             {quickPrompts.map((p, idx) => (
@@ -397,18 +413,19 @@ export default function AIAssistantWidget() {
                 key={idx}
                 onClick={() => handleSendMessage(p)}
                 style={{
-                  padding: "3px 8px",
-                  borderRadius: "6px",
-                  background: "rgba(255, 255, 255, 0.04)",
-                  border: "1px solid var(--border-subtle)",
+                  padding: "4px 10px",
+                  borderRadius: "8px",
+                  background: "rgba(255, 255, 255, 0.06)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
                   fontSize: "11px",
-                  color: "var(--text-muted)",
+                  color: "#cbd5e1",
                   whiteSpace: "nowrap",
                   cursor: "pointer",
+                  transition: "all 0.15s ease",
                 }}
-                className="hover:border-slate-500 hover:text-white"
+                className="hover:border-indigo-400 hover:text-white hover:bg-slate-700"
               >
-                {p.slice(0, 32)}...
+                {p.slice(0, 34)}...
               </button>
             ))}
           </div>
@@ -417,8 +434,8 @@ export default function AIAssistantWidget() {
           <div
             style={{
               padding: "12px 14px",
-              borderTop: "1px solid var(--border-subtle)",
-              background: "var(--bg-card)",
+              borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+              backgroundColor: "#0f1a36",
               display: "flex",
               alignItems: "center",
               gap: "8px",
@@ -426,11 +443,11 @@ export default function AIAssistantWidget() {
           >
             <button
               onClick={toggleVoiceInput}
-              className={`btn btn-ghost btn-sm ${isListening ? "text-rose-400" : "text-slate-400"}`}
-              style={{ padding: "6px" }}
+              className={`btn btn-ghost btn-sm ${isListening ? "text-rose-400" : "text-sky-400"}`}
+              style={{ padding: "7px", borderRadius: "8px", background: isListening ? "rgba(244, 63, 94, 0.15)" : "rgba(56, 189, 248, 0.1)" }}
               title={isListening ? "Arrêter l'écoute" : "Dicter une consigne"}
             >
-              {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+              {isListening ? <MicOff size={17} /> : <Mic size={17} />}
             </button>
 
             <input
@@ -446,12 +463,12 @@ export default function AIAssistantWidget() {
               placeholder="Écrivez ou dictez votre consigne..."
               style={{
                 flex: 1,
-                background: "var(--bg-app)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: "8px",
-                padding: "8px 12px",
+                backgroundColor: "#0b1329",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                borderRadius: "10px",
+                padding: "9px 14px",
                 fontSize: "13px",
-                color: "#f8fafc",
+                color: "#ffffff",
                 outline: "none",
               }}
             />
@@ -461,11 +478,11 @@ export default function AIAssistantWidget() {
               disabled={loading || !inputMessage.trim()}
               className="btn btn-primary btn-sm"
               style={{
-                padding: "7px 12px",
-                borderRadius: "8px",
+                padding: "8px 14px",
+                borderRadius: "10px",
               }}
             >
-              <Send size={14} />
+              <Send size={15} />
             </button>
           </div>
         </div>

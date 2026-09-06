@@ -183,39 +183,39 @@ export default function DashboardLayout({
             onClick={handleOpenAI}
             style={{
               width: "100%",
-              padding: "10px 14px",
-              borderRadius: "10px",
-              background: "var(--bg-card)",
-              border: "1px solid var(--border-strong)",
-              color: "var(--text-primary)",
+              padding: "11px 14px",
+              borderRadius: "12px",
+              background: "linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%)",
+              border: "1px solid rgba(99, 102, 241, 0.4)",
+              color: "#ffffff",
               display: "flex",
               alignItems: "center",
               gap: "10px",
               fontWeight: "600",
               fontSize: "13px",
               cursor: "pointer",
-              transition: "all 0.15s ease",
+              transition: "all 0.2s ease",
             }}
-            className="hover:border-slate-500"
+            className="hover:scale-[1.02] hover:border-indigo-400"
           >
             <div
               style={{
-                width: "28px",
-                height: "28px",
+                width: "30px",
+                height: "30px",
                 borderRadius: "8px",
-                background: "linear-gradient(135deg, #2563eb, #06b6d4)",
+                background: "linear-gradient(135deg, #38bdf8, #6366f1)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "#ffffff",
-                boxShadow: "0 0 12px rgba(37, 99, 235, 0.3)",
+                boxShadow: "0 0 14px rgba(56, 189, 248, 0.4)",
               }}
             >
               <Sparkles size={16} />
             </div>
             <div style={{ textAlign: "left", flex: 1 }}>
-              <div style={{ color: "#f8fafc" }}>Assistant IA</div>
-              <div style={{ fontSize: "10px", color: "var(--text-muted)", fontWeight: "500" }}>Commandes & Voix</div>
+              <div style={{ color: "#ffffff", fontWeight: "700" }}>Assistant IA</div>
+              <div style={{ fontSize: "10.5px", color: "#94a3b8", fontWeight: "500" }}>Commandes & Voix</div>
             </div>
           </button>
         </div>
