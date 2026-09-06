@@ -5,6 +5,7 @@ import { Sparkles, Clock, Bell, Plus, Calendar, Mic } from "lucide-react";
 
 interface DashboardClockHeroProps {
   greeting: string;
+  userName?: string;
   onOpenAI: () => void;
   onNewEvent: () => void;
   nextReminderTitle?: string;
@@ -13,6 +14,7 @@ interface DashboardClockHeroProps {
 
 export default function DashboardClockHero({
   greeting,
+  userName,
   onOpenAI,
   onNewEvent,
   nextReminderTitle = "Aucune alerte urgente",
@@ -41,6 +43,8 @@ export default function DashboardClockHero({
       })
     : "";
 
+  const displayName = userName ? userName.split(" ")[0] : "Utilisateur";
+
   return (
     <div className="hero-banner">
       {/* Left: Greeting & Current Date */}
@@ -65,7 +69,7 @@ export default function DashboardClockHero({
           </span>
         </div>
         <h1 className="hero-title">
-          {greeting}, Alexandre 👋
+          {greeting}, {displayName} 👋
         </h1>
         <p style={{ fontSize: "14px", color: "var(--text-secondary)", marginTop: "4px" }}>
           Voici le récapitulatif de votre journée et vos prochaines alertes.

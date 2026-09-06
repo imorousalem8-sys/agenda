@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import {
   Mic,
   MicOff,
@@ -35,6 +36,7 @@ const quickPrompts = [
 ];
 
 export default function AIAssistantWidget() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [liveTranscript, setLiveTranscript] = useState("");
@@ -51,6 +53,11 @@ export default function AIAssistantWidget() {
   const recognitionRef = useRef<any>(null);
   const chatBottomRef = useRef<HTMLDivElement | null>(null);
 
+  // Auto-close on page navigation
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
   useEffect(() => {
     if (isOpen) {
       chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -59,8 +66,19 @@ export default function AIAssistantWidget() {
 
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);
+    const handleClose = () => setIsOpen(false);
+
     window.addEventListener("open-ai-assistant", handleOpen);
-    return () => window.removeEventListener("open-ai-assistant", handleOpen);
+    window.addEventListener("close-ai-assistant", handleClose);
+    window.addEventListener("open-upgrade-modal" as any, handleClose);
+    window.addEventListener("open-voice-live-modal" as any, handleClose);
+
+    return () => {
+      window.removeEventListener("open-ai-assistant", handleOpen);
+      window.removeEventListener("close-ai-assistant", handleClose);
+      window.removeEventListener("open-upgrade-modal" as any, handleClose);
+      window.removeEventListener("open-voice-live-modal" as any, handleClose);
+    };
   }, []);
 
   const openVoiceLiveMode = () => {

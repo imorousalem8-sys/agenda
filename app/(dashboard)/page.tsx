@@ -264,7 +264,7 @@ export default function DashboardPage() {
             </span>
           </div>
           <h1 style={{ fontSize: "24px", fontWeight: "700", color: "#f8fafc", letterSpacing: "-0.02em" }}>
-            {greeting}, {session?.user?.name || "Alexandre"}
+            {greeting}, {session?.user?.name ? session.user.name.split(" ")[0] : "Utilisateur"} 👋
           </h1>
           <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
             Synthèse de votre activité, vos priorités et vos alertes du jour.
