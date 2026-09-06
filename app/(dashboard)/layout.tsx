@@ -34,7 +34,7 @@ import PaymentSuccessToast from "@/components/subscription/PaymentSuccessToast";
 import { useSubscription } from "@/lib/useSubscription";
 
 const navLinks = [
-  { href: "/", icon: LayoutDashboard, label: "Accueil" },
+  { href: "/dashboard", icon: LayoutDashboard, label: "Tableau de bord" },
   { href: "/calendar", icon: Calendar, label: "Agenda" },
   { href: "/reminders", icon: Bell, label: "Rappels" },
   { href: "/tasks", icon: CheckSquare, label: "Tâches" },

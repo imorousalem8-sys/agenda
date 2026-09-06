@@ -155,7 +155,7 @@ export default function LandingPage() {
         setError("Email ou mot de passe incorrect. Vérifiez vos identifiants.");
         setLoading(false);
       } else {
-        window.location.href = "/";
+        window.location.href = "/dashboard";
       }
     } catch {
       setError("Erreur inattendue lors de la connexion.");
@@ -227,9 +227,9 @@ export default function LandingPage() {
         redirect: false,
       });
 
-      window.location.replace("/");
+      window.location.replace("/dashboard");
     } catch {
-      window.location.replace("/");
+      window.location.replace("/dashboard");
     }
   };
 
@@ -306,9 +306,9 @@ export default function LandingPage() {
         redirect: false,
       });
 
-      window.location.replace("/");
+      window.location.replace("/dashboard");
     } catch {
-      window.location.replace("/");
+      window.location.replace("/dashboard");
     }
   };
 
