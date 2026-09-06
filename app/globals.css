@@ -2,44 +2,65 @@
 
 @layer base {
   :root {
-    /* Design System Alamajonda (Executive Navy & Crisp Light SaaS) */
-    --bg-primary: #f8fafc;          /* Fond de page lumineux, propre et moderne */
-    --bg-secondary: #f1f5f9;        /* Niveau secondaire */
-    --bg-surface: #ffffff;          /* Cartes blanches nettes et opaques */
-    --bg-card: #ffffff;             /* Surface des cartes */
-    --bg-elevated: #ffffff;         /* Élément surélevé */
-    --bg-hover: #f8fafc;            /* État survol */
-    --bg-sidebar: #0b152e;          /* Sidebar bleu nuit profond */
-    --bg-app: #f8fafc;              /* Fond général */
+    /* Design System Alamajonda (Executive Navy & Crisp Light SaaS by default) */
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --bg-surface: #ffffff;
+    --bg-card: #ffffff;
+    --bg-elevated: #ffffff;
+    --bg-hover: #f1f5f9;
+    --bg-sidebar: #0b152e;
+    --bg-app: #f8fafc;
     --bg-glass: rgba(255, 255, 255, 0.98);
 
-    /* Bordures subtiles & Précises */
     --border-subtle: #e2e8f0;
     --border-default: #cbd5e1;
     --border-strong: rgba(37, 99, 235, 0.45);
     --border-accent: #3b82f6;
 
-    /* Typographie Haute Lisibilité */
-    --text-primary: #0f172a;        /* Titres & textes sombres profonds */
-    --text-secondary: #475569;      /* Sous-titres et détails */
-    --text-muted: #64748b;          /* Métadonnées */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
 
-    /* Palette Royale Alamajonda */
-    --accent-primary: #2563eb;       /* Bleu Royal Principal */
+    --accent-primary: #2563eb;
     --accent-primary-hover: #1d4ed8;
-    --accent-emerald: #10b981;       /* Vert Succès */
-    --accent-indigo: #4f46e5;        /* Indigo */
-    --accent-violet: #7c3aed;        /* Violet */
-    --accent-cyan: #0284c7;          /* Cyan */
-    --accent-danger: #ef4444;        /* Rouge Alerte */
-    --accent-warning: #f59e0b;       /* Ambre */
+    --accent-emerald: #10b981;
+    --accent-indigo: #4f46e5;
+    --accent-violet: #7c3aed;
+    --accent-cyan: #0284c7;
+    --accent-danger: #ef4444;
+    --accent-warning: #f59e0b;
     --accent-success: #10b981;
     --accent-info: #2563eb;
 
-    /* Ombres douces & Modernes */
     --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
     --shadow-elevated: 0 10px 30px -4px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
     --glow-primary: 0 0 25px rgba(37, 99, 235, 0.35);
+  }
+
+  [data-theme="dark"], .dark {
+    --bg-primary: #070c1e;
+    --bg-secondary: #0d1633;
+    --bg-surface: #142045;
+    --bg-card: #142045;
+    --bg-elevated: #1b2b5c;
+    --bg-hover: #1e293b;
+    --bg-sidebar: #070d1e;
+    --bg-app: #070c1e;
+    --bg-glass: rgba(20, 32, 69, 0.95);
+
+    --border-subtle: rgba(255, 255, 255, 0.1);
+    --border-default: rgba(255, 255, 255, 0.18);
+    --border-strong: rgba(99, 102, 241, 0.45);
+    --border-accent: rgba(56, 189, 248, 0.55);
+
+    --text-primary: #ffffff;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+
+    --shadow-card: 0 12px 35px rgba(0, 0, 0, 0.5);
+    --shadow-elevated: 0 20px 45px rgba(0, 0, 0, 0.65);
+    --glow-primary: 0 0 30px rgba(56, 189, 248, 0.25);
   }
 }
 

@@ -93,12 +93,12 @@ const MONTHS_LIST = [
 const WEEKDAYS_SHORT = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 const CATEGORY_STYLES: Record<string, { bg: string; text: string; border: string; dot: string }> = {
-  WORK: { bg: "rgba(59, 130, 246, 0.15)", text: "#93c5fd", border: "rgba(59, 130, 246, 0.35)", dot: "#3b82f6" },
-  HEALTH: { bg: "rgba(244, 63, 94, 0.15)", text: "#fda4af", border: "rgba(244, 63, 94, 0.35)", dot: "#f43f5e" },
-  FAMILY: { bg: "rgba(168, 85, 247, 0.15)", text: "#d8b4fe", border: "rgba(168, 85, 247, 0.35)", dot: "#a855f7" },
-  ADMIN: { bg: "rgba(245, 158, 11, 0.15)", text: "#fcd34d", border: "rgba(245, 158, 11, 0.35)", dot: "#f59e0b" },
-  EDUCATION: { bg: "rgba(16, 185, 129, 0.15)", text: "#6ee7b7", border: "rgba(16, 185, 129, 0.35)", dot: "#10b981" },
-  OTHER: { bg: "rgba(99, 102, 241, 0.15)", text: "#c7d2fe", border: "rgba(99, 102, 241, 0.35)", dot: "#6366f1" },
+  WORK: { bg: "#eff6ff", text: "#1d4ed8", border: "#bfdbfe", dot: "#2563eb" },
+  HEALTH: { bg: "#fff1f2", text: "#be123c", border: "#fecdd3", dot: "#e11d48" },
+  FAMILY: { bg: "#faf5ff", text: "#7e22ce", border: "#e9d5ff", dot: "#9333ea" },
+  ADMIN: { bg: "#fffbeb", text: "#b45309", border: "#fde68a", dot: "#d97706" },
+  EDUCATION: { bg: "#f0fdf4", text: "#15803d", border: "#bbf7d0", dot: "#16a34a" },
+  OTHER: { bg: "#eef2ff", text: "#4338ca", border: "#c7d2fe", dot: "#4f46e5" },
 };
 
 export default function CalendarPage() {
@@ -1443,15 +1443,15 @@ export default function CalendarPage() {
         .pro-month-weekdays-row {
           display: grid;
           grid-template-columns: repeat(7, minmax(0, 1fr));
-          background: rgba(0, 0, 0, 0.35);
+          background: var(--bg-secondary);
           border-bottom: 1px solid var(--border-subtle);
         }
         .pro-weekday-header-cell {
           padding: 12px 6px;
           text-align: center;
-          font-size: 12px;
-          font-weight: 700;
-          color: #94a3b8;
+          font-size: 12.5px;
+          font-weight: 800;
+          color: var(--text-primary);
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
@@ -1472,18 +1472,18 @@ export default function CalendarPage() {
           transition: background 0.15s ease;
         }
         .pro-day-cell:hover {
-          background: var(--bg-elevated);
+          background: var(--bg-hover);
         }
         .pro-day-cell.is-outside-month {
-          background: rgba(12, 16, 26, 0.6);
-          opacity: 0.4;
+          background: var(--bg-secondary);
+          opacity: 0.55;
         }
         .pro-day-cell.is-selected-cell {
-          background: rgba(99, 102, 241, 0.12) !important;
+          background: rgba(37, 99, 235, 0.08) !important;
           box-shadow: inset 0 0 0 2px var(--accent-primary);
         }
         .pro-day-cell.is-today-cell {
-          background: rgba(99, 102, 241, 0.06);
+          background: rgba(37, 99, 235, 0.05);
         }
         .pro-day-cell-top {
           display: flex;
@@ -1491,8 +1491,8 @@ export default function CalendarPage() {
           justify-content: space-between;
         }
         .pro-day-number {
-          font-size: 13px;
-          font-weight: 600;
+          font-size: 14px;
+          font-weight: 700;
           color: var(--text-primary);
           width: 26px;
           height: 26px;
@@ -1505,13 +1505,13 @@ export default function CalendarPage() {
           background: var(--accent-primary);
           color: white;
           font-weight: 800;
-          box-shadow: 0 0 10px rgba(99, 102, 241, 0.7);
+          box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
         }
         .pro-day-event-count-badge {
           font-size: 10px;
           font-weight: 700;
-          color: var(--text-muted);
-          background: rgba(255, 255, 255, 0.08);
+          color: var(--accent-primary);
+          background: rgba(37, 99, 235, 0.1);
           padding: 1px 6px;
           border-radius: 10px;
         }

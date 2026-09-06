@@ -17,8 +17,8 @@ import {
   Phone,
   Sparkles,
   UserPlus,
-  Search,
   Moon,
+  Sun,
   Settings,
 } from "lucide-react";
 import AlarmOverlay from "@/components/reminders/AlarmOverlay";
@@ -55,11 +55,37 @@ export default function DashboardLayout({
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showVoiceLiveModal, setShowVoiceLiveModal] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const { isPro } = useSubscription();
   const isDemoUser = session?.user?.email === "demo@alarmagenda.fr";
 
   const userName = session?.user?.name || "Salem Imorou";
+
+  // Initialisation du thème depuis localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("alamajonda_theme") as "light" | "dark" | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      if (savedTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    setTheme(nextTheme);
+    localStorage.setItem("alamajonda_theme", nextTheme);
+    document.documentElement.setAttribute("data-theme", nextTheme);
+    if (nextTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
 
   useEffect(() => {
     const handleOpenUpgrade = (e: CustomEvent<{ feature?: string }>) => {
@@ -124,7 +150,7 @@ export default function DashboardLayout({
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#f8fafc" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-app)" }}>
       {/* Mobile Backdrop */}
       {sidebarOpen && (
         <div
@@ -237,7 +263,39 @@ export default function DashboardLayout({
 
           <div style={{ height: "1px", background: "rgba(255, 255, 255, 0.08)", margin: "14px 4px" }} />
 
-          {/* Paramètres & Voix */}
+          {/* Bouton de Thème Nuit / Jour Réel */}
+          <button
+            onClick={toggleTheme}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "10px",
+              padding: "9px 14px",
+              borderRadius: "10px",
+              fontSize: "13px",
+              fontWeight: "500",
+              color: "#94a3b8",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              textAlign: "left",
+              marginBottom: "4px",
+            }}
+            className="hover:bg-slate-800/60 hover:text-white"
+            title={theme === "light" ? "Activer le Mode Nuit (Sombre)" : "Activer le Mode Jour (Clair)"}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              {theme === "light" ? <Moon size={17} style={{ color: "#38bdf8" }} /> : <Sun size={17} style={{ color: "#f59e0b" }} />}
+              <span>{theme === "light" ? "Mode Nuit (Sombre)" : "Mode Jour (Clair)"}</span>
+            </div>
+            <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "6px", background: "rgba(255, 255, 255, 0.1)", color: "#cbd5e1" }}>
+              {theme === "light" ? "OFF" : "ON"}
+            </span>
+          </button>
+
+          {/* Voix & Synthèse (Test Homme / Femme) */}
           <button
             onClick={handleOpenVoiceSettings}
             style={{
@@ -254,6 +312,7 @@ export default function DashboardLayout({
               border: "none",
               cursor: "pointer",
               textAlign: "left",
+              marginBottom: "4px",
             }}
             className="hover:bg-slate-800/60 hover:text-white"
           >
@@ -339,132 +398,49 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, background: "#f8fafc" }}>
-        {/* Top Header Bar with Global Search & Quick Actions */}
-        <header
+      {/* Main Content Area (No overlapping headers!) */}
+      <main style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflowY: "auto" }}>
+        {/* Mobile Topbar */}
+        <div
           style={{
-            height: "64px",
-            background: "#ffffff",
-            borderBottom: "1px solid #e2e8f0",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 36px",
+            padding: "10px 14px",
+            borderBottom: "1px solid var(--border-subtle)",
+            background: "var(--bg-sidebar)",
             position: "sticky",
             top: 0,
             zIndex: 30,
           }}
+          className="mobile-topbar"
         >
-          {/* Global Search Input */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, maxWidth: "480px" }}>
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                background: "#f1f5f9",
-                border: "1px solid #e2e8f0",
-                borderRadius: "10px",
-                padding: "8px 14px",
-              }}
-            >
-              <Search size={16} style={{ color: "#94a3b8" }} />
-              <input
-                type="text"
-                placeholder="Rechercher un rendez-vous, une tâche, un contact..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  outline: "none",
-                  fontSize: "13px",
-                  color: "#0f172a",
-                  width: "100%",
-                }}
-              />
-            </div>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="btn btn-ghost"
+            style={{ padding: "6px" }}
+          >
+            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <div style={{ marginLeft: "8px" }}>
+            <Logo size={24} showText={false} />
           </div>
-
-          {/* Right Controls (Bell, Moon, Profile) */}
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <button
-              onClick={() => (window.location.href = "/reminders")}
-              style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "9px",
-                background: "#f1f5f9",
-                border: "1px solid #e2e8f0",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#64748b",
-                cursor: "pointer",
-                position: "relative",
-              }}
-              title="Notifications"
-            >
-              <Bell size={16} />
-              <span style={{ position: "absolute", top: "7px", right: "7px", width: "6px", height: "6px", background: "#ef4444", borderRadius: "50%" }} />
-            </button>
-
-            <button
-              onClick={handleOpenVoiceSettings}
-              style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "9px",
-                background: "#f1f5f9",
-                border: "1px solid #e2e8f0",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#64748b",
-                cursor: "pointer",
-              }}
-              title="Paramètres de voix"
-            >
-              <Moon size={16} />
-            </button>
-
-            {/* Profile Avatar Pill */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                padding: "4px 10px 4px 4px",
-                borderRadius: "20px",
-                background: "#f1f5f9",
-                border: "1px solid #e2e8f0",
-              }}
-            >
-              <div
-                style={{
-                  width: "28px",
-                  height: "28px",
-                  borderRadius: "50%",
-                  background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
-                  color: "#ffffff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "12px",
-                  fontWeight: "700",
-                }}
-              >
-                {userName[0]?.toUpperCase() || "S"}
-              </div>
-              <span style={{ fontSize: "13px", fontWeight: "600", color: "#0f172a" }}>{userName}</span>
-            </div>
-          </div>
-        </header>
+          <div style={{ flex: 1 }} />
+          <button
+            onClick={handleOpenAI}
+            className="btn btn-primary btn-sm"
+            style={{
+              padding: "6px 12px",
+              gap: "6px",
+              fontSize: "12px",
+            }}
+          >
+            <Sparkles size={14} />
+            <span>Assistant</span>
+          </button>
+        </div>
 
         {children}
-      </div>
+      </main>
 
       {/* Persistent Global Overlays */}
       <PaymentSuccessToast />
