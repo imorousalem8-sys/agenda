@@ -1,16 +1,22 @@
 import { prisma } from "@/lib/prisma";
 import { AIUserContext } from "./types";
 import { getQuotaStatus } from "./quotas";
-import { addDays, subHours } from "date-fns";
+import { addDays, subHours, startOfDay, endOfDay } from "date-fns";
 import { resolveDbUserId } from "@/lib/dbUser";
+import { DetectedIntentType } from "./intentRouter";
 
-export async function buildUserAIContext(
-  rawUserId: string
-): Promise<AIUserContext> {
+// Cache utilisateur en mémoire (5 minutes) pour éviter des requêtes répétées
+const userProfileCache = new Map<string, { name?: string; timezone: string; cachedAt: number }>();
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
+export async function buildSelectiveAIContext(
+  rawUserId: string,
+  intent?: DetectedIntentType,
+  targetDate?: Date
+): Promise<{ context: AIUserContext; dbQueriesCount: number }> {
   const userId = await resolveDbUserId(rawUserId);
   const now = new Date();
-  const nextWeek = addDays(now, 7);
-  const pastHours = subHours(now, 12);
+  let dbQueriesCount = 0;
 
   const currentDateFormatted = now.toLocaleDateString("fr-FR", {
     weekday: "long",
@@ -21,112 +27,97 @@ export async function buildUserAIContext(
     minute: "2-digit",
   });
 
-  // Default safe empty structures in case database is offline or during cold starts
+  // 1. Récupération profil / timezone (avec cache mémoire ultra-rapide)
   let userName: string | undefined = undefined;
   let timezone = "Europe/Paris";
-  let events: Array<{
-    id: string;
-    title: string;
-    startAt: Date;
-    location?: string | null;
-    category: string;
-    mode: string;
-    contact?: { firstName: string; lastName?: string | null } | null;
-  }> = [];
-  let tasks: Array<{
-    id: string;
-    title: string;
-    dueAt?: Date | null;
-    priority: string;
-    isDone: boolean;
-    mode: string;
-  }> = [];
-  let reminders: Array<{
-    id: string;
-    title: string;
-    fireAt: Date;
-    status: string;
-    method: string;
-  }> = [];
-  let contacts: Array<{
-    id: string;
-    firstName: string;
-    lastName?: string | null;
-    phone?: string | null;
-    email?: string | null;
-  }> = [];
-  let memories: Array<{ key: string; value: string }> = [];
 
-  try {
-    const [userRes, eventsRes, tasksRes, remindersRes, contactsRes, memoriesRes] = await Promise.allSettled([
-      prisma.user.findUnique({
+  const cached = userProfileCache.get(userId);
+  if (cached && now.getTime() - cached.cachedAt < CACHE_TTL_MS) {
+    userName = cached.name;
+    timezone = cached.timezone;
+  } else {
+    try {
+      dbQueriesCount++;
+      const user = await prisma.user.findUnique({
         where: { id: userId },
         select: { name: true, timezone: true },
-      }),
-      prisma.event.findMany({
-        where: {
-          userId,
-          startAt: { gte: pastHours, lte: nextWeek },
-        },
+      });
+      if (user) {
+        userName = user.name || undefined;
+        timezone = user.timezone || "Europe/Paris";
+        userProfileCache.set(userId, { name: userName, timezone, cachedAt: now.getTime() });
+      }
+    } catch (err) {
+      console.warn("User profile fetch notice:", err);
+    }
+  }
+
+  let events: Array<any> = [];
+  let tasks: Array<any> = [];
+  let reminders: Array<any> = [];
+  let contacts: Array<any> = [];
+  let memories: Array<{ key: string; value: string }> = [];
+
+  // 2. Requêtes sélectives conditionnées par l'intention détectée
+  try {
+    if (intent === "CALENDAR_VIEW" || intent === "RESCHEDULE_ACTION") {
+      dbQueriesCount++;
+      const rangeStart = targetDate ? startOfDay(targetDate) : subHours(now, 2);
+      const rangeEnd = targetDate ? endOfDay(targetDate) : addDays(now, 7);
+
+      events = await prisma.event.findMany({
+        where: { userId, startAt: { gte: rangeStart, lte: rangeEnd } },
         include: { contact: true },
         orderBy: { startAt: "asc" },
-        take: 15,
-      }),
-      prisma.task.findMany({
-        where: {
-          userId,
-          isDone: false,
-        },
-        orderBy: [{ priority: "desc" }, { dueAt: "asc" }],
-        take: 15,
-      }),
-      prisma.reminder.findMany({
-        where: {
-          userId,
-          status: "PENDING",
-          fireAt: { gte: now },
-        },
+        take: 10,
+      });
+    } else if (intent === "REMINDER_VIEW" || intent === "CANCEL_ACTION") {
+      dbQueriesCount++;
+      reminders = await prisma.reminder.findMany({
+        where: { userId, status: "PENDING" },
         orderBy: { fireAt: "asc" },
         take: 8,
-      }),
-      prisma.contact.findMany({
-        where: { userId },
-        orderBy: { firstName: "asc" },
-        take: 25,
-      }),
-      prisma.userMemory.findMany({
-        where: { userId },
-        orderBy: { updatedAt: "desc" },
-        take: 20,
-      }),
-    ]);
-
-    if (userRes.status === "fulfilled" && userRes.value) {
-      userName = userRes.value.name || undefined;
-      timezone = userRes.value.timezone || "Europe/Paris";
+      });
+    } else if (intent === "TASK_VIEW" || intent === "COMPLETE_ACTION") {
+      dbQueriesCount++;
+      tasks = await prisma.task.findMany({
+        where: { userId, isDone: false },
+        orderBy: [{ priority: "desc" }, { dueAt: "asc" }],
+        take: 10,
+      });
+    } else if (intent === "COMPLEX_OR_LLM") {
+      // Contexte complet mais limité si demande libre ou complexe
+      dbQueriesCount += 3;
+      const [eventsRes, tasksRes, remindersRes] = await Promise.all([
+        prisma.event.findMany({
+          where: { userId, startAt: { gte: subHours(now, 4), lte: addDays(now, 5) } },
+          include: { contact: true },
+          orderBy: { startAt: "asc" },
+          take: 8,
+        }),
+        prisma.task.findMany({
+          where: { userId, isDone: false },
+          orderBy: [{ priority: "desc" }, { dueAt: "asc" }],
+          take: 8,
+        }),
+        prisma.reminder.findMany({
+          where: { userId, status: "PENDING", fireAt: { gte: now } },
+          orderBy: { fireAt: "asc" },
+          take: 6,
+        }),
+      ]);
+      events = eventsRes;
+      tasks = tasksRes;
+      reminders = remindersRes;
     }
-    if (eventsRes.status === "fulfilled" && Array.isArray(eventsRes.value)) {
-      events = eventsRes.value as typeof events;
-    }
-    if (tasksRes.status === "fulfilled" && Array.isArray(tasksRes.value)) {
-      tasks = tasksRes.value as typeof tasks;
-    }
-    if (remindersRes.status === "fulfilled" && Array.isArray(remindersRes.value)) {
-      reminders = remindersRes.value as typeof reminders;
-    }
-    if (contactsRes.status === "fulfilled" && Array.isArray(contactsRes.value)) {
-      contacts = contactsRes.value as typeof contacts;
-    }
-    if (memoriesRes.status === "fulfilled" && Array.isArray(memoriesRes.value)) {
-      memories = memoriesRes.value;
-    }
+    // Pour CREATE_EVENT / CREATE_REMINDER / CREATE_TASK : 0 requête supplémentaire requise avant l'insertion !
   } catch (err) {
-    console.warn("buildUserAIContext query fallback:", err);
+    console.warn("Selective AI context fetch notice:", err);
   }
 
   const quotaStatus = await getQuotaStatus(userId);
 
-  return {
+  const context: AIUserContext = {
     userId,
     userName,
     currentTime: now.toISOString(),
@@ -148,25 +139,23 @@ export async function buildUserAIContext(
       location: e.location,
       category: e.category,
       mode: e.mode,
-      contactName: e.contact ? `${e.contact.firstName} ${e.contact.lastName || ""}`.trim() : null,
+      contactName: e.contact ? `${e.contact.firstName} ${e.contact.lastName || ""}`.trim() : undefined,
     })),
     tasksSummary: tasks.map((t) => ({
       id: t.id,
       title: t.title,
-      dueAt: t.dueAt ? (t.dueAt instanceof Date ? t.dueAt.toISOString() : String(t.dueAt)) : null,
-      dueFormatted: t.dueAt
-        ? (t.dueAt instanceof Date
-            ? t.dueAt.toLocaleDateString("fr-FR", {
-                weekday: "short",
-                day: "numeric",
-                month: "short",
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : null)
-        : null,
+      dueAt: t.dueAt ? (t.dueAt instanceof Date ? t.dueAt.toISOString() : String(t.dueAt)) : undefined,
+      dueFormatted: t.dueAt && t.dueAt instanceof Date
+        ? t.dueAt.toLocaleDateString("fr-FR", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : undefined,
       priority: t.priority,
-      isDone: t.isDone,
+      isDone: Boolean(t.isDone),
       mode: t.mode,
     })),
     remindersSummary: reminders.map((r) => ({
@@ -174,16 +163,10 @@ export async function buildUserAIContext(
       title: r.title,
       fireAt: r.fireAt instanceof Date ? r.fireAt.toISOString() : String(r.fireAt),
       fireFormatted: r.fireAt instanceof Date
-        ? r.fireAt.toLocaleDateString("fr-FR", {
-            weekday: "short",
-            day: "numeric",
-            month: "short",
-            hour: "2-digit",
-            minute: "2-digit",
-          })
+        ? r.fireAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
         : "",
-      status: r.status,
       method: r.method,
+      status: r.status,
     })),
     contactsSummary: contacts.map((c) => ({
       id: c.id,
@@ -191,11 +174,16 @@ export async function buildUserAIContext(
       phone: c.phone,
       email: c.email,
     })),
-    memorySummary: memories.map((m) => ({
-      key: m.key,
-      value: m.value,
-    })),
-    quotaRemaining: quotaStatus.remaining,
+    memorySummary: memories,
     quotaLimit: quotaStatus.limit,
+    quotaRemaining: quotaStatus.remaining,
   };
+
+  return { context, dbQueriesCount };
+}
+
+// Fonction rétro-compatible
+export async function buildUserAIContext(rawUserId: string): Promise<AIUserContext> {
+  const { context } = await buildSelectiveAIContext(rawUserId, "COMPLEX_OR_LLM");
+  return context;
 }

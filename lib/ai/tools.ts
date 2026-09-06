@@ -245,6 +245,32 @@ export const AI_TOOL_DEFINITIONS: AIToolDefinition[] = [
     },
   },
   {
+    name: "delete_reminder",
+    description: "Supprime ou annule un rappel ou une alarme existante.",
+    parameters: {
+      type: "object",
+      properties: {
+        reminderId: { type: "string", description: "ID du rappel" },
+        query: { type: "string", description: "Heure ou mot-clé du rappel (ex: '18h', 'médicament')" },
+      },
+      required: [],
+    },
+  },
+  {
+    name: "update_reminder",
+    description: "Modifie ou reporte un rappel à un nouvel horaire.",
+    parameters: {
+      type: "object",
+      properties: {
+        reminderId: { type: "string", description: "ID du rappel" },
+        query: { type: "string", description: "Heure ou mot-clé du rappel" },
+        newFireAt: { type: "string", description: "Nouvel horaire ISO 8601" },
+        newTitle: { type: "string", description: "Nouveau titre" },
+      },
+      required: [],
+    },
+  },
+  {
     name: "save_user_preference",
     description: "Mémorise une préférence durable explicite exprimée par l'utilisateur (information uniquement, ne crée pas d'action).",
     parameters: {
@@ -556,6 +582,95 @@ async function executeToolInternal(
       });
 
       return { id: reminder.id, type: "REMINDER", title: reminder.title, notes: reminder.body || undefined, dateTime: formatISO(reminder.fireAt), level: 1 };
+    }
+
+    case "delete_reminder": {
+      let reminderId = args.reminderId ? String(args.reminderId) : undefined;
+      const query = args.query ? String(args.query).toLowerCase() : undefined;
+
+      if (!reminderId && query) {
+        // Find by time matching (e.g. 18h / 18:00) or title
+        const candidates = await prisma.reminder.findMany({
+          where: { userId, status: "PENDING" },
+          orderBy: { fireAt: "asc" },
+        });
+
+        const hourMatch = query.match(/(\d{1,2})h?/);
+        const targetHour = hourMatch ? parseInt(hourMatch[1], 10) : null;
+
+        const found = candidates.find((r) => {
+          if (r.title.toLowerCase().includes(query)) return true;
+          if (targetHour !== null && r.fireAt.getHours() === targetHour) return true;
+          return false;
+        });
+
+        if (found) reminderId = found.id;
+      }
+
+      if (!reminderId && context.remindersSummary.length > 0) {
+        reminderId = context.remindersSummary[0].id;
+      }
+
+      if (!reminderId) throw new Error("Rappel introuvable pour l'annulation.");
+
+      const existing = await prisma.reminder.findUnique({ where: { id: reminderId, userId } });
+      if (!existing) throw new Error("Rappel introuvable.");
+
+      await prisma.reminder.update({
+        where: { id: reminderId, userId },
+        data: { status: "DISMISSED" },
+      });
+
+      return {
+        id: reminderId,
+        type: "INFO",
+        title: `Rappel "${existing.title}" annulé avec succès.`,
+        level: 1,
+      };
+    }
+
+    case "update_reminder": {
+      let reminderId = args.reminderId ? String(args.reminderId) : undefined;
+      const query = args.query ? String(args.query).toLowerCase() : undefined;
+
+      if (!reminderId && query) {
+        const candidates = await prisma.reminder.findMany({
+          where: { userId, status: "PENDING" },
+          orderBy: { fireAt: "asc" },
+        });
+        const hourMatch = query.match(/(\d{1,2})h?/);
+        const targetHour = hourMatch ? parseInt(hourMatch[1], 10) : null;
+
+        const found = candidates.find((r) => {
+          if (r.title.toLowerCase().includes(query)) return true;
+          if (targetHour !== null && r.fireAt.getHours() === targetHour) return true;
+          return false;
+        });
+        if (found) reminderId = found.id;
+      }
+
+      if (!reminderId && context.remindersSummary.length > 0) {
+        reminderId = context.remindersSummary[0].id;
+      }
+      if (!reminderId) throw new Error("Rappel introuvable.");
+
+      const updateData: Record<string, unknown> = {};
+      if (args.newFireAt) updateData.fireAt = parseISO(String(args.newFireAt));
+      if (args.newTitle) updateData.title = String(args.newTitle);
+
+      const updated = await prisma.reminder.update({
+        where: { id: reminderId, userId },
+        data: updateData,
+      });
+
+      return {
+        id: updated.id,
+        type: "REMINDER",
+        title: updated.title,
+        notes: "Rappel mis à jour avec succès.",
+        dateTime: formatISO(updated.fireAt),
+        level: 1,
+      };
     }
 
     case "create_contact": {

@@ -1,11 +1,14 @@
 import { AIUserContext, AIEngineResponse, AIChatMessage, AIActionExecutionResult, AgentStep } from "./types";
-import { buildUserAIContext } from "./context";
+import { buildSelectiveAIContext } from "./context";
 import { executeAITool, AI_TOOL_DEFINITIONS } from "./tools";
-import { checkAndIncrementQuota } from "./quotas";
+import { checkAndIncrementQuota, getQuotaStatus } from "./quotas";
 import { getAvailableAIProviders } from "./providers/factory";
 import { AIProvider, ProviderResponse } from "./providers/base";
 import { APP_CONFIG } from "@/lib/config";
 import { resolveDbUserId } from "@/lib/dbUser";
+import { routeUserIntent } from "./intentRouter";
+import { processMultiTaskQueue } from "./taskQueue";
+import { AITelemetryTracker } from "./telemetry";
 
 export async function processUserAIMessage(
   userId: string,
@@ -13,12 +16,42 @@ export async function processUserAIMessage(
   conversationHistory: AIChatMessage[] = [],
   activeTarget?: AIUserContext["activeTarget"]
 ): Promise<AIEngineResponse> {
-  // 0. Ensure user exists in database with valid foreign key target
+  const telemetry = new AITelemetryTracker(userMessage);
+  telemetry.startIntentTimer();
+
+  // 1. Fast Intent Routing Layer (< 2ms, 0 DB query, 0 LLM) - Exigence 1 & 27
+  const route = routeUserIntent(userMessage);
+  telemetry.endIntentTimer(route.intent, route.isFastRoute);
+
+  // FAST PATH: Instant reply (< 5ms, 0 DB queries, 0 LLM inference, 0 quota waste)
+  if (route.isFastRoute && route.fastResponse) {
+    telemetry.finish(true);
+    return route.fastResponse;
+  }
+
+  // 0. Ensure user exists in database with valid foreign key target for transactional operations
   const validUserId = await resolveDbUserId(userId);
 
-  // 1. Check & increment user quota (1 user prompt = 1 request debit)
+  // 2. Multi-Task Queue Processing (Requirements #4, #5)
+  if (route.intent === "MULTI_TASK" && route.subTasks && route.subTasks.length > 0) {
+    telemetry.startDbTimer();
+    const { context, dbQueriesCount } = await buildSelectiveAIContext(validUserId, route.intent);
+    telemetry.endDbTimer(dbQueriesCount);
+    if (activeTarget) context.activeTarget = activeTarget;
+
+    telemetry.startExecutionTimer();
+    route.subTasks.forEach((st) => telemetry.recordTool(st.type));
+    const multiTaskResult = await processMultiTaskQueue(validUserId, route.subTasks, context);
+    telemetry.endExecutionTimer();
+
+    telemetry.finish(true);
+    return multiTaskResult;
+  }
+
+  // 3. Check & increment user quota for AI execution
   const quotaStatus = await checkAndIncrementQuota(validUserId);
   if (quotaStatus.isExceeded) {
+    telemetry.finish(false, "Quota exceeded");
     return {
       reply: `Vous avez atteint votre limite de **${quotaStatus.limit} requêtes IA** ce mois-ci. Passez au plan **Pro** pour continuer sans interruption avec 1000 requêtes/mois.`,
       spokenReply: `Vous avez atteint votre limite de requêtes IA ce mois-ci.`,
@@ -28,19 +61,32 @@ export async function processUserAIMessage(
     };
   }
 
-  // 2. Build Rich User Context
-  const context = await buildUserAIContext(validUserId);
+  // 4. Selective Context Extraction (Only fetch what is needed!)
+  telemetry.startDbTimer();
+  const { context, dbQueriesCount } = await buildSelectiveAIContext(validUserId, route.intent);
+  telemetry.endDbTimer(dbQueriesCount);
+
   if (activeTarget) {
     context.activeTarget = activeTarget;
   }
 
-  // 3. Multi-Model Provider Fallback Chain (Gemini -> OpenAI -> Claude -> Local)
+  // 5. Multi-Model Provider Fallback Chain (Gemini -> OpenAI -> Claude -> Local)
   const providers = getAvailableAIProviders();
   let lastError = "";
 
   for (const provider of providers) {
     try {
-      const response = await executeMultiStepAgent(provider, userMessage, conversationHistory, context, quotaStatus);
+      telemetry.startLlmTimer();
+      const response = await executeMultiStepAgent(
+        provider,
+        userMessage,
+        conversationHistory,
+        context,
+        quotaStatus,
+        telemetry
+      );
+      telemetry.endLlmTimer();
+      telemetry.finish(true);
       return response;
     } catch (err: unknown) {
       lastError = err instanceof Error ? err.message : String(err);
@@ -48,6 +94,7 @@ export async function processUserAIMessage(
     }
   }
 
+  telemetry.finish(false, lastError);
   // Safe universal fallback
   return {
     reply: "Je suis à votre disposition. Que souhaitez-vous planifier ou organiser dans votre agenda ?",
@@ -59,14 +106,15 @@ export async function processUserAIMessage(
 }
 
 /**
- * Multi-Step Agent Runner across any AIProvider
+ * Multi-Step Agent Runner across any AIProvider with telemetry & backend verification
  */
 async function executeMultiStepAgent(
   provider: AIProvider,
   userMessage: string,
   history: AIChatMessage[],
   context: AIUserContext,
-  quotaStatus: { used: number; limit: number; remaining: number }
+  quotaStatus: { used: number; limit: number; remaining: number },
+  telemetry: AITelemetryTracker
 ): Promise<AIEngineResponse> {
   const steps: AgentStep[] = [];
   const actionResults: AIActionExecutionResult[] = [];
@@ -88,7 +136,7 @@ CONSIGNE D'EXÉCUTION & POSITIONNEMENT :
    - Rendez-vous avec date/heure -> create_event
    - Alarme ou rappel vocal -> create_reminder
    - Tâche à faire -> create_task
-   - Consultation d'agenda -> search_events / list_today_events
+   - Consultation d'agenda -> search_events / list_today_events / list_week_events
    - Discussion / Salutations -> Réponse courtoise, chaleureuse et concise (0 tool call).
 
 CONTEXTE EN TEMPS RÉEL :
@@ -102,13 +150,13 @@ ${
     : ""
 }
 
-AGENDA EN COURS (Prochains 7 jours) :
+AGENDA EN COURS :
 ${
   context.eventsSummary.length > 0
     ? context.eventsSummary
         .map((e) => `• [${e.id}] ${e.startFormatted} : "${e.title}" ${e.location ? `(📍 ${e.location})` : ""} ${e.contactName ? `(👤 ${e.contactName})` : ""}`)
         .join("\n")
-    : "Aucun rendez-vous sur les 7 prochains jours."
+    : "Aucun rendez-vous enregistré sur cette période."
 }
 
 TÂCHES EN COURS :
@@ -123,11 +171,11 @@ ${
 RAPPELS / ALARMES :
 ${
   context.remindersSummary.length > 0
-    ? context.remindersSummary.map((r) => `• "${r.title}" prévu pour ${r.fireFormatted} (${r.method})`).join("\n")
+    ? context.remindersSummary.map((r) => `• [${r.id}] "${r.title}" prévu pour ${r.fireFormatted} (${r.method})`).join("\n")
     : "Aucun rappel programmé."
 }
 
-MÉMOIRE PERSONNELLE (Information uniquement, ne constitue pas une demande d'action immédiate) :
+MÉMOIRE PERSONNELLE :
 ${
   context.memorySummary.length > 0
     ? context.memorySummary.map((m) => `• ${m.key} = ${m.value}`).join("\n")
@@ -168,10 +216,13 @@ ${
       status: "running",
     });
 
+    telemetry.recordTool(toolCall.name);
+    telemetry.startExecutionTimer();
+
     try {
       const result = await executeAITool(toolCall.name, toolCall.args, context);
       actionResults.push(result);
-      
+
       const stepIndex = steps.findIndex((s) => s.id === stepId);
       if (stepIndex !== -1) {
         steps[stepIndex] = {
@@ -191,6 +242,8 @@ ${
           detail: err instanceof Error ? err.message : String(err),
         };
       }
+    } finally {
+      telemetry.endExecutionTimer();
     }
 
     executedCount++;
