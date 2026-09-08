@@ -16,7 +16,6 @@ import { speakAIText, playAlertChime } from "@/lib/voice";
 
 export default function MonumentalHoloClock() {
   const [time, setTime] = useState<Date | null>(null);
-  const [ms, setMs] = useState("00");
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -28,10 +27,8 @@ export default function MonumentalHoloClock() {
     setTime(new Date());
 
     const interval = setInterval(() => {
-      const now = new Date();
-      setTime(now);
-      setMs(Math.floor(now.getMilliseconds() / 10).toString().padStart(2, "0"));
-    }, 40);
+      setTime(new Date());
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -463,26 +460,23 @@ export default function MonumentalHoloClock() {
                 </svg>
               </div>
 
-              {/* Real-time Digital Telemetry Display */}
+              {/* Real-time Digital Telemetry Display (Clean HH:MM) */}
               <div
                 style={{
                   marginTop: "18px",
                   display: "flex",
-                  alignItems: "baseline",
-                  gap: "6px",
+                  alignItems: "center",
+                  justifyContent: "center",
                   fontFamily: "monospace",
-                  background: "rgba(11, 21, 48, 0.7)",
-                  padding: "8px 20px",
+                  background: "rgba(11, 21, 48, 0.75)",
+                  padding: "8px 26px",
                   borderRadius: "16px",
                   border: "1px solid rgba(56, 189, 248, 0.3)",
                   boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
                 }}
               >
-                <span style={{ fontSize: "clamp(22px, 4vw, 30px)", fontWeight: "900", color: "#ffffff", letterSpacing: "0.05em" }}>
-                  {formattedHours}:{formattedMinutes}:{formattedSeconds}
-                </span>
-                <span style={{ fontSize: "16px", fontWeight: "800", color: "#38bdf8" }}>
-                  .{ms}
+                <span style={{ fontSize: "clamp(24px, 4.5vw, 32px)", fontWeight: "900", color: "#ffffff", letterSpacing: "0.08em" }}>
+                  {formattedHours}:{formattedMinutes}
                 </span>
               </div>
             </div>
