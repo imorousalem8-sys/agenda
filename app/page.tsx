@@ -127,37 +127,7 @@ export default function LandingPage() {
         >
           <Logo size={32} showText={true} />
 
-          {/* Navigation Links */}
-          <nav
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "32px",
-            }}
-            className="hidden md:flex"
-          >
-            <a
-              href="#features"
-              style={{ fontSize: "14px", fontWeight: "600", color: "#cbd5e1", textDecoration: "none", transition: "color 0.15s" }}
-              className="hover:text-cyan-400"
-            >
-              Fonctionnalités
-            </a>
-            <a
-              href="#testimonials"
-              style={{ fontSize: "14px", fontWeight: "600", color: "#cbd5e1", textDecoration: "none", transition: "color 0.15s" }}
-              className="hover:text-cyan-400"
-            >
-              Avis
-            </a>
-            <a
-              href="#pricing"
-              style={{ fontSize: "14px", fontWeight: "600", color: "#cbd5e1", textDecoration: "none", transition: "color 0.15s" }}
-              className="hover:text-cyan-400"
-            >
-              Tarifs
-            </a>
-          </nav>
+
 
           {/* Action CTAs */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
