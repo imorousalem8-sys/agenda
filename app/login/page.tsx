@@ -312,13 +312,6 @@ export default function LandingPage() {
     }
   };
 
-  const handleFillDemo = () => {
-    setAuthTab("LOGIN");
-    setLoginValue("email", "demo@alarmagenda.fr");
-    setLoginValue("password", "Demo1234!");
-    setError("");
-    authRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   const handleSandboxSimulate = async (prompt: string) => {
     setSandboxInput(prompt);
@@ -536,26 +529,6 @@ export default function LandingPage() {
               <ArrowRight size={15} />
             </button>
 
-            <button
-              onClick={handleFillDemo}
-              style={{
-                background: "rgba(255, 255, 255, 0.05)",
-                color: "#f8fafc",
-                fontWeight: "600",
-                padding: "12px 20px",
-                fontSize: "14px",
-                borderRadius: "9px",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "7px",
-                transition: "all 0.2s ease",
-              }}
-            >
-              <Terminal size={15} color="#34d399" />
-              <span>Accès Démo 1-Clic</span>
-            </button>
           </div>
 
           {/* Trust badges */}
@@ -1205,29 +1178,7 @@ export default function LandingPage() {
                   {loading ? <Loader2 size={16} className="animate-spin" /> : <span>Se connecter</span>}
                 </button>
 
-                {/* Quick 1-click Demo Fill */}
-                <button
-                  type="button"
-                  onClick={handleFillDemo}
-                  style={{
-                    width: "100%",
-                    background: "rgba(255, 255, 255, 0.04)",
-                    color: "#94a3b8",
-                    border: "1px solid rgba(255, 255, 255, 0.08)",
-                    borderRadius: "8px",
-                    padding: "9px",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "6px",
-                  }}
-                >
-                  <Terminal size={12} color="#34d399" />
-                  <span>Remplir les identifiants Démo</span>
-                </button>
+
               </form>
             )}
 

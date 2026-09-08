@@ -41,11 +41,11 @@ export async function resolveDbUserId(
     }
   }
 
-  // 3. Si l'utilisateur est le compte démo ou un ID transitoire, créer/upsert l'utilisateur
+  // 3. Si l'utilisateur est un ID transitoire, créer/upsert l'utilisateur
   try {
     const safeId = userId || `usr_${Date.now()}`;
-    const safeEmail = normalizedEmail || (safeId === "demo_usr_1" ? "demo@alarmagenda.ai" : `user_${safeId.replace(/[^a-zA-Z0-9]/g, "") || Date.now()}@alarmagenda.ai`);
-    const safeName = name || (safeId === "demo_usr_1" ? "Utilisateur Démo" : "Utilisateur");
+    const safeEmail = normalizedEmail || `user_${safeId.replace(/[^a-zA-Z0-9]/g, "") || Date.now()}@alarmagenda.ai`;
+    const safeName = name || "Utilisateur";
 
     const created = await prisma.user.upsert({
       where: { id: safeId },

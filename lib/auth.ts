@@ -30,30 +30,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = (credentials.email as string).toLowerCase().trim();
         const password = credentials.password as string;
 
-        // 1. Compte Démo instantané
-        if (email === "demo@alarmagenda.ai" && password === "Demo1234!") {
-          let demoDbUser = await prisma.user.upsert({
-            where: { email: "demo@alarmagenda.ai" },
-            update: { plan: "PRO", subscriptionStatus: "ACTIVE" },
-            create: {
-              id: "demo_usr_1",
-              email: "demo@alarmagenda.ai",
-              name: "Utilisateur Démo",
-              password: await bcrypt.hash("Demo1234!", 10),
-              plan: "PRO",
-              subscriptionStatus: "ACTIVE",
-            },
-          }).catch(() => null);
-
-          return {
-            id: demoDbUser?.id || "demo_usr_1",
-            email: "demo@alarmagenda.ai",
-            name: "Utilisateur Démo",
-            plan: "PRO",
-            subscriptionStatus: "ACTIVE",
-          };
-        }
-
         let user: any = null;
 
         // 2. Recherche prioritaire dans Prisma DB

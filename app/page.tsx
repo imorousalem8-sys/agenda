@@ -138,11 +138,11 @@ export default function LandingPage() {
               Fonctionnalités
             </a>
             <a
-              href="#demo"
+              href="#voice"
               style={{ fontSize: "14px", fontWeight: "600", color: "#ffffff", textDecoration: "none", opacity: 0.95 }}
               className="hover:opacity-100"
             >
-              Démo
+              Synthèse Vocale
             </a>
             <a
               href="#pricing"
@@ -295,7 +295,7 @@ export default function LandingPage() {
               id="hero-voice-demo-btn"
             >
               <Volume2 size={18} color="#2563eb" />
-              <span>{isPlayingVoice ? "Lecture en cours..." : "Découvrir la démo"}</span>
+              <span>{isPlayingVoice ? "Lecture en cours..." : "Tester la voix IA"}</span>
             </button>
           </div>
 

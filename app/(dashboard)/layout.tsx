@@ -60,7 +60,6 @@ export default function DashboardLayout({
   const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const { isPro } = useSubscription();
-  const isDemoUser = session?.user?.email === "demo@alarmagenda.fr";
 
   const userName = session?.user?.name || "Salem Imorou";
 
@@ -147,10 +146,7 @@ export default function DashboardLayout({
     window.dispatchEvent(new CustomEvent("open-ai-assistant"));
   };
 
-  const handleExitDemoAndRegister = async () => {
-    await signOut({ redirect: false });
-    window.location.href = "/register";
-  };
+
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-app)" }}>
