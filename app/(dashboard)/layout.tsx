@@ -20,6 +20,8 @@ import {
   Moon,
   Sun,
   Settings,
+  Globe,
+  Home,
 } from "lucide-react";
 import AlarmOverlay from "@/components/reminders/AlarmOverlay";
 import NotificationManager from "@/components/reminders/NotificationManager";
@@ -40,6 +42,7 @@ const navLinks = [
   { href: "/tasks", icon: CheckSquare, label: "Tâches" },
   { href: "/agent", icon: Sparkles, label: "Assistant IA", badge: "Nouveau" },
   { href: "/contacts", icon: Users, label: "Contacts" },
+  { href: "/", icon: Globe, label: "Page d'Accueil" },
 ];
 
 export default function DashboardLayout({
@@ -193,7 +196,9 @@ export default function DashboardLayout({
             justifyContent: "space-between",
           }}
         >
-          <Logo size={28} showText={true} />
+          <Link href="/" title="Retourner à la page d'accueil" style={{ textDecoration: "none" }}>
+            <Logo size={28} showText={true} />
+          </Link>
           <button
             onClick={() => setSidebarOpen(false)}
             className="btn btn-ghost"
