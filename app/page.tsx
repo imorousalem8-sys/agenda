@@ -34,7 +34,6 @@ import {
   CornerDownLeft,
 } from "lucide-react";
 import Logo from "@/components/brand/Logo";
-import MonumentalHoloClock from "@/components/landing/MonumentalHoloClock";
 import { speakAIText, playAlertChime } from "@/lib/voice";
 
 export default function LandingPage() {
@@ -137,13 +136,6 @@ export default function LandingPage() {
             }}
             className="hidden md:flex"
           >
-            <a
-              href="#horloge"
-              style={{ fontSize: "14px", fontWeight: "600", color: "#cbd5e1", textDecoration: "none", transition: "color 0.15s" }}
-              className="hover:text-cyan-400"
-            >
-              Horloge &amp; Précision
-            </a>
             <a
               href="#features"
               style={{ fontSize: "14px", fontWeight: "600", color: "#cbd5e1", textDecoration: "none", transition: "color 0.15s" }}
@@ -375,10 +367,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 3. Section Monumental Precision Clock & Voice Sentinel */}
-      <section id="horloge" style={{ maxWidth: "1280px", margin: "30px auto 80px", padding: "0 24px", position: "relative", zIndex: 2 }}>
-        <MonumentalHoloClock />
-      </section>
+
 
       {/* 4. Section: Les Piliers Technologiques (Bento Grid) */}
       <section id="features" style={{ maxWidth: "1280px", margin: "0 auto 100px", padding: "0 24px" }}>
