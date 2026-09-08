@@ -1,63 +1,88 @@
+import Link from "next/link";
 import { User, Briefcase, Building2, Wrench, ArrowRight } from "lucide-react";
 
 const profiles = [
   {
-    icon: <User size={20} strokeWidth={1.5} />,
+    icon: <User size={20} className="text-blue-600" />,
+    bg: "bg-blue-50",
     title: "Particuliers",
     desc: "Gérez vos rendez-vous personnels, familiaux et administratifs.",
-    color: "text-blue-500 bg-blue-50",
+    href: "/register",
   },
   {
-    icon: <Briefcase size={20} strokeWidth={1.5} />,
+    icon: <Briefcase size={20} className="text-emerald-600" />,
+    bg: "bg-emerald-50",
     title: "Professionnels",
     desc: "Optimisez votre emploi du temps et votre relation client.",
-    color: "text-emerald-600 bg-emerald-50",
+    href: "/register",
   },
   {
-    icon: <Building2 size={20} strokeWidth={1.5} />,
+    icon: <Building2 size={20} className="text-purple-600" />,
+    bg: "bg-purple-50",
     title: "Entreprises",
     desc: "Améliorez la gestion de vos équipes et de vos plannings.",
-    color: "text-violet-600 bg-violet-50",
+    href: "/register",
   },
   {
-    icon: <Wrench size={20} strokeWidth={1.5} />,
+    icon: <Wrench size={20} className="text-amber-600" />,
+    bg: "bg-amber-50",
     title: "Artisans & Indépendants",
     desc: "Suivez vos chantiers et vos rendez-vous sur le terrain.",
-    color: "text-amber-600 bg-amber-50",
+    href: "/register",
   },
 ];
 
 export default function UseCases() {
   return (
-    <section className="py-20 md:py-28 bg-white">
-      <div className="max-w-[1100px] mx-auto px-6">
-        <div className="text-center mb-14">
-          <p className="text-[12px] font-semibold text-blue-600 tracking-widest uppercase mb-3">
-            Adapté à tous vos besoins
-          </p>
-          <h2 className="text-[1.75rem] md:text-[2.25rem] font-extrabold text-slate-900 tracking-tight">
-            Une solution pour chaque profil
-          </h2>
-        </div>
+    <section id="profiles" className="py-20 md:py-24 bg-white text-slate-900 border-b border-slate-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        
+        {/* Pretitle */}
+        <p className="text-xs font-bold text-blue-600 tracking-widest uppercase mb-3">
+          ADAPTÉ À TOUS VOS BESOINS
+        </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {profiles.map((p, i) => (
+        {/* Heading */}
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight mb-12 sm:mb-16">
+          Une solution pour chaque profil
+        </h2>
+
+        {/* 4 Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+          {profiles.map((p, idx) => (
             <div
-              key={i}
-              className="group p-6 rounded-2xl bg-white border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300"
+              key={idx}
+              className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between"
             >
-              <div className={`w-10 h-10 rounded-xl ${p.color} flex items-center justify-center mb-4`}>
-                {p.icon}
+              <div>
+                {/* Icon */}
+                <div className={`w-11 h-11 rounded-xl ${p.bg} flex items-center justify-center mb-4`}>
+                  {p.icon}
+                </div>
+
+                {/* Title */}
+                <h3 className="text-lg font-bold text-slate-900 mb-2">
+                  {p.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-sm text-slate-500 leading-relaxed mb-6">
+                  {p.desc}
+                </p>
               </div>
-              <h3 className="text-[15px] font-semibold text-slate-800 mb-1.5">{p.title}</h3>
-              <p className="text-[12px] text-slate-400 leading-relaxed mb-4">{p.desc}</p>
-              <span className="inline-flex items-center gap-1 text-[12px] font-medium text-slate-400 group-hover:text-blue-600 transition-colors">
-                En savoir plus
-                <ArrowRight size={12} />
-              </span>
+
+              {/* Link */}
+              <Link
+                href={p.href}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-blue-600 transition-colors pt-2 border-t border-slate-100"
+              >
+                <span>En savoir plus</span>
+                <ArrowRight size={13} />
+              </Link>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

@@ -1,119 +1,117 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Volume2, Clock, MessageSquare } from "lucide-react";
+import { ArrowRight, Volume2, Sparkles } from "lucide-react";
 
 export default function ProductShowcase() {
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-white overflow-hidden">
-      <div className="max-w-[1200px] mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-          {/* Left — Phone Mockup */}
-          <div className="relative flex justify-center order-2 md:order-1">
-            {/* Speech bubble */}
-            <div className="absolute -top-4 -left-2 md:left-4 z-10 bg-white rounded-xl px-4 py-3 shadow-lg max-w-[180px]">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                  <Clock size={12} className="text-blue-600" />
-                </div>
-                <span className="text-[9px] font-bold text-slate-800">Rappel vocal</span>
+    <section id="voice-reminders" className="py-20 md:py-28 bg-[#F8FAFC] text-slate-900 overflow-hidden border-b border-slate-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          
+          {/* Left: Phone Voice Reminder Mockup (5 cols) */}
+          <div className="lg:col-span-6 flex justify-center relative">
+            <div className="relative w-full max-w-[320px] sm:max-w-[340px]">
+              
+              {/* Note / Callout */}
+              <div className="absolute -top-6 -left-4 sm:-left-8 z-20 bg-white px-3.5 py-2 rounded-xl shadow-md border border-slate-100 flex items-center gap-2">
+                <span className="text-xs font-semibold text-slate-700 italic">
+                  Votre temps est précieux !
+                </span>
+                <Sparkles size={14} className="text-amber-500" />
               </div>
-              <p className="text-[8px] text-slate-500 leading-relaxed">
-                Votre rendez-vous est demain à 09:00
-              </p>
-              <div className="absolute -bottom-2 left-6 w-4 h-4 bg-white rotate-45 rounded-sm" />
-            </div>
 
-            {/* Phone */}
-            <div className="w-[220px] sm:w-[260px] bg-slate-700 rounded-[2rem] p-2 shadow-2xl">
-              <div className="rounded-[1.5rem] bg-white overflow-hidden">
-                {/* Status bar */}
-                <div className="flex justify-center pt-3 pb-2">
-                  <div className="w-16 h-1 rounded-full bg-slate-200" />
-                </div>
+              {/* Smartphone Frame */}
+              <div className="bg-slate-900 rounded-[2.5rem] p-3 shadow-2xl border-4 border-slate-800">
+                <div className="bg-[#0B1120] text-white rounded-[2rem] p-5 pt-8 overflow-hidden min-h-[360px] flex flex-col justify-between">
+                  
+                  {/* Top status info */}
+                  <div>
+                    <div className="flex justify-center mb-6">
+                      <div className="w-20 h-4 bg-slate-800 rounded-full" />
+                    </div>
 
-                {/* App header */}
-                <div className="px-4 pb-3">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-[11px] font-bold text-slate-800">Bonjour !</span>
-                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                      <span className="text-[8px] font-bold text-blue-600">A</span>
+                    <div className="text-center space-y-1 mb-8">
+                      <div className="text-xs text-sky-400 font-semibold tracking-wide">
+                        ALAMAJONDA VOCAL
+                      </div>
+                      <h4 className="text-base font-bold text-white">
+                        Votre rendez-vous demain à 09:00
+                      </h4>
+                      <p className="text-xs text-slate-400">
+                        Consultation médicale — Dr. Martin
+                      </p>
                     </div>
                   </div>
 
-                  {/* Notification card */}
-                  <div className="p-3 rounded-xl bg-blue-50 border border-blue-100 mb-3">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <Volume2 size={12} className="text-blue-600" />
-                      <span className="text-[9px] font-bold text-blue-700">Rappel vocal en cours...</span>
+                  {/* Audio Wave Visualizer */}
+                  <div className="bg-slate-800/80 rounded-2xl p-4 border border-slate-700/60 text-center space-y-3">
+                    <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-sky-300">
+                      <Volume2 size={16} className="text-sky-400 animate-pulse" />
+                      <span>Rappel vocal en cours...</span>
                     </div>
-                    {/* Waveform */}
-                    <div className="flex items-end gap-0.5 h-4">
-                      {[30, 60, 40, 80, 50, 70, 35, 65, 45, 75, 55, 85].map((h, i) => (
-                        <div
+
+                    {/* Animated sound waves */}
+                    <div className="flex items-center justify-center gap-1 h-8">
+                      {[40, 75, 30, 90, 50, 85, 35, 95, 60, 45, 80, 55, 70, 30].map((h, i) => (
+                        <span
                           key={i}
-                          className="flex-1 rounded-full bg-blue-400"
+                          className="w-1 bg-gradient-to-t from-blue-500 to-sky-400 rounded-full inline-block"
                           style={{ height: `${h}%` }}
                         />
                       ))}
                     </div>
+
+                    <p className="text-[10px] text-slate-400">
+                      &quot;Bonjour, votre rendez-vous est programmé demain à 9h au cabinet médical.&quot;
+                    </p>
                   </div>
 
-                  {/* Event list */}
-                  <div className="space-y-2">
-                    {[
-                      { time: "09:00", title: "Consultation médicale", color: "bg-emerald-500" },
-                      { time: "14:00", title: "Rendez-vous coiffure", color: "bg-blue-500" },
-                      { time: "18:00", title: "Réunion pro.", color: "bg-amber-500" },
-                    ].map((evt, i) => (
-                      <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-slate-50">
-                        <div className={`w-1 h-7 rounded-full ${evt.color} shrink-0`} />
-                        <div>
-                          <div className="text-[9px] font-semibold text-slate-700">{evt.title}</div>
-                          <div className="text-[7px] text-slate-400">{evt.time}</div>
-                        </div>
-                      </div>
-                    ))}
+                  {/* Bottom indicator */}
+                  <div className="mt-6 flex justify-center">
+                    <div className="w-28 h-1 bg-slate-700 rounded-full" />
                   </div>
+
                 </div>
               </div>
-            </div>
 
-            {/* Decorative note */}
-            <div className="absolute bottom-8 -left-6 md:left-0 bg-white rounded-lg px-3 py-2 shadow-md hidden sm:block">
-              <div className="flex items-center gap-1.5">
-                <MessageSquare size={10} className="text-slate-400" />
-                <span className="text-[8px] text-slate-500 italic">
-                  &quot;Votre temps est précieux !&quot;
-                </span>
-              </div>
             </div>
           </div>
 
-          {/* Right — Text */}
-          <div className="order-1 md:order-2">
-            <p className="text-[11px] font-semibold text-blue-400 tracking-widest uppercase mb-4">
-              Un assistant qui vous accompagne
-            </p>
-            <h2 className="text-[1.75rem] md:text-[2.25rem] font-extrabold text-white leading-tight tracking-tight mb-5">
+          {/* Right: Explanatory Copy & CTA (7 cols) */}
+          <div className="lg:col-span-6 text-left max-w-xl mx-auto lg:mx-0">
+            {/* Tag */}
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 tracking-wider uppercase mb-4">
+              <span>UN ASSISTANT QUI VOUS ACCOMPAGNE</span>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight tracking-tight mb-5">
               Des rappels personnalisés,
               <br />
               par appel ou notification
             </h2>
-            <p className="text-[15px] text-slate-400 leading-relaxed mb-8 max-w-md">
+
+            {/* Description */}
+            <p className="text-base text-slate-600 leading-relaxed mb-8">
               Alamajonda vous rappelle vos rendez-vous la veille ou le jour même,
               selon vos préférences. Vous pouvez également recevoir des
               notifications sur votre téléphone, ou être appelé directement
               avec un message personnalisé.
             </p>
-            <Link
-              href="#how-it-works"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[14px] font-medium text-blue-400 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all"
-            >
-              Découvrir comment ça marche
-              <ArrowRight size={14} />
-            </Link>
+
+            {/* CTA Button */}
+            <div>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all hover:gap-3"
+              >
+                <span>Découvrir comment ça marche</span>
+                <ArrowRight size={16} />
+              </Link>
+            </div>
           </div>
+
         </div>
       </div>
     </section>
