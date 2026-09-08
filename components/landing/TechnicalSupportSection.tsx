@@ -12,6 +12,8 @@ import {
   Loader2,
   Sparkles,
   LifeBuoy,
+  Mail,
+  Copy,
 } from "lucide-react";
 
 export default function TechnicalSupportSection() {
@@ -24,6 +26,13 @@ export default function TechnicalSupportSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedTicket, setSubmittedTicket] = useState<{ id: string; msg: string } | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [copiedEmail, setCopiedEmail] = useState(false);
+
+  const copySupportEmail = () => {
+    navigator.clipboard.writeText("salemimorou129@gmail.com");
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 3000);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -364,8 +373,114 @@ export default function TechnicalSupportSection() {
           )}
         </div>
 
-        {/* Right Side: Facebook Card & Direct Channels */}
+        {/* Right Side: Email & Facebook Direct Channels */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {/* Direct Technical Email Card */}
+          <div
+            style={{
+              borderRadius: "24px",
+              background: "linear-gradient(180deg, rgba(37, 99, 235, 0.15) 0%, rgba(13, 27, 62, 0.85) 100%)",
+              border: "1px solid rgba(56, 189, 248, 0.35)",
+              boxShadow: "0 15px 35px rgba(0, 0, 0, 0.3)",
+              padding: "26px",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+              <div
+                style={{
+                  width: "42px",
+                  height: "42px",
+                  borderRadius: "12px",
+                  background: "linear-gradient(135deg, #2563eb, #38bdf8)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#ffffff",
+                  boxShadow: "0 0 15px rgba(56, 189, 248, 0.4)",
+                }}
+              >
+                <Mail size={20} />
+              </div>
+              <div>
+                <span
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: "800",
+                    color: "#38bdf8",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  Contact Direct Service Technique
+                </span>
+                <h3 style={{ fontSize: "17.5px", fontWeight: "800", color: "#ffffff", margin: 0 }}>
+                  salemimorou129@gmail.com
+                </h3>
+              </div>
+            </div>
+
+            <p style={{ fontSize: "13.5px", color: "#cbd5e1", lineHeight: "1.5", marginBottom: "16px" }}>
+              Vous pouvez également écrire directement par courriel pour toute urgence technique ou demande personnalisée.
+            </p>
+
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <a
+                href="mailto:salemimorou129@gmail.com?subject=Support%20Technique%20Alamajonda"
+                style={{
+                  flex: 1,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                  padding: "11px 16px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
+                  color: "#ffffff",
+                  fontWeight: "700",
+                  fontSize: "13px",
+                  textDecoration: "none",
+                  border: "1px solid rgba(56, 189, 248, 0.3)",
+                }}
+                className="hover:scale-[1.02]"
+              >
+                <Mail size={15} />
+                <span>Écrire un email</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={copySupportEmail}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                  padding: "11px 16px",
+                  borderRadius: "10px",
+                  background: "rgba(255, 255, 255, 0.08)",
+                  color: "#e2e8f0",
+                  fontWeight: "700",
+                  fontSize: "13px",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  cursor: "pointer",
+                }}
+                className="hover:bg-white/15"
+              >
+                {copiedEmail ? (
+                  <>
+                    <CheckCircle2 size={15} color="#34d399" />
+                    <span style={{ color: "#34d399" }}>Copié !</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={15} />
+                    <span>Copier l&apos;adresse</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
           {/* Facebook Official Page Card */}
           <div
             style={{

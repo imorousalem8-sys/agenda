@@ -35,8 +35,9 @@ export async function POST(req: NextRequest) {
 
     // Envoi par email au support si Resend API est configuré
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const adminEmail = process.env.SUPPORT_ADMIN_EMAIL || process.env.ADMIN_EMAIL || "salemimorou129@gmail.com";
+
     if (RESEND_API_KEY) {
-      const adminEmail = process.env.SUPPORT_ADMIN_EMAIL || process.env.ADMIN_EMAIL || "contact@alamajonda.ai";
       try {
         await fetch("https://api.resend.com/emails", {
           method: "POST",
