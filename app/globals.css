@@ -539,6 +539,22 @@ input:checked + .toggle-slider:before {
   100% { background-position: -200% 0; }
 }
 
+/* Utility: Glassmorphism */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 /* Navigation active */
 .nav-link-active {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(56, 189, 248, 0.12) 100%) !important;
