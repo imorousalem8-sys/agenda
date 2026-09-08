@@ -15,40 +15,33 @@ import {
   Check,
   Clock,
   Activity,
-  Bot,
-  Star,
   Users,
   ChevronRight,
   Headphones,
   Smartphone,
-  Flame,
+  Star,
+  Mic,
+  Sliders,
+  ChevronLeft,
 } from "lucide-react";
 import Logo from "@/components/brand/Logo";
 import { speakAIText, playAlertChime } from "@/lib/voice";
 
 export default function LandingPage() {
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
-  const [activeTab, setActiveTab] = useState<"FEMALE" | "MALE">("FEMALE");
-  const [liveTime, setLiveTime] = useState("");
+  const [activeVoiceGender, setActiveVoiceGender] = useState<"FEMALE" | "MALE">("FEMALE");
+  const [task1Done, setTask1Done] = useState(false);
+  const [task2Done, setTask2Done] = useState(true);
 
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setLiveTime(now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }));
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleTestVoice = async (gender: "FEMALE" | "MALE") => {
+  const handleTestVoice = async (gender: "FEMALE" | "MALE" = "FEMALE") => {
+    setActiveVoiceGender(gender);
     setIsPlayingVoice(true);
     await playAlertChime();
 
     const sample =
       gender === "FEMALE"
-        ? "Bonjour ! Je suis votre assistante Alamajonda. À 14h30, vous avez rendez-vous avec le directeur technique à l'Atelier. Tout est synchronisé."
-        : "Bonjour ! Je suis votre copilote Alamajonda. Vos tâches prioritaires du jour ont été planifiées avec succès.";
+        ? "Bonjour Salem ! Je suis votre assistante Alamajonda. Vos 3 rendez-vous de la journée sont confirmés et votre rappel atelier est programmé pour 18 heures."
+        : "Bonjour Salem ! Je suis votre copilote Alamajonda. Votre planning hebdomadaire est parfaitement optimisé avec 4 heures de temps libre préservées.";
 
     speakAIText(sample, {
       gender,
@@ -61,114 +54,129 @@ export default function LandingPage() {
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(180deg, #060b1b 0%, #0a132e 50%, #060b1b 100%)",
-        color: "#ffffff",
-        fontFamily: "'Inter', sans-serif",
+        background: "linear-gradient(135deg, #f0f7ff 0%, #e0f0fe 35%, #d4eafc 70%, #eff6ff 100%)",
+        color: "#0f172a",
+        fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
         overflowX: "hidden",
+        position: "relative",
       }}
     >
-      {/* 1. Header & Navigation Bar */}
+      {/* Radiant Giant Royal Sapphire Mesh Orb in Background (as in mockup) */}
+      <div
+        style={{
+          position: "absolute",
+          top: "60px",
+          right: "-120px",
+          width: "720px",
+          height: "720px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, #2563eb 0%, #1d4ed8 45%, rgba(37, 99, 235, 0.4) 70%, transparent 85%)",
+          filter: "blur(50px)",
+          opacity: 0.85,
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
+      <div
+        style={{
+          position: "absolute",
+          bottom: "100px",
+          left: "-150px",
+          width: "600px",
+          height: "600px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(37, 99, 235, 0.15) 50%, transparent 75%)",
+          filter: "blur(60px)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
+      {/* 1. Top Royal Sapphire Navigation Bar (Match Mockup) */}
       <header
         style={{
           position: "sticky",
           top: 0,
           zIndex: 100,
-          background: "rgba(6, 11, 27, 0.85)",
-          backdropFilter: "blur(16px)",
-          borderBottom: "1px solid rgba(56, 189, 248, 0.15)",
-          padding: "16px 32px",
+          padding: "12px 24px",
         }}
       >
         <div
           style={{
-            maxWidth: "1350px",
+            maxWidth: "1380px",
             margin: "0 auto",
+            borderRadius: "18px",
+            background: "linear-gradient(90deg, #1d4ed8 0%, #2563eb 60%, #1e40af 100%)",
+            boxShadow: "0 10px 30px rgba(37, 99, 235, 0.35)",
+            padding: "14px 28px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            color: "#ffffff",
           }}
         >
-          <Logo size={32} showText={true} />
+          {/* Logo */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Logo size={32} showText={true} />
+          </div>
 
           {/* Nav Links */}
           <nav
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "28px",
+              gap: "32px",
             }}
             className="hidden md:flex"
           >
             <a
               href="#features"
-              style={{
-                fontSize: "14px",
-                color: "#cbd5e1",
-                textDecoration: "none",
-                fontWeight: "500",
-                transition: "color 0.2s",
-              }}
-              className="hover:text-cyan-400"
+              style={{ fontSize: "14px", fontWeight: "600", color: "#ffffff", textDecoration: "none", opacity: 0.95 }}
+              className="hover:opacity-100"
             >
               Fonctionnalités
             </a>
             <a
-              href="#voice"
-              style={{
-                fontSize: "14px",
-                color: "#cbd5e1",
-                textDecoration: "none",
-                fontWeight: "500",
-                transition: "color 0.2s",
-              }}
-              className="hover:text-cyan-400"
+              href="#demo"
+              style={{ fontSize: "14px", fontWeight: "600", color: "#ffffff", textDecoration: "none", opacity: 0.95 }}
+              className="hover:opacity-100"
             >
-              Synthèse Vocale
-            </a>
-            <a
-              href="#copilot"
-              style={{
-                fontSize: "14px",
-                color: "#cbd5e1",
-                textDecoration: "none",
-                fontWeight: "500",
-                transition: "color 0.2s",
-              }}
-              className="hover:text-cyan-400"
-            >
-              Copilote IA
+              Démo
             </a>
             <a
               href="#pricing"
-              style={{
-                fontSize: "14px",
-                color: "#cbd5e1",
-                textDecoration: "none",
-                fontWeight: "500",
-                transition: "color 0.2s",
-              }}
-              className="hover:text-cyan-400"
+              style={{ fontSize: "14px", fontWeight: "600", color: "#ffffff", textDecoration: "none", opacity: 0.95 }}
+              className="hover:opacity-100"
             >
               Tarifs
             </a>
+            <a
+              href="#testimonials"
+              style={{ fontSize: "14px", fontWeight: "600", color: "#ffffff", textDecoration: "none", opacity: 0.95 }}
+              className="hover:opacity-100"
+            >
+              Avis
+            </a>
           </nav>
 
-          {/* CTA Buttons */}
+          {/* Action Buttons */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <Link
               href="/login"
               style={{
-                padding: "8px 18px",
-                borderRadius: "10px",
+                padding: "8px 20px",
+                borderRadius: "30px",
                 fontSize: "13.5px",
-                fontWeight: "600",
-                color: "#cbd5e1",
+                fontWeight: "700",
+                color: "#ffffff",
                 textDecoration: "none",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                background: "rgba(255, 255, 255, 0.05)",
-                transition: "all 0.2s",
+                border: "1.5px solid rgba(255, 255, 255, 0.4)",
+                background: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(6px)",
+                transition: "all 0.15s ease",
               }}
-              className="hover:bg-white/10 hover:text-white"
+              className="hover:bg-white hover:text-blue-700"
             >
               Connexion
             </Link>
@@ -176,139 +184,85 @@ export default function LandingPage() {
             <Link
               href="/dashboard"
               style={{
-                padding: "8px 20px",
-                borderRadius: "10px",
+                padding: "8px 22px",
+                borderRadius: "30px",
                 fontSize: "13.5px",
-                fontWeight: "700",
-                color: "#ffffff",
+                fontWeight: "800",
+                color: "#1d4ed8",
                 textDecoration: "none",
-                background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                boxShadow: "0 0 20px rgba(37, 99, 235, 0.4)",
-                border: "1px solid rgba(56, 189, 248, 0.4)",
+                background: "#ffffff",
+                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.15)",
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
+                transition: "transform 0.15s ease",
               }}
               className="hover:scale-105"
             >
-              <span>Tableau de bord</span>
+              <span>Accéder au Cockpit</span>
               <ArrowRight size={14} />
             </Link>
           </div>
         </div>
       </header>
 
-      {/* 2. Hero Section (Ultra Modern Sapphire Glow) */}
+      {/* 2. Hero Section (2-Column Architecture from Mockup) */}
       <section
         style={{
           position: "relative",
-          padding: "80px 24px 100px",
-          maxWidth: "1350px",
+          zIndex: 2,
+          maxWidth: "1380px",
           margin: "0 auto",
-          textAlign: "center",
+          padding: "50px 24px 80px",
+          display: "grid",
+          gridTemplateColumns: "1.1fr 1fr",
+          gap: "48px",
+          alignItems: "center",
         }}
       >
-        {/* Glow Spheres */}
-        <div
-          style={{
-            position: "absolute",
-            top: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "600px",
-            height: "350px",
-            background: "radial-gradient(ellipse, rgba(37, 99, 235, 0.35) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 75%)",
-            filter: "blur(60px)",
-            pointerEvents: "none",
-            zIndex: 0,
-          }}
-        />
-
-        <div style={{ position: "relative", zIndex: 2 }}>
-          {/* Top Pill */}
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "6px 16px",
-              borderRadius: "30px",
-              background: "rgba(37, 99, 235, 0.2)",
-              border: "1px solid rgba(56, 189, 248, 0.4)",
-              boxShadow: "0 0 20px rgba(37, 99, 235, 0.3)",
-              marginBottom: "24px",
-            }}
-          >
-            <span
-              style={{
-                width: "8px",
-                height: "8px",
-                borderRadius: "50%",
-                background: "#38bdf8",
-                boxShadow: "0 0 10px #38bdf8",
-              }}
-            />
-            <span style={{ fontSize: "12.5px", fontWeight: "700", color: "#38bdf8", letterSpacing: "0.04em" }}>
-              L&apos;AGENCE IA & AGENDA NOUVELLE GÉNÉRATION
-            </span>
-          </div>
-
-          {/* Monumental Headline */}
+        {/* Left Column: Hero Copy & Feature Badges */}
+        <div>
           <h1
             style={{
-              fontSize: "clamp(34px, 5.5vw, 64px)",
+              fontSize: "clamp(38px, 4.2vw, 56px)",
               fontWeight: "900",
               lineHeight: "1.12",
               letterSpacing: "-0.03em",
-              maxWidth: "960px",
-              margin: "0 auto 22px",
-              background: "linear-gradient(180deg, #ffffff 30%, #93c5fd 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              color: "#0b152e",
+              marginBottom: "20px",
             }}
           >
-            Ne subissez plus vos journées.
-            <br />
-            Laissez l&apos;IA orchestrer votre quotidien.
+            Votre Agenda &amp; Copilote IA d&apos;Action Exécutif
           </h1>
 
-          {/* Subtitle */}
           <p
             style={{
-              fontSize: "clamp(15px, 2vw, 19px)",
-              color: "#94a3b8",
-              maxWidth: "760px",
-              margin: "0 auto 36px",
+              fontSize: "16.5px",
+              color: "#475569",
               lineHeight: "1.6",
+              maxWidth: "580px",
+              marginBottom: "32px",
+              fontWeight: "500",
             }}
           >
-            <strong style={{ color: "#e2e8f0" }}>Alamajonda</strong> fusionne un agenda haute fidélité, des alertes vocales proactives et un copilote IA autonome. Planifiez en langage naturel et ne manquez plus jamais un créneau.
+            Le copilote intelligent qui simplifie votre vie exécutive. Automatisez vos rappels vocaux, organisez vos rendez-vous et optimisez votre temps, le tout géré par l&apos;IA d&apos;Alamajonda.
           </p>
 
-          {/* Main Action Buttons */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "16px",
-              flexWrap: "wrap",
-              marginBottom: "48px",
-            }}
-          >
+          {/* Action CTAs */}
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", marginBottom: "40px" }}>
             <Link
               href="/register"
               style={{
-                padding: "15px 34px",
-                borderRadius: "14px",
+                padding: "15px 32px",
+                borderRadius: "30px",
                 fontSize: "15.5px",
                 fontWeight: "800",
                 color: "#ffffff",
                 textDecoration: "none",
-                background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                boxShadow: "0 10px 30px rgba(37, 99, 235, 0.5), 0 0 20px rgba(56, 189, 248, 0.3)",
-                border: "1px solid rgba(56, 189, 248, 0.4)",
-                display: "flex",
+                background: "linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)",
+                boxShadow: "0 10px 28px rgba(37, 99, 235, 0.45)",
+                border: "none",
+                display: "inline-flex",
                 alignItems: "center",
                 gap: "8px",
                 transition: "all 0.2s ease",
@@ -323,565 +277,864 @@ export default function LandingPage() {
               onClick={() => handleTestVoice("FEMALE")}
               style={{
                 padding: "15px 28px",
-                borderRadius: "14px",
+                borderRadius: "30px",
                 fontSize: "15px",
                 fontWeight: "700",
-                color: "#38bdf8",
-                background: "rgba(56, 189, 248, 0.08)",
-                border: "1px solid rgba(56, 189, 248, 0.3)",
-                boxShadow: "0 0 20px rgba(56, 189, 248, 0.15)",
-                display: "flex",
+                color: "#0f172a",
+                background: "rgba(255, 255, 255, 0.85)",
+                border: "1px solid rgba(37, 99, 235, 0.25)",
+                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.06)",
+                cursor: "pointer",
+                display: "inline-flex",
                 alignItems: "center",
                 gap: "10px",
-                cursor: "pointer",
+                backdropFilter: "blur(10px)",
                 transition: "all 0.2s ease",
               }}
-              className="hover:bg-cyan-500/20"
-              id="landing-hero-test-voice"
+              className="hover:bg-white hover:shadow-md"
+              id="hero-voice-demo-btn"
             >
-              <Volume2 size={18} />
-              <span>{isPlayingVoice ? "Synthèse en cours..." : "Écouter la Voix IA en direct"}</span>
+              <Volume2 size={18} color="#2563eb" />
+              <span>{isPlayingVoice ? "Lecture en cours..." : "Découvrir la démo"}</span>
             </button>
           </div>
 
-          {/* Live Trust Metrics */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "36px",
-              flexWrap: "wrap",
-              color: "#94a3b8",
-              fontSize: "13px",
-              fontWeight: "600",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <ShieldCheck size={16} color="#34d399" />
-              <span>Données 100% sécurisées</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Zap size={16} color="#fbbf24" />
-              <span>Exécution IA &lt; 2ms</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Headphones size={16} color="#38bdf8" />
-              <span>Synthèse vocale native FR</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 3. Hero Interactive Cockpit Preview Card (Glassmorphism Mockup) */}
-        <div
-          style={{
-            marginTop: "60px",
-            position: "relative",
-            maxWidth: "1080px",
-            margin: "60px auto 0",
-            borderRadius: "24px",
-            background: "linear-gradient(180deg, rgba(13, 27, 62, 0.8) 0%, rgba(6, 11, 27, 0.95) 100%)",
-            border: "1px solid rgba(56, 189, 248, 0.3)",
-            boxShadow: "0 30px 80px rgba(0, 0, 0, 0.85), 0 0 50px rgba(37, 99, 235, 0.25)",
-            padding: "24px",
-            backdropFilter: "blur(20px)",
-            textAlign: "left",
-          }}
-        >
-          {/* Top Cockpit Bar */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingBottom: "18px",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-              marginBottom: "20px",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{ display: "flex", gap: "6px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#ef4444" }} />
-                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#f59e0b" }} />
-                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#10b981" }} />
-              </div>
-              <span style={{ fontSize: "13px", fontWeight: "700", color: "#cbd5e1" }}>
-                Alamajonda Cockpit • {liveTime || "12:00"}
-              </span>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                background: "rgba(37, 99, 235, 0.2)",
-                padding: "4px 12px",
-                borderRadius: "20px",
-                border: "1px solid rgba(56, 189, 248, 0.3)",
-              }}
-            >
-              <Sparkles size={13} color="#38bdf8" />
-              <span style={{ fontSize: "11.5px", color: "#38bdf8", fontWeight: "700" }}>Copilote IA Actif</span>
-            </div>
-          </div>
-
-          {/* Grid View inside Mockup */}
+          {/* 4 Feature Pill Badges (Exact 2x2 grid from mockup) */}
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "16px",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "14px",
+              maxWidth: "560px",
             }}
           >
-            {/* Mock Card 1: Agenda */}
+            {/* Badge 1: Vocal Reminders */}
             <div
               style={{
-                background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
+                padding: "12px 16px",
                 borderRadius: "16px",
-                padding: "16px",
+                background: "rgba(255, 255, 255, 0.75)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(255, 255, 255, 0.9)",
+                boxShadow: "0 4px 16px rgba(37, 99, 235, 0.08)",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-                <Calendar size={16} color="#38bdf8" />
-                <span style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Prochains Rendez-vous</span>
-              </div>
               <div
                 style={{
-                  padding: "10px 12px",
+                  width: "38px",
+                  height: "38px",
                   borderRadius: "10px",
-                  background: "rgba(37, 99, 235, 0.15)",
-                  border: "1px solid rgba(56, 189, 248, 0.25)",
-                  marginBottom: "8px",
+                  background: "linear-gradient(135deg, #dbeafe, #eff6ff)",
+                  color: "#2563eb",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
                 }}
               >
-                <div style={{ fontSize: "13px", fontWeight: "700", color: "#ffffff" }}>Rendez-vous avec Paul</div>
-                <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>10:00 · Atelier Liège</div>
+                <Mic size={20} />
               </div>
-              <div
-                style={{
-                  padding: "10px 12px",
-                  borderRadius: "10px",
-                  background: "rgba(255, 255, 255, 0.02)",
-                  border: "1px solid rgba(255, 255, 255, 0.05)",
-                }}
-              >
-                <div style={{ fontSize: "13px", fontWeight: "700", color: "#ffffff" }}>Consultation Clinique</div>
-                <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>14:00 · Liège Centre</div>
+              <div>
+                <div style={{ fontSize: "13.5px", fontWeight: "800", color: "#0b152e" }}>Vocal Reminders</div>
+                <div style={{ fontSize: "11.5px", color: "#64748b" }}>Rappels vocaux proactifs</div>
               </div>
             </div>
 
-            {/* Mock Card 2: Voice Alert */}
+            {/* Badge 2: Client Management */}
             <div
               style={{
-                background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
+                padding: "12px 16px",
                 borderRadius: "16px",
-                padding: "16px",
+                background: "rgba(255, 255, 255, 0.75)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(255, 255, 255, 0.9)",
+                boxShadow: "0 4px 16px rgba(37, 99, 235, 0.08)",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-                <Volume2 size={16} color="#fbbf24" />
-                <span style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Alerte Vocale Proactive</span>
+              <div
+                style={{
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #dbeafe, #eff6ff)",
+                  color: "#2563eb",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <Users size={20} />
+              </div>
+              <div>
+                <div style={{ fontSize: "13.5px", fontWeight: "800", color: "#0b152e" }}>Client Management</div>
+                <div style={{ fontSize: "11.5px", color: "#64748b" }}>Organisation des RDV</div>
+              </div>
+            </div>
+
+            {/* Badge 3: Time Optimization */}
+            <div
+              style={{
+                padding: "12px 16px",
+                borderRadius: "16px",
+                background: "rgba(255, 255, 255, 0.75)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(255, 255, 255, 0.9)",
+                boxShadow: "0 4px 16px rgba(37, 99, 235, 0.08)",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
+              <div
+                style={{
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #dbeafe, #eff6ff)",
+                  color: "#2563eb",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <Clock size={20} />
+              </div>
+              <div>
+                <div style={{ fontSize: "13.5px", fontWeight: "800", color: "#0b152e" }}>Time Optimization</div>
+                <div style={{ fontSize: "11.5px", color: "#64748b" }}>Gain de temps garanti</div>
+              </div>
+            </div>
+
+            {/* Badge 4: Vocal Agent AI */}
+            <div
+              style={{
+                padding: "12px 16px",
+                borderRadius: "16px",
+                background: "rgba(255, 255, 255, 0.75)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(255, 255, 255, 0.9)",
+                boxShadow: "0 4px 16px rgba(37, 99, 235, 0.08)",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
+              <div
+                style={{
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #dbeafe, #eff6ff)",
+                  color: "#2563eb",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <Sparkles size={20} />
+              </div>
+              <div>
+                <div style={{ fontSize: "13.5px", fontWeight: "800", color: "#0b152e" }}>Vocal Agent AI</div>
+                <div style={{ fontSize: "11.5px", color: "#64748b" }}>Copilote IA instantané</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: The Monumental Frosted Glass Cockpit Widget (Directly from Mockup!) */}
+        <div style={{ position: "relative" }}>
+          {/* Main Agenda Card */}
+          <div
+            style={{
+              borderRadius: "24px",
+              background: "rgba(255, 255, 255, 0.82)",
+              backdropFilter: "blur(24px)",
+              border: "1.5px solid rgba(255, 255, 255, 0.95)",
+              boxShadow: "0 25px 60px rgba(37, 99, 235, 0.2), 0 4px 16px rgba(0, 0, 0, 0.04)",
+              padding: "24px",
+              position: "relative",
+              zIndex: 3,
+            }}
+          >
+            {/* Header of Agenda */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+              }}
+            >
+              <h3 style={{ fontSize: "17px", fontWeight: "800", color: "#0b152e" }}>
+                Agenda de la semaine
+              </h3>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <button
+                  style={{
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "8px",
+                    border: "1px solid #cbd5e1",
+                    background: "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#64748b",
+                    cursor: "pointer",
+                  }}
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <button
+                  style={{
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "8px",
+                    border: "none",
+                    background: "#2563eb",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#ffffff",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Calendar size={14} />
+                </button>
+                <button
+                  style={{
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "8px",
+                    border: "1px solid #cbd5e1",
+                    background: "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#64748b",
+                    cursor: "pointer",
+                  }}
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Days Header */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1.2fr repeat(6, 1fr)",
+                gap: "8px",
+                fontSize: "11px",
+                fontWeight: "700",
+                color: "#64748b",
+                textAlign: "center",
+                marginBottom: "12px",
+                paddingBottom: "8px",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.06)",
+              }}
+            >
+              <div style={{ textAlign: "left" }}>Utilisateur</div>
+              <div>Lun</div>
+              <div>Mar</div>
+              <div>Mer</div>
+              <div>Jeu</div>
+              <div>Ven</div>
+              <div>Sam</div>
+            </div>
+
+            {/* User Row 1 */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1.2fr repeat(6, 1fr)",
+                gap: "8px",
+                alignItems: "center",
+                marginBottom: "12px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div
+                  style={{
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "50%",
+                    background: "#1e293b",
+                    color: "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "11px",
+                    fontWeight: "800",
+                  }}
+                >
+                  S
+                </div>
+                <div>
+                  <div style={{ fontSize: "11.5px", fontWeight: "700", color: "#0b152e", lineHeight: 1.1 }}>Salem Imorou</div>
+                  <div style={{ fontSize: "9.5px", color: "#64748b" }}>Compte Pro</div>
+                </div>
+              </div>
+
+              {/* Event 1: Client Imorou */}
+              <div
+                style={{
+                  gridColumn: "2 / 4",
+                  padding: "6px 8px",
+                  borderRadius: "8px",
+                  background: "#2563eb",
+                  color: "#ffffff",
+                  fontSize: "10.5px",
+                  fontWeight: "700",
+                  boxShadow: "0 2px 8px rgba(37, 99, 235, 0.3)",
+                }}
+              >
+                <div>Client Imorou</div>
+                <div style={{ fontSize: "9px", opacity: 0.85 }}>19 SEP · 18:00</div>
+              </div>
+
+              {/* Empty Lun/Mar */}
+              <div />
+              <div />
+            </div>
+
+            {/* User Row 2: Strategic Planning & Board Meeting */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1.2fr repeat(6, 1fr)",
+                gap: "8px",
+                alignItems: "center",
+                marginBottom: "12px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div
+                  style={{
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "50%",
+                    background: "#0284c7",
+                    color: "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "11px",
+                    fontWeight: "800",
+                  }}
+                >
+                  D
+                </div>
+                <div>
+                  <div style={{ fontSize: "11.5px", fontWeight: "700", color: "#0b152e", lineHeight: 1.1 }}>Direction</div>
+                  <div style={{ fontSize: "9.5px", color: "#64748b" }}>Atelier</div>
+                </div>
+              </div>
+
+              <div />
+              {/* Event 2: Strategic Planning */}
+              <div
+                style={{
+                  gridColumn: "3 / 5",
+                  padding: "6px 8px",
+                  borderRadius: "8px",
+                  background: "#10b981",
+                  color: "#ffffff",
+                  fontSize: "10.5px",
+                  fontWeight: "700",
+                  boxShadow: "0 2px 8px rgba(16, 185, 129, 0.3)",
+                }}
+              >
+                <div>Strategic Planning</div>
+                <div style={{ fontSize: "9px", opacity: 0.85 }}>10 SEP · 10:00</div>
+              </div>
+
+              {/* Event 3: Board Meeting */}
+              <div
+                style={{
+                  gridColumn: "5 / 7",
+                  padding: "6px 8px",
+                  borderRadius: "8px",
+                  background: "#7c3aed",
+                  color: "#ffffff",
+                  fontSize: "10.5px",
+                  fontWeight: "700",
+                  boxShadow: "0 2px 8px rgba(124, 58, 237, 0.3)",
+                }}
+              >
+                <div>Board Meeting</div>
+                <div style={{ fontSize: "9px", opacity: 0.85 }}>11 SEP · 14:00</div>
+              </div>
+            </div>
+
+            {/* Row 3: Workshop */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1.2fr repeat(6, 1fr)",
+                gap: "8px",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div
+                  style={{
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "50%",
+                    background: "#ea580c",
+                    color: "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "11px",
+                    fontWeight: "800",
+                  }}
+                >
+                  P
+                </div>
+                <div>
+                  <div style={{ fontSize: "11.5px", fontWeight: "700", color: "#0b152e", lineHeight: 1.1 }}>Paul Durand</div>
+                  <div style={{ fontSize: "9.5px", color: "#64748b" }}>Client VIP</div>
+                </div>
+              </div>
+
+              <div />
+              <div
+                style={{
+                  gridColumn: "3 / 6",
+                  padding: "6px 8px",
+                  borderRadius: "8px",
+                  background: "#f97316",
+                  color: "#ffffff",
+                  fontSize: "10.5px",
+                  fontWeight: "700",
+                  boxShadow: "0 2px 8px rgba(249, 115, 22, 0.3)",
+                }}
+              >
+                <div>Atelier &amp; Débriefing Exécutif</div>
+                <div style={{ fontSize: "9px", opacity: 0.85 }}>10 SEP · 17:00</div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3 Bottom Floating Interactive Cards (As seen in the Mockup) */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: "12px",
+              marginTop: "16px",
+            }}
+          >
+            {/* Card 1: Parler à l'IA */}
+            <div
+              onClick={() => handleTestVoice("FEMALE")}
+              style={{
+                borderRadius: "18px",
+                background: "rgba(255, 255, 255, 0.85)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255, 255, 255, 0.95)",
+                boxShadow: "0 10px 25px rgba(37, 99, 235, 0.12)",
+                padding: "14px",
+                cursor: "pointer",
+                transition: "transform 0.15s ease",
+              }}
+              className="hover:scale-105"
+            >
+              <div style={{ fontSize: "12.5px", fontWeight: "800", color: "#0b152e", marginBottom: "8px" }}>
+                Parler à l&apos;IA
               </div>
               <div
                 style={{
-                  padding: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  background: "rgba(37, 99, 235, 0.08)",
+                  padding: "6px 10px",
                   borderRadius: "10px",
-                  background: "rgba(245, 158, 11, 0.1)",
-                  border: "1px solid rgba(245, 158, 11, 0.3)",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-                  <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#f59e0b", animation: "pulse 1.5s infinite" }} />
-                  <span style={{ fontSize: "12px", fontWeight: "700", color: "#fbbf24" }}>Déclenchement direct</span>
-                </div>
-                <div style={{ fontSize: "12.5px", color: "#ffffff", fontStyle: "italic", lineHeight: "1.4" }}>
-                  « C&apos;est l&apos;heure d&apos;acheter les pièces de rechange avant la fermeture. »
+                <span style={{ fontSize: "11px", color: "#2563eb", fontWeight: "700" }}>
+                  {isPlayingVoice ? "En écoute..." : "Activer micro"}
+                </span>
+                <div
+                  style={{
+                    width: "24px",
+                    height: "24px",
+                    borderRadius: "50%",
+                    background: "#2563eb",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#ffffff",
+                  }}
+                >
+                  <Volume2 size={13} />
                 </div>
               </div>
             </div>
 
-            {/* Mock Card 3: AI Copilot */}
+            {/* Card 2: Rappels du jour */}
+            <div
+              onClick={() => handleTestVoice("MALE")}
+              style={{
+                borderRadius: "18px",
+                background: "rgba(255, 255, 255, 0.85)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255, 255, 255, 0.95)",
+                boxShadow: "0 10px 25px rgba(37, 99, 235, 0.12)",
+                padding: "14px",
+                cursor: "pointer",
+                transition: "transform 0.15s ease",
+              }}
+              className="hover:scale-105"
+            >
+              <div style={{ fontSize: "12.5px", fontWeight: "800", color: "#0b152e", marginBottom: "8px" }}>
+                Rappels du jour
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "10.5px" }}>
+                  <span style={{ background: "#fee2e2", color: "#dc2626", fontWeight: "700", padding: "2px 6px", borderRadius: "4px" }}>
+                    Priorité
+                  </span>
+                  <Volume2 size={12} color="#2563eb" />
+                </div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "10.5px" }}>
+                  <span style={{ background: "#fef3c7", color: "#d97706", fontWeight: "700", padding: "2px 6px", borderRadius: "4px" }}>
+                    Atelier
+                  </span>
+                  <Volume2 size={12} color="#2563eb" />
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3: Tâches prioritaires */}
             <div
               style={{
-                background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                borderRadius: "16px",
-                padding: "16px",
+                borderRadius: "18px",
+                background: "rgba(255, 255, 255, 0.85)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255, 255, 255, 0.95)",
+                boxShadow: "0 10px 25px rgba(37, 99, 235, 0.12)",
+                padding: "14px",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-                <Activity size={16} color="#34d399" />
-                <span style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Efficacité & Impact</span>
+              <div style={{ fontSize: "12.5px", fontWeight: "800", color: "#0b152e", marginBottom: "8px" }}>
+                Tâches prioritaires
               </div>
-              <div style={{ fontSize: "24px", fontWeight: "900", color: "#34d399", marginBottom: "4px" }}>
-                +4.5h <span style={{ fontSize: "13px", color: "#94a3b8", fontWeight: "500" }}>/ semaine</span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <div
+                  onClick={() => setTask1Done(!task1Done)}
+                  style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
+                >
+                  <div
+                    style={{
+                      width: "14px",
+                      height: "14px",
+                      borderRadius: "4px",
+                      border: task1Done ? "none" : "1.5px solid #94a3b8",
+                      background: task1Done ? "#10b981" : "transparent",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#ffffff",
+                    }}
+                  >
+                    {task1Done && <Check size={10} />}
+                  </div>
+                  <span style={{ fontSize: "10.5px", color: "#334155", fontWeight: "600", textDecoration: task1Done ? "line-through" : "none" }}>
+                    Contacter Paul
+                  </span>
+                </div>
+
+                <div
+                  onClick={() => setTask2Done(!task2Done)}
+                  style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
+                >
+                  <div
+                    style={{
+                      width: "14px",
+                      height: "14px",
+                      borderRadius: "4px",
+                      border: task2Done ? "none" : "1.5px solid #94a3b8",
+                      background: task2Done ? "#10b981" : "transparent",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#ffffff",
+                    }}
+                  >
+                    {task2Done && <Check size={10} />}
+                  </div>
+                  <span style={{ fontSize: "10.5px", color: "#334155", fontWeight: "600", textDecoration: task2Done ? "line-through" : "none" }}>
+                    Pièces atelier
+                  </span>
+                </div>
               </div>
-              <p style={{ fontSize: "11.5px", color: "#94a3b8", lineHeight: "1.4" }}>
-                Temps économisé sur la gestion manuelle de vos rendez-vous et priorités.
-              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4. Section: Les 4 Piliers Fondamentaux */}
-      <section id="features" style={{ padding: "80px 24px", maxWidth: "1350px", margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: "50px" }}>
-          <span style={{ fontSize: "12px", fontWeight: "800", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-            Technologie & Ergonomie
-          </span>
-          <h2 style={{ fontSize: "34px", fontWeight: "800", letterSpacing: "-0.02em", color: "#ffffff", marginTop: "8px" }}>
-            Pourquoi Alamajonda surpasse un agenda classique
+      {/* 3. Section: Témoignages Clients & Succès Exécutifs (Bottom Carousel from Mockup) */}
+      <section
+        id="testimonials"
+        style={{
+          padding: "60px 24px 80px",
+          maxWidth: "1380px",
+          margin: "0 auto",
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+          <h2 style={{ fontSize: "28px", fontWeight: "800", color: "#0b152e", letterSpacing: "-0.02em" }}>
+            Adopté par les professionnels exigeants
           </h2>
+          <p style={{ fontSize: "15px", color: "#64748b", marginTop: "6px" }}>
+            Voici comment Alamajonda transforme l&apos;organisation quotidienne.
+          </p>
         </div>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
             gap: "24px",
           }}
         >
-          {/* Feature 1 */}
+          {/* Testimonial 1 */}
           <div
             style={{
-              padding: "28px",
+              padding: "24px",
               borderRadius: "20px",
-              background: "linear-gradient(180deg, #0d1b3e 0%, #08112b 100%)",
-              border: "1px solid rgba(56, 189, 248, 0.2)",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
+              background: "rgba(255, 255, 255, 0.8)",
+              backdropFilter: "blur(16px)",
+              border: "1px solid rgba(255, 255, 255, 0.95)",
+              boxShadow: "0 10px 30px rgba(37, 99, 235, 0.08)",
             }}
           >
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, #0284c7, #38bdf8)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#ffffff",
-                marginBottom: "20px",
-                boxShadow: "0 0 20px rgba(56, 189, 248, 0.4)",
-              }}
-            >
-              <Volume2 size={24} />
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
+              <div
+                style={{
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, #1e293b, #0f172a)",
+                  color: "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "800",
+                  fontSize: "14px",
+                }}
+              >
+                SI
+              </div>
+              <div>
+                <div style={{ fontSize: "14.5px", fontWeight: "800", color: "#0b152e" }}>Salem Imorou</div>
+                <div style={{ fontSize: "12px", color: "#64748b" }}>Fondateur &amp; Dirigeant</div>
+              </div>
             </div>
-            <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#ffffff", marginBottom: "10px" }}>
-              Synthèse & Alertes Vocales
-            </h3>
-            <p style={{ fontSize: "13.5px", color: "#94a3b8", lineHeight: "1.6" }}>
-              Fini les simples notifications perdues au milieu des autres. L&apos;IA énonce vos consignes à voix haute avec un timbre fluide et naturel dès l&apos;heure convenue.
+            <p style={{ fontSize: "13.5px", color: "#334155", lineHeight: "1.6", fontStyle: "italic" }}>
+              « La synthèse vocale proactive qui vous parle directement dès l&apos;heure du rendez-vous est un atout révolutionnaire. Je ne rate plus aucune réunion. »
             </p>
+            <div style={{ display: "flex", gap: "4px", marginTop: "12px", color: "#f59e0b" }}>
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={15} fill="#f59e0b" />
+              ))}
+            </div>
           </div>
 
-          {/* Feature 2 */}
+          {/* Testimonial 2 */}
           <div
             style={{
-              padding: "28px",
+              padding: "24px",
               borderRadius: "20px",
-              background: "linear-gradient(180deg, #0d1b3e 0%, #08112b 100%)",
-              border: "1px solid rgba(99, 102, 241, 0.2)",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
+              background: "rgba(255, 255, 255, 0.8)",
+              backdropFilter: "blur(16px)",
+              border: "1px solid rgba(255, 255, 255, 0.95)",
+              boxShadow: "0 10px 30px rgba(37, 99, 235, 0.08)",
             }}
           >
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, #4f46e5, #6366f1)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#ffffff",
-                marginBottom: "20px",
-                boxShadow: "0 0 20px rgba(99, 102, 241, 0.4)",
-              }}
-            >
-              <Sparkles size={24} />
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
+              <div
+                style={{
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+                  color: "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "800",
+                  fontSize: "14px",
+                }}
+              >
+                CL
+              </div>
+              <div>
+                <div style={{ fontSize: "14.5px", fontWeight: "800", color: "#0b152e" }}>Claire Laurent</div>
+                <div style={{ fontSize: "12px", color: "#64748b" }}>Consultante Exécutive</div>
+              </div>
             </div>
-            <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#ffffff", marginBottom: "10px" }}>
-              Copilote IA Ultra-Réactif
-            </h3>
-            <p style={{ fontSize: "13.5px", color: "#94a3b8", lineHeight: "1.6" }}>
-              Dites « Prends RDV avec Paul demain à 14h » ou « Rappelle-moi d&apos;appeler la banque à 18h ». L&apos;IA route et enregistre l&apos;action en moins de 2 millisecondes.
+            <p style={{ fontSize: "13.5px", color: "#334155", lineHeight: "1.6", fontStyle: "italic" }}>
+              « L&apos;IA comprend mes instructions vocales en une seconde et organise l&apos;agenda instantanément. Un gain de plus de 4 heures chaque semaine. »
             </p>
+            <div style={{ display: "flex", gap: "4px", marginTop: "12px", color: "#f59e0b" }}>
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={15} fill="#f59e0b" />
+              ))}
+            </div>
           </div>
 
-          {/* Feature 3 */}
+          {/* Testimonial 3 */}
           <div
             style={{
-              padding: "28px",
+              padding: "24px",
               borderRadius: "20px",
-              background: "linear-gradient(180deg, #0d1b3e 0%, #08112b 100%)",
-              border: "1px solid rgba(16, 185, 129, 0.2)",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
+              background: "rgba(255, 255, 255, 0.8)",
+              backdropFilter: "blur(16px)",
+              border: "1px solid rgba(255, 255, 255, 0.95)",
+              boxShadow: "0 10px 30px rgba(37, 99, 235, 0.08)",
             }}
           >
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, #059669, #10b981)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#ffffff",
-                marginBottom: "20px",
-                boxShadow: "0 0 20px rgba(16, 185, 129, 0.4)",
-              }}
-            >
-              <Calendar size={24} />
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
+              <div
+                style={{
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, #059669, #10b981)",
+                  color: "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "800",
+                  fontSize: "14px",
+                }}
+              >
+                MD
+              </div>
+              <div>
+                <div style={{ fontSize: "14.5px", fontWeight: "800", color: "#0b152e" }}>Marc Dubois</div>
+                <div style={{ fontSize: "12px", color: "#64748b" }}>Directeur de Projet</div>
+              </div>
             </div>
-            <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#ffffff", marginBottom: "10px" }}>
-              Agenda Haute Définition
-            </h3>
-            <p style={{ fontSize: "13.5px", color: "#94a3b8", lineHeight: "1.6" }}>
-              Une vue mensuelle, hebdomadaire et quotidienne ultra-fluide avec catégorisation couleur (Travail, Personnel, Santé, Urgent) et synchronisation immédiate.
+            <p style={{ fontSize: "13.5px", color: "#334155", lineHeight: "1.6", fontStyle: "italic" }}>
+              « Le design est somptueux, ultra-lisible et réactif. Alamajonda est désormais mon centre névralgique pour toutes mes journées de travail. »
             </p>
-          </div>
-
-          {/* Feature 4 */}
-          <div
-            style={{
-              padding: "28px",
-              borderRadius: "20px",
-              background: "linear-gradient(180deg, #0d1b3e 0%, #08112b 100%)",
-              border: "1px solid rgba(234, 88, 12, 0.2)",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
-            }}
-          >
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, #ea580c, #f97316)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#ffffff",
-                marginBottom: "20px",
-                boxShadow: "0 0 20px rgba(234, 88, 12, 0.4)",
-              }}
-            >
-              <Smartphone size={24} />
+            <div style={{ display: "flex", gap: "4px", marginTop: "12px", color: "#f59e0b" }}>
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={15} fill="#f59e0b" />
+              ))}
             </div>
-            <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#ffffff", marginBottom: "10px" }}>
-              Mode Appel Téléphonique
-            </h3>
-            <p style={{ fontSize: "13.5px", color: "#94a3b8", lineHeight: "1.6" }}>
-              Besoin d&apos;une alerte incontournable ? L&apos;application fait sonner votre smartphone ou navigateur comme un vrai appel entrant avec un bouton Décrocher.
-            </p>
           </div>
         </div>
       </section>
 
-      {/* 5. Section: Tarifs Clairs & Transparents */}
-      <section id="pricing" style={{ padding: "80px 24px", maxWidth: "1000px", margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: "50px" }}>
-          <span style={{ fontSize: "12px", fontWeight: "800", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-            Offres & Tarification
-          </span>
-          <h2 style={{ fontSize: "34px", fontWeight: "800", letterSpacing: "-0.02em", color: "#ffffff", marginTop: "8px" }}>
-            Choisissez l&apos;excellence pour votre quotidien
-          </h2>
-        </div>
-
+      {/* 4. Section: Call to Action & Tarifs */}
+      <section
+        id="pricing"
+        style={{
+          padding: "60px 24px 80px",
+          maxWidth: "1100px",
+          margin: "0 auto",
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "24px",
+            borderRadius: "28px",
+            background: "linear-gradient(135deg, #1d4ed8 0%, #2563eb 60%, #1e40af 100%)",
+            boxShadow: "0 20px 50px rgba(37, 99, 235, 0.35)",
+            padding: "48px 36px",
+            color: "#ffffff",
+            display: "flex",
             alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "28px",
           }}
         >
-          {/* Plan Gratuit */}
-          <div
-            style={{
-              padding: "32px",
-              borderRadius: "20px",
-              background: "rgba(13, 27, 62, 0.4)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-            }}
-          >
-            <h3 style={{ fontSize: "20px", fontWeight: "800", color: "#ffffff" }}>Gratuit</h3>
-            <p style={{ fontSize: "13px", color: "#94a3b8", marginTop: "4px" }}>
-              Idéal pour découvrir la puissance d&apos;Alamajonda
+          <div>
+            <h3 style={{ fontSize: "30px", fontWeight: "900", letterSpacing: "-0.02em", color: "#ffffff", marginBottom: "8px" }}>
+              Prêt à passer à l&apos;action avec Alamajonda ?
+            </h3>
+            <p style={{ fontSize: "15.5px", color: "rgba(255, 255, 255, 0.9)", maxWidth: "560px", lineHeight: "1.5" }}>
+              Créez votre compte en 30 secondes et découvrez la puissance de la synthèse vocale et du copilote IA exécutif.
             </p>
-            <div style={{ fontSize: "36px", fontWeight: "900", color: "#ffffff", margin: "20px 0" }}>
-              0€ <span style={{ fontSize: "14px", color: "#94a3b8", fontWeight: "500" }}>/ pour toujours</span>
-            </div>
+          </div>
 
-            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px", display: "flex", flexDirection: "column", gap: "12px", fontSize: "13.5px", color: "#cbd5e1" }}>
-              <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Check size={16} color="#38bdf8" />
-                <span>Agenda & Calendrier illimité</span>
-              </li>
-              <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Check size={16} color="#38bdf8" />
-                <span>Synthèse vocale native standard</span>
-              </li>
-              <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Check size={16} color="#38bdf8" />
-                <span>Copilote IA (10 interactions / jour)</span>
-              </li>
-            </ul>
-
+          <div style={{ display: "flex", alignItems: "center", gap: "14px", flexWrap: "wrap" }}>
             <Link
               href="/register"
               style={{
-                display: "block",
-                textAlign: "center",
-                padding: "12px",
-                borderRadius: "12px",
-                background: "rgba(255, 255, 255, 0.08)",
+                padding: "14px 30px",
+                borderRadius: "30px",
+                background: "#ffffff",
+                color: "#1d4ed8",
+                fontWeight: "800",
+                fontSize: "15px",
+                textDecoration: "none",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+              className="hover:scale-105"
+            >
+              <span>Créer mon compte</span>
+              <ArrowRight size={16} />
+            </Link>
+
+            <Link
+              href="/login"
+              style={{
+                padding: "14px 26px",
+                borderRadius: "30px",
+                background: "rgba(255, 255, 255, 0.15)",
+                backdropFilter: "blur(8px)",
+                border: "1.5px solid rgba(255, 255, 255, 0.4)",
                 color: "#ffffff",
                 fontWeight: "700",
-                fontSize: "14px",
+                fontSize: "15px",
                 textDecoration: "none",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
               }}
+              className="hover:bg-white/25"
             >
-              Créer un compte gratuit
-            </Link>
-          </div>
-
-          {/* Plan Pro */}
-          <div
-            style={{
-              padding: "36px",
-              borderRadius: "22px",
-              background: "linear-gradient(180deg, #11224f 0%, #0b1533 100%)",
-              border: "2px solid #38bdf8",
-              boxShadow: "0 20px 50px rgba(37, 99, 235, 0.4), 0 0 30px rgba(56, 189, 248, 0.2)",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                top: "-12px",
-                right: "24px",
-                padding: "4px 12px",
-                borderRadius: "20px",
-                background: "linear-gradient(135deg, #38bdf8, #2563eb)",
-                color: "#ffffff",
-                fontWeight: "800",
-                fontSize: "11px",
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-              }}
-            >
-              Recommandé
-            </div>
-
-            <h3 style={{ fontSize: "20px", fontWeight: "800", color: "#ffffff" }}>Pro Illimité</h3>
-            <p style={{ fontSize: "13px", color: "#93c5fd", marginTop: "4px" }}>
-              Pour les dirigeants, professionnels et exigeants
-            </p>
-            <div style={{ fontSize: "36px", fontWeight: "900", color: "#ffffff", margin: "20px 0" }}>
-              9.99€ <span style={{ fontSize: "14px", color: "#94a3b8", fontWeight: "500" }}>/ mois</span>
-            </div>
-
-            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px", display: "flex", flexDirection: "column", gap: "12px", fontSize: "13.5px", color: "#ffffff" }}>
-              <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Check size={16} color="#38bdf8" />
-                <span><strong>Copilote IA illimité</strong> 24/7</span>
-              </li>
-              <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Check size={16} color="#38bdf8" />
-                <span><strong>Synthèse vocale HD</strong> multi-voix</span>
-              </li>
-              <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Check size={16} color="#38bdf8" />
-                <span>Mode appel & alarmes prioritaires</span>
-              </li>
-              <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Check size={16} color="#38bdf8" />
-                <span>Support prioritaire par l&apos;équipe</span>
-              </li>
-            </ul>
-
-            <Link
-              href="/register"
-              style={{
-                display: "block",
-                textAlign: "center",
-                padding: "14px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                color: "#ffffff",
-                fontWeight: "800",
-                fontSize: "14.5px",
-                textDecoration: "none",
-                boxShadow: "0 8px 25px rgba(37, 99, 235, 0.5)",
-                border: "1px solid rgba(56, 189, 248, 0.4)",
-              }}
-            >
-              Passer à Alamajonda Pro
+              Se connecter
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 6. Section: Call to Action Final */}
-      <section style={{ padding: "80px 24px", maxWidth: "1100px", margin: "0 auto", textAlign: "center" }}>
-        <div
-          style={{
-            padding: "50px 32px",
-            borderRadius: "24px",
-            background: "linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #0d1b3e 100%)",
-            border: "1px solid rgba(56, 189, 248, 0.4)",
-            boxShadow: "0 25px 60px rgba(37, 99, 235, 0.4)",
-          }}
-        >
-          <h2 style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: "900", color: "#ffffff", marginBottom: "16px", letterSpacing: "-0.02em" }}>
-            Prêt à transformer votre organisation ?
-          </h2>
-          <p style={{ fontSize: "16px", color: "#e0f2fe", maxWidth: "600px", margin: "0 auto 30px" }}>
-            Rejoignez Alamajonda dès aujourd&apos;hui et laissez votre copilote IA gérer vos priorités.
-          </p>
-          <Link
-            href="/register"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "15px 36px",
-              borderRadius: "14px",
-              background: "#ffffff",
-              color: "#1d4ed8",
-              fontWeight: "800",
-              fontSize: "15.5px",
-              textDecoration: "none",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-            }}
-          >
-            <span>Créer mon compte gratuit</span>
-            <ArrowRight size={17} />
-          </Link>
-        </div>
-      </section>
-
-      {/* 7. Footer */}
+      {/* 5. Footer */}
       <footer
         style={{
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-          padding: "36px 24px",
-          background: "#050917",
+          borderTop: "1px solid rgba(37, 99, 235, 0.15)",
+          padding: "32px 24px",
+          background: "rgba(255, 255, 255, 0.7)",
+          backdropFilter: "blur(12px)",
           textAlign: "center",
           color: "#64748b",
           fontSize: "13px",
         }}
       >
-        <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
           <Logo size={28} showText={true} />
           <p>© {new Date().getFullYear()} Alamajonda. Ton assistant, ton quotidien. Tous droits réservés.</p>
         </div>
