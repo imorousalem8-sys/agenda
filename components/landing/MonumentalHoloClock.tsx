@@ -7,11 +7,8 @@ import {
   Sparkles,
   Zap,
   Volume2,
-  VolumeX,
   Play,
   Calendar,
-  BellRing,
-  Activity,
   CheckCircle2,
   Radio,
 } from "lucide-react";
@@ -25,7 +22,6 @@ export default function MonumentalHoloClock() {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [voiceVolume, setVoiceVolume] = useState(1);
 
   useEffect(() => {
     setMounted(true);
@@ -35,7 +31,7 @@ export default function MonumentalHoloClock() {
       const now = new Date();
       setTime(now);
       setMs(Math.floor(now.getMilliseconds() / 10).toString().padStart(2, "0"));
-    }, 50);
+    }, 40);
 
     return () => clearInterval(interval);
   }, []);
@@ -46,8 +42,8 @@ export default function MonumentalHoloClock() {
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
 
-    const tiltX = -(y / (rect.height / 2)) * 6;
-    const tiltY = (x / (rect.width / 2)) * 6;
+    const tiltX = -(y / (rect.height / 2)) * 5;
+    const tiltY = (x / (rect.width / 2)) * 5;
     setTilt({ x: tiltX, y: tiltY });
   };
 
@@ -76,9 +72,10 @@ export default function MonumentalHoloClock() {
   const seconds = time ? time.getSeconds() : 0;
   const milliseconds = time ? time.getMilliseconds() : 0;
 
+  // Mathematical exact angles
   const secAngle = (seconds + milliseconds / 1000) * 6;
-  const minAngle = (minutes + seconds / 60) * 6;
-  const hourAngle = ((hours % 12) + minutes / 60) * 30;
+  const minAngle = (minutes + seconds / 60 + milliseconds / 60000) * 6;
+  const hourAngle = ((hours % 12) + minutes / 60 + seconds / 3600) * 30;
 
   const formattedHours = hours.toString().padStart(2, "0");
   const formattedMinutes = minutes.toString().padStart(2, "0");
@@ -94,7 +91,7 @@ export default function MonumentalHoloClock() {
     : "";
 
   if (!mounted) {
-    return <div style={{ minHeight: "440px", width: "100%" }} />;
+    return <div style={{ minHeight: "480px", width: "100%" }} />;
   }
 
   return (
@@ -105,7 +102,7 @@ export default function MonumentalHoloClock() {
       onMouseLeave={handleMouseLeave}
       style={{
         position: "relative",
-        maxWidth: "1200px",
+        maxWidth: "1240px",
         margin: "0 auto",
         perspective: "1400px",
         transformStyle: "preserve-3d",
@@ -130,10 +127,10 @@ export default function MonumentalHoloClock() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%) translateZ(-40px)",
-            width: "min(850px, 95vw)",
-            height: "min(500px, 85vw)",
+            width: "min(900px, 95vw)",
+            height: "min(560px, 85vw)",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(37, 99, 235, 0.22) 0%, rgba(56, 189, 248, 0.08) 50%, transparent 75%)",
+            background: "radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, rgba(56, 189, 248, 0.1) 45%, transparent 75%)",
             filter: "blur(60px)",
             pointerEvents: "none",
             zIndex: 0,
@@ -145,12 +142,12 @@ export default function MonumentalHoloClock() {
           style={{
             position: "relative",
             zIndex: 1,
-            background: "linear-gradient(180deg, rgba(13, 27, 62, 0.92) 0%, rgba(7, 14, 34, 0.95) 100%)",
+            background: "linear-gradient(180deg, rgba(13, 27, 62, 0.94) 0%, rgba(7, 14, 34, 0.97) 100%)",
             borderRadius: "28px",
-            border: "1.5px solid rgba(56, 189, 248, 0.3)",
+            border: "1.5px solid rgba(56, 189, 248, 0.35)",
             boxShadow:
-              "0 30px 90px rgba(0, 0, 0, 0.85), 0 0 50px rgba(37, 99, 235, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
-            padding: "36px clamp(16px, 4vw, 40px)",
+              "0 30px 90px rgba(0, 0, 0, 0.85), 0 0 50px rgba(37, 99, 235, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+            padding: "36px clamp(16px, 3.5vw, 40px)",
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
             overflow: "hidden",
@@ -173,9 +170,9 @@ export default function MonumentalHoloClock() {
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <div
                 style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "10px",
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "11px",
                   background: "linear-gradient(135deg, rgba(37, 99, 235, 0.4), rgba(56, 189, 248, 0.2))",
                   border: "1px solid rgba(56, 189, 248, 0.4)",
                   display: "flex",
@@ -183,13 +180,13 @@ export default function MonumentalHoloClock() {
                   justifyContent: "center",
                 }}
               >
-                <Clock size={18} color="#38bdf8" />
+                <Clock size={19} color="#38bdf8" />
               </div>
               <div>
-                <div style={{ fontSize: "15px", fontWeight: "800", color: "#f8fafc", letterSpacing: "-0.01em" }}>
+                <div style={{ fontSize: "16px", fontWeight: "800", color: "#f8fafc", letterSpacing: "-0.01em" }}>
                   Moteur Temporel &amp; Sentinelle Vocale Alamajonda
                 </div>
-                <div style={{ fontSize: "11.5px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "6px" }}>
+                <div style={{ fontSize: "12px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "6px" }}>
                   <span>Synchronisation continue haute fidélité</span>
                   <span style={{ width: "3px", height: "3px", borderRadius: "50%", background: "#64748b" }} />
                   <span style={{ color: "#38bdf8", fontWeight: "600" }}>Temps Réel</span>
@@ -230,7 +227,7 @@ export default function MonumentalHoloClock() {
               display: "grid",
               gridTemplateColumns: "1fr auto 1fr",
               alignItems: "center",
-              gap: " clamp(20px, 3vw, 36px)",
+              gap: "clamp(20px, 3vw, 36px)",
             }}
             className="flex flex-col lg:grid"
           >
@@ -242,22 +239,22 @@ export default function MonumentalHoloClock() {
                   background: "rgba(255, 255, 255, 0.03)",
                   border: "1px solid rgba(255, 255, 255, 0.08)",
                   borderRadius: "18px",
-                  padding: "18px",
+                  padding: "20px",
                   transition: "border-color 0.2s ease, background 0.2s ease",
                 }}
                 className="hover:border-cyan-500/30 hover:bg-white/[0.05]"
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
-                  <Calendar size={16} color="#38bdf8" />
-                  <span style={{ fontSize: "13px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
+                  <Calendar size={17} color="#38bdf8" />
+                  <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
                     PLANNING DE HAUTE PRÉCISION
                   </span>
                 </div>
-                <p style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.5", margin: 0 }}>
+                <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: "1.5", margin: 0 }}>
                   Chaque rendez-vous et rappel est cadencé avec rigueur. Export instantané compatible Google Calendar, Apple et Outlook (.ics).
                 </p>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "10px", fontSize: "11.5px", color: "#38bdf8", fontWeight: "600" }}>
-                  <CheckCircle2 size={13} />
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "12px", fontSize: "12px", color: "#38bdf8", fontWeight: "600" }}>
+                  <CheckCircle2 size={14} />
                   <span>Compatibilité universelle RFC 5545</span>
                 </div>
               </div>
@@ -268,195 +265,223 @@ export default function MonumentalHoloClock() {
                   background: "rgba(255, 255, 255, 0.03)",
                   border: "1px solid rgba(255, 255, 255, 0.08)",
                   borderRadius: "18px",
-                  padding: "18px",
+                  padding: "20px",
                   transition: "border-color 0.2s ease, background 0.2s ease",
                 }}
                 className="hover:border-blue-500/30 hover:bg-white/[0.05]"
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
-                  <Zap size={16} color="#fbbf24" />
-                  <span style={{ fontSize: "13px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
+                  <Zap size={17} color="#fbbf24" />
+                  <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
                     COPILOTE IA INTELLIGENT
                   </span>
                 </div>
-                <p style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.5", margin: 0 }}>
+                <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: "1.5", margin: 0 }}>
                   Organisez vos journées en une consigne. L&apos;IA détecte les priorités, optimise vos plages de concentration et préserve votre temps.
                 </p>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "10px", fontSize: "11.5px", color: "#fbbf24", fontWeight: "600" }}>
-                  <Sparkles size={13} />
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "12px", fontSize: "12px", color: "#fbbf24", fontWeight: "600" }}>
+                  <Sparkles size={14} />
                   <span>Jusqu&apos;à 4.5h gagnées par semaine</span>
                 </div>
               </div>
             </div>
 
-            {/* Center Column: The Monumental Chronometer Dial */}
+            {/* Center Column: The Monumental SVG Chronometer Dial */}
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                padding: "10px 0",
+                padding: "8px 0",
               }}
             >
-              {/* Dial Outer Ring */}
+              {/* Dial Outer Frame (Expanded size: 360px) */}
               <div
                 style={{
                   position: "relative",
-                  width: "min(280px, 75vw)",
-                  height: "min(280px, 75vw)",
+                  width: "min(360px, 86vw)",
+                  height: "min(360px, 86vw)",
                   borderRadius: "50%",
-                  background: "radial-gradient(circle at 35% 35%, #10224d 0%, #08112b 60%, #030612 100%)",
-                  border: "2.5px solid rgba(56, 189, 248, 0.4)",
-                  boxShadow:
-                    "0 0 50px rgba(37, 99, 235, 0.45), inset 0 0 40px rgba(0, 0, 0, 0.9), 0 10px 30px rgba(0, 0, 0, 0.8)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
                 }}
               >
-                {/* Outer Holographic Glow Halo */}
-                <div
+                {/* SVG Dial with Mathematical Zero-Offset Precision */}
+                <svg
+                  viewBox="0 0 400 400"
                   style={{
-                    position: "absolute",
-                    inset: "-8px",
-                    borderRadius: "50%",
-                    border: "1px dashed rgba(56, 189, 248, 0.3)",
-                    animation: "spin 40s linear infinite",
-                  }}
-                />
-
-                {/* Dial Ticks (60 subdivisions & 12 main hours) */}
-                {[...Array(60)].map((_, i) => {
-                  const isHour = i % 5 === 0;
-                  const isQuarter = i % 15 === 0;
-                  return (
-                    <div
-                      key={i}
-                      style={{
-                        position: "absolute",
-                        top: isQuarter ? "8px" : isHour ? "10px" : "12px",
-                        left: "calc(50% - 1px)",
-                        width: isQuarter ? "2.5px" : isHour ? "1.5px" : "1px",
-                        height: isQuarter ? "12px" : isHour ? "8px" : "4px",
-                        background: isQuarter ? "#38bdf8" : isHour ? "rgba(255, 255, 255, 0.8)" : "rgba(255, 255, 255, 0.2)",
-                        transformOrigin: "bottom center",
-                        transform: `rotate(${i * 6}deg) translateY(0px)`,
-                        boxShadow: isQuarter ? "0 0 8px #38bdf8" : "none",
-                      }}
-                    />
-                  );
-                })}
-
-                {/* Chronometer Numbers */}
-                <span style={{ position: "absolute", top: "24px", fontSize: "13px", fontWeight: "900", color: "#f8fafc", fontFamily: "monospace" }}>12</span>
-                <span style={{ position: "absolute", right: "24px", fontSize: "13px", fontWeight: "900", color: "#f8fafc", fontFamily: "monospace" }}>03</span>
-                <span style={{ position: "absolute", bottom: "24px", fontSize: "13px", fontWeight: "900", color: "#f8fafc", fontFamily: "monospace" }}>06</span>
-                <span style={{ position: "absolute", left: "24px", fontSize: "13px", fontWeight: "900", color: "#f8fafc", fontFamily: "monospace" }}>09</span>
-
-                {/* Sub-Dial: Brand & Precision */}
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "35%",
-                    textAlign: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
+                    width: "100%",
+                    height: "100%",
+                    filter: "drop-shadow(0 20px 40px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 25px rgba(37, 99, 235, 0.35))",
                   }}
                 >
-                  <span style={{ fontSize: "10px", fontWeight: "800", color: "#38bdf8", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+                  <defs>
+                    {/* Dial Face Gradient */}
+                    <radialGradient id="dialFace" cx="45%" cy="40%" r="65%">
+                      <stop offset="0%" stopColor="#132759" />
+                      <stop offset="60%" stopColor="#081432" />
+                      <stop offset="100%" stopColor="#020614" />
+                    </radialGradient>
+
+                    {/* Outer Bezel Gradient */}
+                    <linearGradient id="bezelRing" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#38bdf8" />
+                      <stop offset="40%" stopColor="#1e3a8a" />
+                      <stop offset="70%" stopColor="#0f172a" />
+                      <stop offset="100%" stopColor="#38bdf8" />
+                    </linearGradient>
+
+                    {/* Hour Hand Gradient */}
+                    <linearGradient id="hourHandGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#ffffff" />
+                      <stop offset="100%" stopColor="#cbd5e1" />
+                    </linearGradient>
+
+                    {/* Minute Hand Gradient */}
+                    <linearGradient id="minHandGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#93c5fd" />
+                      <stop offset="100%" stopColor="#38bdf8" />
+                    </linearGradient>
+
+                    {/* Glow filter for second hand & indicators */}
+                    <filter id="cyanGlow" x="-30%" y="-30%" width="160%" height="160%">
+                      <feGaussianBlur stdDeviation="3" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                  </defs>
+
+                  {/* Outer Bezel Shadow & Border */}
+                  <circle cx="200" cy="200" r="196" fill="none" stroke="url(#bezelRing)" strokeWidth="3.5" />
+                  <circle cx="200" cy="200" r="192" fill="url(#dialFace)" />
+
+                  {/* Inner Track Rings */}
+                  <circle cx="200" cy="200" r="176" fill="none" stroke="rgba(56, 189, 248, 0.25)" strokeWidth="1.5" strokeDasharray="3 3" />
+                  <circle cx="200" cy="200" r="130" fill="none" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="1" />
+
+                  {/* 60 Dial Minute & Hour Ticks (Accurate coordinates) */}
+                  {[...Array(60)].map((_, i) => {
+                    const angle = i * 6;
+                    const isQuarter = i % 15 === 0;
+                    const isHour = i % 5 === 0;
+                    const y1 = isQuarter ? 24 : isHour ? 28 : 32;
+                    const y2 = 40;
+                    const strokeWidth = isQuarter ? 3.5 : isHour ? 2.2 : 1;
+                    const strokeColor = isQuarter ? "#38bdf8" : isHour ? "rgba(255, 255, 255, 0.9)" : "rgba(255, 255, 255, 0.25)";
+
+                    return (
+                      <line
+                        key={i}
+                        x1="200"
+                        y1={y1}
+                        x2="200"
+                        y2={y2}
+                        stroke={strokeColor}
+                        strokeWidth={strokeWidth}
+                        strokeLinecap="round"
+                        transform={`rotate(${angle} 200 200)`}
+                        filter={isQuarter ? "url(#cyanGlow)" : undefined}
+                      />
+                    );
+                  })}
+
+                  {/* Major Hour Numerals with Modern Typography */}
+                  <text x="200" y="68" textAnchor="middle" fill="#f8fafc" fontSize="19" fontWeight="900" fontFamily="monospace" letterSpacing="0.05em">
+                    12
+                  </text>
+                  <text x="345" y="207" textAnchor="middle" fill="#f8fafc" fontSize="19" fontWeight="900" fontFamily="monospace" letterSpacing="0.05em">
+                    03
+                  </text>
+                  <text x="200" y="352" textAnchor="middle" fill="#f8fafc" fontSize="19" fontWeight="900" fontFamily="monospace" letterSpacing="0.05em">
+                    06
+                  </text>
+                  <text x="55" y="207" textAnchor="middle" fill="#f8fafc" fontSize="19" fontWeight="900" fontFamily="monospace" letterSpacing="0.05em">
+                    09
+                  </text>
+
+                  {/* Dial Branding / Sub-text */}
+                  <text x="200" y="145" textAnchor="middle" fill="#38bdf8" fontSize="11" fontWeight="800" letterSpacing="0.22em" fontFamily="sans-serif">
                     ALAMAJONDA
-                  </span>
-                  <span style={{ fontSize: "8px", fontWeight: "600", color: "#94a3b8", letterSpacing: "0.08em" }}>
+                  </text>
+                  <text x="200" y="160" textAnchor="middle" fill="#94a3b8" fontSize="9" fontWeight="600" letterSpacing="0.1em" fontFamily="sans-serif">
                     CHRONOMÈTRE IA
-                  </span>
-                </div>
+                  </text>
 
-                {/* Hour Hand */}
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "50%",
-                    left: "calc(50% - 2.5px)",
-                    width: "5px",
-                    height: "56px",
-                    background: "linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%)",
-                    borderRadius: "6px",
-                    transformOrigin: "bottom center",
-                    transform: `rotate(${hourAngle}deg)`,
-                    zIndex: 4,
-                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.8)",
-                  }}
-                />
+                  {/* HOUR HAND (Anchored strictly at center 200, 200) */}
+                  <g transform={`rotate(${hourAngle} 200 200)`}>
+                    {/* Shadow */}
+                    <path
+                      d="M196 220 L195 105 L200 90 L205 105 L204 220 Z"
+                      fill="rgba(0, 0, 0, 0.5)"
+                      transform="translate(2, 4)"
+                    />
+                    {/* Hand Body */}
+                    <path
+                      d="M196 220 L195 105 L200 90 L205 105 L204 220 Z"
+                      fill="url(#hourHandGrad)"
+                      stroke="rgba(255, 255, 255, 0.4)"
+                      strokeWidth="0.8"
+                    />
+                    {/* Luminous Core Inlay */}
+                    <line x1="200" y1="110" x2="200" y2="185" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" />
+                  </g>
 
-                {/* Minute Hand */}
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "50%",
-                    left: "calc(50% - 2px)",
-                    width: "4px",
-                    height: "82px",
-                    background: "linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%)",
-                    borderRadius: "4px",
-                    transformOrigin: "bottom center",
-                    transform: `rotate(${minAngle}deg)`,
-                    zIndex: 5,
-                    boxShadow: "0 0 12px rgba(59, 130, 246, 0.5)",
-                  }}
-                />
+                  {/* MINUTE HAND (Anchored strictly at center 200, 200) */}
+                  <g transform={`rotate(${minAngle} 200 200)`}>
+                    {/* Shadow */}
+                    <path
+                      d="M197 225 L196 60 L200 45 L204 60 L203 225 Z"
+                      fill="rgba(0, 0, 0, 0.5)"
+                      transform="translate(2, 4)"
+                    />
+                    {/* Hand Body */}
+                    <path
+                      d="M197 225 L196 60 L200 45 L204 60 L203 225 Z"
+                      fill="url(#minHandGrad)"
+                      stroke="rgba(255, 255, 255, 0.6)"
+                      strokeWidth="0.8"
+                    />
+                    {/* Luminous Core Inlay */}
+                    <line x1="200" y1="65" x2="200" y2="185" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" />
+                  </g>
 
-                {/* Second Hand (Electric Cyan with Glow) */}
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "45px",
-                    left: "calc(50% - 1px)",
-                    width: "2px",
-                    height: "110px",
-                    background: "#38bdf8",
-                    borderRadius: "2px",
-                    transformOrigin: "50% 90px",
-                    transform: `rotate(${secAngle}deg)`,
-                    zIndex: 6,
-                    boxShadow: "0 0 12px #38bdf8, 0 0 20px rgba(56, 189, 248, 0.8)",
-                  }}
-                />
+                  {/* SECOND HAND (Electric Cyan, fully anchored at 200, 200 with counterweight) */}
+                  <g transform={`rotate(${secAngle} 200 200)`} filter="url(#cyanGlow)">
+                    {/* Needle (Length: from center 200,200 up to y=35 -> strictly stays inside dial) */}
+                    <line x1="200" y1="35" x2="200" y2="245" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" />
+                    {/* Counterbalance Ring */}
+                    <circle cx="200" cy="235" r="5.5" fill="#020614" stroke="#38bdf8" strokeWidth="2" />
+                    {/* Needle Tip Accent */}
+                    <circle cx="200" cy="40" r="2.5" fill="#ffffff" />
+                  </g>
 
-                {/* Central High-Precision Pivot */}
-                <div
-                  style={{
-                    width: "14px",
-                    height: "14px",
-                    borderRadius: "50%",
-                    background: "#ffffff",
-                    border: "3px solid #38bdf8",
-                    boxShadow: "0 0 10px #38bdf8",
-                    zIndex: 10,
-                  }}
-                />
+                  {/* Center Jewel Pivot Cap (Exact center 200, 200) */}
+                  <circle cx="200" cy="200" r="10" fill="#081432" stroke="#38bdf8" strokeWidth="2.5" />
+                  <circle cx="200" cy="200" r="5" fill="#ffffff" />
+                </svg>
               </div>
 
-              {/* Real-time Telemetry Display under the Dial */}
+              {/* Real-time Digital Telemetry Display */}
               <div
                 style={{
-                  marginTop: "16px",
+                  marginTop: "18px",
                   display: "flex",
                   alignItems: "baseline",
                   gap: "6px",
                   fontFamily: "monospace",
-                  background: "rgba(11, 21, 48, 0.6)",
-                  padding: "6px 16px",
-                  borderRadius: "14px",
-                  border: "1px solid rgba(56, 189, 248, 0.25)",
+                  background: "rgba(11, 21, 48, 0.7)",
+                  padding: "8px 20px",
+                  borderRadius: "16px",
+                  border: "1px solid rgba(56, 189, 248, 0.3)",
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
                 }}
               >
-                <span style={{ fontSize: "clamp(20px, 3.5vw, 26px)", fontWeight: "900", color: "#ffffff", letterSpacing: "0.05em" }}>
+                <span style={{ fontSize: "clamp(22px, 4vw, 30px)", fontWeight: "900", color: "#ffffff", letterSpacing: "0.05em" }}>
                   {formattedHours}:{formattedMinutes}:{formattedSeconds}
                 </span>
-                <span style={{ fontSize: "14px", fontWeight: "800", color: "#38bdf8" }}>
+                <span style={{ fontSize: "16px", fontWeight: "800", color: "#38bdf8" }}>
                   .{ms}
                 </span>
               </div>
@@ -470,29 +495,29 @@ export default function MonumentalHoloClock() {
                   background: "rgba(255, 255, 255, 0.03)",
                   border: "1px solid rgba(255, 255, 255, 0.08)",
                   borderRadius: "18px",
-                  padding: "18px",
+                  padding: "20px",
                   transition: "border-color 0.2s ease, background 0.2s ease",
                 }}
                 className="hover:border-cyan-500/30 hover:bg-white/[0.05]"
               >
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <Volume2 size={16} color="#34d399" />
-                    <span style={{ fontSize: "13px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
+                    <Volume2 size={17} color="#34d399" />
+                    <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
                       SENTINELLE VOCALE HD
                     </span>
                   </div>
-                  <span style={{ fontSize: "10px", color: "#34d399", background: "rgba(16, 185, 129, 0.15)", padding: "2px 8px", borderRadius: "8px", fontWeight: "700" }}>
+                  <span style={{ fontSize: "11px", color: "#34d399", background: "rgba(16, 185, 129, 0.15)", padding: "2px 8px", borderRadius: "8px", fontWeight: "700" }}>
                     Voix Française
                   </span>
                 </div>
 
-                <p style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.5", margin: "0 0 12px 0" }}>
+                <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: "1.5", margin: "0 0 14px 0" }}>
                   Alertes sonores proactives prononcées à voix haute pour vos engagements critiques. Zéro oubli garanti.
                 </p>
 
                 {/* Animated Sound Waveform */}
-                <div style={{ display: "flex", alignItems: "center", gap: "3px", height: "24px", marginBottom: "12px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "3.5px", height: "26px", marginBottom: "14px" }}>
                   {[12, 20, 10, 26, 16, 12, 22, 18, 8, 24, 14, 20, 10, 22, 16, 12, 24, 14].map((h, i) => (
                     <div
                       key={i}
@@ -513,12 +538,12 @@ export default function MonumentalHoloClock() {
                   onClick={playVoiceAlarmSample}
                   style={{
                     width: "100%",
-                    padding: "10px 14px",
+                    padding: "11px 16px",
                     borderRadius: "12px",
-                    background: isPlayingAudio ? "linear-gradient(135deg, #10b981, #059669)" : "linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(56, 189, 248, 0.2))",
-                    border: "1px solid rgba(56, 189, 248, 0.4)",
+                    background: isPlayingAudio ? "linear-gradient(135deg, #10b981, #059669)" : "linear-gradient(135deg, rgba(37, 99, 235, 0.35), rgba(56, 189, 248, 0.25))",
+                    border: "1px solid rgba(56, 189, 248, 0.45)",
                     color: "#ffffff",
-                    fontSize: "12.5px",
+                    fontSize: "13px",
                     fontWeight: "700",
                     cursor: "pointer",
                     display: "flex",
@@ -526,11 +551,11 @@ export default function MonumentalHoloClock() {
                     justifyContent: "center",
                     gap: "8px",
                     transition: "all 0.2s ease",
-                    boxShadow: "0 4px 15px rgba(37, 99, 235, 0.2)",
+                    boxShadow: "0 4px 15px rgba(37, 99, 235, 0.25)",
                   }}
                   className="hover:scale-[1.02]"
                 >
-                  <Play size={13} fill="#ffffff" />
+                  <Play size={14} fill="#ffffff" />
                   <span>{isPlayingAudio ? "Lecture de l'annonce en cours..." : "Tester la synthèse vocale en direct"}</span>
                 </button>
               </div>
@@ -541,22 +566,22 @@ export default function MonumentalHoloClock() {
                   background: "rgba(255, 255, 255, 0.03)",
                   border: "1px solid rgba(255, 255, 255, 0.08)",
                   borderRadius: "18px",
-                  padding: "18px",
+                  padding: "20px",
                   transition: "border-color 0.2s ease, background 0.2s ease",
                 }}
                 className="hover:border-emerald-500/30 hover:bg-white/[0.05]"
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
-                  <ShieldCheck size={16} color="#34d399" />
-                  <span style={{ fontSize: "13px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
+                  <ShieldCheck size={17} color="#34d399" />
+                  <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
                     SÉCURITÉ &amp; CONFIDENTIALITÉ
                   </span>
                 </div>
-                <p style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.5", margin: 0 }}>
+                <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: "1.5", margin: 0 }}>
                   Vos rendez-vous et vos données personnelles restent strictement sous votre contrôle. Double espace Pro &amp; Perso cloisonné.
                 </p>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "10px", fontSize: "11.5px", color: "#34d399", fontWeight: "600" }}>
-                  <Radio size={13} />
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "12px", fontSize: "12px", color: "#34d399", fontWeight: "600" }}>
+                  <Radio size={14} />
                   <span>Chiffrement bout-en-bout &bull; Serveurs Sécurisés</span>
                 </div>
               </div>
@@ -566,8 +591,8 @@ export default function MonumentalHoloClock() {
           {/* Bottom Footer Bar: Date & Location telemetry */}
           <div
             style={{
-              marginTop: "28px",
-              paddingTop: "18px",
+              marginTop: "32px",
+              paddingTop: "20px",
               borderTop: "1px solid rgba(255, 255, 255, 0.08)",
               display: "flex",
               alignItems: "center",
@@ -578,7 +603,7 @@ export default function MonumentalHoloClock() {
           >
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#38bdf8" }} />
-              <span style={{ fontSize: "12.5px", color: "#cbd5e1", textTransform: "capitalize", fontWeight: "600" }}>
+              <span style={{ fontSize: "13px", color: "#cbd5e1", textTransform: "capitalize", fontWeight: "600" }}>
                 {formattedDate}
               </span>
             </div>
