@@ -1,8 +1,21 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Clock, Shield, Sparkles, Zap, Radio, BellRing, Volume2, CheckCircle2, Play, Terminal, Cpu } from "lucide-react";
-import Image from "next/image";
+import {
+  Clock,
+  ShieldCheck,
+  Sparkles,
+  Zap,
+  Volume2,
+  VolumeX,
+  Play,
+  Calendar,
+  BellRing,
+  Activity,
+  CheckCircle2,
+  Radio,
+} from "lucide-react";
+import { speakAIText, playAlertChime } from "@/lib/voice";
 
 export default function MonumentalHoloClock() {
   const [time, setTime] = useState<Date | null>(null);
@@ -11,8 +24,8 @@ export default function MonumentalHoloClock() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
-  const [activeTab, setActiveTab] = useState<"LIVE_COCKPIT" | "HD_SYSTEM">("LIVE_COCKPIT");
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [voiceVolume, setVoiceVolume] = useState(1);
 
   useEffect(() => {
     setMounted(true);
@@ -22,19 +35,19 @@ export default function MonumentalHoloClock() {
       const now = new Date();
       setTime(now);
       setMs(Math.floor(now.getMilliseconds() / 10).toString().padStart(2, "0"));
-    }, 100);
+    }, 50);
 
     return () => clearInterval(interval);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current || window.innerWidth < 768) return;
+    if (!containerRef.current || typeof window === "undefined" || window.innerWidth < 768) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
 
-    const tiltX = -(y / (rect.height / 2)) * 8;
-    const tiltY = (x / (rect.width / 2)) * 8;
+    const tiltX = -(y / (rect.height / 2)) * 6;
+    const tiltY = (x / (rect.width / 2)) * 6;
     setTilt({ x: tiltX, y: tiltY });
   };
 
@@ -43,21 +56,19 @@ export default function MonumentalHoloClock() {
     setTilt({ x: 0, y: 0 });
   };
 
-  const playVoiceAlarmSample = () => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
+  const playVoiceAlarmSample = async () => {
+    if (isPlayingAudio) return;
     setIsPlayingAudio(true);
+    await playAlertChime();
 
-    const text = "Bonjour ! Alerte de votre Agence IA. Il est l'heure de votre rendez-vous de 14 heures : Signature du contrat avec Marc. Veuillez confirmer votre prise en charge.";
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "fr-FR";
-    utterance.rate = 1.05;
-    utterance.pitch = 1.0;
+    const sampleText =
+      "Bonjour ! Sentinelle Alamajonda activée. Il est l'heure de votre rendez-vous stratégique. Vos alertes vocales et votre agenda sont parfaitement synchronisés.";
 
-    utterance.onend = () => setIsPlayingAudio(false);
-    utterance.onerror = () => setIsPlayingAudio(false);
-
-    window.speechSynthesis.speak(utterance);
+    speakAIText(sampleText, {
+      gender: "FEMALE",
+      onEnd: () => setIsPlayingAudio(false),
+      onError: () => setIsPlayingAudio(false),
+    });
   };
 
   const hours = time ? time.getHours() : 0;
@@ -83,7 +94,7 @@ export default function MonumentalHoloClock() {
     : "";
 
   if (!mounted) {
-    return <div style={{ minHeight: "360px", width: "100%" }} />;
+    return <div style={{ minHeight: "440px", width: "100%" }} />;
   }
 
   return (
@@ -94,9 +105,9 @@ export default function MonumentalHoloClock() {
       onMouseLeave={handleMouseLeave}
       style={{
         position: "relative",
-        maxWidth: "1140px",
+        maxWidth: "1200px",
         margin: "0 auto",
-        perspective: "1600px",
+        perspective: "1400px",
         transformStyle: "preserve-3d",
         width: "100%",
       }}
@@ -106,486 +117,478 @@ export default function MonumentalHoloClock() {
       <div
         style={{
           transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-          transition: isHovered ? "transform 0.1s ease-out" : "transform 0.6s ease-out",
+          transition: isHovered ? "transform 0.1s ease-out" : "transform 0.5s ease-out",
           transformStyle: "preserve-3d",
           position: "relative",
           width: "100%",
         }}
       >
-        {/* Subtle monochrome ambient light behind the card */}
+        {/* Background Ambient Glow */}
         <div
           style={{
             position: "absolute",
             top: "50%",
             left: "50%",
-            transform: "translate(-50%, -50%) translateZ(-50px)",
-            width: "min(680px, 90vw)",
-            height: "min(460px, 80vw)",
-            borderRadius: "40px",
-            background: "radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(52, 211, 153, 0.04) 45%, transparent 75%)",
-            filter: "blur(50px)",
+            transform: "translate(-50%, -50%) translateZ(-40px)",
+            width: "min(850px, 95vw)",
+            height: "min(500px, 85vw)",
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(37, 99, 235, 0.22) 0%, rgba(56, 189, 248, 0.08) 50%, transparent 75%)",
+            filter: "blur(60px)",
             pointerEvents: "none",
             zIndex: 0,
           }}
         />
 
-        {/* Outer Titanium & Glass Cockpit Container */}
+        {/* Masterpiece Clock Container */}
         <div
-          className="chrono-container-pad"
           style={{
             position: "relative",
             zIndex: 1,
-            background: "linear-gradient(180deg, #0d0d11 0%, #050507 100%)",
-            borderRadius: "24px",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
+            background: "linear-gradient(180deg, rgba(13, 27, 62, 0.92) 0%, rgba(7, 14, 34, 0.95) 100%)",
+            borderRadius: "28px",
+            border: "1.5px solid rgba(56, 189, 248, 0.3)",
             boxShadow:
-              "0 30px 90px rgba(0, 0, 0, 0.95), 0 0 1px 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
-            padding: "24px clamp(12px, 3vw, 24px)",
+              "0 30px 90px rgba(0, 0, 0, 0.85), 0 0 50px rgba(37, 99, 235, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+            padding: "36px clamp(16px, 4vw, 40px)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
             overflow: "hidden",
-            width: "100%",
-            boxSizing: "border-box",
           }}
         >
-          {/* Top Window Bar - Developer IDE Style */}
+          {/* Top Status Header */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: "20px",
-              paddingBottom: "14px",
+              marginBottom: "32px",
+              paddingBottom: "18px",
               borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
               flexWrap: "wrap",
-              gap: "10px",
+              gap: "14px",
             }}
           >
-            {/* Window Dots & Identifier */}
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                <span style={{ width: "9px", height: "9px", borderRadius: "50%", background: "#ef4444", display: "inline-block" }} />
-                <span style={{ width: "9px", height: "9px", borderRadius: "50%", background: "#eab308", display: "inline-block" }} />
-                <span style={{ width: "9px", height: "9px", borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
-              </div>
+            {/* Title & Badge */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <div
                 style={{
-                  fontFamily: "monospace",
-                  fontSize: "12px",
-                  color: "#94a3b8",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, rgba(37, 99, 235, 0.4), rgba(56, 189, 248, 0.2))",
+                  border: "1px solid rgba(56, 189, 248, 0.4)",
                   display: "flex",
                   alignItems: "center",
-                  gap: "6px",
+                  justifyContent: "center",
                 }}
               >
-                <Terminal size={13} color="#34d399" />
-                <span style={{ color: "#e2e8f0", fontWeight: "600" }}>agence-ia-core</span>
-                <span style={{ color: "#64748b" }} className="hidden-mobile">// v2.4</span>
+                <Clock size={18} color="#38bdf8" />
+              </div>
+              <div>
+                <div style={{ fontSize: "15px", fontWeight: "800", color: "#f8fafc", letterSpacing: "-0.01em" }}>
+                  Moteur Temporel &amp; Sentinelle Vocale Alamajonda
+                </div>
+                <div style={{ fontSize: "11.5px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span>Synchronisation continue haute fidélité</span>
+                  <span style={{ width: "3px", height: "3px", borderRadius: "50%", background: "#64748b" }} />
+                  <span style={{ color: "#38bdf8", fontWeight: "600" }}>Temps Réel</span>
+                </div>
               </div>
             </div>
 
-            {/* View Switcher Tabs */}
+            {/* Live Status Pill */}
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                background: "rgba(255, 255, 255, 0.05)",
-                borderRadius: "8px",
-                padding: "3px",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
+                gap: "8px",
+                background: "rgba(16, 185, 129, 0.12)",
+                padding: "6px 14px",
+                borderRadius: "20px",
+                border: "1px solid rgba(16, 185, 129, 0.35)",
               }}
             >
-              <button
-                type="button"
-                onClick={() => setActiveTab("LIVE_COCKPIT")}
-                style={{
-                  background: activeTab === "LIVE_COCKPIT" ? "#1e293b" : "transparent",
-                  color: activeTab === "LIVE_COCKPIT" ? "#ffffff" : "#94a3b8",
-                  padding: "5px 12px",
-                  borderRadius: "6px",
-                  fontSize: "11px",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "5px",
-                  border: activeTab === "LIVE_COCKPIT" ? "1px solid rgba(255, 255, 255, 0.15)" : "none",
-                }}
-              >
-                <Cpu size={12} color="#34d399" />
-                Cockpit
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("HD_SYSTEM")}
-                style={{
-                  background: activeTab === "HD_SYSTEM" ? "#1e293b" : "transparent",
-                  color: activeTab === "HD_SYSTEM" ? "#ffffff" : "#94a3b8",
-                  padding: "5px 12px",
-                  borderRadius: "6px",
-                  fontSize: "11px",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "5px",
-                  border: activeTab === "HD_SYSTEM" ? "1px solid rgba(255, 255, 255, 0.15)" : "none",
-                }}
-              >
-                <Sparkles size={12} color="#38bdf8" />
-                Vue HD
-              </button>
-            </div>
-
-            {/* Status Telemetry */}
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <span
                 style={{
-                  width: "7px",
-                  height: "7px",
+                  width: "8px",
+                  height: "8px",
                   borderRadius: "50%",
                   background: "#10b981",
-                  boxShadow: "0 0 8px #10b981",
+                  boxShadow: "0 0 10px #10b981",
                 }}
               />
-              <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#34d399", fontWeight: "700" }}>
-                OPÉRATIONNEL
+              <span style={{ fontSize: "11.5px", fontFamily: "monospace", color: "#34d399", fontWeight: "800" }}>
+                SYNCHRO ATOMIQUE ACTIVE
               </span>
             </div>
           </div>
 
-          {activeTab === "LIVE_COCKPIT" ? (
-            /* Tab 1: Live Interactive Software Cockpit */
-            <div>
+          {/* Core Content: 3-Column Executive Layout */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr auto 1fr",
+              alignItems: "center",
+              gap: " clamp(20px, 3vw, 36px)",
+            }}
+            className="flex flex-col lg:grid"
+          >
+            {/* Left Column: Agenda & Precision Architecture */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
+              {/* Feature Box 1 */}
               <div
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr auto 1fr",
-                  alignItems: "center",
-                  gap: "20px",
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "18px",
+                  padding: "18px",
+                  transition: "border-color 0.2s ease, background 0.2s ease",
                 }}
-                className="chrono-grid"
+                className="hover:border-cyan-500/30 hover:bg-white/[0.05]"
               >
-                {/* Left Column: Voice Agent & Realtime Activity */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
-                  {/* Voice input card */}
-                  <div
-                    style={{
-                      background: "rgba(255, 255, 255, 0.03)",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      borderRadius: "14px",
-                      padding: "16px",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-                      <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#94a3b8", fontWeight: "700" }}>
-                        AGENCE IA • DICTÉE
-                      </span>
-                      <span style={{ fontSize: "10px", background: "rgba(52, 211, 153, 0.12)", color: "#34d399", padding: "2px 6px", borderRadius: "10px", border: "1px solid rgba(52, 211, 153, 0.3)" }}>
-                        0.4s
-                      </span>
-                    </div>
-                    <p style={{ fontSize: "13px", color: "#f8fafc", fontStyle: "italic", margin: "0 0 8px 0", lineHeight: "1.4" }}>
-                      &ldquo;Rappelle-moi demain 14h de signer le contrat avec Marc.&rdquo;
-                    </p>
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#34d399" }}>
-                      <CheckCircle2 size={13} />
-                      <span>Événement synchronisé • Alarme armée</span>
-                    </div>
-                  </div>
-
-                  {/* Persistent Alarm Widget */}
-                  <div
-                    style={{
-                      background: "rgba(255, 255, 255, 0.03)",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      borderRadius: "14px",
-                      padding: "16px",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
-                      <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#94a3b8", fontWeight: "700" }}>
-                        SENTINELLE D&apos;ALARME
-                      </span>
-                      <BellRing size={14} color="#f59e0b" />
-                    </div>
-                    <div style={{ fontSize: "14px", fontWeight: "700", color: "#ffffff", marginBottom: "2px" }}>
-                      0 Oubli Garanti
-                    </div>
-                    <p style={{ fontSize: "11.5px", color: "#94a3b8", margin: 0 }}>
-                      Sonnerie + synthèse vocale continue jusqu&apos;à confirmation explicite.
-                    </p>
-                  </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                  <Calendar size={16} color="#38bdf8" />
+                  <span style={{ fontSize: "13px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
+                    PLANNING DE HAUTE PRÉCISION
+                  </span>
                 </div>
+                <p style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.5", margin: 0 }}>
+                  Chaque rendez-vous et rappel est cadencé avec rigueur. Export instantané compatible Google Calendar, Apple et Outlook (.ics).
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "10px", fontSize: "11.5px", color: "#38bdf8", fontWeight: "600" }}>
+                  <CheckCircle2 size={13} />
+                  <span>Compatibilité universelle RFC 5545</span>
+                </div>
+              </div>
 
-                {/* Center: Precision Dark Dial Clock */}
+              {/* Feature Box 2 */}
+              <div
+                style={{
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "18px",
+                  padding: "18px",
+                  transition: "border-color 0.2s ease, background 0.2s ease",
+                }}
+                className="hover:border-blue-500/30 hover:bg-white/[0.05]"
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                  <Zap size={16} color="#fbbf24" />
+                  <span style={{ fontSize: "13px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
+                    COPILOTE IA INTELLIGENT
+                  </span>
+                </div>
+                <p style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.5", margin: 0 }}>
+                  Organisez vos journées en une consigne. L&apos;IA détecte les priorités, optimise vos plages de concentration et préserve votre temps.
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "10px", fontSize: "11.5px", color: "#fbbf24", fontWeight: "600" }}>
+                  <Sparkles size={13} />
+                  <span>Jusqu&apos;à 4.5h gagnées par semaine</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Center Column: The Monumental Chronometer Dial */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "10px 0",
+              }}
+            >
+              {/* Dial Outer Ring */}
+              <div
+                style={{
+                  position: "relative",
+                  width: "min(280px, 75vw)",
+                  height: "min(280px, 75vw)",
+                  borderRadius: "50%",
+                  background: "radial-gradient(circle at 35% 35%, #10224d 0%, #08112b 60%, #030612 100%)",
+                  border: "2.5px solid rgba(56, 189, 248, 0.4)",
+                  boxShadow:
+                    "0 0 50px rgba(37, 99, 235, 0.45), inset 0 0 40px rgba(0, 0, 0, 0.9), 0 10px 30px rgba(0, 0, 0, 0.8)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                {/* Outer Holographic Glow Halo */}
                 <div
                   style={{
+                    position: "absolute",
+                    inset: "-8px",
+                    borderRadius: "50%",
+                    border: "1px dashed rgba(56, 189, 248, 0.3)",
+                    animation: "spin 40s linear infinite",
+                  }}
+                />
+
+                {/* Dial Ticks (60 subdivisions & 12 main hours) */}
+                {[...Array(60)].map((_, i) => {
+                  const isHour = i % 5 === 0;
+                  const isQuarter = i % 15 === 0;
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        position: "absolute",
+                        top: isQuarter ? "8px" : isHour ? "10px" : "12px",
+                        left: "calc(50% - 1px)",
+                        width: isQuarter ? "2.5px" : isHour ? "1.5px" : "1px",
+                        height: isQuarter ? "12px" : isHour ? "8px" : "4px",
+                        background: isQuarter ? "#38bdf8" : isHour ? "rgba(255, 255, 255, 0.8)" : "rgba(255, 255, 255, 0.2)",
+                        transformOrigin: "bottom center",
+                        transform: `rotate(${i * 6}deg) translateY(0px)`,
+                        boxShadow: isQuarter ? "0 0 8px #38bdf8" : "none",
+                      }}
+                    />
+                  );
+                })}
+
+                {/* Chronometer Numbers */}
+                <span style={{ position: "absolute", top: "24px", fontSize: "13px", fontWeight: "900", color: "#f8fafc", fontFamily: "monospace" }}>12</span>
+                <span style={{ position: "absolute", right: "24px", fontSize: "13px", fontWeight: "900", color: "#f8fafc", fontFamily: "monospace" }}>03</span>
+                <span style={{ position: "absolute", bottom: "24px", fontSize: "13px", fontWeight: "900", color: "#f8fafc", fontFamily: "monospace" }}>06</span>
+                <span style={{ position: "absolute", left: "24px", fontSize: "13px", fontWeight: "900", color: "#f8fafc", fontFamily: "monospace" }}>09</span>
+
+                {/* Sub-Dial: Brand & Precision */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "35%",
+                    textAlign: "center",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    justifyContent: "center",
-                    padding: "4px",
-                    width: "100%",
                   }}
                 >
-                  <div
-                    style={{
-                      position: "relative",
-                      width: "min(210px, 60vw)",
-                      height: "min(210px, 60vw)",
-                      borderRadius: "50%",
-                      background: "radial-gradient(circle, #141419 0%, #09090c 70%, #000000 100%)",
-                      border: "2px solid rgba(255, 255, 255, 0.15)",
-                      boxShadow: "0 0 30px rgba(0, 0, 0, 0.9), inset 0 0 25px rgba(0, 0, 0, 0.8)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {/* Dial Ticks */}
-                    {[...Array(12)].map((_, i) => {
-                      const isQuarter = i % 3 === 0;
-                      return (
-                        <div
-                          key={i}
-                          style={{
-                            position: "absolute",
-                            top: "6px",
-                            left: "calc(50% - 1px)",
-                            width: isQuarter ? "2px" : "1px",
-                            height: isQuarter ? "10px" : "5px",
-                            background: isQuarter ? "#ffffff" : "rgba(255, 255, 255, 0.3)",
-                            transformOrigin: "bottom center",
-                            transform: `rotate(${i * 30}deg) translateY(0px)`,
-                          }}
-                        />
-                      );
-                    })}
-
-                    {/* Quarter Numbers */}
-                    <span style={{ position: "absolute", top: "16px", fontSize: "11px", fontWeight: "700", color: "#cbd5e1", fontFamily: "monospace" }}>12</span>
-                    <span style={{ position: "absolute", right: "16px", fontSize: "11px", fontWeight: "700", color: "#cbd5e1", fontFamily: "monospace" }}>03</span>
-                    <span style={{ position: "absolute", bottom: "16px", fontSize: "11px", fontWeight: "700", color: "#cbd5e1", fontFamily: "monospace" }}>06</span>
-                    <span style={{ position: "absolute", left: "16px", fontSize: "11px", fontWeight: "700", color: "#cbd5e1", fontFamily: "monospace" }}>09</span>
-
-                    {/* Hour Hand */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: "50%",
-                        left: "calc(50% - 2px)",
-                        width: "4px",
-                        height: "45px",
-                        background: "#ffffff",
-                        borderRadius: "4px",
-                        transformOrigin: "bottom center",
-                        transform: `rotate(${hourAngle}deg)`,
-                        zIndex: 4,
-                        boxShadow: "0 0 6px rgba(255, 255, 255, 0.4)",
-                      }}
-                    />
-
-                    {/* Minute Hand */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: "50%",
-                        left: "calc(50% - 1.5px)",
-                        width: "3px",
-                        height: "65px",
-                        background: "#cbd5e1",
-                        borderRadius: "3px",
-                        transformOrigin: "bottom center",
-                        transform: `rotate(${minAngle}deg)`,
-                        zIndex: 5,
-                      }}
-                    />
-
-                    {/* Second Hand (Emerald) */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: "35px",
-                        left: "calc(50% - 1px)",
-                        width: "2px",
-                        height: "85px",
-                        background: "#34d399",
-                        borderRadius: "2px",
-                        transformOrigin: "50% 70px",
-                        transform: `rotate(${secAngle}deg)`,
-                        zIndex: 6,
-                        boxShadow: "0 0 8px #34d399",
-                      }}
-                    />
-
-                    {/* Center Pivot */}
-                    <div
-                      style={{
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "50%",
-                        background: "#ffffff",
-                        border: "2px solid #34d399",
-                        zIndex: 10,
-                      }}
-                    />
-                  </div>
+                  <span style={{ fontSize: "10px", fontWeight: "800", color: "#38bdf8", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+                    ALAMAJONDA
+                  </span>
+                  <span style={{ fontSize: "8px", fontWeight: "600", color: "#94a3b8", letterSpacing: "0.08em" }}>
+                    CHRONOMÈTRE IA
+                  </span>
                 </div>
 
-                {/* Right Column: Real Voice Synthesis Tester & Pro/Perso */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
-                  {/* Interactive Audio Voice Player */}
-                  <div
-                    style={{
-                      background: "rgba(255, 255, 255, 0.03)",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      borderRadius: "14px",
-                      padding: "16px",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-                      <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#94a3b8", fontWeight: "700" }}>
-                        SYNTHÈSE VOCALE HD
-                      </span>
-                      <Volume2 size={13} color="#38bdf8" />
-                    </div>
+                {/* Hour Hand */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "50%",
+                    left: "calc(50% - 2.5px)",
+                    width: "5px",
+                    height: "56px",
+                    background: "linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%)",
+                    borderRadius: "6px",
+                    transformOrigin: "bottom center",
+                    transform: `rotate(${hourAngle}deg)`,
+                    zIndex: 4,
+                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.8)",
+                  }}
+                />
 
-                    {/* Audio Waveform visualizer */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "3px", height: "24px", marginBottom: "10px" }}>
-                      {[14, 22, 12, 28, 18, 14, 24, 20, 10, 26, 16, 22, 12, 24, 18, 14].map((h, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            flex: 1,
-                            height: isPlayingAudio ? `${Math.max(5, (h * (1 + Math.sin(i + (time?.getMilliseconds() || 0) * 0.01))))}px` : `${h}px`,
-                            background: isPlayingAudio ? "#34d399" : "rgba(255, 255, 255, 0.2)",
-                            borderRadius: "2px",
-                            transition: "height 0.1s ease, background 0.2s ease",
-                          }}
-                        />
-                      ))}
-                    </div>
+                {/* Minute Hand */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "50%",
+                    left: "calc(50% - 2px)",
+                    width: "4px",
+                    height: "82px",
+                    background: "linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%)",
+                    borderRadius: "4px",
+                    transformOrigin: "bottom center",
+                    transform: `rotate(${minAngle}deg)`,
+                    zIndex: 5,
+                    boxShadow: "0 0 12px rgba(59, 130, 246, 0.5)",
+                  }}
+                />
 
-                    <button
-                      type="button"
-                      onClick={playVoiceAlarmSample}
-                      style={{
-                        width: "100%",
-                        background: isPlayingAudio ? "#10b981" : "rgba(255, 255, 255, 0.08)",
-                        border: "1px solid rgba(255, 255, 255, 0.15)",
-                        borderRadius: "8px",
-                        padding: "7px 10px",
-                        color: "#ffffff",
-                        fontSize: "11.5px",
-                        fontWeight: "600",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "6px",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
-                      }}
-                    >
-                      <Play size={11} fill="#ffffff" />
-                      <span>{isPlayingAudio ? "Lecture en cours..." : "Tester la synthèse vocale"}</span>
-                    </button>
-                  </div>
+                {/* Second Hand (Electric Cyan with Glow) */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "45px",
+                    left: "calc(50% - 1px)",
+                    width: "2px",
+                    height: "110px",
+                    background: "#38bdf8",
+                    borderRadius: "2px",
+                    transformOrigin: "50% 90px",
+                    transform: `rotate(${secAngle}deg)`,
+                    zIndex: 6,
+                    boxShadow: "0 0 12px #38bdf8, 0 0 20px rgba(56, 189, 248, 0.8)",
+                  }}
+                />
 
-                  {/* Calendar Pipeline */}
-                  <div
-                    style={{
-                      background: "rgba(255, 255, 255, 0.03)",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      borderRadius: "14px",
-                      padding: "16px",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
-                      <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#94a3b8", fontWeight: "700" }}>
-                        PIPELINE SÉCURISÉ
-                      </span>
-                      <Zap size={13} color="#34d399" />
-                    </div>
-                    <div style={{ fontSize: "14px", fontWeight: "700", color: "#ffffff", marginBottom: "2px" }}>
-                      Double Espace Pro & Perso
-                    </div>
-                    <p style={{ fontSize: "11.5px", color: "#94a3b8", margin: 0 }}>
-                      Cloisonnement étanche et export d&apos;activité instantané.
-                    </p>
-                  </div>
-                </div>
+                {/* Central High-Precision Pivot */}
+                <div
+                  style={{
+                    width: "14px",
+                    height: "14px",
+                    borderRadius: "50%",
+                    background: "#ffffff",
+                    border: "3px solid #38bdf8",
+                    boxShadow: "0 0 10px #38bdf8",
+                    zIndex: 10,
+                  }}
+                />
               </div>
 
-              {/* Bottom Atomic Time Display */}
+              {/* Real-time Telemetry Display under the Dial */}
               <div
                 style={{
-                  marginTop: "20px",
-                  paddingTop: "16px",
-                  borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+                  marginTop: "16px",
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                  gap: "10px",
+                  alignItems: "baseline",
+                  gap: "6px",
+                  fontFamily: "monospace",
+                  background: "rgba(11, 21, 48, 0.6)",
+                  padding: "6px 16px",
+                  borderRadius: "14px",
+                  border: "1px solid rgba(56, 189, 248, 0.25)",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "baseline", gap: "6px", fontFamily: "monospace" }}>
-                  <span style={{ fontSize: "clamp(24px, 5vw, 34px)", fontWeight: "900", color: "#ffffff", letterSpacing: "0.03em" }}>
-                    {formattedHours}:{formattedMinutes}:{formattedSeconds}
-                  </span>
-                  <span style={{ fontSize: "18px", fontWeight: "700", color: "#34d399" }}>
-                    .{ms}
+                <span style={{ fontSize: "clamp(20px, 3.5vw, 26px)", fontWeight: "900", color: "#ffffff", letterSpacing: "0.05em" }}>
+                  {formattedHours}:{formattedMinutes}:{formattedSeconds}
+                </span>
+                <span style={{ fontSize: "14px", fontWeight: "800", color: "#38bdf8" }}>
+                  .{ms}
+                </span>
+              </div>
+            </div>
+
+            {/* Right Column: Voice Sentinel & Audio Testing Hub */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
+              {/* Feature Box 3: Voice Alert Sentinelle */}
+              <div
+                style={{
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "18px",
+                  padding: "18px",
+                  transition: "border-color 0.2s ease, background 0.2s ease",
+                }}
+                className="hover:border-cyan-500/30 hover:bg-white/[0.05]"
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Volume2 size={16} color="#34d399" />
+                    <span style={{ fontSize: "13px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
+                      SENTINELLE VOCALE HD
+                    </span>
+                  </div>
+                  <span style={{ fontSize: "10px", color: "#34d399", background: "rgba(16, 185, 129, 0.15)", padding: "2px 8px", borderRadius: "8px", fontWeight: "700" }}>
+                    Voix Française
                   </span>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: "12px", color: "#94a3b8", textTransform: "capitalize" }}>
-                    {formattedDate}
+                <p style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.5", margin: "0 0 12px 0" }}>
+                  Alertes sonores proactives prononcées à voix haute pour vos engagements critiques. Zéro oubli garanti.
+                </p>
+
+                {/* Animated Sound Waveform */}
+                <div style={{ display: "flex", alignItems: "center", gap: "3px", height: "24px", marginBottom: "12px" }}>
+                  {[12, 20, 10, 26, 16, 12, 22, 18, 8, 24, 14, 20, 10, 22, 16, 12, 24, 14].map((h, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        flex: 1,
+                        height: isPlayingAudio ? `${Math.max(4, h * (1 + Math.sin(i + (time?.getMilliseconds() || 0) * 0.015)))}px` : `${h}px`,
+                        background: isPlayingAudio ? "#38bdf8" : "rgba(255, 255, 255, 0.2)",
+                        borderRadius: "2px",
+                        transition: "height 0.08s ease, background 0.2s ease",
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Interactive Speech Test CTA */}
+                <button
+                  type="button"
+                  onClick={playVoiceAlarmSample}
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    borderRadius: "12px",
+                    background: isPlayingAudio ? "linear-gradient(135deg, #10b981, #059669)" : "linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(56, 189, 248, 0.2))",
+                    border: "1px solid rgba(56, 189, 248, 0.4)",
+                    color: "#ffffff",
+                    fontSize: "12.5px",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                    transition: "all 0.2s ease",
+                    boxShadow: "0 4px 15px rgba(37, 99, 235, 0.2)",
+                  }}
+                  className="hover:scale-[1.02]"
+                >
+                  <Play size={13} fill="#ffffff" />
+                  <span>{isPlayingAudio ? "Lecture de l'annonce en cours..." : "Tester la synthèse vocale en direct"}</span>
+                </button>
+              </div>
+
+              {/* Feature Box 4: Security & Privacy */}
+              <div
+                style={{
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "18px",
+                  padding: "18px",
+                  transition: "border-color 0.2s ease, background 0.2s ease",
+                }}
+                className="hover:border-emerald-500/30 hover:bg-white/[0.05]"
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                  <ShieldCheck size={16} color="#34d399" />
+                  <span style={{ fontSize: "13px", fontWeight: "800", color: "#ffffff", letterSpacing: "0.02em" }}>
+                    SÉCURITÉ &amp; CONFIDENTIALITÉ
                   </span>
-                  <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#475569" }} />
-                  <span style={{ fontSize: "10px", fontFamily: "monospace", color: "#64748b" }}>
-                    UTC+2
-                  </span>
+                </div>
+                <p style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.5", margin: 0 }}>
+                  Vos rendez-vous et vos données personnelles restent strictement sous votre contrôle. Double espace Pro &amp; Perso cloisonné.
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "10px", fontSize: "11.5px", color: "#34d399", fontWeight: "600" }}>
+                  <Radio size={13} />
+                  <span>Chiffrement bout-en-bout &bull; Serveurs Sécurisés</span>
                 </div>
               </div>
             </div>
-          ) : (
-            /* Tab 2: High-Definition Software Architecture Mockup */
-            <div style={{ position: "relative", borderRadius: "14px", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", width: "100%" }}>
-              <Image
-                src="/images/dark_software_hud.jpg"
-                alt="AlarmAgenda Software Interface Preview"
-                width={1200}
-                height={675}
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  display: "block",
-                  borderRadius: "14px",
-                }}
-                priority
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "10px",
-                  right: "10px",
-                  background: "rgba(0, 0, 0, 0.8)",
-                  backdropFilter: "blur(8px)",
-                  padding: "4px 10px",
-                  borderRadius: "14px",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                  fontSize: "10px",
-                  fontFamily: "monospace",
-                  color: "#e2e8f0",
-                }}
-              >
-                Moteur v2.4 • Architecture Développeur
-              </div>
+          </div>
+
+          {/* Bottom Footer Bar: Date & Location telemetry */}
+          <div
+            style={{
+              marginTop: "28px",
+              paddingTop: "18px",
+              borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "12px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#38bdf8" }} />
+              <span style={{ fontSize: "12.5px", color: "#cbd5e1", textTransform: "capitalize", fontWeight: "600" }}>
+                {formattedDate}
+              </span>
             </div>
-          )}
+
+            <div style={{ display: "flex", alignItems: "center", gap: "16px", color: "#94a3b8", fontSize: "12px", fontFamily: "monospace" }}>
+              <span>FUSEAU : EUROPE/PARIS (UTC+2)</span>
+              <span style={{ width: "3px", height: "3px", borderRadius: "50%", background: "#475569" }} />
+              <span style={{ color: "#38bdf8" }}>LATENCE &lt; 1ms</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
