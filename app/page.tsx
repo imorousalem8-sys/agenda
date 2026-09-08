@@ -34,6 +34,7 @@ import {
   CornerDownLeft,
 } from "lucide-react";
 import Logo from "@/components/brand/Logo";
+import TechnicalSupportSection from "@/components/landing/TechnicalSupportSection";
 import { speakAIText, playAlertChime } from "@/lib/voice";
 
 export default function LandingPage() {
@@ -850,7 +851,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 8. Footer (Ultra-Clean & High Contrast) */}
+      {/* 8. Section Service Technique & Signalement */}
+      <TechnicalSupportSection />
+
+      {/* 9. Footer (Ultra-Clean & High Contrast) */}
       <footer
         style={{
           borderTop: "1px solid rgba(255, 255, 255, 0.08)",
