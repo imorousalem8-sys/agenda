@@ -1,48 +1,60 @@
+"use client";
+
 import Link from "next/link";
+import { Bell } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-slate-100 py-10 sm:py-12 text-slate-500 text-xs">
+    <footer className="bg-white border-t border-slate-200 py-12 text-slate-600 text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-100">
+        
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-10 border-b border-slate-100">
           
-          {/* Brand & Tagline */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                </svg>
+          {/* Brand Logo & Description */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
+                <Bell size={16} />
               </div>
-              <span className="text-base font-bold text-slate-900 tracking-tight">
+              <span className="text-lg font-extrabold text-slate-900 tracking-tight">
                 Alamajonda
               </span>
             </Link>
             <span className="hidden sm:inline text-slate-300">|</span>
-            <span className="text-slate-400">
-              Plus de temps pour ce qui compte.
+            <span className="text-xs text-slate-500">
+              Vos rendez-vous, toujours au bon moment.
             </span>
           </div>
 
-          {/* Legal Links & Socials */}
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            <Link href="/terms" className="hover:text-slate-900 transition-colors">
+          {/* Nav & Legal Links */}
+          <div className="flex flex-wrap items-center justify-center gap-6 text-xs sm:text-sm font-medium">
+            <a href="#features" className="hover:text-blue-600 transition-colors">
+              Fonctionnalités
+            </a>
+            <a href="#how-it-works" className="hover:text-blue-600 transition-colors">
+              Comment ça marche
+            </a>
+            <a href="#pricing" className="hover:text-blue-600 transition-colors">
+              Tarifs
+            </a>
+            <Link href="/terms" className="hover:text-blue-600 transition-colors">
               Conditions d&apos;utilisation
             </Link>
-            <Link href="/privacy" className="hover:text-slate-900 transition-colors">
-              Politique de confidentialité
+            <Link href="/privacy" className="hover:text-blue-600 transition-colors">
+              Confidentialité
             </Link>
-            <a href="mailto:contact@alamajonda.com" className="hover:text-slate-900 transition-colors">
+            <a href="mailto:contact@alamajonda.com" className="hover:text-blue-600 transition-colors">
               Contact
             </a>
           </div>
 
         </div>
 
-        {/* Bottom Copyright */}
-        <div className="pt-6 text-center text-[11px] text-slate-400">
+        {/* Copyright */}
+        <div className="pt-8 text-center text-xs text-slate-400">
           &copy; {new Date().getFullYear()} Alamajonda. Tous droits réservés.
         </div>
+
       </div>
     </footer>
   );

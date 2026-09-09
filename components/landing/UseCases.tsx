@@ -1,82 +1,75 @@
-import Link from "next/link";
-import { User, Briefcase, Building2, Wrench, ArrowRight } from "lucide-react";
+"use client";
 
-const profiles = [
+import Link from "next/link";
+import { User, Briefcase, Stethoscope, Building2, ArrowRight } from "lucide-react";
+
+const solutions = [
   {
-    icon: <User size={20} className="text-blue-600" />,
-    bg: "bg-blue-50",
-    title: "Particuliers",
-    desc: "Gérez vos rendez-vous personnels, familiaux et administratifs.",
-    href: "/register",
+    icon: <User className="w-6 h-6 text-blue-600" />,
+    title: "Particuliers & Familles",
+    description: "Médecins, rendez-vous administratifs, activités des enfants : gardez le contrôle complet sur votre vie quotidienne.",
   },
   {
-    icon: <Briefcase size={20} className="text-emerald-600" />,
-    bg: "bg-emerald-50",
-    title: "Professionnels",
-    desc: "Optimisez votre emploi du temps et votre relation client.",
-    href: "/register",
+    icon: <Briefcase className="w-6 h-6 text-blue-600" />,
+    title: "Indépendants & Consultants",
+    description: "Ne manquez aucun appel client ni rendez-vous d'affaires. Soignez votre professionnalisme et votre ponctualité.",
   },
   {
-    icon: <Building2 size={20} className="text-purple-600" />,
-    bg: "bg-purple-50",
-    title: "Entreprises",
-    desc: "Améliorez la gestion de vos équipes et de vos plannings.",
-    href: "/register",
+    icon: <Stethoscope className="w-6 h-6 text-blue-600" />,
+    title: "Professions Médicales",
+    description: "Éliminez les oublis de rendez-vous et préservez vos créneaux de consultation grâce aux rappels directs.",
   },
   {
-    icon: <Wrench size={20} className="text-amber-600" />,
-    bg: "bg-amber-50",
-    title: "Artisans & Indépendants",
-    desc: "Suivez vos chantiers et vos rendez-vous sur le terrain.",
-    href: "/register",
+    icon: <Building2 className="w-6 h-6 text-blue-600" />,
+    title: "PME & Artisans",
+    description: "Organisez vos déplacements sur le terrain, vos interventions clients et vos plannings d'équipes sans friction.",
   },
 ];
 
 export default function UseCases() {
   return (
-    <section id="profiles" className="py-20 md:py-24 bg-white text-slate-900 border-b border-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <section id="solutions" className="py-20 md:py-28 bg-white border-t border-slate-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Pretitle */}
-        <p className="text-xs font-bold text-blue-600 tracking-widest uppercase mb-3">
-          ADAPTÉ À TOUS VOS BESOINS
-        </p>
-
-        {/* Heading */}
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight mb-12 sm:mb-16">
-          Une solution pour chaque profil
-        </h2>
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <p className="text-xs font-bold text-blue-600 tracking-widest uppercase mb-3">
+            POUR CHAQUE PROFIL
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
+            Une solution adaptée à votre quotidien
+          </h2>
+          <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
+            Que vous soyez un particulier soucieux de ne rien oublier ou un professionnel exigeant, Alamajonda répond à vos attentes.
+          </p>
+        </div>
 
         {/* 4 Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-          {profiles.map((p, idx) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {solutions.map((item, index) => (
             <div
-              key={idx}
-              className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between"
+              key={index}
+              className="bg-white border border-slate-200 hover:border-blue-400 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all flex flex-col justify-between"
             >
               <div>
-                {/* Icon */}
-                <div className={`w-11 h-11 rounded-xl ${p.bg} flex items-center justify-center mb-4`}>
-                  {p.icon}
+                <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-5">
+                  {item.icon}
                 </div>
 
-                {/* Title */}
                 <h3 className="text-lg font-bold text-slate-900 mb-2">
-                  {p.title}
+                  {item.title}
                 </h3>
 
-                {/* Description */}
-                <p className="text-sm text-slate-500 leading-relaxed mb-6">
-                  {p.desc}
+                <p className="text-sm text-slate-600 leading-relaxed mb-6">
+                  {item.description}
                 </p>
               </div>
 
-              {/* Link */}
               <Link
-                href={p.href}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-blue-600 transition-colors pt-2 border-t border-slate-100"
+                href="/register"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors pt-4 border-t border-slate-100"
               >
-                <span>En savoir plus</span>
+                <span>Découvrir cette formule</span>
                 <ArrowRight size={13} />
               </Link>
             </div>
