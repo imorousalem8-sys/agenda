@@ -4,7 +4,7 @@ import { Calendar, Bell, CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function HowItWorks() {
   return (
-    <section className="py-16 md:py-20 bg-white border-t border-slate-100">
+    <section className="py-16 md:py-20 bg-[#F8FAFC] border-t border-slate-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="grid lg:grid-cols-12 gap-8 items-center">
@@ -22,11 +22,11 @@ export default function HowItWorks() {
             </p>
           </div>
 
-          {/* Right: 3 Steps Cards (8 cols) */}
-          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+          {/* Right: 3 Steps Cards (8 cols) with arrows */}
+          <div className="lg:col-span-8 flex flex-col sm:flex-row items-center gap-3">
             
             {/* Step 1 */}
-            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between min-h-[190px] relative">
+            <div className="flex-1 w-full p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between min-h-[175px]">
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center">
@@ -43,8 +43,10 @@ export default function HowItWorks() {
               </div>
             </div>
 
+            <ArrowRight size={16} className="hidden sm:block text-slate-300 shrink-0" />
+
             {/* Step 2 */}
-            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between min-h-[190px] relative">
+            <div className="flex-1 w-full p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between min-h-[175px]">
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center">
@@ -61,8 +63,10 @@ export default function HowItWorks() {
               </div>
             </div>
 
+            <ArrowRight size={16} className="hidden sm:block text-slate-300 shrink-0" />
+
             {/* Step 3 */}
-            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between min-h-[190px] relative">
+            <div className="flex-1 w-full p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between min-h-[175px]">
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center">
