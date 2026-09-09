@@ -1,159 +1,237 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Mic, MessageSquare, CalendarCheck, CheckCircle2, Volume2, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, Volume2, Search, Bell, User, Clock, Calendar, Briefcase, FileText, Settings, Home } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative bg-white pt-8 pb-16 md:pt-14 md:pb-24 overflow-hidden border-b border-slate-100">
+    <section className="relative bg-white pt-10 pb-16 md:pt-16 md:pb-20 overflow-hidden">
       
-      {/* Soft Background Accent */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-50/60 rounded-full blur-3xl pointer-events-none -z-10" />
+      {/* Soft Ambient Glow */}
+      <div className="absolute top-1/3 right-1/4 w-[450px] h-[450px] bg-blue-50/80 rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Main Hero Grid */}
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           
-          {/* Left Column: Copy & Actions (6 cols) */}
+          {/* Left Column: Copy & Actions (5.5 cols) */}
           <div className="lg:col-span-6 text-left">
             
-            {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-6 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-              <span>Votre assistant vocal IA intelligent</span>
+            {/* Pre-badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-bold tracking-wide uppercase mb-6">
+              VOTRE ASSISTANT POUR NE PLUS RIEN OUBLIER
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-slate-900 tracking-tight leading-[1.18] mb-5">
-              Ne manquez plus aucun <br className="hidden sm:inline" />
-              <span className="text-blue-600">rendez-vous important</span>
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.85rem] font-extrabold text-slate-900 tracking-tight leading-[1.15] mb-5">
+              N&apos;oubliez plus jamais <br />
+              <span className="text-blue-600">un rendez-vous important.</span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-8 max-w-lg">
-              Alamajonda planifie, organise et vous rappelle automatiquement chacun de vos rendez-vous par appel vocal direct, SMS et notification.
+              AlarmaAgenda organise vos rendez-vous et vous prévient au bon moment grâce aux rappels vocaux, notifications et SMS.
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 mb-8">
+            <div className="flex flex-wrap items-center gap-4 mb-8">
               <Link
                 href="/register"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 transition-all text-center"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/25 hover:shadow-xl transition-all"
               >
-                <span>Commencer Gratuitement</span>
+                <span>Commencer gratuitement</span>
                 <ArrowRight size={16} />
               </Link>
 
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all text-center"
+                className="text-sm font-semibold text-slate-700 hover:text-blue-600 underline underline-offset-4 px-2 py-2 transition-colors"
               >
-                <span>Se connecter</span>
+                Se connecter
               </Link>
             </div>
 
-            {/* Trust Checklist */}
-            <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-xs font-medium text-slate-500">
+            {/* Checklist items */}
+            <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-xs text-slate-500 font-medium">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 size={14} className="text-blue-600 shrink-0" />
+                <CheckCircle2 size={15} className="text-blue-600 shrink-0" />
                 Sans carte bancaire
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 size={14} className="text-blue-600 shrink-0" />
-                Actif en 2 minutes
+                <CheckCircle2 size={15} className="text-blue-600 shrink-0" />
+                Configuration en quelques minutes
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 size={14} className="text-blue-600 shrink-0" />
-                Données 100% sécurisées
+                <CheckCircle2 size={15} className="text-blue-600 shrink-0" />
+                Disponible sur ordinateur et mobile
               </span>
             </div>
 
           </div>
 
-          {/* Right Column: Real Image & Floating Badge (6 cols) */}
-          <div className="lg:col-span-6 relative flex justify-center lg:justify-end">
+          {/* Right Column: Realistic Laptop & Smartphone Visual (6.5 cols) */}
+          <div className="lg:col-span-6 relative flex items-center justify-center pt-4 lg:pt-0">
             
-            <div className="relative w-full max-w-[460px]">
+            <div className="relative w-full max-w-[560px]">
               
-              {/* Photo Frame */}
-              <div className="relative rounded-2xl overflow-hidden shadow-xl border border-slate-200 bg-slate-100 aspect-[4/3]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/images/hero-woman.jpg"
-                  alt="Utilisatrice recevant un rappel vocal Alamajonda"
-                  className="w-full h-full object-cover object-center block"
-                  loading="eager"
-                />
+              {/* Laptop Mockup */}
+              <div className="w-[88%] sm:w-[85%] bg-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-2xl border border-slate-700/80">
+                <div className="bg-white rounded-xl overflow-hidden shadow-inner text-slate-800">
+                  
+                  {/* Laptop Topbar */}
+                  <div className="bg-slate-50 px-3 py-1.5 border-b border-slate-200/80 flex items-center justify-between text-[10px]">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-blue-600 flex items-center justify-center text-[7px] text-white font-bold">
+                        A
+                      </div>
+                      <span className="font-bold text-slate-900">AlarmaAgenda</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-400">
+                      <Search size={11} />
+                      <Bell size={11} />
+                      <div className="w-4 h-4 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-[8px]">
+                        SA
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Laptop Body */}
+                  <div className="flex min-h-[220px] text-[10px]">
+                    
+                    {/* Sidebar */}
+                    <div className="w-24 bg-slate-50 border-r border-slate-100 p-2 space-y-1 hidden sm:block">
+                      <div className="flex items-center gap-1 px-1.5 py-1 text-slate-500 rounded">
+                        <Home size={10} />
+                        <span>Accueil</span>
+                      </div>
+                      <div className="flex items-center gap-1 px-1.5 py-1 bg-blue-50 text-blue-700 font-bold rounded">
+                        <Calendar size={10} />
+                        <span>Agenda</span>
+                      </div>
+                      <div className="flex items-center gap-1 px-1.5 py-1 text-slate-500 rounded">
+                        <FileText size={10} />
+                        <span>Tâches</span>
+                      </div>
+                      <div className="flex items-center gap-1 px-1.5 py-1 text-slate-500 rounded">
+                        <Bell size={10} />
+                        <span>Rappels</span>
+                      </div>
+                      <div className="flex items-center gap-1 px-1.5 py-1 text-slate-500 rounded">
+                        <Settings size={10} />
+                        <span>Paramètres</span>
+                      </div>
+                    </div>
+
+                    {/* Schedule View */}
+                    <div className="flex-1 p-2.5 sm:p-3 bg-white">
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <h4 className="font-bold text-slate-900 text-xs">Aujourd&apos;hui</h4>
+                          <span className="text-[8px] text-slate-400">Lundi 12 mai 2025</span>
+                        </div>
+                      </div>
+
+                      {/* Items */}
+                      <div className="space-y-1.5">
+                        <div className="p-1.5 rounded-lg bg-blue-50/60 border border-blue-100 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-blue-700 text-[9px]">09:00</span>
+                            <div>
+                              <div className="font-bold text-slate-800 text-[9px]">Rendez-vous client</div>
+                              <div className="text-[7px] text-slate-400">Cabinet Dupont</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-600 text-[9px]">12:30</span>
+                            <div>
+                              <div className="font-bold text-slate-800 text-[9px]">Déjeuner</div>
+                              <div className="text-[7px] text-slate-400">Restaurant Le Central</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-600 text-[9px]">14:30</span>
+                            <div>
+                              <div className="font-bold text-slate-800 text-[9px]">Consultation</div>
+                              <div className="text-[7px] text-slate-400">Dr. Martin</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-600 text-[9px]">17:00</span>
+                            <div>
+                              <div className="font-bold text-slate-800 text-[9px]">Chantier</div>
+                              <div className="text-[7px] text-slate-400">Rue des Tilleuls</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
               </div>
 
-              {/* Floating Voice Call Widget */}
-              <div className="absolute -bottom-5 left-3 sm:-left-5 bg-white/95 backdrop-blur-md border border-blue-200/80 p-3.5 sm:p-4 rounded-xl shadow-lg shadow-blue-900/10 flex items-center gap-3 z-20 max-w-[300px]">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
-                  <Volume2 className="w-5 h-5 text-blue-600 animate-pulse" />
+              {/* Smartphone Mockup (Overlapping right) */}
+              <div className="absolute right-0 -bottom-3 sm:-bottom-4 w-[160px] sm:w-[195px] bg-slate-900 rounded-[2rem] p-2 shadow-2xl border-2 border-slate-700 z-20">
+                <div className="bg-slate-950 text-white rounded-[1.6rem] p-3 pt-4 min-h-[260px] flex flex-col justify-between">
+                  {/* Lock Screen Header */}
+                  <div className="text-center">
+                    <div className="w-12 h-3 bg-slate-800 rounded-full mx-auto mb-2" />
+                    <div className="text-2xl font-light tracking-tight">14:15</div>
+                    <div className="text-[9px] text-slate-400 mb-4">Lundi 12 mai</div>
+
+                    {/* Incoming Push Notification */}
+                    <div className="bg-white/95 text-slate-900 rounded-xl p-2.5 text-left shadow-lg border border-slate-200">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 rounded bg-blue-600 flex items-center justify-center text-[7px] text-white font-bold">
+                            A
+                          </div>
+                          <span className="text-[9px] font-bold">AlarmaAgenda</span>
+                        </div>
+                        <span className="text-[7px] text-slate-400">maintenant</span>
+                      </div>
+                      <div className="text-[8px] font-bold text-blue-700 mb-0.5">
+                        Rappel vocal dans 15 minutes
+                      </div>
+                      <div className="text-[7px] text-slate-600 leading-tight">
+                        « Vous avez un rendez-vous avec votre client à 14h30. »
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom bar indicator */}
+                  <div className="w-16 h-1 bg-slate-600 rounded-full mx-auto" />
+                </div>
+              </div>
+
+              {/* Floating Pill Card (Bottom) */}
+              <div className="absolute -bottom-6 left-2 sm:left-4 bg-white/95 backdrop-blur-md border border-blue-200 px-4 py-2.5 rounded-full shadow-xl shadow-blue-900/10 flex items-center gap-2.5 z-30">
+                <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                  <Volume2 size={15} className="text-blue-600 animate-pulse" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">
-                      Appel Vocal
-                    </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+                  <div className="text-[9px] font-bold text-blue-700 uppercase">
+                    Rappel vocal
                   </div>
-                  <h4 className="text-xs font-bold text-slate-900">
-                    Programmé à 14h30
-                  </h4>
-                  <p className="text-[10px] text-slate-500">
-                    Consultation & Déplacement
-                  </p>
+                  <div className="text-xs font-semibold text-slate-800">
+                    Votre rendez-vous commence dans 15 minutes.
+                  </div>
                 </div>
               </div>
 
             </div>
 
-          </div>
-
-        </div>
-
-        {/* 3 Pillars Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-          
-          {/* Pillar 1 */}
-          <div className="bg-white border border-slate-200 hover:border-blue-400 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all group">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
-              <Mic className="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
-              Rappels Vocaux IA
-            </h3>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Planifiez des rappels vocaux clairs et naturels en quelques secondes pour ne rater aucun engagement.
-            </p>
-          </div>
-
-          {/* Pillar 2 */}
-          <div className="bg-white border border-slate-200 hover:border-blue-400 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all group">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
-              <MessageSquare className="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
-              Multi-Canaux SMS
-            </h3>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Envoyez des confirmations et rappels automatiques par SMS et notifications pour une portée maximale.
-            </p>
-          </div>
-
-          {/* Pillar 3 */}
-          <div className="bg-white border border-slate-200 hover:border-blue-400 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all group">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
-              <CalendarCheck className="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
-              Agenda Intelligent
-            </h3>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Organisez vos rendez-vous, réunions et tâches avec une planification fluide et intuitive.
-            </p>
           </div>
 
         </div>
