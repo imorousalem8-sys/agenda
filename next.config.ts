@@ -6,19 +6,18 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Allow images from external sources if needed
+  // High-performance modern image formats
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [],
   },
-  // Global Cache-Control & PWA headers
+  // Cache-Control & PWA headers
   async headers() {
     return [
       {
-        source: "/:path*",
+        source: "/images/:path*",
         headers: [
-          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate, max-age=0, s-maxage=0" },
-          { key: "Pragma", value: "no-cache" },
-          { key: "Expires", value: "0" },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
       {

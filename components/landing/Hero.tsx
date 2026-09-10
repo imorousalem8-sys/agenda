@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Sparkles } from "lucide-react";
 
 export default function Hero() {
@@ -46,18 +47,22 @@ export default function Hero() {
             <div className="absolute -inset-2 bg-gradient-to-tr from-cyan-500/30 via-indigo-600/30 to-purple-600/30 rounded-[2rem] blur-2xl opacity-75 pointer-events-none" />
 
             {/* 3D Scene Container */}
-            <div className="relative rounded-3xl overflow-hidden border-2 border-cyan-500/30 shadow-2xl shadow-indigo-950/60 bg-slate-900 group">
+            <div className="relative rounded-3xl overflow-hidden border-2 border-cyan-500/30 shadow-2xl shadow-indigo-950/60 bg-slate-900 group aspect-[16/9]">
               
-              {/* 3D Isometric Artwork */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/alarma-hero-3d-workspace.jpg"
+              {/* Ultra-Fast Next.js Image with Preload Priority */}
+              <Image
+                src="/images/alarma-hero-3d-workspace.webp"
                 alt="AlarmaAgenda - Espace de travail 3D avec assistant vocal IA"
-                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
+                width={1376}
+                height={768}
+                priority={true}
+                quality={85}
+                sizes="(max-width: 1024px) 100vw, 600px"
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
               />
 
               {/* Gradient Glass Overlay on edges */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-slate-950/10 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/30 via-transparent to-slate-950/10 pointer-events-none" />
 
             </div>
 
