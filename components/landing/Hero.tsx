@@ -14,25 +14,26 @@ export default function Hero() {
       <div className="absolute top-10 left-10 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none -z-10" />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
         
-        {/* Main Grid: Headline Left, 3D Right */}
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-8 items-center mb-16 sm:mb-24">
+        {/* Main Grid: Balanced spacing with generous margins */}
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center mb-16 sm:mb-24">
           
-          {/* Left Column: Headline detached from the edge and brought closer to the image */}
-          <div className="lg:col-span-6 flex flex-col justify-center items-start lg:pl-8 xl:pl-12">
-            <div className="max-w-lg">
-              <h1 className="text-3xl sm:text-4xl lg:text-[2.85rem] xl:text-[3.2rem] font-black text-white tracking-tight leading-[1.15]">
-                Votre temps, orchestré avec{" "}
-                <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-400 bg-clip-text text-transparent block mt-1">
+          {/* Left Column: Headline nicely centered and shifted toward the center/image */}
+          <div className="lg:col-span-5 flex flex-col justify-center items-start lg:items-end lg:pr-2">
+            <div className="w-full max-w-lg lg:text-left">
+              <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-[3.1rem] font-black text-white tracking-tight leading-[1.18]">
+                Votre temps, <br />
+                orchestré avec <br />
+                <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-400 bg-clip-text text-transparent">
                   une précision absolue.
                 </span>
               </h1>
             </div>
           </div>
 
-          {/* Right Column: 3D Isometric AI Workspace Scene (6 cols) */}
-          <div className="lg:col-span-6 relative">
+          {/* Right Column: 3D Isometric AI Workspace Scene (7 cols) */}
+          <div className="lg:col-span-7 relative">
             
             {/* Glowing Aura behind 3D image */}
             <div className="absolute -inset-2 bg-gradient-to-tr from-cyan-500/30 via-indigo-600/30 to-purple-600/30 rounded-[2rem] blur-2xl opacity-75 pointer-events-none" />
@@ -42,13 +43,13 @@ export default function Hero() {
               
               {/* Ultra-Fast Next.js Image with Preload Priority */}
               <Image
-                src="/images/alamajonda-founder-workspace.webp"
+                src="/images/alamajonda-founder-v3.webp"
                 alt="Alamajonda - Le fondateur au bureau avec l'assistant vocal IA et agenda holographique"
                 width={1376}
                 height={768}
                 priority={true}
                 quality={95}
-                sizes="(max-width: 1024px) 100vw, 600px"
+                sizes="(max-width: 1024px) 100vw, 700px"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
               />
 
