@@ -43,12 +43,12 @@ export default function Hero() {
               
               {/* Ultra-Fast Next.js Image with Preload Priority */}
               <Image
-                src="/images/alarma-hero-3d-workspace.webp"
-                alt="AlarmaAgenda - Espace de travail 3D avec assistant vocal IA"
+                src="/images/founder-hero-workspace.webp"
+                alt="AlarmaAgenda - Espace de travail 3D avec le créateur et assistant vocal IA"
                 width={1376}
                 height={768}
                 priority={true}
-                quality={85}
+                quality={90}
                 sizes="(max-width: 1024px) 100vw, 600px"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
               />
