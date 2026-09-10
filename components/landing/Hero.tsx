@@ -19,7 +19,7 @@ export default function Hero() {
         
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
-          {/* Left Column: Copy & CTAs (6.5 cols) */}
+          {/* Left Column: Copy & CTAs (6 cols) */}
           <div className="lg:col-span-6 text-left">
             
             {/* Shimmer Badge */}
@@ -38,8 +38,8 @@ export default function Hero() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-8 max-w-lg">
-              AlarmaAgenda planifie vos rendez-vous et <strong className="text-white font-semibold">vous appelle directement au téléphone</strong> avec une voix naturelle pour que vous soyez toujours à l&apos;heure, sans stress.
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed mb-8 max-w-lg">
+              L&apos;intelligence vocale proactive qui veille sur votre planning et sécurise chaque créneau important.
             </p>
 
             {/* Actions Buttons */}
@@ -78,7 +78,7 @@ export default function Hero() {
 
           </div>
 
-          {/* Right Column: 3D Isometric AI Workspace Scene (5.5 cols) */}
+          {/* Right Column: 3D Isometric AI Workspace Scene (6 cols) */}
           <div className="lg:col-span-6 relative">
             
             {/* Glowing Aura behind 3D image */}
@@ -102,6 +102,17 @@ export default function Hero() {
 
           </div>
 
+        </div>
+
+        {/* Centered H3 Statement Section directly under the 3D Image */}
+        <div className="mt-14 sm:mt-20 pt-10 border-t border-slate-800/60 max-w-4xl mx-auto text-center px-4">
+          <h3 className="text-lg sm:text-2xl md:text-[1.65rem] font-medium sm:font-semibold text-slate-200 leading-relaxed tracking-tight">
+            AlarmaAgenda planifie vos rendez-vous et{" "}
+            <strong className="text-white font-bold bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent">
+              vous appelle directement au téléphone
+            </strong>{" "}
+            avec une voix naturelle pour que vous soyez toujours à l&apos;heure, sans stress.
+          </h3>
         </div>
 
       </div>
