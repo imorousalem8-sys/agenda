@@ -17,7 +17,8 @@ export default function Hero() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        {/* Main Grid: Copy Left, 3D Right */}
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center mb-16 sm:mb-24">
           
           {/* Left Column: Copy & CTAs (6 cols) */}
           <div className="lg:col-span-6 text-left">
@@ -30,17 +31,12 @@ export default function Hero() {
             </div>
 
             {/* Monumental Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-black text-white tracking-tight leading-[1.12] mb-6">
+            <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-black text-white tracking-tight leading-[1.12] mb-8">
               Votre temps, orchestré avec <br />
               <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-400 bg-clip-text text-transparent">
                 une précision absolue.
               </span>
             </h1>
-
-            {/* Subtitle */}
-            <p className="text-base sm:text-lg text-slate-300 leading-relaxed mb-8 max-w-lg">
-              L&apos;intelligence vocale proactive qui veille sur votre planning et sécurise chaque créneau important.
-            </p>
 
             {/* Actions Buttons */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-8">
@@ -104,15 +100,17 @@ export default function Hero() {
 
         </div>
 
-        {/* Centered H3 Statement Section directly under the 3D Image */}
-        <div className="mt-14 sm:mt-20 pt-10 border-t border-slate-800/60 max-w-4xl mx-auto text-center px-4">
-          <h3 className="text-lg sm:text-2xl md:text-[1.65rem] font-medium sm:font-semibold text-slate-200 leading-relaxed tracking-tight">
-            AlarmaAgenda planifie vos rendez-vous et{" "}
-            <strong className="text-white font-bold bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent">
-              vous appelle directement au téléphone
-            </strong>{" "}
-            avec une voix naturelle pour que vous soyez toujours à l&apos;heure, sans stress.
-          </h3>
+        {/* Centered H3 Statement Section - Stricly Centered Across Full Width */}
+        <div className="w-full flex justify-center items-center text-center">
+          <div className="max-w-3xl mx-auto text-center px-4">
+            <h3 className="text-lg sm:text-2xl md:text-[1.65rem] font-medium sm:font-semibold text-slate-200 leading-relaxed tracking-tight text-center">
+              AlarmaAgenda planifie vos rendez-vous et{" "}
+              <strong className="text-white font-bold bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent">
+                vous appelle directement au téléphone
+              </strong>{" "}
+              avec une voix naturelle pour que vous soyez toujours à l&apos;heure, sans stress.
+            </h3>
+          </div>
         </div>
 
       </div>
