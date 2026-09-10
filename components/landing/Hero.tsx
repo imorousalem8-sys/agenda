@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Sparkles, Mic, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -96,27 +96,7 @@ export default function Hero() {
               />
 
               {/* Gradient Glass Overlay on edges */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/20 pointer-events-none" />
-
-              {/* Floating Live AI Call Pill in center-bottom */}
-              <div className="absolute bottom-4 left-4 right-4 bg-slate-950/85 backdrop-blur-xl border border-cyan-400/40 p-3 sm:p-3.5 rounded-2xl shadow-2xl flex items-center justify-between gap-3 text-white">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center text-slate-950 font-bold shrink-0 shadow-lg shadow-cyan-500/40">
-                    <Mic size={18} className="animate-pulse" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <span>Rappel vocal IA programmé à 14h30</span>
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-ping" />
-                    </div>
-                    <div className="text-[11px] text-cyan-200/80">« Chantier client : Matériel &amp; outillage »</div>
-                  </div>
-                </div>
-
-                <span className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-cyan-400/20 text-cyan-300 text-[10px] font-bold border border-cyan-400/30">
-                  En direct
-                </span>
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-slate-950/10 pointer-events-none" />
 
             </div>
 
