@@ -17,19 +17,18 @@ export default function Hero() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Main Grid: Headline Left, 3D Right */}
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center mb-16 sm:mb-24">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-8 items-center mb-16 sm:mb-24">
           
-          {/* Left Column: Headline only */}
-          <div className="lg:col-span-6 text-left">
-            
-            {/* Monumental Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-black text-white tracking-tight leading-[1.12]">
-              Votre temps, orchestré avec <br />
-              <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-400 bg-clip-text text-transparent">
-                une précision absolue.
-              </span>
-            </h1>
-
+          {/* Left Column: Headline detached from the edge and brought closer to the image */}
+          <div className="lg:col-span-6 flex flex-col justify-center items-start lg:pl-8 xl:pl-12">
+            <div className="max-w-lg">
+              <h1 className="text-3xl sm:text-4xl lg:text-[2.85rem] xl:text-[3.2rem] font-black text-white tracking-tight leading-[1.15]">
+                Votre temps, orchestré avec{" "}
+                <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-400 bg-clip-text text-transparent block mt-1">
+                  une précision absolue.
+                </span>
+              </h1>
+            </div>
           </div>
 
           {/* Right Column: 3D Isometric AI Workspace Scene (6 cols) */}
@@ -66,7 +65,7 @@ export default function Hero() {
         <div className="w-full flex justify-center items-center text-center">
           <div className="max-w-3xl mx-auto text-center px-4">
             <h3 className="text-lg sm:text-2xl md:text-[1.65rem] font-medium sm:font-semibold text-slate-200 leading-relaxed tracking-tight text-center">
-              AlarmaAgenda planifie vos rendez-vous et{" "}
+              Alamajonda planifie vos rendez-vous et{" "}
               <strong className="text-white font-bold bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent">
                 vous appelle directement au téléphone
               </strong>{" "}
