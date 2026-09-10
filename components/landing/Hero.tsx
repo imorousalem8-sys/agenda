@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { Sparkles } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -23,13 +22,6 @@ export default function Hero() {
           {/* Left Column: Headline only */}
           <div className="lg:col-span-6 text-left">
             
-            {/* Shimmer Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/30 text-cyan-300 text-xs font-bold tracking-wide uppercase mb-6 backdrop-blur-md">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-              <Sparkles size={13} className="text-cyan-400" />
-              <span>L&apos;INTELLIGENCE VOCALE QUI ORGANISE VOS JOURNÉES</span>
-            </div>
-
             {/* Monumental Headline */}
             <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-black text-white tracking-tight leading-[1.12]">
               Votre temps, orchestré avec <br />

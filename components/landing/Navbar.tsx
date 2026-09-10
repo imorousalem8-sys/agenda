@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Logo from "@/components/brand/Logo";
 
 export default function Navbar() {
@@ -13,10 +13,6 @@ export default function Navbar() {
           {/* Vrai Logo Officiel de l'application */}
           <Link href="/" className="flex items-center gap-3 group">
             <Logo size={36} showText={true} animated={true} />
-            <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-cyan-300 border border-blue-400/30">
-              <Sparkles size={10} className="text-cyan-400" />
-              IA Vocale
-            </span>
           </Link>
 
           {/* Actions Droite */}
