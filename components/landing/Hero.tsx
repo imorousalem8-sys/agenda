@@ -27,8 +27,8 @@ export default function Hero() {
   }, []);
 
   const formattedHours = time ? time.getHours().toString().padStart(2, "0") : "20";
-  const formattedMinutes = time ? time.getMinutes().toString().padStart(2, "0") : "27";
-  const formattedSeconds = time ? time.getSeconds().toString().padStart(2, "0") : "32";
+  const formattedMinutes = time ? time.getMinutes().toString().padStart(2, "0") : "35";
+  const formattedSeconds = time ? time.getSeconds().toString().padStart(2, "0") : "10";
   
   const formattedDate = time
     ? time.toLocaleDateString("fr-FR", {
@@ -51,11 +51,11 @@ export default function Hero() {
         {/* Cockpit Grid Responsive (Gauche: Horloge + Titre | Centre: Montre | Droite: Photo) */}
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
-          {/* A. Colonne Gauche : Horloge IA Rehaussée + Grand Titre & Sous-titre Personnalisés */}
+          {/* A. Colonne Gauche : Horloge IA Rehaussée + Large Espace + Grand Titre & Sous-titre */}
           <div className="lg:col-span-4 flex flex-col items-start justify-center pr-0 lg:pr-2">
             
-            {/* 1. Module Digital Horloge IA (Rehaussé en haut) */}
-            <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border border-emerald-500/35 backdrop-blur-2xl shadow-xl shadow-black/80 w-full max-w-[240px] mb-5 group hover:border-emerald-400/50 transition-all duration-300">
+            {/* 1. Module Digital Horloge IA (Rehaussé avec grand espace en dessous) */}
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border border-emerald-500/35 backdrop-blur-2xl shadow-xl shadow-black/80 w-full max-w-[240px] mb-8 sm:mb-10 group hover:border-emerald-400/50 transition-all duration-300">
               
               {/* Header avec signal actif */}
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80">
@@ -98,8 +98,8 @@ export default function Hero() {
 
             </div>
 
-            {/* 2. Grand Titre Personnalisé (Style référence modernisé en mode sombre) */}
-            <h1 className="text-2xl sm:text-3xl lg:text-[2rem] xl:text-[2.25rem] font-black text-white tracking-tight leading-[1.2] mb-3">
+            {/* 2. Grand Titre Personnalisé (Bien Décollé et Aéré) */}
+            <h1 className="text-2xl sm:text-3xl lg:text-[2rem] xl:text-[2.25rem] font-black text-white tracking-tight leading-[1.2] mb-3 pt-1">
               Ne manquez plus aucun{" "}
               <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
                 rendez-vous important
