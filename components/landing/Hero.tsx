@@ -4,11 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Mic,
-  Volume2,
-  Calendar,
   Clock,
-  Sparkles,
   ArrowRight,
   Radio,
 } from "lucide-react";
@@ -52,41 +48,23 @@ export default function Hero() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Main Grid: HUD Watch Center + Founder Office Top Right + 4 Smooth Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        {/* Main Layout: Left Empty | Center HUD Watch | Right Founder Office Photo */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* LEFT COLUMN: 2 Cards 100% lisses */}
-          <div className="lg:col-span-3 flex flex-col gap-5 order-2 lg:order-1">
-            
-            {/* Card 1: Espace Gauche Haut (100% lisse, sans barres ni éléments) */}
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 min-h-[160px] flex flex-col">
-              <div className="flex items-center justify-between mb-2">
-                <Mic size={16} className="text-emerald-400" />
-              </div>
-              <div className="flex-1 w-full" />
-            </div>
+          {/* LEFT COLUMN: Espace totalement libre & épuré (3 cols) */}
+          <div className="hidden lg:block lg:col-span-3" />
 
-            {/* Card 2: Espace Gauche Bas (100% lisse) */}
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[220px] flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <Calendar size={16} className="text-cyan-400" />
-              </div>
-              <div className="flex-1 w-full" />
-            </div>
-
-          </div>
-
-          {/* CENTER COLUMN: The Iconic Glowing Skeleton Watch HUD (5 cols) */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center order-1 lg:order-2 py-4">
+          {/* CENTER COLUMN: The Iconic Glowing Skeleton Watch HUD (6 cols) */}
+          <div className="lg:col-span-6 flex flex-col items-center justify-center py-4">
             
             {/* Main Center Container with Glow */}
-            <div className="relative flex flex-col items-center group w-full max-w-[430px]">
+            <div className="relative flex flex-col items-center group w-full max-w-[460px]">
               
               {/* Emerald Back Glow */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/30 via-teal-500/20 to-cyan-500/30 rounded-full blur-3xl opacity-70 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/30 via-teal-500/20 to-cyan-500/30 rounded-full blur-3xl opacity-75 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
               {/* Watch Outer Ring & Frame */}
-              <div className="relative w-[320px] h-[320px] sm:w-[370px] sm:h-[370px] rounded-full p-2 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
+              <div className="relative w-[340px] h-[340px] sm:w-[410px] sm:h-[410px] rounded-full p-2.5 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
                 
                 {/* Watch Dial Inner Glass */}
                 <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-emerald-500/40 bg-[#070b10] flex items-center justify-center">
@@ -96,7 +74,7 @@ export default function Hero() {
                     src="/images/dark-hud-watch.jpg"
                     alt="Horlogerie de précision Alamajonda"
                     fill
-                    className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-700"
+                    className="object-cover opacity-95 group-hover:scale-105 transition-transform duration-700"
                     priority
                   />
 
@@ -106,7 +84,7 @@ export default function Hero() {
               </div>
 
               {/* Digital Time & System Sync Badge */}
-              <div className="mt-4 px-6 py-3 rounded-2xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-2xl flex items-center gap-4 text-center">
+              <div className="mt-5 px-7 py-3 rounded-2xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-2xl flex items-center gap-5 text-center">
                 <div className="flex items-center gap-2 text-emerald-400">
                   <Clock size={18} className="animate-spin-slow" />
                   <span className="text-xl sm:text-2xl font-black font-mono tracking-wider text-white">
@@ -129,37 +107,21 @@ export default function Hero() {
 
           </div>
 
-          {/* RIGHT COLUMN: Founder Office Photo (Top Right) + 2 Smooth Cards (4 cols) */}
-          <div className="lg:col-span-4 flex flex-col gap-5 order-3">
+          {/* RIGHT COLUMN: Founder Office Photo (Top Right) (3 cols) */}
+          <div className="lg:col-span-3 flex flex-col justify-start">
             
-            {/* 📸 Top Right: Photo Fondateur au bureau (Propre et lisse) */}
-            <div className="relative rounded-3xl p-1.5 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/70 group overflow-hidden">
-              <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/10]">
+            {/* 📸 Photo Fondateur au bureau (Mise en valeur en haut à droite) */}
+            <div className="relative rounded-3xl p-1.5 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/70 group overflow-hidden max-w-[340px] w-full mx-auto lg:mx-0">
+              <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/11]">
                 <Image
                   src="/images/founder-desk-official.jpg"
                   alt="Le Fondateur au bureau"
                   fill
-                  sizes="(max-width: 1024px) 100vw, 450px"
+                  sizes="(max-width: 1024px) 100vw, 340px"
                   priority
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
-            </div>
-
-            {/* Card 3: Espace Droite Milieu (100% lisse) */}
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[140px] flex flex-col">
-              <div className="flex items-center justify-between mb-2">
-                <Volume2 size={16} className="text-emerald-400" />
-              </div>
-              <div className="flex-1 w-full" />
-            </div>
-
-            {/* Card 4: Espace Droite Bas (100% lisse) */}
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 min-h-[150px] flex flex-col">
-              <div className="flex items-center justify-between mb-2">
-                <Sparkles size={16} className="text-cyan-400" />
-              </div>
-              <div className="flex-1 w-full" />
             </div>
 
           </div>
