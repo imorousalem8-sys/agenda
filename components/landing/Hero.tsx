@@ -28,14 +28,14 @@ export default function Hero() {
   const ampm = time && time.getHours() >= 12 ? "PM" : "AM";
 
   return (
-    <section className="relative min-h-[90vh] bg-[#05070c] text-white pt-6 pb-20 overflow-hidden font-sans">
+    <section className="relative min-h-[90vh] bg-[#05070c] text-white pt-6 pb-20 overflow-hidden font-sans flex flex-col justify-between">
       {/* Background Matrix & Subtle Glow Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:32px_32px] opacity-10 pointer-events-none" />
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
       <div className="absolute top-10 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none -z-10" />
 
-      {/* Top HUD Status Bar - Lisse et épuré */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+      {/* Top HUD Status Bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-6">
         <div className="flex items-center justify-between py-3 px-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-2xl min-h-[52px]">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -46,25 +46,25 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col justify-center">
         
-        {/* Main Layout: Left Empty | Center HUD Watch | Right Founder Office Photo */}
+        {/* Main Grid: Centered Luxury Watch HUD + Top Right Founder Photo */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* LEFT COLUMN: Espace totalement libre & épuré (3 cols) */}
-          <div className="hidden lg:block lg:col-span-3" />
+          {/* LEFT SPACER (Col 2 for balance) */}
+          <div className="hidden lg:block lg:col-span-2" />
 
-          {/* CENTER COLUMN: The Iconic Glowing Skeleton Watch HUD (6 cols) */}
-          <div className="lg:col-span-6 flex flex-col items-center justify-center py-4">
+          {/* CENTER COLUMN: The Iconic Glowing Skeleton Watch HUD (7 cols) */}
+          <div className="lg:col-span-7 flex flex-col items-center justify-center py-4">
             
             {/* Main Center Container with Glow */}
-            <div className="relative flex flex-col items-center group w-full max-w-[460px]">
+            <div className="relative flex flex-col items-center group w-full max-w-[480px]">
               
               {/* Emerald Back Glow */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/30 via-teal-500/20 to-cyan-500/30 rounded-full blur-3xl opacity-75 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/35 via-teal-500/25 to-cyan-500/35 rounded-full blur-3xl opacity-80 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
               {/* Watch Outer Ring & Frame */}
-              <div className="relative w-[340px] h-[340px] sm:w-[410px] sm:h-[410px] rounded-full p-2.5 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
+              <div className="relative w-[340px] h-[340px] sm:w-[420px] sm:h-[420px] md:w-[450px] md:h-[450px] rounded-full p-2.5 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
                 
                 {/* Watch Dial Inner Glass */}
                 <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-emerald-500/40 bg-[#070b10] flex items-center justify-center">
@@ -74,6 +74,7 @@ export default function Hero() {
                     src="/images/dark-hud-watch.jpg"
                     alt="Horlogerie de précision Alamajonda"
                     fill
+                    unoptimized={true}
                     className="object-cover opacity-95 group-hover:scale-105 transition-transform duration-700"
                     priority
                   />
@@ -83,8 +84,8 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Digital Time & System Sync Badge */}
-              <div className="mt-5 px-7 py-3 rounded-2xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-2xl flex items-center gap-5 text-center">
+              {/* Digital Time & System Sync Badge directly beneath Watch */}
+              <div className="mt-5 px-7 py-3.5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-2xl flex items-center gap-5 text-center">
                 <div className="flex items-center gap-2 text-emerald-400">
                   <Clock size={18} className="animate-spin-slow" />
                   <span className="text-xl sm:text-2xl font-black font-mono tracking-wider text-white">
@@ -108,16 +109,16 @@ export default function Hero() {
           </div>
 
           {/* RIGHT COLUMN: Founder Office Photo (Top Right) (3 cols) */}
-          <div className="lg:col-span-3 flex flex-col justify-start">
+          <div className="lg:col-span-3 flex flex-col justify-start items-center lg:items-end">
             
-            {/* 📸 Photo Fondateur au bureau (Mise en valeur en haut à droite) */}
-            <div className="relative rounded-3xl p-1.5 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/70 group overflow-hidden max-w-[340px] w-full mx-auto lg:mx-0">
+            {/* 📸 Photo Fondateur au bureau - Format soigné, visible et élégant */}
+            <div className="relative rounded-3xl p-1.5 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-full max-w-[340px]">
               <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/11]">
                 <Image
                   src="/images/founder-desk-official.jpg"
-                  alt="Le Fondateur au bureau"
+                  alt="Le Fondateur au bureau avec l'application Alamajonda"
                   fill
-                  sizes="(max-width: 1024px) 100vw, 340px"
+                  unoptimized={true}
                   priority
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
@@ -129,7 +130,7 @@ export default function Hero() {
         </div>
 
         {/* Bottom Headline & Call To Action Banner */}
-        <div className="mt-14 pt-8 border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-12 pt-8 border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               Votre temps, orchestré avec une{" "}

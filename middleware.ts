@@ -10,6 +10,8 @@ export function middleware(req: NextRequest) {
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/icons") ||
+    pathname.startsWith("/images") ||
+    pathname.match(/\.(jpg|jpeg|png|webp|svg|gif|ico|json|js|css)$/i) ||
     pathname === "/manifest.json" ||
     pathname === "/sw.js" ||
     pathname === "/favicon.ico"
