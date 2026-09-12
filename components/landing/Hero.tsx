@@ -10,14 +10,11 @@ import {
   Clock,
   Sparkles,
   ArrowRight,
-  Play,
   Radio,
 } from "lucide-react";
-import { speakAIText, playAlertChime } from "@/lib/voice";
 
 export default function Hero() {
   const [time, setTime] = useState<Date | null>(null);
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -28,17 +25,6 @@ export default function Hero() {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  const handleTestVoice = async () => {
-    if (isPlayingAudio) return;
-    setIsPlayingAudio(true);
-    await playAlertChime();
-    speakAIText("Test audio Alamajonda", {
-      gender: "FEMALE",
-      onEnd: () => setIsPlayingAudio(false),
-      onError: () => setIsPlayingAudio(false),
-    });
-  };
 
   const formattedHours = time ? time.getHours().toString().padStart(2, "0") : "10";
   const formattedMinutes = time ? time.getMinutes().toString().padStart(2, "0") : "09";
@@ -69,42 +55,30 @@ export default function Hero() {
         {/* Main Grid: HUD Watch Center + Founder Office Top Right + Smooth Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
-          {/* LEFT COLUMN: 2 Cards lisses (Espace intérieur totalement épuré) */}
+          {/* LEFT COLUMN: 2 Cards lisses */}
           <div className="lg:col-span-3 flex flex-col gap-5 order-2 lg:order-1">
             
-            {/* Card 1: Espace Gauche Haut (avec onde sonore) */}
+            {/* Card 1: Espace Gauche Haut (Onde sonore parfaitement intégrée et 100% lisse) */}
             <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 min-h-[160px] flex flex-col justify-between">
               <div className="flex items-center justify-between">
                 <Mic size={16} className="text-emerald-400" />
               </div>
 
-              {/* Dynamic Oscillogram Waveform */}
-              <div className="h-14 flex items-center justify-between gap-1 px-3 bg-slate-950/40 rounded-xl my-2">
+              {/* Dynamic Oscillogram Waveform (Sans sous-boîte foncée, lisse) */}
+              <div className="h-16 flex items-center justify-between gap-1.5 px-1 my-auto">
                 {[40, 65, 30, 85, 95, 45, 70, 100, 60, 40, 80, 55, 90, 35, 75, 50].map(
                   (h, i) => (
                     <span
                       key={i}
                       style={{ height: `${h}%` }}
-                      className="w-1 bg-gradient-to-t from-emerald-500 to-cyan-400 rounded-full opacity-80"
+                      className="w-1 bg-gradient-to-t from-emerald-500 to-cyan-400 rounded-full opacity-85 hover:opacity-100 transition-opacity"
                     />
                   )
                 )}
               </div>
-
-              <div className="flex items-center justify-between">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <button
-                  onClick={handleTestVoice}
-                  disabled={isPlayingAudio}
-                  aria-label="Tester la voix"
-                  className="p-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition-colors"
-                >
-                  <Play size={12} />
-                </button>
-              </div>
             </div>
 
-            {/* Card 2: Espace Gauche Bas (Intérieur totalement lisse sans sous-cadres) */}
+            {/* Card 2: Espace Gauche Bas (Intérieur totalement lisse) */}
             <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[220px] flex flex-col">
               <div className="flex items-center justify-between mb-4">
                 <Calendar size={16} className="text-cyan-400" />
