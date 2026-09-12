@@ -9,16 +9,10 @@ import {
   Calendar,
   Clock,
   Sparkles,
-  CheckCircle2,
   ArrowRight,
-  ShieldCheck,
-  Activity,
   Play,
-  PhoneCall,
-  Bell,
   Cpu,
   Radio,
-  Sliders,
 } from "lucide-react";
 import { speakAIText, playAlertChime } from "@/lib/voice";
 
@@ -40,9 +34,7 @@ export default function Hero() {
     if (isPlayingAudio) return;
     setIsPlayingAudio(true);
     await playAlertChime();
-    const message =
-      "Bonjour ! Sentinelle Alamajonda activée. Votre agenda et vos alertes d'appels vocaux sont parfaitement synchronisés.";
-    speakAIText(message, {
+    speakAIText("Test audio Alamajonda", {
       gender: "FEMALE",
       onEnd: () => setIsPlayingAudio(false),
       onError: () => setIsPlayingAudio(false),
@@ -61,28 +53,20 @@ export default function Hero() {
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
       <div className="absolute top-10 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none -z-10" />
 
-      {/* Top HUD Status Bar */}
+      {/* Top HUD Status Bar (Texte retiré, espace conservé) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="flex flex-wrap items-center justify-between gap-4 py-2.5 px-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-2xl">
+        <div className="flex flex-wrap items-center justify-between gap-4 py-3 px-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-2xl min-h-[52px]">
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-xs font-semibold tracking-wider uppercase text-emerald-400">
-              Cockpit Alamajonda
-            </span>
-            <span className="hidden sm:inline-block text-xs text-slate-500">|</span>
-            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-300">
-              <Cpu size={13} className="text-cyan-400" />
-              IA Vocale Prête
+              {/* Espace réservé pour texte cockpit */}
             </span>
           </div>
 
           <div className="flex items-center gap-3 text-xs">
             <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 font-mono flex items-center gap-1.5">
               <Radio size={12} className="animate-pulse" />
-              Système Synchronisé
-            </span>
-            <span className="hidden md:inline-flex px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 font-mono">
-              Latence : 0.4ms
+              {/* Espace statut */}
             </span>
           </div>
         </div>
@@ -90,28 +74,28 @@ export default function Hero() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Main Grid: HUD Watch Center + Founder Office Top Right + Smart Text Cards */}
+        {/* Main Grid: HUD Watch Center + Founder Office Top Right + Emplacements préservés */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
-          {/* LEFT COLUMN: Voice Signal & Event Timeline (3 cols) */}
+          {/* LEFT COLUMN: 2 Cards (Dimensions et espaces exacts conservés, textes supprimés) */}
           <div className="lg:col-span-3 flex flex-col gap-5 order-2 lg:order-1">
             
-            {/* Card 1: Voice Analytics */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 group">
-              <div className="flex items-center justify-between mb-3">
+            {/* Card 1: Emplacement Widget Gauche Haut (ex: Analyse Vocale) */}
+            <div className="p-4 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 group min-h-[160px] flex flex-col justify-between">
+              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Mic size={15} className="text-emerald-400" />
                   <span className="text-xs font-bold tracking-wider uppercase text-slate-200">
-                    Analyse Vocale
+                    {/* Espace Titre 1 */}
                   </span>
                 </div>
-                <span className="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                  99.8% Clarté
+                <span className="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 min-w-[30px] h-5">
+                  {/* Espace Badge 1 */}
                 </span>
               </div>
 
-              {/* Dynamic Oscillogram simulation */}
-              <div className="h-14 flex items-center justify-between gap-1 px-2 bg-slate-950/70 rounded-xl border border-slate-800/60 my-2">
+              {/* Dynamic Oscillogram simulation conservée */}
+              <div className="h-14 flex items-center justify-between gap-1 px-2 bg-slate-950/70 rounded-xl border border-slate-800/60 my-1">
                 {[40, 65, 30, 85, 95, 45, 70, 100, 60, 40, 80, 55, 90, 35, 75, 50].map(
                   (h, i) => (
                     <span
@@ -123,65 +107,57 @@ export default function Hero() {
                 )}
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2">
+              <div className="flex items-center justify-between text-[11px] text-slate-400 mt-1 min-h-[24px]">
                 <span className="flex items-center gap-1 text-emerald-400">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  Statut : Écoute active
+                  {/* Espace Statut */}
                 </span>
                 <button
                   onClick={handleTestVoice}
                   disabled={isPlayingAudio}
-                  className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold flex items-center gap-1 transition-colors"
+                  aria-label="Tester"
+                  className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold flex items-center gap-1 transition-colors h-6"
                 >
                   <Play size={10} />
-                  {isPlayingAudio ? "En cours..." : "Tester la voix"}
                 </button>
               </div>
             </div>
 
-            {/* Card 2: Event Timeline */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40">
+            {/* Card 2: Emplacement Widget Gauche Bas (ex: Chronologie) */}
+            <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[220px] flex flex-col justify-between">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Calendar size={15} className="text-cyan-400" />
                   <span className="text-xs font-bold tracking-wider uppercase text-slate-200">
-                    Chronologie des Événements
+                    {/* Espace Titre 2 */}
                   </span>
                 </div>
-                <span className="text-[10px] text-slate-400 font-mono">Aujourd&apos;hui</span>
+                <span className="text-[10px] text-slate-400 font-mono min-w-[20px]"></span>
               </div>
 
-              <div className="space-y-2 text-xs">
-                <div className="p-2.5 rounded-xl bg-slate-950/60 border border-emerald-500/20 flex items-center justify-between">
+              <div className="space-y-2 text-xs flex-1 flex flex-col justify-around">
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-emerald-500/20 min-h-[44px] flex items-center justify-between">
                   <div>
-                    <p className="font-semibold text-white">Réunion Stratégique</p>
-                    <p className="text-[11px] text-slate-400">Briefing équipe & objectifs</p>
+                    <p className="font-semibold text-white"></p>
+                    <p className="text-[11px] text-slate-400"></p>
                   </div>
-                  <span className="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md text-[11px]">
-                    10:15
-                  </span>
+                  <span className="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md text-[11px] min-w-[40px] h-4"></span>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 min-h-[44px] flex items-center justify-between">
                   <div>
-                    <p className="font-semibold text-slate-200">Appel Vocal IA Programmé</p>
-                    <p className="text-[11px] text-cyan-400 flex items-center gap-1">
-                      <PhoneCall size={10} /> Rappel téléphonique
-                    </p>
+                    <p className="font-semibold text-slate-200"></p>
+                    <p className="text-[11px] text-cyan-400"></p>
                   </div>
-                  <span className="font-mono text-cyan-400 font-bold bg-cyan-500/10 px-2 py-0.5 rounded-md text-[11px]">
-                    11:30
-                  </span>
+                  <span className="font-mono text-cyan-400 font-bold bg-cyan-500/10 px-2 py-0.5 rounded-md text-[11px] min-w-[40px] h-4"></span>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 min-h-[44px] flex items-center justify-between">
                   <div>
-                    <p className="font-semibold text-slate-300">Revue des Rendez-vous</p>
-                    <p className="text-[11px] text-slate-500">Synchronisation automatique</p>
+                    <p className="font-semibold text-slate-300"></p>
+                    <p className="text-[11px] text-slate-500"></p>
                   </div>
-                  <span className="font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md text-[11px]">
-                    14:00
-                  </span>
+                  <span className="font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md text-[11px] min-w-[40px] h-4"></span>
                 </div>
               </div>
             </div>
@@ -227,7 +203,7 @@ export default function Hero() {
                   </span>
                 </div>
                 <div className="h-6 w-px bg-slate-700" />
-                <div className="text-left">
+                <div className="text-left min-w-[70px]">
                   <div className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
                     Système
                   </div>
@@ -241,7 +217,7 @@ export default function Hero() {
 
           </div>
 
-          {/* RIGHT COLUMN: Founder Office Photo (Top Right) + Simplified Human Tasks (4 cols) */}
+          {/* RIGHT COLUMN: Founder Office Photo (Top Right) + 2 Reserved Widget Spaces (4 cols) */}
           <div className="lg:col-span-4 flex flex-col gap-5 order-3">
             
             {/* 📸 Top Right Highlighted Card: Founder Office Desk Photo */}
@@ -251,82 +227,76 @@ export default function Hero() {
                 {/* Official Founder Photo */}
                 <Image
                   src="/images/founder-desk-official.jpg"
-                  alt="Le Fondateur au bureau avec l'application Alamajonda sur MacBook"
+                  alt="Le Fondateur au bureau"
                   fill
                   sizes="(max-width: 1024px) 100vw, 450px"
                   priority
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
 
-                {/* Subtle vignette & sleek corner tag */}
+                {/* Subtle vignette & sleek corner tag (espace préservé) */}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/20 pointer-events-none" />
 
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between bg-slate-900/90 backdrop-blur-md px-3 py-2 rounded-xl border border-emerald-500/30">
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between bg-slate-900/90 backdrop-blur-md px-3 py-2 rounded-xl border border-emerald-500/30 min-h-[36px]">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     <div>
-                      <p className="text-xs font-bold text-white leading-none">
-                        Espace Fondateur
-                      </p>
-                      <p className="text-[10px] text-emerald-300">
-                        Agenda Pro & Assistant Vocal
-                      </p>
+                      {/* Espace réservé pour votre texte fondateur */}
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">
-                    EN DIRECT
+                  <span className="text-[10px] font-mono text-emerald-300 px-2 py-0.5 rounded font-bold">
+                    {/* Espace badge */}
                   </span>
                 </div>
               </div>
 
             </div>
 
-            {/* Card 4: Live Voice Transcription */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40">
+            {/* Card 4: Emplacement Widget Droite Milieu (ex: Transcription) */}
+            <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[140px] flex flex-col justify-between">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Volume2 size={15} className="text-emerald-400" />
                   <span className="text-xs font-bold tracking-wider uppercase text-slate-200">
-                    Transcription Vocale
+                    {/* Espace Titre 3 */}
                   </span>
                 </div>
-                <span className="text-[10px] text-emerald-400 font-mono">IA Active</span>
+                <span className="text-[10px] text-emerald-400 font-mono"></span>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs text-slate-300 leading-relaxed italic">
-                &ldquo;Rappelle-moi mon rendez-vous de 14h par téléphone avec 15 minutes d&apos;avance.&rdquo;
+              <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs text-slate-300 leading-relaxed italic min-h-[44px]">
+                {/* Espace Texte 3 */}
               </div>
 
-              <div className="flex items-center gap-2 text-[11px] text-emerald-400 font-medium mt-2">
-                <CheckCircle2 size={13} className="text-emerald-400" />
-                Événement et appel vocal enregistrés
+              <div className="flex items-center gap-2 text-[11px] text-emerald-400 font-medium mt-2 min-h-[18px]">
+                {/* Espace Sous-titre 3 */}
               </div>
             </div>
 
-            {/* Card 5: Smart Tasks (Clean human tasks instead of code!) */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40">
+            {/* Card 5: Emplacement Widget Droite Bas (ex: Actions & Tâches) */}
+            <div className="p-4 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 min-h-[150px] flex flex-col justify-between">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Sparkles size={15} className="text-cyan-400" />
                   <span className="text-xs font-bold tracking-wider uppercase text-slate-200">
-                    Actions & Tâches Intelligentes
+                    {/* Espace Titre 4 */}
                   </span>
                 </div>
-                <span className="text-[10px] font-mono text-cyan-400">Automatisé</span>
+                <span className="text-[10px] font-mono text-cyan-400"></span>
               </div>
 
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center gap-2.5 text-slate-200 bg-slate-950/60 p-2 rounded-lg border border-slate-800/70">
+              <div className="space-y-2 text-xs flex-1 flex flex-col justify-around">
+                <div className="flex items-center gap-2.5 text-slate-200 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/70 min-h-[34px]">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span>Appel vocal IA programmé pour le rendez-vous</span>
+                  {/* Espace Tâche 1 */}
                 </div>
-                <div className="flex items-center gap-2.5 text-slate-200 bg-slate-950/60 p-2 rounded-lg border border-slate-800/70">
+                <div className="flex items-center gap-2.5 text-slate-200 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/70 min-h-[34px]">
                   <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                  <span>Synchronisation instantanée avec le calendrier</span>
+                  {/* Espace Tâche 2 */}
                 </div>
-                <div className="flex items-center gap-2.5 text-slate-200 bg-slate-950/60 p-2 rounded-lg border border-slate-800/70">
+                <div className="flex items-center gap-2.5 text-slate-200 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/70 min-h-[34px]">
                   <div className="w-1.5 h-1.5 rounded-full bg-teal-400" />
-                  <span>Notification envoyée sur votre téléphone</span>
+                  {/* Espace Tâche 3 */}
                 </div>
               </div>
             </div>
