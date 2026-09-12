@@ -35,10 +35,10 @@ export default function Hero() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none -z-10" />
       <div className="absolute top-20 right-1/4 w-80 h-80 bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
 
-      {/* Main Centered Stage (Resserré pour ne jamais coller aux bords de l'écran) */}
+      {/* Main Centered Stage */}
       <div className="max-w-5xl mx-auto flex flex-col items-center">
         
-        {/* 1. Top HUD Status Bar - Centré et discret */}
+        {/* 1. Top HUD Status Bar */}
         <div className="w-full max-w-2xl mb-8">
           <div className="flex items-center justify-between py-2 px-5 rounded-2xl bg-slate-900/50 border border-slate-800/70 backdrop-blur-xl shadow-xl">
             <div className="flex items-center gap-2">
@@ -50,10 +50,32 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* 2. Cockpit Duo : Montre Réduite + Photo Fondateur Agrandie & Rapprochée */}
-        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-12 mb-12 sm:mb-16">
+        {/* 2. Cockpit Trio : Badge Heure en Haut à Gauche + Montre Centrée + Photo à Droite */}
+        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-10 mb-14 sm:mb-20 relative">
           
-          {/* A. Montre Mécanique Centrée & Ajustée */}
+          {/* A. 🕒 Badge Heure Numérique & Synchronisation (Placé en haut à gauche de la montre) */}
+          <div className="flex flex-col justify-center items-center lg:items-end self-center lg:self-start lg:pt-4">
+            <div className="px-5 py-2 rounded-2xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-xl flex items-center gap-3.5 text-center">
+              <div className="flex items-center gap-1.5 text-emerald-400">
+                <Clock size={15} className="animate-spin-slow" />
+                <span className="text-sm sm:text-base font-black font-mono tracking-wider text-white">
+                  {formattedHours}:{formattedMinutes}:{formattedSeconds}{" "}
+                  <span className="text-[10px] text-emerald-400">{ampm}</span>
+                </span>
+              </div>
+              <div className="h-4 w-px bg-slate-700" />
+              <div className="text-left">
+                <div className="text-[8px] uppercase font-bold tracking-wider text-emerald-400">
+                  Système
+                </div>
+                <div className="text-[10px] font-semibold text-slate-200">
+                  Synchronisé
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* B. Montre Mécanique Centrée (Dégagée en dessous, plus rien de collé aux 3 tableaux) */}
           <div className="flex flex-col items-center group">
             
             {/* Watch Outer Ring & Frame */}
@@ -73,31 +95,11 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* Digital Time & System Sync Badge */}
-            <div className="mt-3.5 px-5 py-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-xl flex items-center gap-3.5 text-center">
-              <div className="flex items-center gap-1.5 text-emerald-400">
-                <Clock size={14} className="animate-spin-slow" />
-                <span className="text-sm sm:text-base font-black font-mono tracking-wider text-white">
-                  {formattedHours}:{formattedMinutes}:{formattedSeconds}{" "}
-                  <span className="text-[10px] text-emerald-400">{ampm}</span>
-                </span>
-              </div>
-              <div className="h-3.5 w-px bg-slate-700" />
-              <div className="text-left">
-                <div className="text-[8px] uppercase font-bold tracking-wider text-emerald-400">
-                  Système
-                </div>
-                <div className="text-[10px] font-semibold text-slate-200">
-                  Synchronisé
-                </div>
-              </div>
-            </div>
-
           </div>
 
-          {/* B. Photo Fondateur au bureau : Plus Grande, Rapprochée et Bien Décollée du bord */}
-          <div className="flex flex-col items-center">
-            <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-[290px] sm:w-[340px] md:w-[380px]">
+          {/* C. Photo Fondateur au bureau : À droite, équilibrée */}
+          <div className="flex flex-col items-center justify-center">
+            <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-[280px] sm:w-[320px] md:w-[350px]">
               <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/11]">
                 <Image
                   src="/images/founder-desk-official.jpg"
@@ -113,7 +115,7 @@ export default function Hero() {
 
         </div>
 
-        {/* 3. Les 3 Tableaux : Centrés, Compacts, et Largement Décollés du Bas */}
+        {/* 3. Les 3 Tableaux : Parfaitement Libérés & Décollés avec Grand Espace au-dessus et en-dessous */}
         <div className="w-full flex justify-center items-center">
           <div className="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4">
             
