@@ -7,6 +7,10 @@ import {
   Clock,
   ArrowRight,
   Radio,
+  Mic,
+  MessageSquare,
+  CalendarCheck,
+  Sparkles,
 } from "lucide-react";
 
 export default function Hero() {
@@ -152,6 +156,50 @@ export default function Hero() {
               <ArrowRight size={16} />
             </Link>
           </div>
+        </div>
+
+        {/* 🌟 3 Feature Cards (Tableaux) intégrés en bas avec design sombre & émeraude */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Tableau 1: Rappels Vocaux IA */}
+          <div className="p-6 rounded-3xl bg-slate-900/70 border border-slate-800 hover:border-emerald-500/40 backdrop-blur-xl shadow-2xl shadow-black/60 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+              <Mic size={26} className="text-emerald-400 group-hover:text-emerald-300 transition-colors" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+              Rappels Vocaux IA
+            </h3>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Planifiez des rappels vocaux clairs et naturels en quelques secondes.
+            </p>
+          </div>
+
+          {/* Tableau 2: Multi-Canaux SMS */}
+          <div className="p-6 rounded-3xl bg-slate-900/70 border border-slate-800 hover:border-cyan-500/40 backdrop-blur-xl shadow-2xl shadow-black/60 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/10 border border-cyan-500/30 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+              <MessageSquare size={26} className="text-cyan-400 group-hover:text-cyan-300 transition-colors" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+              Multi-Canaux SMS
+            </h3>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Envoyez des confirmations et rappels automatiques par SMS pour une portée maximale.
+            </p>
+          </div>
+
+          {/* Tableau 3: Agenda Intelligent */}
+          <div className="p-6 rounded-3xl bg-slate-900/70 border border-slate-800 hover:border-teal-500/40 backdrop-blur-xl shadow-2xl shadow-black/60 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/10 border border-teal-500/30 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+              <CalendarCheck size={26} className="text-teal-400 group-hover:text-teal-300 transition-colors" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+              Agenda Intelligent
+            </h3>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Organisez vos rendez-vous, réunions et tâches avec une planification intelligente.
+            </p>
+          </div>
+
         </div>
 
       </div>
