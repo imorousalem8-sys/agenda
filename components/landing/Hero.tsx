@@ -11,6 +11,8 @@ import {
   CalendarCheck,
   Zap,
   ArrowRight,
+  Activity,
+  CheckCircle2,
 } from "lucide-react";
 
 export default function Hero() {
@@ -51,7 +53,7 @@ export default function Hero() {
         {/* Cockpit Grid Responsive (Gauche: Horloge + Titre | Centre: Montre | Droite: Photo) */}
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
-          {/* A. Colonne Gauche : Horloge IA Rehaussée + Large Espace + Grand Titre & Sous-titre */}
+          {/* A. Colonne Gauche : Horloge IA Rehaussée + 1cm d'espacement + Grand Titre & Sous-titre */}
           <div className="lg:col-span-4 flex flex-col items-start justify-center pr-0 lg:pr-2">
             
             {/* 1. Module Digital Horloge IA (Espacement exact de 1 centimètre avec le texte) */}
@@ -59,7 +61,6 @@ export default function Hero() {
               style={{ marginBottom: "1cm" }}
               className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border border-emerald-500/35 backdrop-blur-2xl shadow-xl shadow-black/80 w-full max-w-[240px] group hover:border-emerald-400/50 transition-all duration-300"
             >
-              
               {/* Header avec signal actif */}
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80">
                 <div className="flex items-center gap-1.5">
@@ -98,10 +99,9 @@ export default function Hero() {
                   <Zap size={10} /> &lt;0.1ms
                 </span>
               </div>
-
             </div>
 
-            {/* 2. Grand Titre Personnalisé (Bien Décollé et Aéré) */}
+            {/* 2. Grand Titre Personnalisé */}
             <h1 className="text-2xl sm:text-3xl lg:text-[2rem] xl:text-[2.25rem] font-black text-white tracking-tight leading-[1.2] mb-3 pt-1">
               Ne manquez plus aucun{" "}
               <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
@@ -160,50 +160,128 @@ export default function Hero() {
 
         </div>
 
-        {/* 3. Les 3 Tableaux : Décollés, Centrés et Parfaitement Espacés */}
+        {/* 3. Les 3 Modules de Haute Technologie (Design HUD Ultra-Pro & Luxe) */}
         <div 
-          style={{ marginTop: "70px", marginBottom: "20px" }}
+          style={{ marginTop: "75px", marginBottom: "20px" }}
           className="w-full flex justify-center items-center flex-shrink-0"
         >
-          <div className="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-5">
             
-            {/* Tableau 1: Rappels Vocaux IA */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 hover:border-emerald-500/40 backdrop-blur-xl shadow-xl shadow-black/50 transition-all duration-300 hover:-translate-y-0.5 group">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
-                <Mic size={16} className="text-emerald-400 group-hover:text-emerald-300 transition-colors" />
+            {/* Tableau 1: Rappels Vocaux IA (Style HUD Pro) */}
+            <div className="relative p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/95 border border-emerald-500/30 backdrop-blur-2xl shadow-2xl shadow-black/70 hover:border-emerald-400/60 transition-all duration-300 hover:-translate-y-1 group flex flex-col justify-between">
+              
+              {/* Header Module avec badge */}
+              <div className="flex items-center justify-between mb-3.5 pb-2.5 border-b border-slate-800/80">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
+                    <Mic size={14} />
+                  </div>
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold">
+                    Module 01
+                  </span>
+                </div>
+                <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 font-bold">
+                  AUDIO IA
+                </span>
               </div>
-              <h3 className="text-xs sm:text-sm font-bold text-white mb-1 tracking-tight">
-                Rappels Vocaux IA
-              </h3>
-              <p className="text-[11px] text-slate-400 leading-snug">
-                Planifiez des rappels vocaux clairs et naturels en quelques secondes.
-              </p>
+
+              {/* Titre & Description */}
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-white mb-1.5 tracking-tight group-hover:text-emerald-300 transition-colors">
+                  Rappels Vocaux IA
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed mb-3">
+                  Planifiez des rappels vocaux clairs et naturels en quelques secondes.
+                </p>
+              </div>
+
+              {/* Pied de carte télémétrie */}
+              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-emerald-400">
+                <span className="flex items-center gap-1 text-slate-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Voix Haute Fidélité
+                </span>
+                <span className="font-bold">100% AUTO</span>
+              </div>
+
             </div>
 
-            {/* Tableau 2: Multi-Canaux SMS */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 hover:border-cyan-500/40 backdrop-blur-xl shadow-xl shadow-black/50 transition-all duration-300 hover:-translate-y-0.5 group">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-500/10 border border-cyan-500/30 flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
-                <MessageSquare size={16} className="text-cyan-400 group-hover:text-cyan-300 transition-colors" />
+            {/* Tableau 2: Multi-Canaux SMS (Style HUD Pro) */}
+            <div className="relative p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/95 border border-cyan-500/30 backdrop-blur-2xl shadow-2xl shadow-black/70 hover:border-cyan-400/60 transition-all duration-300 hover:-translate-y-1 group flex flex-col justify-between">
+              
+              {/* Header Module avec badge */}
+              <div className="flex items-center justify-between mb-3.5 pb-2.5 border-b border-slate-800/80">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform">
+                    <MessageSquare size={14} />
+                  </div>
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold">
+                    Module 02
+                  </span>
+                </div>
+                <span className="text-[9px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20 font-bold">
+                  SMS AUTO
+                </span>
               </div>
-              <h3 className="text-xs sm:text-sm font-bold text-white mb-1 tracking-tight">
-                Multi-Canaux SMS
-              </h3>
-              <p className="text-[11px] text-slate-400 leading-snug">
-                Envoyez des confirmations et rappels automatiques par SMS pour une portée maximale.
-              </p>
+
+              {/* Titre & Description */}
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-white mb-1.5 tracking-tight group-hover:text-cyan-300 transition-colors">
+                  Multi-Canaux SMS
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed mb-3">
+                  Envoyez des confirmations et rappels automatiques par SMS pour une portée maximale.
+                </p>
+              </div>
+
+              {/* Pied de carte télémétrie */}
+              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-cyan-400">
+                <span className="flex items-center gap-1 text-slate-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                  Routage Instantané
+                </span>
+                <span className="font-bold">&lt; 1 SEC</span>
+              </div>
+
             </div>
 
-            {/* Tableau 3: Agenda Intelligent */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 hover:border-teal-500/40 backdrop-blur-xl shadow-xl shadow-black/50 transition-all duration-300 hover:-translate-y-0.5 group">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500/20 to-emerald-500/10 border border-teal-500/30 flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
-                <CalendarCheck size={16} className="text-teal-400 group-hover:text-teal-300 transition-colors" />
+            {/* Tableau 3: Agenda Intelligent (Style HUD Pro) */}
+            <div className="relative p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/95 border border-teal-500/30 backdrop-blur-2xl shadow-2xl shadow-black/70 hover:border-teal-400/60 transition-all duration-300 hover:-translate-y-1 group flex flex-col justify-between">
+              
+              {/* Header Module avec badge */}
+              <div className="flex items-center justify-between mb-3.5 pb-2.5 border-b border-slate-800/80">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 group-hover:scale-105 transition-transform">
+                    <CalendarCheck size={14} />
+                  </div>
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold">
+                    Module 03
+                  </span>
+                </div>
+                <span className="text-[9px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full border border-teal-500/20 font-bold">
+                  AGENDA 24/7
+                </span>
               </div>
-              <h3 className="text-xs sm:text-sm font-bold text-white mb-1 tracking-tight">
-                Agenda Intelligent
-              </h3>
-              <p className="text-[11px] text-slate-400 leading-snug">
-                Organisez vos rendez-vous, réunions et tâches avec une planification intelligente.
-              </p>
+
+              {/* Titre & Description */}
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-white mb-1.5 tracking-tight group-hover:text-teal-300 transition-colors">
+                  Agenda Intelligent
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed mb-3">
+                  Organisez vos rendez-vous, réunions et tâches avec une planification intelligente.
+                </p>
+              </div>
+
+              {/* Pied de carte télémétrie */}
+              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-teal-400">
+                <span className="flex items-center gap-1 text-slate-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                  Synchronisation
+                </span>
+                <span className="font-bold">ACTIVE</span>
+              </div>
+
             </div>
 
           </div>
