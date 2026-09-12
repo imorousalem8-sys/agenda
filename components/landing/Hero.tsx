@@ -54,8 +54,11 @@ export default function Hero() {
           {/* A. Colonne Gauche : Horloge IA Rehaussée + Large Espace + Grand Titre & Sous-titre */}
           <div className="lg:col-span-4 flex flex-col items-start justify-center pr-0 lg:pr-2">
             
-            {/* 1. Module Digital Horloge IA (Rehaussé avec grand espace en dessous) */}
-            <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border border-emerald-500/35 backdrop-blur-2xl shadow-xl shadow-black/80 w-full max-w-[240px] mb-8 sm:mb-10 group hover:border-emerald-400/50 transition-all duration-300">
+            {/* 1. Module Digital Horloge IA (Espacement exact de 1 centimètre avec le texte) */}
+            <div 
+              style={{ marginBottom: "1cm" }}
+              className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border border-emerald-500/35 backdrop-blur-2xl shadow-xl shadow-black/80 w-full max-w-[240px] group hover:border-emerald-400/50 transition-all duration-300"
+            >
               
               {/* Header avec signal actif */}
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80">
