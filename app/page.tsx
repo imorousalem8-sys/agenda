@@ -9,12 +9,12 @@ export const metadata = {
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-950 text-white font-sans antialiased selection:bg-cyan-500 selection:text-slate-950 flex flex-col justify-between">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#05070c] text-white font-sans antialiased selection:bg-cyan-500 selection:text-slate-950 flex flex-col">
       {/* 1. Navigation bar */}
       <Navbar />
 
-      {/* 2. Hero Section Principale avec scène 3D */}
-      <div className="flex-1 flex flex-col justify-center">
+      {/* 2. Hero Section Principale */}
+      <div className="flex-1 w-full">
         <Hero />
       </div>
 
