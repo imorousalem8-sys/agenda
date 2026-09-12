@@ -8,6 +8,8 @@ import {
   Mic,
   MessageSquare,
   CalendarCheck,
+  Zap,
+  Activity,
 } from "lucide-react";
 
 export default function Hero() {
@@ -23,13 +25,20 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, []);
 
-  const formattedHours = time ? time.getHours().toString().padStart(2, "0") : "10";
-  const formattedMinutes = time ? time.getMinutes().toString().padStart(2, "0") : "09";
-  const formattedSeconds = time ? time.getSeconds().toString().padStart(2, "0") : "42";
-  const ampm = time && time.getHours() >= 12 ? "PM" : "AM";
+  const formattedHours = time ? time.getHours().toString().padStart(2, "0") : "20";
+  const formattedMinutes = time ? time.getMinutes().toString().padStart(2, "0") : "27";
+  const formattedSeconds = time ? time.getSeconds().toString().padStart(2, "0") : "32";
+  
+  const formattedDate = time
+    ? time.toLocaleDateString("fr-FR", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+      }).toUpperCase()
+    : "SAM. 12 SEPT.";
 
   return (
-    <section className="relative w-full bg-[#05070c] text-white pt-6 pb-28 px-6 sm:px-10 lg:px-16 overflow-hidden font-sans">
+    <section className="relative w-full bg-[#05070c] text-white pt-8 pb-28 px-6 sm:px-10 lg:px-16 overflow-hidden font-sans">
       {/* Background Matrix & Subtle Glow Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:36px_36px] opacity-10 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none -z-10" />
@@ -37,34 +46,57 @@ export default function Hero() {
 
       {/* Main Centered Stage */}
       <div className="max-w-6xl mx-auto flex flex-col items-center">
-        
 
-        {/* 2. Cockpit : Agrandissement Majestueux & Parfaitement Équilibré */}
+        {/* Cockpit : Widget Horloge Haute Précision + Montre Centrée + Photo Fondateur */}
         <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-14 relative flex-shrink-0">
           
-          {/* A. 🕒 Badge Heure Numérique (Haut Gauche) */}
-          <div className="flex flex-col justify-center items-center lg:items-end self-center lg:self-start lg:pt-3">
-            <div className="px-4 py-2 rounded-2xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-xl flex items-center gap-3.5 text-center">
-              <div className="flex items-center gap-1.5 text-emerald-400">
-                <Clock size={15} className="animate-spin-slow" />
-                <span className="text-sm sm:text-base font-black font-mono tracking-wider text-white">
-                  {formattedHours}:{formattedMinutes}:{formattedSeconds}{" "}
-                  <span className="text-[10px] text-emerald-400">{ampm}</span>
+          {/* A. ⌚ Module Digital Ultra-Pro (Chronographe & Synchro Atomique) */}
+          <div className="flex flex-col justify-center items-center lg:items-end self-center lg:self-start lg:pt-2">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-b from-slate-900/90 to-black/90 border border-emerald-500/30 backdrop-blur-2xl shadow-2xl shadow-black/80 w-[230px] sm:w-[250px] group hover:border-emerald-400/50 transition-all duration-300">
+              
+              {/* Header du module avec statut actif */}
+              <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-800/80">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-slate-300 uppercase">
+                    Horloge IA
+                  </span>
+                </div>
+                <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded-md font-semibold border border-emerald-500/20">
+                  SYNC LIVE
                 </span>
               </div>
-              <div className="h-3.5 w-px bg-slate-700" />
-              <div className="text-left">
-                <div className="text-[8px] uppercase font-bold tracking-wider text-emerald-400">
-                  Système
+
+              {/* Affichage Principal de l'Heure (Digital LED Glow) */}
+              <div className="flex items-baseline justify-between px-1 my-1 font-mono">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl sm:text-3xl font-black text-white tracking-wider drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+                    {formattedHours}:{formattedMinutes}
+                  </span>
+                  <span className="text-base sm:text-lg font-bold text-emerald-400">
+                    :{formattedSeconds}
+                  </span>
                 </div>
-                <div className="text-[10px] font-semibold text-slate-200">
-                  Synchronisé
-                </div>
+                <span className="text-[10px] font-bold text-slate-400 bg-slate-800/80 px-1.5 py-0.5 rounded">
+                  24H
+                </span>
               </div>
+
+              {/* Barre de données et précision */}
+              <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                <span className="text-slate-300">{formattedDate}</span>
+                <span className="text-emerald-400 flex items-center gap-1">
+                  <Zap size={10} /> &lt;0.1ms
+                </span>
+              </div>
+
             </div>
           </div>
 
-          {/* B. Montre Mécanique Agrandie & Impressionnante */}
+          {/* B. Montre Mécanique Squelette Centrée */}
           <div className="flex flex-col items-center group flex-shrink-0">
             <div className="relative w-[280px] h-[280px] sm:w-[330px] sm:h-[330px] md:w-[360px] md:h-[360px] rounded-full p-2.5 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
               <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-emerald-500/40 bg-[#070b10] flex items-center justify-center">
@@ -81,7 +113,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* C. Photo Fondateur au bureau Agrandie & Valorisation Maximale */}
+          {/* C. Photo Fondateur au bureau Agrandie */}
           <div className="flex flex-col items-center justify-center flex-shrink-0">
             <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-[310px] sm:w-[380px] md:w-[420px]">
               <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/11]">
@@ -99,7 +131,7 @@ export default function Hero() {
 
         </div>
 
-        {/* 3. Les 3 Tableaux : Aérés, Bien Décollés avec Espace Parfait au-dessus et en-dessous */}
+        {/* 3. Les 3 Tableaux : Aérés et Décollés */}
         <div 
           style={{ marginTop: "75px", marginBottom: "20px" }}
           className="w-full flex justify-center items-center flex-shrink-0"
