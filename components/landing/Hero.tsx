@@ -13,6 +13,8 @@ import {
   ArrowRight,
   Activity,
   CheckCircle2,
+  Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import BMXRiderAnimation from "./BMXRiderAnimation";
 import AppDetailsModal from "./AppDetailsModal";
@@ -44,7 +46,7 @@ export default function Hero() {
     : "SAM. 12 SEPT.";
 
   return (
-    <section className="relative w-full bg-[#05070c] text-white pt-4 sm:pt-8 pb-12 sm:pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden font-sans">
+    <section className="relative w-full bg-[#05070c] text-white pt-4 sm:pt-8 pb-16 sm:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden font-sans">
       {/* Background Matrix & Subtle Glow Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:36px_36px] opacity-10 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none -z-10" />
@@ -54,19 +56,19 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto flex flex-col items-center">
 
         {/* ========================================================= */}
-        {/* DISPOSITION DESKTOP (3 Colonnes : Texte | Montre | Photo) */}
+        {/* 1. DISPOSITION DESKTOP (3 Colonnes Principales)           */}
         {/* ========================================================= */}
         <div className="w-full hidden lg:grid grid-cols-12 gap-8 items-center">
           
-          {/* A. Colonne Gauche : Horloge IA + BMX + Grand Titre & Boutons */}
+          {/* A. Colonne Gauche : Horloge IA + Grand Titre & Boutons */}
           <div 
             style={{ paddingLeft: "0.5cm" }}
             className="col-span-4 flex flex-col items-start justify-center pr-2"
           >
-            {/* 1. Module Digital Horloge IA */}
+            {/* Module Digital Horloge IA */}
             <div 
-              style={{ marginBottom: "1cm" }}
-              className="p-3.5 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border border-emerald-500/35 backdrop-blur-2xl shadow-xl shadow-black/80 w-full max-w-[240px] group hover:border-emerald-400/50 transition-all duration-300"
+              style={{ marginBottom: "0.8cm" }}
+              className="p-3.5 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border-2 border-emerald-500/40 backdrop-blur-2xl shadow-xl shadow-black/80 w-full max-w-[250px] group hover:border-emerald-400/60 transition-all duration-300"
             >
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80">
                 <div className="flex items-center gap-1.5">
@@ -78,40 +80,35 @@ export default function Hero() {
                     Horloge IA
                   </span>
                 </div>
-                <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 px-1.5 py-0.5 rounded font-semibold border border-emerald-500/20">
-                  LIVE
+                <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded font-semibold border border-emerald-500/25">
+                  SYNC LIVE
                 </span>
               </div>
 
               <div className="flex items-baseline justify-between px-0.5 my-0.5 font-mono">
                 <div className="flex items-baseline gap-0.5">
-                  <span className="text-[1.65rem] font-black text-white tracking-tight drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+                  <span className="text-[1.75rem] font-black text-white tracking-tight drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
                     {formattedHours}:{formattedMinutes}
                   </span>
                   <span className="text-lg font-bold text-emerald-400">
                     :{formattedSeconds}
                   </span>
                 </div>
-                <span className="text-[9px] font-bold text-slate-400 bg-slate-800/90 px-1 py-0.5 rounded">
+                <span className="text-[9px] font-bold text-slate-400 bg-slate-800/90 px-1.5 py-0.5 rounded">
                   24H
                 </span>
               </div>
 
               <div className="mt-1.5 pt-1.5 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
-                <span className="text-slate-300">{formattedDate}</span>
+                <span className="text-slate-300 font-semibold">{formattedDate}</span>
                 <span className="text-emerald-400 flex items-center gap-1">
                   <Zap size={10} /> &lt;0.1ms
                 </span>
               </div>
             </div>
 
-            {/* Parcours BMX Bad Boys */}
-            <div className="w-full max-w-md overflow-visible relative -mb-1">
-              <BMXRiderAnimation />
-            </div>
-
             {/* Grand Titre */}
-            <h1 className="text-3xl xl:text-[2.25rem] font-black text-white tracking-tight leading-[1.2] mb-3 pt-0 relative z-10">
+            <h1 className="text-3xl xl:text-[2.35rem] font-black text-white tracking-tight leading-[1.2] mb-3 pt-0 relative z-10">
               Ne manquez plus aucun{" "}
               <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
                 rendez-vous important
@@ -119,7 +116,7 @@ export default function Hero() {
             </h1>
 
             {/* Sous-titre */}
-            <p className="text-sm text-slate-300 leading-relaxed mb-5 max-w-md">
+            <p className="text-sm text-slate-300 leading-relaxed mb-6 max-w-md">
               L&apos;assistant vocal IA intelligent pour une gestion d&apos;agenda sans effort, précise et automatisée.
             </p>
 
@@ -128,15 +125,15 @@ export default function Hero() {
               <button
                 type="button"
                 onClick={() => setShowDetailsModal(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:from-emerald-300 hover:to-teal-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/35 hover:-translate-y-0.5 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:from-emerald-300 hover:to-teal-200 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 transition-all cursor-pointer"
               >
                 <span>En savoir plus</span>
-                <ArrowRight size={14} />
+                <ArrowRight size={15} />
               </button>
 
               <Link
                 href="/register"
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full font-bold text-sm text-slate-300 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 transition-all"
+                className="inline-flex items-center gap-1.5 px-5 py-3 rounded-full font-bold text-sm text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 transition-all shadow-md"
               >
                 <span>Démarrer</span>
               </Link>
@@ -183,58 +180,50 @@ export default function Hero() {
         </div>
 
         {/* ========================================================= */}
-        {/* DISPOSITION MOBILE & TABLETTE RÉPARTIE SUR TOUT L'ESPACE  */}
-        {/* (Grand Titre Bien Visible + Duo Visuel Horizontal Agrandit) */}
+        {/* 2. DISPOSITION MOBILE & TABLETTE (Le Site D'abord !)      */}
         {/* ========================================================= */}
-        <div className="w-full flex lg:hidden flex-col items-center gap-5 sm:gap-7">
+        <div className="w-full flex lg:hidden flex-col items-center gap-5 sm:gap-6">
           
-          {/* 1. Haut : Horloge IA Agrandie + Circuit BMX */}
-          <div className="w-full flex flex-col items-center">
-            <div className="p-3 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border border-emerald-500/35 backdrop-blur-2xl shadow-xl shadow-black/80 w-full max-w-[280px]">
-              <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-800/80">
-                <div className="flex items-center gap-1.5">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  <span className="text-[10px] font-mono font-bold tracking-widest text-slate-300 uppercase">
-                    Horloge IA
-                  </span>
-                </div>
-                <span className="text-[8px] font-mono bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded font-semibold border border-emerald-500/20">
-                  LIVE SYNC
+          {/* A. Horloge IA Mobile Agrandie */}
+          <div className="p-3 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border-2 border-emerald-500/40 backdrop-blur-2xl shadow-xl shadow-black/80 w-full max-w-[280px]">
+            <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-800/80">
+              <div className="flex items-center gap-1.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span className="text-[10px] font-mono font-bold tracking-widest text-slate-300 uppercase">
+                  Horloge IA
                 </span>
               </div>
-
-              <div className="flex items-baseline justify-between px-1 my-0.5 font-mono">
-                <div className="flex items-baseline gap-0.5">
-                  <span className="text-2xl font-black text-white tracking-tight drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
-                    {formattedHours}:{formattedMinutes}
-                  </span>
-                  <span className="text-base font-bold text-emerald-400">
-                    :{formattedSeconds}
-                  </span>
-                </div>
-                <span className="text-[9px] font-bold text-slate-400 bg-slate-800/90 px-1.5 py-0.5 rounded">
-                  24H
-                </span>
-              </div>
-
-              <div className="mt-1 pt-1 border-t border-slate-800/60 flex items-center justify-between text-[9px] font-mono text-slate-400">
-                <span className="text-slate-300">{formattedDate}</span>
-                <span className="text-emerald-400 flex items-center gap-1">
-                  <Zap size={10} /> &lt;0.1ms
-                </span>
-              </div>
+              <span className="text-[8px] font-mono bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded font-semibold border border-emerald-500/20">
+                LIVE SYNC
+              </span>
             </div>
 
-            {/* Circuit BMX animé */}
-            <div className="w-full max-w-md overflow-visible relative my-1">
-              <BMXRiderAnimation />
+            <div className="flex items-baseline justify-between px-1 my-0.5 font-mono">
+              <div className="flex items-baseline gap-0.5">
+                <span className="text-2xl font-black text-white tracking-tight drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+                  {formattedHours}:{formattedMinutes}
+                </span>
+                <span className="text-base font-bold text-emerald-400">
+                  :{formattedSeconds}
+                </span>
+              </div>
+              <span className="text-[9px] font-bold text-slate-400 bg-slate-800/90 px-1.5 py-0.5 rounded">
+                24H
+              </span>
+            </div>
+
+            <div className="mt-1 pt-1 border-t border-slate-800/60 flex items-center justify-between text-[9px] font-mono text-slate-400">
+              <span className="text-slate-300">{formattedDate}</span>
+              <span className="text-emerald-400 flex items-center gap-1">
+                <Zap size={10} /> &lt;0.1ms
+              </span>
             </div>
           </div>
 
-          {/* 2. Centre : Grand Titre en Grands Caractères + Sous-titre + Boutons */}
+          {/* B. Grand Titre en Grands Caractères + Boutons */}
           <div className="w-full text-center flex flex-col items-center px-2">
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight mb-2">
               Ne manquez plus aucun{" "}
@@ -251,7 +240,7 @@ export default function Hero() {
               <button
                 type="button"
                 onClick={() => setShowDetailsModal(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:from-emerald-300 hover:to-teal-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/35 hover:-translate-y-0.5 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:from-emerald-300 hover:to-teal-200 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 transition-all cursor-pointer"
               >
                 <span>En savoir plus</span>
                 <ArrowRight size={14} />
@@ -259,15 +248,15 @@ export default function Hero() {
 
               <Link
                 href="/register"
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full font-bold text-xs sm:text-sm text-slate-300 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 transition-all"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full font-bold text-xs sm:text-sm text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 transition-all shadow-md"
               >
                 <span>Démarrer</span>
               </Link>
             </div>
           </div>
 
-          {/* 3. Duo Visuel Horizontal Agrandit (Montre + Photo côte à côte à l'horizontale) */}
-          <div className="w-full grid grid-cols-2 gap-3 sm:gap-6 items-center justify-center max-w-md my-2">
+          {/* C. Duo Visuel Horizontal Agrandit (Montre + Photo côte à côte) */}
+          <div className="w-full grid grid-cols-2 gap-3 sm:gap-6 items-center justify-center max-w-md my-1">
             
             {/* Montre Agrandie */}
             <div className="w-full flex justify-center items-center">
@@ -311,117 +300,150 @@ export default function Hero() {
         </div>
 
         {/* ========================================================= */}
-        {/* LES 3 MODULES DE HAUTE TECHNOLOGIE (Remplissent l'espace bas) */}
+        {/* 3. PARCOURS BMX EN DESSOUS DES VISUELS (Transition Stylée) */}
+        {/* ========================================================= */}
+        <div className="w-full max-w-xl my-4 sm:my-7 flex justify-center">
+          <div className="w-full">
+            <BMXRiderAnimation />
+          </div>
+        </div>
+
+        {/* ========================================================= */}
+        {/* 4. LES 3 MODULES LUXE 3D ÉPAIS & STYLE PRO               */}
         {/* ========================================================= */}
         <div 
-          className="w-full flex justify-center items-center flex-shrink-0 mt-8 sm:mt-16 md:mt-20 mb-4 sm:mb-8"
+          className="w-full flex justify-center items-center flex-shrink-0 mt-4 sm:mt-8 mb-4 sm:mb-8"
         >
-          <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-5">
+          <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6">
             
-            {/* Tableau 1: Rappels Vocaux IA */}
-            <div className="relative p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/95 border border-emerald-500/30 backdrop-blur-2xl shadow-2xl shadow-black/70 hover:border-emerald-400/60 transition-all duration-300 hover:-translate-y-1 group flex flex-col justify-between">
+            {/* Tableau 1: Rappels Vocaux IA (Cadre Épais 3D Luxe) */}
+            <div className="relative p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-slate-900/98 via-slate-950 to-black border-2 border-emerald-500/50 border-b-4 border-b-emerald-400 shadow-[0_20px_45px_rgba(0,0,0,0.9),inset_0_2px_4px_rgba(255,255,255,0.1),0_0_25px_rgba(16,185,129,0.15)] hover:border-emerald-400/80 transition-all duration-300 hover:-translate-y-1.5 group flex flex-col justify-between">
               
-              <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/80">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
-                    <Mic size={14} />
+              {/* Header Module avec badge relief */}
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800/90">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-teal-500/10 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform shadow-[0_0_12px_rgba(16,185,129,0.4)]">
+                    <Mic size={18} />
                   </div>
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold">
-                    Module 01
-                  </span>
+                  <div>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold block">
+                      Module 01
+                    </span>
+                    <span className="text-[9px] font-mono text-slate-400">TECHNOLOGIE IA</span>
+                  </div>
                 </div>
-                <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 font-bold">
-                  AUDIO IA
+                <span className="text-[10px] font-mono text-emerald-300 bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-400/40 font-bold shadow-sm">
+                  AUDIO HD
                 </span>
               </div>
 
+              {/* Titre & Description Riche */}
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-white mb-1 tracking-tight group-hover:text-emerald-300 transition-colors">
+                <h3 className="text-base sm:text-lg lg:text-xl font-black text-white mb-2 tracking-tight group-hover:text-emerald-300 transition-colors">
                   Rappels Vocaux IA
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed mb-3">
-                  Planifiez des rappels vocaux clairs et naturels en quelques secondes sans effort.
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                  Planifiez des rappels vocaux par synthèse vocale naturelle. Votre téléphone sonne à l&apos;heure exacte pour vous dicter votre tâche avec une clarté absolue.
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-emerald-400">
-                <span className="flex items-center gap-1 text-slate-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              {/* Pied de carte télémétrie */}
+              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-emerald-400 font-bold">
+                <span className="flex items-center gap-1.5 text-slate-300">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   Voix Haute Fidélité
                 </span>
-                <span className="font-bold">100% AUTO</span>
+                <span className="bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  100% AUTO
+                </span>
               </div>
 
             </div>
 
-            {/* Tableau 2: Multi-Canaux SMS */}
-            <div className="relative p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/95 border border-cyan-500/30 backdrop-blur-2xl shadow-2xl shadow-black/70 hover:border-cyan-400/60 transition-all duration-300 hover:-translate-y-1 group flex flex-col justify-between">
+            {/* Tableau 2: Multi-Canaux SMS (Cadre Épais 3D Luxe) */}
+            <div className="relative p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-slate-900/98 via-slate-950 to-black border-2 border-cyan-500/50 border-b-4 border-b-cyan-400 shadow-[0_20px_45px_rgba(0,0,0,0.9),inset_0_2px_4px_rgba(255,255,255,0.1),0_0_25px_rgba(6,182,212,0.15)] hover:border-cyan-400/80 transition-all duration-300 hover:-translate-y-1.5 group flex flex-col justify-between">
               
-              <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/80">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform">
-                    <MessageSquare size={14} />
+              {/* Header Module avec badge relief */}
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800/90">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-500/30 to-blue-500/10 border-2 border-cyan-500/50 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform shadow-[0_0_12px_rgba(6,182,212,0.4)]">
+                    <MessageSquare size={18} />
                   </div>
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold">
-                    Module 02
-                  </span>
+                  <div>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 font-bold block">
+                      Module 02
+                    </span>
+                    <span className="text-[9px] font-mono text-slate-400">ROUTAGE DIRECT</span>
+                  </div>
                 </div>
-                <span className="text-[9px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20 font-bold">
+                <span className="text-[10px] font-mono text-cyan-300 bg-cyan-500/20 px-2.5 py-1 rounded-full border border-cyan-400/40 font-bold shadow-sm">
                   SMS AUTO
                 </span>
               </div>
 
+              {/* Titre & Description Riche */}
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-white mb-1 tracking-tight group-hover:text-cyan-300 transition-colors">
+                <h3 className="text-base sm:text-lg lg:text-xl font-black text-white mb-2 tracking-tight group-hover:text-cyan-300 transition-colors">
                   Multi-Canaux SMS
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed mb-3">
-                  Envoyez des confirmations et rappels automatiques par SMS pour une portée maximale.
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                  Envoyez et recevez des confirmations instantanées par SMS et WhatsApp. Une transmission fiable et prioritaire pour ne rien laisser au hasard.
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-cyan-400">
-                <span className="flex items-center gap-1 text-slate-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              {/* Pied de carte télémétrie */}
+              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-cyan-400 font-bold">
+                <span className="flex items-center gap-1.5 text-slate-300">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
                   Routage Instantané
                 </span>
-                <span className="font-bold">&lt; 1 SEC</span>
+                <span className="bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
+                  &lt; 1 SEC
+                </span>
               </div>
 
             </div>
 
-            {/* Tableau 3: Agenda Intelligent */}
-            <div className="relative p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/95 border border-teal-500/30 backdrop-blur-2xl shadow-2xl shadow-black/70 hover:border-teal-400/60 transition-all duration-300 hover:-translate-y-1 group flex flex-col justify-between">
+            {/* Tableau 3: Agenda Intelligent (Cadre Épais 3D Luxe) */}
+            <div className="relative p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-slate-900/98 via-slate-950 to-black border-2 border-teal-500/50 border-b-4 border-b-teal-400 shadow-[0_20px_45px_rgba(0,0,0,0.9),inset_0_2px_4px_rgba(255,255,255,0.1),0_0_25px_rgba(20,184,166,0.15)] hover:border-teal-400/80 transition-all duration-300 hover:-translate-y-1.5 group flex flex-col justify-between">
               
-              <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/80">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 group-hover:scale-105 transition-transform">
-                    <CalendarCheck size={14} />
+              {/* Header Module avec badge relief */}
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800/90">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-500/30 to-emerald-500/10 border-2 border-teal-500/50 flex items-center justify-center text-teal-400 group-hover:scale-110 transition-transform shadow-[0_0_12px_rgba(20,184,166,0.4)]">
+                    <CalendarCheck size={18} />
                   </div>
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold">
-                    Module 03
-                  </span>
+                  <div>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-teal-400 font-bold block">
+                      Module 03
+                    </span>
+                    <span className="text-[9px] font-mono text-slate-400">PLANIFICATION IA</span>
+                  </div>
                 </div>
-                <span className="text-[9px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full border border-teal-500/20 font-bold">
+                <span className="text-[10px] font-mono text-teal-300 bg-teal-500/20 px-2.5 py-1 rounded-full border border-teal-400/40 font-bold shadow-sm">
                   AGENDA 24/7
                 </span>
               </div>
 
+              {/* Titre & Description Riche */}
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-white mb-1 tracking-tight group-hover:text-teal-300 transition-colors">
+                <h3 className="text-base sm:text-lg lg:text-xl font-black text-white mb-2 tracking-tight group-hover:text-teal-300 transition-colors">
                   Agenda Intelligent
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed mb-3">
-                  Organisez vos rendez-vous, réunions et tâches avec une synchronisation intelligente.
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                  Orchestrez vos rendez-vous, devis et réunions professionnelles. L&apos;IA priorise vos urgences et synchronise votre emploi du temps sans friction.
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-teal-400">
-                <span className="flex items-center gap-1 text-slate-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+              {/* Pied de carte télémétrie */}
+              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-teal-400 font-bold">
+                <span className="flex items-center gap-1.5 text-slate-300">
+                  <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
                   Synchronisation
                 </span>
-                <span className="font-bold">ACTIVE</span>
+                <span className="bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20">
+                  ACTIVE
+                </span>
               </div>
 
             </div>
