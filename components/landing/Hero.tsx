@@ -14,6 +14,7 @@ import {
   Activity,
   CheckCircle2,
 } from "lucide-react";
+import BMXRiderAnimation from "./BMXRiderAnimation";
 
 export default function Hero() {
   const [time, setTime] = useState<Date | null>(null);
@@ -104,8 +105,13 @@ export default function Hero() {
               </div>
             </div>
 
+            {/* Parcours BMX Bad Boys (2 riders animés faisant des figures sur les lettres) */}
+            <div className="w-full max-w-md overflow-visible relative -mb-1">
+              <BMXRiderAnimation />
+            </div>
+
             {/* 2. Grand Titre Personnalisé */}
-            <h1 className="text-2xl sm:text-3xl lg:text-[2rem] xl:text-[2.25rem] font-black text-white tracking-tight leading-[1.2] mb-3 pt-1">
+            <h1 className="text-2xl sm:text-3xl lg:text-[2rem] xl:text-[2.25rem] font-black text-white tracking-tight leading-[1.2] mb-3 pt-0 relative z-10">
               Ne manquez plus aucun{" "}
               <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
                 rendez-vous important
