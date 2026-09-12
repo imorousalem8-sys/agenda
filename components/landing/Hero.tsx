@@ -29,7 +29,7 @@ export default function Hero() {
   const ampm = time && time.getHours() >= 12 ? "PM" : "AM";
 
   return (
-    <section className="relative w-full bg-[#05070c] text-white pt-6 pb-24 px-6 sm:px-10 lg:px-16 overflow-hidden font-sans">
+    <section className="relative w-full bg-[#05070c] text-white pt-6 pb-28 px-6 sm:px-10 lg:px-16 overflow-hidden font-sans">
       {/* Background Matrix & Subtle Glow Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:36px_36px] opacity-10 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none -z-10" />
@@ -51,10 +51,10 @@ export default function Hero() {
         </div>
 
         {/* 2. Cockpit : Badge Heure en Haut à Gauche + Montre Centrée + Photo à Droite */}
-        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-10 mb-16 sm:mb-20 relative">
+        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-12 relative">
           
           {/* A. 🕒 Badge Heure Numérique (Placé en haut à gauche de la montre) */}
-          <div className="flex flex-col justify-center items-center lg:items-end self-center lg:self-start lg:pt-3">
+          <div className="flex flex-col justify-center items-center lg:items-end self-center lg:self-start lg:pt-2">
             <div className="px-4 py-1.5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-xl flex items-center gap-3 text-center">
               <div className="flex items-center gap-1.5 text-emerald-400">
                 <Clock size={14} className="animate-spin-slow" />
@@ -75,9 +75,9 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* B. Montre Mécanique Centrée */}
+          {/* B. Montre Mécanique Centrée (Format compact et net) */}
           <div className="flex flex-col items-center group">
-            <div className="relative w-[230px] h-[230px] sm:w-[270px] sm:h-[270px] rounded-full p-2 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
+            <div className="relative w-[210px] h-[210px] sm:w-[250px] sm:h-[250px] rounded-full p-2 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
               <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-emerald-500/40 bg-[#070b10] flex items-center justify-center">
                 <Image
                   src="/images/dark-hud-watch.jpg"
@@ -94,7 +94,7 @@ export default function Hero() {
 
           {/* C. Photo Fondateur au bureau */}
           <div className="flex flex-col items-center justify-center">
-            <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-[270px] sm:w-[310px] md:w-[340px]">
+            <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-[260px] sm:w-[300px] md:w-[330px]">
               <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/11]">
                 <Image
                   src="/images/founder-desk-official.jpg"
@@ -110,8 +110,8 @@ export default function Hero() {
 
         </div>
 
-        {/* 3. Les 3 Tableaux : Redescendus avec une grande marge de respiration (mt-12 sm:mt-16) */}
-        <div className="w-full flex justify-center items-center mt-6 sm:mt-10">
+        {/* 3. Les 3 Tableaux : Largement Espacés du Cockpit du haut avec un grand mt-14 sm:mt-20 */}
+        <div className="w-full flex justify-center items-center mt-14 sm:mt-20">
           <div className="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4">
             
             {/* Tableau 1: Rappels Vocaux IA */}
