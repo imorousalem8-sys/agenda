@@ -52,33 +52,21 @@ export default function Hero() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Main Grid: HUD Watch Center + Founder Office Top Right + Smooth Cards */}
+        {/* Main Grid: HUD Watch Center + Founder Office Top Right + 4 Smooth Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
-          {/* LEFT COLUMN: 2 Cards lisses */}
+          {/* LEFT COLUMN: 2 Cards 100% lisses */}
           <div className="lg:col-span-3 flex flex-col gap-5 order-2 lg:order-1">
             
-            {/* Card 1: Espace Gauche Haut (Onde sonore parfaitement intégrée et 100% lisse) */}
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 min-h-[160px] flex flex-col justify-between">
-              <div className="flex items-center justify-between">
+            {/* Card 1: Espace Gauche Haut (100% lisse, sans barres ni éléments) */}
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 min-h-[160px] flex flex-col">
+              <div className="flex items-center justify-between mb-2">
                 <Mic size={16} className="text-emerald-400" />
               </div>
-
-              {/* Dynamic Oscillogram Waveform (Sans sous-boîte foncée, lisse) */}
-              <div className="h-16 flex items-center justify-between gap-1.5 px-1 my-auto">
-                {[40, 65, 30, 85, 95, 45, 70, 100, 60, 40, 80, 55, 90, 35, 75, 50].map(
-                  (h, i) => (
-                    <span
-                      key={i}
-                      style={{ height: `${h}%` }}
-                      className="w-1 bg-gradient-to-t from-emerald-500 to-cyan-400 rounded-full opacity-85 hover:opacity-100 transition-opacity"
-                    />
-                  )
-                )}
-              </div>
+              <div className="flex-1 w-full" />
             </div>
 
-            {/* Card 2: Espace Gauche Bas (Intérieur totalement lisse) */}
+            {/* Card 2: Espace Gauche Bas (100% lisse) */}
             <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[220px] flex flex-col">
               <div className="flex items-center justify-between mb-4">
                 <Calendar size={16} className="text-cyan-400" />
@@ -144,7 +132,7 @@ export default function Hero() {
           {/* RIGHT COLUMN: Founder Office Photo (Top Right) + 2 Smooth Cards (4 cols) */}
           <div className="lg:col-span-4 flex flex-col gap-5 order-3">
             
-            {/* 📸 Top Right: Photo Fondateur au bureau (Propre, lisse et sans barre superposée) */}
+            {/* 📸 Top Right: Photo Fondateur au bureau (Propre et lisse) */}
             <div className="relative rounded-3xl p-1.5 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/70 group overflow-hidden">
               <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/10]">
                 <Image
@@ -158,7 +146,7 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* Card 3: Espace Droite Milieu (Totalement lisse à l'intérieur) */}
+            {/* Card 3: Espace Droite Milieu (100% lisse) */}
             <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[140px] flex flex-col">
               <div className="flex items-center justify-between mb-2">
                 <Volume2 size={16} className="text-emerald-400" />
@@ -166,7 +154,7 @@ export default function Hero() {
               <div className="flex-1 w-full" />
             </div>
 
-            {/* Card 4: Espace Droite Bas (Totalement lisse à l'intérieur) */}
+            {/* Card 4: Espace Droite Bas (100% lisse) */}
             <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 min-h-[150px] flex flex-col">
               <div className="flex items-center justify-between mb-2">
                 <Sparkles size={16} className="text-cyan-400" />
