@@ -4,12 +4,12 @@ import React from "react";
 
 export default function BMXRiderAnimation() {
   return (
-    <div className="relative w-full h-36 overflow-visible pointer-events-none select-none my-1">
+    <div className="relative w-full h-24 sm:h-32 md:h-36 overflow-visible pointer-events-none select-none my-0.5 sm:my-1">
       
       {/* ========================================================= */}
       {/* 🛣️ PISTE DE GOUDRON STREET & PORTE DE LA GRANDE HORLOGE */}
       {/* ========================================================= */}
-      <div className="absolute bottom-2 left-0 right-0 h-11 rounded-xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-y-2 border-emerald-500/50 shadow-[0_10px_25px_rgba(0,0,0,0.8)] flex items-center justify-between px-3 overflow-visible">
+      <div className="absolute bottom-1 sm:bottom-2 left-0 right-0 h-8 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-y sm:border-y-2 border-emerald-500/50 shadow-[0_10px_25px_rgba(0,0,0,0.8)] flex items-center justify-between px-1.5 sm:px-3 overflow-visible">
         
         {/* Texture Asphalte & Grain Bitume Réaliste */}
         <div className="absolute inset-0 bg-[radial-gradient(#475569_1px,transparent_1px)] [background-size:6px_6px] opacity-45 rounded-xl" />
@@ -80,7 +80,7 @@ export default function BMXRiderAnimation() {
         {/* SVG BMX PRO HAUTE DÉFINITION + RIDER STREETWEAR RÉALISTE */}
         <svg
           viewBox="0 0 115 75"
-          className="w-20 h-14 overflow-visible drop-shadow-[0_0_10px_rgba(16,185,129,0.95)]"
+          className="w-14 h-10 sm:w-20 sm:h-14 overflow-visible drop-shadow-[0_0_10px_rgba(16,185,129,0.95)]"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -256,7 +256,7 @@ export default function BMXRiderAnimation() {
         {/* SVG BMX PRO SALEM */}
         <svg
           viewBox="0 0 115 75"
-          className="w-20 h-14 overflow-visible drop-shadow-[0_0_10px_rgba(6,182,212,0.95)]"
+          className="w-14 h-10 sm:w-20 sm:h-14 overflow-visible drop-shadow-[0_0_10px_rgba(6,182,212,0.95)]"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
