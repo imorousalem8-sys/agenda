@@ -15,10 +15,12 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import BMXRiderAnimation from "./BMXRiderAnimation";
+import AppDetailsModal from "./AppDetailsModal";
 
 export default function Hero() {
   const [time, setTime] = useState<Date | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -123,14 +125,24 @@ export default function Hero() {
               L&apos;assistant vocal IA intelligent pour une gestion d&apos;agenda sans effort, précise et automatisée.
             </p>
 
-            {/* 4. Bouton d'action */}
-            <Link
-              href="/register"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:from-emerald-300 hover:to-teal-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/35 hover:-translate-y-0.5 transition-all"
-            >
-              <span>En savoir plus</span>
-              <ArrowRight size={14} />
-            </Link>
+            {/* 4. Boutons d'action */}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setShowDetailsModal(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:from-emerald-300 hover:to-teal-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/35 hover:-translate-y-0.5 transition-all cursor-pointer"
+              >
+                <span>En savoir plus</span>
+                <ArrowRight size={14} />
+              </button>
+
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full font-bold text-xs sm:text-sm text-slate-300 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 transition-all"
+              >
+                <span>Démarrer</span>
+              </Link>
+            </div>
 
           </div>
 
@@ -302,6 +314,12 @@ export default function Hero() {
         </div>
 
       </div>
+
+      {/* Modale interactive de Présentation Détaillée de l'Application */}
+      <AppDetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+      />
     </section>
   );
 }
