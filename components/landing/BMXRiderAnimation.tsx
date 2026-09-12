@@ -56,7 +56,7 @@ export default function BMXRiderAnimation() {
       </div>
 
       {/* ========================================================= */}
-      {/* 🚴‍♂️ RIDER 1 : "DOM" (Pédalage Dynamique + Position Debout + Wheelings + Tours) */}
+      {/* 🚴‍♂️ RIDER 1 : "DOM" (Pédalage Réaliste Synchronisé : Pédale au sol, Fixe en l'air) */}
       {/* ========================================================= */}
       <div className="absolute bottom-[17px] animate-dom-ground-ride flex flex-col items-center z-20">
         
@@ -69,7 +69,7 @@ export default function BMXRiderAnimation() {
           <span className="text-[8px] text-emerald-400 font-bold">⚡</span>
         </div>
 
-        {/* Badges Flottants des Nouvelles Figures Dynamiques */}
+        {/* Badges Flottants des Figures */}
         <div className="absolute -top-6 animate-trick-dom-ground px-2 py-0.5 bg-emerald-500/30 border border-emerald-400 rounded text-[9px] font-mono font-black text-emerald-300 opacity-0 whitespace-nowrap shadow-[0_0_10px_rgba(16,185,129,0.8)]">
           🔥 DEBOUT SUR LE VÉLO !
         </div>
@@ -77,7 +77,7 @@ export default function BMXRiderAnimation() {
         {/* Aura de contact pneu/goudron */}
         <div className="absolute bottom-0 left-2 w-14 h-2 bg-emerald-400/40 rounded-full blur-[2px]" />
 
-        {/* SVG BMX PRO + RIDER QUI PÉDALE VRAIMENT & SE MET DEBOUT */}
+        {/* SVG BMX PRO HAUTE DÉFINITION + RIDER STREETWEAR RÉALISTE */}
         <svg
           viewBox="0 0 115 75"
           className="w-20 h-14 overflow-visible drop-shadow-[0_0_10px_rgba(16,185,129,0.95)]"
@@ -92,112 +92,147 @@ export default function BMXRiderAnimation() {
             </linearGradient>
             <linearGradient id="bomberJacketDom" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#064e3b" />
+              <stop offset="60%" stopColor="#042f2e" />
               <stop offset="100%" stopColor="#022c22" />
             </linearGradient>
             <linearGradient id="skinDom" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#d4a373" />
               <stop offset="100%" stopColor="#a97142" />
             </linearGradient>
+            <linearGradient id="cargoDom" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#1e293b" />
+              <stop offset="100%" stopColor="#0f172a" />
+            </linearGradient>
           </defs>
 
-          {/* 🚲 ROUE ARRIÈRE PRO (Gomme noire + Rayons Néon + Pegs) */}
+          {/* 🚲 ROUE ARRIÈRE BMX PRO (Pneu sculpté + Jante néon + Rayons + Pegs) */}
           <g className="animate-spin-wheel origin-[25px_54px]">
-            <circle cx="25" cy="54" r="13" stroke="#090d16" strokeWidth="3" />
-            <circle cx="25" cy="54" r="11" stroke="#06b6d4" strokeWidth="2" />
+            {/* Pneu gomme épaisse avec crampons */}
+            <circle cx="25" cy="54" r="13.5" stroke="#090d16" strokeWidth="3" />
+            <circle cx="25" cy="54" r="12" stroke="#1e293b" strokeWidth="1" strokeDasharray="2 1" />
+            {/* Jante renforcée */}
+            <circle cx="25" cy="54" r="10.5" stroke="#06b6d4" strokeWidth="2.2" />
+            {/* Disque & Moyeu usiné */}
             <circle cx="25" cy="54" r="4.5" fill="#022c22" stroke="#34d399" strokeWidth="1.5" />
-            <line x1="25" y1="43" x2="25" y2="65" stroke="#38bdf8" strokeWidth="1.2" opacity="0.9" />
-            <line x1="14" y1="54" x2="36" y2="54" stroke="#38bdf8" strokeWidth="1.2" opacity="0.9" />
-            <line x1="17" y1="46" x2="33" y2="62" stroke="#34d399" strokeWidth="1" opacity="0.8" />
-            <line x1="17" y1="62" x2="33" y2="46" stroke="#34d399" strokeWidth="1" opacity="0.8" />
+            {/* Rayons croisés */}
+            <line x1="25" y1="42" x2="25" y2="66" stroke="#38bdf8" strokeWidth="1.2" opacity="0.9" />
+            <line x1="13" y1="54" x2="37" y2="54" stroke="#38bdf8" strokeWidth="1.2" opacity="0.9" />
+            <line x1="16.5" y1="45.5" x2="33.5" y2="62.5" stroke="#34d399" strokeWidth="1" opacity="0.8" />
+            <line x1="16.5" y1="62.5" x2="33.5" y2="45.5" stroke="#34d399" strokeWidth="1" opacity="0.8" />
           </g>
-          <rect x="23" y="52.5" width="4" height="3" rx="1" fill="#38bdf8" />
+          {/* Peg cascadeur arrière */}
+          <rect x="22.5" y="52.5" width="5" height="3" rx="1.5" fill="#38bdf8" stroke="#0f172a" strokeWidth="0.8" />
 
-          {/* 🚲 ROUE AVANT PRO (Gomme noire + Rayons Néon + Pegs) */}
+          {/* 🚲 ROUE AVANT BMX PRO */}
           <g className="animate-spin-wheel origin-[78px_54px]">
-            <circle cx="78" cy="54" r="13" stroke="#090d16" strokeWidth="3" />
-            <circle cx="78" cy="54" r="11" stroke="#10b981" strokeWidth="2" />
+            <circle cx="78" cy="54" r="13.5" stroke="#090d16" strokeWidth="3" />
+            <circle cx="78" cy="54" r="12" stroke="#1e293b" strokeWidth="1" strokeDasharray="2 1" />
+            <circle cx="78" cy="54" r="10.5" stroke="#10b981" strokeWidth="2.2" />
             <circle cx="78" cy="54" r="4.5" fill="#022c22" stroke="#06b6d4" strokeWidth="1.5" />
-            <line x1="78" y1="43" x2="78" y2="65" stroke="#34d399" strokeWidth="1.2" opacity="0.9" />
-            <line x1="67" y1="54" x2="89" y2="54" stroke="#34d399" strokeWidth="1.2" opacity="0.9" />
-            <line x1="70" y1="46" x2="86" y2="62" stroke="#38bdf8" strokeWidth="1" opacity="0.8" />
-            <line x1="70" y1="62" x2="86" y2="46" stroke="#38bdf8" strokeWidth="1" opacity="0.8" />
+            <line x1="78" y1="42" x2="78" y2="66" stroke="#34d399" strokeWidth="1.2" opacity="0.9" />
+            <line x1="66" y1="54" x2="90" y2="54" stroke="#34d399" strokeWidth="1.2" opacity="0.9" />
+            <line x1="69.5" y1="45.5" x2="86.5" y2="62.5" stroke="#38bdf8" strokeWidth="1" opacity="0.8" />
+            <line x1="69.5" y1="62.5" x2="86.5" y2="45.5" stroke="#38bdf8" strokeWidth="1" opacity="0.8" />
           </g>
-          <rect x="76" y="52.5" width="4" height="3" rx="1" fill="#10b981" />
+          <rect x="75.5" y="52.5" width="5" height="3" rx="1.5" fill="#10b981" stroke="#0f172a" strokeWidth="0.8" />
 
-          {/* 🚲 CADRE HYDROFORMÉ BMX LUXE */}
-          <path d="M 25 54 L 46 52 L 25 40 Z" stroke="url(#neonDomBike)" strokeWidth="2.5" strokeLinejoin="round" />
-          <path d="M 46 52 L 70 36 L 46 36 Z" stroke="url(#neonDomBike)" strokeWidth="3.2" strokeLinejoin="round" />
-          <path d="M 70 36 L 78 54" stroke="url(#neonDomBike)" strokeWidth="3" strokeLinecap="round" />
+          {/* 🚲 CADRE ALUMINIUM HYDROFORMÉ RÉALISTE */}
+          {/* Haubans arrière & bases */}
+          <path d="M 25 54 L 46 52 L 25 39 Z" stroke="url(#neonDomBike)" strokeWidth="2.8" strokeLinejoin="round" />
+          {/* Renfort triangle avant */}
+          <path d="M 46 52 L 70 36 L 46 35 Z" stroke="url(#neonDomBike)" strokeWidth="3.4" strokeLinejoin="round" />
+          {/* Gousset de renfort sous douille */}
+          <path d="M 64 39 L 70 36 L 68 43 Z" fill="#10b981" opacity="0.7" />
+          {/* Fourche BMX droite & tube de direction */}
+          <path d="M 70 36 L 78 54" stroke="url(#neonDomBike)" strokeWidth="3.2" strokeLinecap="round" />
           <path d="M 70 36 L 68 21" stroke="url(#neonDomBike)" strokeWidth="3.2" />
 
-          {/* Tige & Selle Streetwear */}
-          <path d="M 46 52 L 40 31" stroke="url(#neonDomBike)" strokeWidth="3" />
-          <path d="M 32 29 L 45 31" stroke="#090d16" strokeWidth="5" strokeLinecap="round" />
-          <path d="M 33 29 L 44 31" stroke="#34d399" strokeWidth="2" strokeLinecap="round" />
+          {/* Tige & Selle Slim Pivotal */}
+          <path d="M 46 52 L 40 30" stroke="url(#neonDomBike)" strokeWidth="3" />
+          <path d="M 31 28 L 45 30" stroke="#090d16" strokeWidth="5.5" strokeLinecap="round" />
+          <path d="M 32 28 L 44 30" stroke="#34d399" strokeWidth="2.2" strokeLinecap="round" />
 
-          {/* Guidon BMX 4 pièces */}
-          <path d="M 62 20 L 74 20" stroke="#38bdf8" strokeWidth="4" strokeLinecap="round" />
-          <line x1="63" y1="23" x2="73" y2="23" stroke="#34d399" strokeWidth="1.5" />
-          <line x1="62" y1="20" x2="64" y2="20" stroke="#10b981" strokeWidth="5" strokeLinecap="round" />
-          <line x1="72" y1="20" x2="74" y2="20" stroke="#10b981" strokeWidth="5" strokeLinecap="round" />
+          {/* Guidon BMX 4 pièces & Potence Top-Load */}
+          <path d="M 61 20 L 75 20" stroke="#38bdf8" strokeWidth="4.2" strokeLinecap="round" />
+          <line x1="62" y1="23" x2="74" y2="23" stroke="#34d399" strokeWidth="1.8" />
+          {/* Grips à collerette */}
+          <line x1="61" y1="20" x2="63.5" y2="20" stroke="#10b981" strokeWidth="5.5" strokeLinecap="round" />
+          <line x1="72.5" y1="20" x2="75" y2="20" stroke="#10b981" strokeWidth="5.5" strokeLinecap="round" />
 
-          {/* ⚙️ PÉDALIER ROTATIF & PÉDALAGE RÉEL EN CONTINU */}
-          <g className="animate-pedal-crank origin-[46px_52px]">
-            {/* Plateau de pédalier */}
-            <circle cx="46" cy="52" r="5" fill="#090d16" stroke="#34d399" strokeWidth="2" />
-            {/* Manivelle Gauche */}
-            <line x1="46" y1="52" x2="52" y2="62" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" />
-            <rect x="50" y="61" width="5" height="2" rx="1" fill="#10b981" />
-            {/* Manivelle Droite (opposée) */}
-            <line x1="46" y1="52" x2="40" y2="42" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" />
-            <rect x="38" y="41" width="5" height="2" rx="1" fill="#10b981" />
+          {/* ⚙️ PÉDALIER : SYNCHRONISÉ AVEC LE ROULAGE (Pédale au sol, Stop en l'air !) */}
+          <g className="animate-dom-pedal-cycle origin-[46px_52px]">
+            {/* Boîtier & Couronne 25 dents */}
+            <circle cx="46" cy="52" r="5.5" fill="#090d16" stroke="#34d399" strokeWidth="2" />
+            {/* Manivelle tubulaire 175mm Gauche */}
+            <line x1="46" y1="52" x2="52" y2="63" stroke="#38bdf8" strokeWidth="2.8" strokeLinecap="round" />
+            <rect x="50" y="62" width="6" height="2.5" rx="1.2" fill="#10b981" />
+            {/* Manivelle Droite opposée */}
+            <line x1="46" y1="52" x2="40" y2="41" stroke="#38bdf8" strokeWidth="2.8" strokeLinecap="round" />
+            <rect x="37" y="40" width="6" height="2.5" rx="1.2" fill="#10b981" />
           </g>
 
           {/* =================================================== */}
-          {/* 🧍 RIDER CORP & JAMBES QUI PÉDALENT ET SE LÈVENT DEBOUT */}
+          {/* 🧍 RIDER DOM : ANATOMIE RÉALISTE & VÊTEMENTS STREETWEAR */}
           {/* =================================================== */}
           <g className="animate-dom-standing-action">
             
-            {/* Jambe Droite (Pédalage synchronisé haut/bas) */}
-            <g className="animate-dom-leg-pedal">
-              <path d="M 42 28 Q 48 42 52 58" stroke="#0f172a" strokeWidth="5.5" strokeLinecap="round" />
-              {/* Bande réfléchissante pantalon */}
-              <path d="M 45 40 L 49 42" stroke="#34d399" strokeWidth="1.5" />
-              {/* Basket Sneaker Chunky qui appuie sur la pédale */}
-              <path d="M 50 58 L 58 60" stroke="#10b981" strokeWidth="4" strokeLinecap="round" />
-              <path d="M 51 60 L 58 60" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
+            {/* Jambe Droite : Pédalage réaliste (Actif au sol, Figé en l'air) */}
+            <g className="animate-dom-leg-motion origin-[42px_28px]">
+              {/* Cuisse & Pantalon Cargo avec plis anatomiques */}
+              <path d="M 42 27 Q 47 38 48 46" stroke="url(#cargoDom)" strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" />
+              {/* Mollet */}
+              <path d="M 48 46 L 53 59" stroke="url(#cargoDom)" strokeWidth="5.5" strokeLinecap="round" />
+              {/* Poche latérale cargo */}
+              <rect x="44" y="38" width="5" height="4" rx="1" fill="#334155" />
+              <line x1="45" y1="40" x2="48" y2="40" stroke="#34d399" strokeWidth="1" />
+              {/* Sneaker Chunky réaliste (Semelle intermédiaire + empeigne + logo) */}
+              <path d="M 50 58 L 59 60" stroke="#10b981" strokeWidth="4.5" strokeLinecap="round" />
+              <path d="M 51 60.5 L 59 60.5" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" />
+              <circle cx="53" cy="58.5" r="1" fill="#fff" />
             </g>
 
-            {/* Buste / Veste Bomber Streetwear */}
-            <path d="M 43 27 C 46 17 58 15 62 20 L 53 35 Z" fill="url(#bomberJacketDom)" stroke="#10b981" strokeWidth="1.5" />
-            <circle cx="56" cy="22" r="1.5" fill="#38bdf8" />
-            <path d="M 52 18 L 48 30" stroke="#34d399" strokeWidth="1.2" strokeLinecap="round" />
+            {/* Buste / Veste Bomber Réaliste */}
+            <path d="M 43 26 C 46 16 59 14 63 19 L 53 35 Z" fill="url(#bomberJacketDom)" stroke="#10b981" strokeWidth="1.6" />
+            {/* Blason brodé sur la poitrine */}
+            <circle cx="57" cy="21" r="1.8" fill="#38bdf8" />
+            <path d="M 53 17 L 48 30" stroke="#34d399" strokeWidth="1.4" strokeLinecap="round" />
+            {/* Ourlet côtelé bas de veste */}
+            <path d="M 47 33 L 53 35" stroke="#090d16" strokeWidth="2.5" strokeLinecap="round" />
 
-            {/* Bras 1 (sur le guidon) */}
-            <path d="M 54 20 L 68 21" stroke="url(#bomberJacketDom)" strokeWidth="5" strokeLinecap="round" />
-            <rect x="66" y="20" width="2" height="3" fill="#34d399" />
-            <circle cx="69" cy="21" r="2.2" fill="url(#skinDom)" />
+            {/* Bras 1 (Prise ferme sur le grip du guidon) */}
+            <path d="M 54 19 L 68 21" stroke="url(#bomberJacketDom)" strokeWidth="5.5" strokeLinecap="round" />
+            <rect x="66" y="19.5" width="2.5" height="3.5" rx="1" fill="#34d399" />
+            <circle cx="69.5" cy="21" r="2.5" fill="url(#skinDom)" />
 
-            {/* Bras 2 Débout Trick (Se lève en l'air lors de la position debout !) */}
+            {/* Bras 2 (Se lève uniquement lors de la figure "Debout") */}
             <g className="animate-dom-arm-trick">
-              <path d="M 55 19 L 62 8" stroke="url(#bomberJacketDom)" strokeWidth="4.5" strokeLinecap="round" />
-              <circle cx="63" cy="7" r="2.2" fill="url(#skinDom)" />
+              <path d="M 55 18 L 63 7" stroke="url(#bomberJacketDom)" strokeWidth="5" strokeLinecap="round" />
+              <circle cx="64" cy="6" r="2.5" fill="url(#skinDom)" />
             </g>
 
-            {/* Tête & Cou */}
-            <circle cx="58" cy="13" r="5.5" fill="url(#skinDom)" />
+            {/* Tête, Visage & Profil Réaliste */}
+            <circle cx="58" cy="13" r="5.8" fill="url(#skinDom)" />
+            {/* Mâchoire sculptée */}
+            <path d="M 55 15 Q 60 17 62 13" stroke="url(#skinDom)" strokeWidth="1.5" />
 
-            {/* 🧢 Casquette tournée en arrière Bad Boy */}
-            <path d="M 53 12 C 53 6 63 6 64 12 Z" fill="#10b981" stroke="#06b6d4" strokeWidth="1" />
-            <path d="M 53 12 Q 43 13 41 10" stroke="#06b6d4" strokeWidth="3" strokeLinecap="round" />
-            <path d="M 58 13 L 63 13" stroke="#000" strokeWidth="2.2" strokeLinecap="round" />
+            {/* 🧢 Casquette Snapback tournée en arrière Haute Définition */}
+            <path d="M 53 12 C 53 5 64 5 65 12 Z" fill="#10b981" stroke="#06b6d4" strokeWidth="1.2" />
+            {/* Bouton central sur le dôme */}
+            <circle cx="58.5" cy="5.5" r="1" fill="#38bdf8" />
+            {/* Visière incurvée tournée vers l'arrière */}
+            <path d="M 53 12 Q 42 13 40 10" stroke="#06b6d4" strokeWidth="3.5" strokeLinecap="round" />
+            {/* Bande de réglage snapback à l'avant */}
+            <path d="M 62 11 L 64 11" stroke="#090d16" strokeWidth="1.5" />
+            {/* Lunettes de soleil noires avec reflet */}
+            <path d="M 57.5 13.5 L 63.5 13.5" stroke="#000000" strokeWidth="2.5" strokeLinecap="round" />
+            <line x1="58.5" y1="13" x2="61" y2="13" stroke="#38bdf8" strokeWidth="1" />
           </g>
 
         </svg>
       </div>
 
       {/* ========================================================= */}
-      {/* 🚴‍♂️ RIDER 2 : "SALEM" (Pédalage Continu, Wheelings & Tours Aériens) */}
+      {/* 🚴‍♂️ RIDER 2 : "SALEM" (Pédalage Réaliste au Sol + Stop en L'air) */}
       {/* ========================================================= */}
       <div className="absolute bottom-[17px] animate-salem-ground-ride flex flex-col items-center z-10">
         
@@ -215,7 +250,7 @@ export default function BMXRiderAnimation() {
           ⚡ 360 TOUR COMPLET EN L&apos;AIR !
         </div>
 
-        {/* Aura de contact pneu/goudron */}
+        {/* Aura de contact */}
         <div className="absolute bottom-0 left-2 w-14 h-2 bg-cyan-400/40 rounded-full blur-[2px]" />
 
         {/* SVG BMX PRO SALEM */}
@@ -233,7 +268,8 @@ export default function BMXRiderAnimation() {
             </linearGradient>
             <linearGradient id="windbreakerSalem" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#083344" />
-              <stop offset="100%" stopColor="#1e1b4b" />
+              <stop offset="60%" stopColor="#1e1b4b" />
+              <stop offset="100%" stopColor="#0f172a" />
             </linearGradient>
             <linearGradient id="skinSalem" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#e0ac69" />
@@ -243,127 +279,179 @@ export default function BMXRiderAnimation() {
 
           {/* Roues Pro Salem */}
           <g className="animate-spin-wheel origin-[25px_54px]">
-            <circle cx="25" cy="54" r="13" stroke="#090d16" strokeWidth="3" />
-            <circle cx="25" cy="54" r="11" stroke="#a855f7" strokeWidth="2" />
+            <circle cx="25" cy="54" r="13.5" stroke="#090d16" strokeWidth="3" />
+            <circle cx="25" cy="54" r="12" stroke="#1e293b" strokeWidth="1" strokeDasharray="2 1" />
+            <circle cx="25" cy="54" r="10.5" stroke="#a855f7" strokeWidth="2.2" />
             <circle cx="25" cy="54" r="4.5" fill="#1e1b4b" stroke="#06b6d4" strokeWidth="1.5" />
-            <line x1="25" y1="43" x2="25" y2="65" stroke="#06b6d4" strokeWidth="1.2" opacity="0.9" />
-            <line x1="14" y1="54" x2="36" y2="54" stroke="#06b6d4" strokeWidth="1.2" opacity="0.9" />
-            <line x1="17" y1="46" x2="33" y2="62" stroke="#a855f7" strokeWidth="1" opacity="0.8" />
-            <line x1="17" y1="62" x2="33" y2="46" stroke="#a855f7" strokeWidth="1" opacity="0.8" />
+            <line x1="25" y1="42" x2="25" y2="66" stroke="#06b6d4" strokeWidth="1.2" opacity="0.9" />
+            <line x1="13" y1="54" x2="37" y2="54" stroke="#06b6d4" strokeWidth="1.2" opacity="0.9" />
+            <line x1="16.5" y1="45.5" x2="33.5" y2="62.5" stroke="#a855f7" strokeWidth="1" opacity="0.8" />
+            <line x1="16.5" y1="62.5" x2="33.5" y2="45.5" stroke="#a855f7" strokeWidth="1" opacity="0.8" />
           </g>
-          <rect x="23" y="52.5" width="4" height="3" rx="1" fill="#a855f7" />
+          <rect x="22.5" y="52.5" width="5" height="3" rx="1.5" fill="#a855f7" stroke="#0f172a" strokeWidth="0.8" />
 
           <g className="animate-spin-wheel origin-[78px_54px]">
-            <circle cx="78" cy="54" r="13" stroke="#090d16" strokeWidth="3" />
-            <circle cx="78" cy="54" r="11" stroke="#06b6d4" strokeWidth="2" />
+            <circle cx="78" cy="54" r="13.5" stroke="#090d16" strokeWidth="3" />
+            <circle cx="78" cy="54" r="12" stroke="#1e293b" strokeWidth="1" strokeDasharray="2 1" />
+            <circle cx="78" cy="54" r="10.5" stroke="#06b6d4" strokeWidth="2.2" />
             <circle cx="78" cy="54" r="4.5" fill="#1e1b4b" stroke="#a855f7" strokeWidth="1.5" />
-            <line x1="78" y1="43" x2="78" y2="65" stroke="#a855f7" strokeWidth="1.2" opacity="0.9" />
-            <line x1="67" y1="54" x2="89" y2="54" stroke="#a855f7" strokeWidth="1.2" opacity="0.9" />
-            <line x1="70" y1="46" x2="86" y2="62" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
-            <line x1="70" y1="62" x2="86" y2="46" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
+            <line x1="78" y1="42" x2="78" y2="66" stroke="#a855f7" strokeWidth="1.2" opacity="0.9" />
+            <line x1="66" y1="54" x2="90" y2="54" stroke="#a855f7" strokeWidth="1.2" opacity="0.9" />
+            <line x1="69.5" y1="45.5" x2="86.5" y2="62.5" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
+            <line x1="69.5" y1="62.5" x2="86.5" y2="45.5" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
           </g>
-          <rect x="76" y="52.5" width="4" height="3" rx="1" fill="#06b6d4" />
+          <rect x="75.5" y="52.5" width="5" height="3" rx="1.5" fill="#06b6d4" stroke="#0f172a" strokeWidth="0.8" />
 
-          {/* Cadre BMX Salem */}
-          <path d="M 25 54 L 46 52 L 25 40 Z" stroke="url(#neonSalemBike)" strokeWidth="2.5" strokeLinejoin="round" />
-          <path d="M 46 52 L 70 36 L 46 36 Z" stroke="url(#neonSalemBike)" strokeWidth="3.2" strokeLinejoin="round" />
-          <path d="M 70 36 L 78 54" stroke="url(#neonSalemBike)" strokeWidth="3" strokeLinecap="round" />
+          {/* Cadre Salem */}
+          <path d="M 25 54 L 46 52 L 25 39 Z" stroke="url(#neonSalemBike)" strokeWidth="2.8" strokeLinejoin="round" />
+          <path d="M 46 52 L 70 36 L 46 35 Z" stroke="url(#neonSalemBike)" strokeWidth="3.4" strokeLinejoin="round" />
+          <path d="M 70 36 L 78 54" stroke="url(#neonSalemBike)" strokeWidth="3.2" strokeLinecap="round" />
           <path d="M 70 36 L 68 21" stroke="url(#neonSalemBike)" strokeWidth="3.2" />
 
           {/* Selle */}
-          <path d="M 46 52 L 40 31" stroke="url(#neonSalemBike)" strokeWidth="3" />
-          <path d="M 32 29 L 45 31" stroke="#090d16" strokeWidth="5" strokeLinecap="round" />
-          <path d="M 33 29 L 44 31" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 46 52 L 40 30" stroke="url(#neonSalemBike)" strokeWidth="3" />
+          <path d="M 31 28 L 45 30" stroke="#090d16" strokeWidth="5.5" strokeLinecap="round" />
+          <path d="M 32 28 L 44 30" stroke="#06b6d4" strokeWidth="2.2" strokeLinecap="round" />
 
           {/* Guidon */}
-          <path d="M 62 20 L 74 20" stroke="#a855f7" strokeWidth="4" strokeLinecap="round" />
-          <line x1="63" y1="23" x2="73" y2="23" stroke="#06b6d4" strokeWidth="1.5" />
-          <line x1="62" y1="20" x2="64" y2="20" stroke="#06b6d4" strokeWidth="5" strokeLinecap="round" />
-          <line x1="72" y1="20" x2="74" y2="20" stroke="#06b6d4" strokeWidth="5" strokeLinecap="round" />
+          <path d="M 61 20 L 75 20" stroke="#a855f7" strokeWidth="4.2" strokeLinecap="round" />
+          <line x1="62" y1="23" x2="74" y2="23" stroke="#06b6d4" strokeWidth="1.8" />
+          <line x1="61" y1="20" x2="63.5" y2="20" stroke="#06b6d4" strokeWidth="5.5" strokeLinecap="round" />
+          <line x1="72.5" y1="20" x2="75" y2="20" stroke="#06b6d4" strokeWidth="5.5" strokeLinecap="round" />
 
-          {/* ⚙️ PÉDALIER SALEM EN ROTATION CONTINUE */}
-          <g className="animate-pedal-crank origin-[46px_52px]">
-            <circle cx="46" cy="52" r="5" fill="#090d16" stroke="#06b6d4" strokeWidth="2" />
-            <line x1="46" y1="52" x2="52" y2="62" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round" />
-            <rect x="50" y="61" width="5" height="2" rx="1" fill="#06b6d4" />
-            <line x1="46" y1="52" x2="40" y2="42" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round" />
-            <rect x="38" y="41" width="5" height="2" rx="1" fill="#06b6d4" />
+          {/* ⚙️ PÉDALIER SALEM : SYNCHRONISÉ */}
+          <g className="animate-salem-pedal-cycle origin-[46px_52px]">
+            <circle cx="46" cy="52" r="5.5" fill="#090d16" stroke="#06b6d4" strokeWidth="2" />
+            <line x1="46" y1="52" x2="52" y2="63" stroke="#a855f7" strokeWidth="2.8" strokeLinecap="round" />
+            <rect x="50" y="62" width="6" height="2.5" rx="1.2" fill="#06b6d4" />
+            <line x1="46" y1="52" x2="40" y2="41" stroke="#a855f7" strokeWidth="2.8" strokeLinecap="round" />
+            <rect x="37" y="40" width="6" height="2.5" rx="1.2" fill="#06b6d4" />
           </g>
 
-          {/* Corps Salem & Jambes qui pédalent */}
+          {/* Corps & Vêtements Salem */}
           <g className="animate-salem-standing-action">
-            <g className="animate-salem-leg-pedal">
-              <path d="M 42 28 Q 48 42 52 58" stroke="#0f172a" strokeWidth="5.5" strokeLinecap="round" />
+            <g className="animate-salem-leg-motion origin-[42px_28px]">
+              <path d="M 42 27 Q 47 38 48 46" stroke="#0f172a" strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M 48 46 L 53 59" stroke="#0f172a" strokeWidth="5.5" strokeLinecap="round" />
               <path d="M 45 40 L 49 42" stroke="#a855f7" strokeWidth="1.5" />
-              <path d="M 50 58 L 58 60" stroke="#06b6d4" strokeWidth="4" strokeLinecap="round" />
-              <path d="M 51 60 L 58 60" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M 50 58 L 59 60" stroke="#06b6d4" strokeWidth="4.5" strokeLinecap="round" />
+              <path d="M 51 60.5 L 59 60.5" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" />
             </g>
 
-            <path d="M 43 27 C 46 17 58 15 62 20 L 53 35 Z" fill="url(#windbreakerSalem)" stroke="#06b6d4" strokeWidth="1.5" />
-            <circle cx="56" cy="22" r="1.5" fill="#a855f7" />
-            <path d="M 52 18 L 48 30" stroke="#06b6d4" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M 43 26 C 46 16 59 14 63 19 L 53 35 Z" fill="url(#windbreakerSalem)" stroke="#06b6d4" strokeWidth="1.6" />
+            <circle cx="57" cy="21" r="1.8" fill="#a855f7" />
+            <path d="M 53 17 L 48 30" stroke="#06b6d4" strokeWidth="1.4" strokeLinecap="round" />
 
-            <path d="M 54 20 L 68 21" stroke="url(#windbreakerSalem)" strokeWidth="5" strokeLinecap="round" />
-            <circle cx="69" cy="21" r="2.2" fill="url(#skinSalem)" />
+            <path d="M 54 19 L 68 21" stroke="url(#windbreakerSalem)" strokeWidth="5.5" strokeLinecap="round" />
+            <circle cx="69.5" cy="21" r="2.5" fill="url(#skinSalem)" />
 
-            <circle cx="58" cy="13" r="5.5" fill="url(#skinSalem)" />
+            <circle cx="58" cy="13" r="5.8" fill="url(#skinSalem)" />
 
-            {/* 🧢 Casquette tournée en arrière Cyan Bad Boy */}
-            <path d="M 53 12 C 53 6 63 6 64 12 Z" fill="#06b6d4" stroke="#a855f7" strokeWidth="1" />
-            <path d="M 53 12 Q 43 13 41 10" stroke="#a855f7" strokeWidth="3" strokeLinecap="round" />
-            <path d="M 58 13 L 63 13" stroke="#000" strokeWidth="2.2" strokeLinecap="round" />
+            {/* 🧢 Casquette Cyan Snapback */}
+            <path d="M 53 12 C 53 5 64 5 65 12 Z" fill="#06b6d4" stroke="#a855f7" strokeWidth="1.2" />
+            <circle cx="58.5" cy="5.5" r="1" fill="#38bdf8" />
+            <path d="M 53 12 Q 42 13 40 10" stroke="#a855f7" strokeWidth="3.5" strokeLinecap="round" />
+            <path d="M 57.5 13.5 L 63.5 13.5" stroke="#000000" strokeWidth="2.5" strokeLinecap="round" />
           </g>
         </svg>
       </div>
 
       <style jsx>{`
         /* ===================================================
-           PÉDALAGE DYNAMIQUE EN CONTINU (Jambes & Pédales)
+           LOGIQUE PHYSIQUE DE PÉDALAGE RÉALISTE :
+           - 0% à 32% : Pédalage actif au sol pour accélérer & cabrer
+           - 35% à 48% : EN L'AIR (Saut Kicker) -> PÉDALAGE ARRÊTÉ / FIGÉ
+           - 50% à 68% : Réception au sol -> Pédalage réenclenché
+           - 70% à 100% : Roue libre en entrant dans l'horloge
            =================================================== */
-        @keyframes pedalCrank {
-          from {
+        @keyframes domPedalLogic {
+          0% {
             transform: rotate(0deg);
           }
-          to {
-            transform: rotate(360deg);
+          32% {
+            /* Pédalage intense sur le goudron */
+            transform: rotate(1440deg);
           }
-        }
-
-        .animate-pedal-crank {
-          animation: pedalCrank 0.4s linear infinite;
-        }
-
-        /* Flexion / Extension des jambes au pédalage */
-        @keyframes legPedalMotion {
-          0%, 100% {
-            transform: translateY(0px) scaleY(1);
+          35%, 48% {
+            /* 🛑 EN L'AIR : PÉDALAGE TOTALEMENT STOPPÉ / FIGÉ POUR ÉQUILIBRE */
+            transform: rotate(1440deg);
           }
           50% {
-            transform: translateY(-4px) scaleY(0.92);
+            /* Atterrissage : Reprise du pédalage */
+            transform: rotate(1440deg);
+          }
+          68% {
+            transform: rotate(2520deg);
+          }
+          72%, 100% {
+            /* Roue libre entrée horloge */
+            transform: rotate(2520deg);
           }
         }
 
-        .animate-dom-leg-pedal {
-          animation: legPedalMotion 0.4s ease-in-out infinite;
-          transform-origin: 42px 28px;
+        @keyframes salemPedalLogic {
+          0% {
+            transform: rotate(0deg);
+          }
+          34% {
+            transform: rotate(1440deg);
+          }
+          37%, 48% {
+            /* 🛑 EN L'AIR : STOP FIGÉ */
+            transform: rotate(1440deg);
+          }
+          52% {
+            transform: rotate(1440deg);
+          }
+          68% {
+            transform: rotate(2520deg);
+          }
+          74%, 100% {
+            transform: rotate(2520deg);
+          }
         }
 
-        .animate-salem-leg-pedal {
-          animation: legPedalMotion 0.4s ease-in-out infinite;
-          transform-origin: 42px 28px;
-          animation-delay: 0.2s;
+        .animate-dom-pedal-cycle {
+          animation: domPedalLogic 10s ease-in-out infinite;
+        }
+
+        .animate-salem-pedal-cycle {
+          animation: salemPedalLogic 10s ease-in-out infinite;
+          animation-delay: 2.5s;
+        }
+
+        /* Mouvement de flexion de la jambe synchronisé */
+        @keyframes domLegFlexLogic {
+          0%, 8%, 16%, 24%, 52%, 60%, 68% {
+            transform: translateY(0px) scaleY(1);
+          }
+          4%, 12%, 20%, 28%, 56%, 64% {
+            transform: translateY(-3.5px) scaleY(0.93);
+          }
+          33%, 49%, 72%, 100% {
+            /* 🛑 Jambe fixe et stable en l'air */
+            transform: translateY(0px) scaleY(1);
+          }
+        }
+
+        .animate-dom-leg-motion {
+          animation: domLegFlexLogic 10s ease-in-out infinite;
+        }
+
+        .animate-salem-leg-motion {
+          animation: domLegFlexLogic 10s ease-in-out infinite;
+          animation-delay: 2.5s;
         }
 
         /* ===================================================
            FIGURE : SE METTRE DEBOUT SUR LE VÉLO (STAND-UP)
            =================================================== */
         @keyframes standingAction {
-          0%, 15%, 45%, 100% {
-            /* Position de conduite normale assise */
+          0%, 12%, 45%, 100% {
             transform: translateY(0px);
           }
-          20%, 38% {
-            /* SE MET DEBOUT SUR LES PÉDALES : ÉLÉVATION DU CORPS */
+          16%, 25% {
+            /* SE MET DEBOUT SUR LES PÉDALES */
             transform: translateY(-7px) scaleY(1.06);
           }
         }
@@ -379,13 +467,12 @@ export default function BMXRiderAnimation() {
           animation-delay: 2.5s;
         }
 
-        /* Bras levé en l'air pendant le Stand-Up */
         @keyframes armTrickAction {
-          0%, 18%, 40%, 100% {
+          0%, 14%, 27%, 100% {
             opacity: 0;
             transform: scale(0.6);
           }
-          22%, 36% {
+          17%, 24% {
             opacity: 1;
             transform: scale(1);
           }
@@ -393,7 +480,7 @@ export default function BMXRiderAnimation() {
 
         .animate-dom-arm-trick {
           animation: armTrickAction 10s ease-in-out infinite;
-          transform-origin: 55px 19px;
+          transform-origin: 55px 18px;
         }
 
         /* ===================================================
@@ -406,32 +493,30 @@ export default function BMXRiderAnimation() {
             transform: translateY(0px) rotate(0deg) scale(0.9);
           }
           6% {
-            /* Roulage normal avec pédalage actif */
             left: 5%;
             opacity: 1;
             transform: translateY(0px) rotate(0deg) scale(1);
           }
           14% {
-            /* FIGURE 1 : SE MET DEBOUT SUR LE VÉLO EN ROULANT */
+            /* FIGURE 1 : DEBOUT SUR LE VÉLO */
             left: 15%;
             opacity: 1;
             transform: translateY(0px) rotate(0deg);
           }
           24% {
-            /* FIGURE 2 : CABRAGE EN VRAI WHEELING ARRIÈRE AU SOL */
+            /* FIGURE 2 : VRAI WHEELING ARRIÈRE AU SOL */
             left: 28%;
             opacity: 1;
             transform: translateY(0px) rotate(-35deg);
             transform-origin: 25px 54px;
           }
           33% {
-            /* Repose de la roue avant pour foncer sur le tremplin */
             left: 36%;
             opacity: 1;
             transform: translateY(0px) rotate(0deg);
           }
           38% {
-            /* 🚀 ENVOI TREMPLIN : GRAND TOUR ACROBATIQUE 360 EN L'AIR */
+            /* 🚀 ENVOI TREMPLIN : 360 EN L'AIR (SANS PÉDALER) */
             left: 44%;
             opacity: 1;
             transform: translateY(-44px) rotate(340deg);
@@ -443,26 +528,24 @@ export default function BMXRiderAnimation() {
             transform: translateY(0px) rotate(0deg);
           }
           54% {
-            /* Relance en Wheeling dynamique */
+            /* Relance */
             left: 65%;
             opacity: 1;
             transform: translateY(0px) rotate(-26deg);
             transform-origin: 25px 54px;
           }
           64% {
-            /* Sprint face à la porte */
             left: 78%;
             opacity: 1;
             transform: translateY(0px) rotate(0deg);
           }
           72% {
-            /* 🚪 ENTRÉE DANS LA PORTE DE LA GRANDE HORLOGE */
+            /* 🚪 ENTRÉE DANS LA PORTE DE L'HORLOGE */
             left: 88%;
             opacity: 1;
             transform: translateY(0px) rotate(0deg) scale(0.95);
           }
           78% {
-            /* Aspiration lumineuse */
             left: 95%;
             opacity: 0;
             transform: translateY(-4px) rotate(0deg) scale(0.65);
@@ -486,13 +569,12 @@ export default function BMXRiderAnimation() {
             transform: translateY(0px) rotate(0deg) scale(1);
           }
           15% {
-            /* Stand-up Trick */
             left: 16%;
             opacity: 1;
             transform: translateY(0px) rotate(0deg);
           }
           26% {
-            /* VRAI WHEELING CABRÉ SALEM */
+            /* VRAI WHEELING */
             left: 30%;
             opacity: 1;
             transform: translateY(0px) rotate(-36deg);
@@ -504,13 +586,12 @@ export default function BMXRiderAnimation() {
             transform: translateY(0px) rotate(0deg);
           }
           40% {
-            /* 🚀 ENVOI SUR TREMPLIN : 360 TOUR COMPLET EN L'AIR */
+            /* 🚀 ENVOI TREMPLIN : 360 EN L'AIR (SANS PÉDALER) */
             left: 45%;
             opacity: 1;
             transform: translateY(-46px) rotate(-350deg);
           }
           48% {
-            /* Atterrissage sur goudron */
             left: 56%;
             opacity: 1;
             transform: translateY(0px) rotate(0deg);
@@ -527,7 +608,7 @@ export default function BMXRiderAnimation() {
             transform: translateY(0px) rotate(0deg);
           }
           74% {
-            /* 🚪 ENTRÉE DANS LA PORTE DE LA GRANDE HORLOGE */
+            /* 🚪 ENTRÉE DANS LA PORTE */
             left: 89%;
             opacity: 1;
             transform: translateY(0px) rotate(0deg) scale(0.95);
