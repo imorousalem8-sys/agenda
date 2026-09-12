@@ -53,8 +53,11 @@ export default function Hero() {
         {/* Cockpit Grid Responsive (Gauche: Horloge + Titre | Centre: Montre | Droite: Photo) */}
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
-          {/* A. Colonne Gauche : Horloge IA Rehaussée + 1cm d'espacement + Grand Titre & Sous-titre */}
-          <div className="lg:col-span-4 flex flex-col items-start justify-center pr-0 lg:pr-2">
+          {/* A. Colonne Gauche : Décollée du bord de 0.5cm + Horloge IA + Grand Titre & Sous-titre */}
+          <div 
+            style={{ paddingLeft: "0.5cm" }}
+            className="lg:col-span-4 flex flex-col items-start justify-center pr-0 lg:pr-2"
+          >
             
             {/* 1. Module Digital Horloge IA (Espacement exact de 1 centimètre avec le texte) */}
             <div 
