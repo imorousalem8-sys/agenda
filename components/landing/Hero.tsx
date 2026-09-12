@@ -16,7 +16,6 @@ import {
   Sparkles,
   ShieldCheck,
 } from "lucide-react";
-import BMXRiderAnimation from "./BMXRiderAnimation";
 import AppDetailsModal from "./AppDetailsModal";
 
 export default function Hero() {
@@ -299,13 +298,9 @@ export default function Hero() {
 
         </div>
 
-        {/* ========================================================= */}
-        {/* 3. PARCOURS BMX EN DESSOUS DES VISUELS (Transition Stylée) */}
-        {/* ========================================================= */}
-        <div className="w-full max-w-xl my-4 sm:my-7 flex justify-center">
-          <div className="w-full">
-            <BMXRiderAnimation />
-          </div>
+        {/* Séparateur Lumineux HUD Subtil */}
+        <div className="w-full max-w-4xl my-6 sm:my-10 flex items-center justify-center">
+          <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/30 via-cyan-500/30 to-transparent" />
         </div>
 
         {/* ========================================================= */}
