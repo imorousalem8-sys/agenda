@@ -9,7 +9,6 @@ import {
   MessageSquare,
   CalendarCheck,
   Zap,
-  Activity,
 } from "lucide-react";
 
 export default function Hero() {
@@ -38,25 +37,25 @@ export default function Hero() {
     : "SAM. 12 SEPT.";
 
   return (
-    <section className="relative w-full bg-[#05070c] text-white pt-8 pb-28 px-6 sm:px-10 lg:px-16 overflow-hidden font-sans">
+    <section className="relative w-full bg-[#05070c] text-white pt-8 pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden font-sans">
       {/* Background Matrix & Subtle Glow Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:36px_36px] opacity-10 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none -z-10" />
       <div className="absolute top-20 right-1/4 w-80 h-80 bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
 
-      {/* Main Centered Stage */}
+      {/* Main Stage Container (Garantit que rien ne déborde des bords de l'écran) */}
       <div className="max-w-6xl mx-auto flex flex-col items-center">
 
-        {/* Cockpit : Widget Horloge Haute Précision + Montre Centrée + Photo Fondateur */}
-        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-14 relative flex-shrink-0">
+        {/* Cockpit Grid Responsive : Horloge Digitale + Montre + Photo Fondateur */}
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center justify-items-center">
           
-          {/* A. ⌚ Module Digital Ultra-Pro (Chronographe & Synchro Atomique) */}
-          <div className="flex flex-col justify-center items-center lg:items-end self-center lg:self-start lg:pt-2">
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-b from-slate-900/90 to-black/90 border border-emerald-500/30 backdrop-blur-2xl shadow-2xl shadow-black/80 w-[230px] sm:w-[250px] group hover:border-emerald-400/50 transition-all duration-300">
+          {/* A. ⌚ Module Digital Ultra-Pro (Gauche - 100% visible, bien cadré) */}
+          <div className="lg:col-span-3 w-full flex justify-center lg:justify-end">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border border-emerald-500/35 backdrop-blur-2xl shadow-2xl shadow-black/80 w-full max-w-[230px] group hover:border-emerald-400/50 transition-all duration-300">
               
-              {/* Header du module avec statut actif */}
-              <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-800/80">
-                <div className="flex items-center gap-2">
+              {/* Header avec signal actif */}
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80">
+                <div className="flex items-center gap-1.5">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -65,30 +64,30 @@ export default function Hero() {
                     Horloge IA
                   </span>
                 </div>
-                <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded-md font-semibold border border-emerald-500/20">
+                <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 px-1.5 py-0.5 rounded font-semibold border border-emerald-500/20">
                   SYNC LIVE
                 </span>
               </div>
 
-              {/* Affichage Principal de l'Heure (Digital LED Glow) */}
-              <div className="flex items-baseline justify-between px-1 my-1 font-mono">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl sm:text-3xl font-black text-white tracking-wider drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+              {/* Affichage de l'Heure */}
+              <div className="flex items-baseline justify-between px-0.5 my-1 font-mono">
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-2xl sm:text-[1.75rem] font-black text-white tracking-tight drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
                     {formattedHours}:{formattedMinutes}
                   </span>
                   <span className="text-base sm:text-lg font-bold text-emerald-400">
                     :{formattedSeconds}
                   </span>
                 </div>
-                <span className="text-[10px] font-bold text-slate-400 bg-slate-800/80 px-1.5 py-0.5 rounded">
+                <span className="text-[9px] font-bold text-slate-400 bg-slate-800/90 px-1 py-0.5 rounded">
                   24H
                 </span>
               </div>
 
-              {/* Barre de données et précision */}
-              <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
-                <span className="text-slate-300">{formattedDate}</span>
-                <span className="text-emerald-400 flex items-center gap-1">
+              {/* Date & Latence */}
+              <div className="mt-2 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                <span className="text-slate-300 text-[10px]">{formattedDate}</span>
+                <span className="text-emerald-400 flex items-center gap-1 text-[10px]">
                   <Zap size={10} /> &lt;0.1ms
                 </span>
               </div>
@@ -96,16 +95,16 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* B. Montre Mécanique Squelette Centrée */}
-          <div className="flex flex-col items-center group flex-shrink-0">
-            <div className="relative w-[280px] h-[280px] sm:w-[330px] sm:h-[330px] md:w-[360px] md:h-[360px] rounded-full p-2.5 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
+          {/* B. Montre Mécanique Squelette (Centre - Majestueuse et bien proportionnée) */}
+          <div className="lg:col-span-5 w-full flex justify-center items-center py-2">
+            <div className="relative w-[260px] h-[260px] sm:w-[310px] sm:h-[310px] md:w-[340px] md:h-[340px] rounded-full p-2 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
               <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-emerald-500/40 bg-[#070b10] flex items-center justify-center">
                 <Image
                   src="/images/dark-hud-watch.jpg"
                   alt="Horlogerie de précision Alamajonda"
                   fill
                   unoptimized={true}
-                  className="object-cover opacity-95 group-hover:scale-105 transition-transform duration-700"
+                  className="object-cover opacity-95 hover:scale-105 transition-transform duration-700"
                   priority
                 />
                 <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/60 pointer-events-none" />
@@ -113,9 +112,9 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* C. Photo Fondateur au bureau Agrandie */}
-          <div className="flex flex-col items-center justify-center flex-shrink-0">
-            <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-[310px] sm:w-[380px] md:w-[420px]">
+          {/* C. Photo Fondateur au bureau (Droite - Nette, visible et sans coupure) */}
+          <div className="lg:col-span-4 w-full flex justify-center lg:justify-start">
+            <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-full max-w-[320px] sm:max-w-[360px]">
               <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/11]">
                 <Image
                   src="/images/founder-desk-official.jpg"
@@ -131,9 +130,9 @@ export default function Hero() {
 
         </div>
 
-        {/* 3. Les 3 Tableaux : Aérés et Décollés */}
+        {/* 3. Les 3 Tableaux : Bien Décollés et Centrés */}
         <div 
-          style={{ marginTop: "75px", marginBottom: "20px" }}
+          style={{ marginTop: "70px", marginBottom: "20px" }}
           className="w-full flex justify-center items-center flex-shrink-0"
         >
           <div className="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4">
