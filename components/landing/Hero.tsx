@@ -29,7 +29,7 @@ export default function Hero() {
   const ampm = time && time.getHours() >= 12 ? "PM" : "AM";
 
   return (
-    <section className="relative w-full bg-[#05070c] text-white pt-6 pb-28 px-6 sm:px-10 lg:px-16 overflow-hidden font-sans">
+    <section className="relative w-full bg-[#05070c] text-white pt-6 pb-36 px-6 sm:px-10 lg:px-16 overflow-hidden font-sans">
       {/* Background Matrix & Subtle Glow Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:36px_36px] opacity-10 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none -z-10" />
@@ -51,7 +51,7 @@ export default function Hero() {
         </div>
 
         {/* 2. Cockpit : Badge Heure en Haut à Gauche + Montre Centrée + Photo à Droite */}
-        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-12 relative">
+        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-12 relative pb-8">
           
           {/* A. 🕒 Badge Heure Numérique (Placé en haut à gauche de la montre) */}
           <div className="flex flex-col justify-center items-center lg:items-end self-center lg:self-start lg:pt-2">
@@ -75,7 +75,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* B. Montre Mécanique Centrée (Format compact et net) */}
+          {/* B. Montre Mécanique Centrée */}
           <div className="flex flex-col items-center group">
             <div className="relative w-[210px] h-[210px] sm:w-[250px] sm:h-[250px] rounded-full p-2 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
               <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-emerald-500/40 bg-[#070b10] flex items-center justify-center">
@@ -110,8 +110,8 @@ export default function Hero() {
 
         </div>
 
-        {/* 3. Les 3 Tableaux : Largement Espacés du Cockpit du haut avec un grand mt-14 sm:mt-20 */}
-        <div className="w-full flex justify-center items-center mt-14 sm:mt-20">
+        {/* 3. Les 3 Tableaux : Fortement redescendus avec une séparation majeure de 100px */}
+        <div className="w-full flex justify-center items-center mt-20 sm:mt-28 lg:mt-32">
           <div className="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4">
             
             {/* Tableau 1: Rappels Vocaux IA */}
