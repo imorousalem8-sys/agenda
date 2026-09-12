@@ -11,7 +11,6 @@ import {
   Sparkles,
   ArrowRight,
   Play,
-  Cpu,
   Radio,
 } from "lucide-react";
 import { speakAIText, playAlertChime } from "@/lib/voice";
@@ -53,113 +52,64 @@ export default function Hero() {
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
       <div className="absolute top-10 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none -z-10" />
 
-      {/* Top HUD Status Bar (Texte retiré, espace conservé) */}
+      {/* Top HUD Status Bar - Lisse et épuré */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="flex flex-wrap items-center justify-between gap-4 py-3 px-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-2xl min-h-[52px]">
-          <div className="flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-semibold tracking-wider uppercase text-emerald-400">
-              {/* Espace réservé pour texte cockpit */}
-            </span>
+        <div className="flex items-center justify-between py-3 px-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-2xl min-h-[52px]">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
           </div>
-
-          <div className="flex items-center gap-3 text-xs">
-            <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 font-mono flex items-center gap-1.5">
-              <Radio size={12} className="animate-pulse" />
-              {/* Espace statut */}
-            </span>
+          <div className="flex items-center gap-2">
+            <Radio size={14} className="text-emerald-400 animate-pulse" />
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Main Grid: HUD Watch Center + Founder Office Top Right + Emplacements préservés */}
+        {/* Main Grid: HUD Watch Center + Founder Office Top Right + Smooth Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
-          {/* LEFT COLUMN: 2 Cards (Dimensions et espaces exacts conservés, textes supprimés) */}
+          {/* LEFT COLUMN: 2 Cards lisses (Espace intérieur totalement épuré) */}
           <div className="lg:col-span-3 flex flex-col gap-5 order-2 lg:order-1">
             
-            {/* Card 1: Emplacement Widget Gauche Haut (ex: Analyse Vocale) */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 group min-h-[160px] flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Mic size={15} className="text-emerald-400" />
-                  <span className="text-xs font-bold tracking-wider uppercase text-slate-200">
-                    {/* Espace Titre 1 */}
-                  </span>
-                </div>
-                <span className="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 min-w-[30px] h-5">
-                  {/* Espace Badge 1 */}
-                </span>
+            {/* Card 1: Espace Gauche Haut (avec onde sonore) */}
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 min-h-[160px] flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <Mic size={16} className="text-emerald-400" />
               </div>
 
-              {/* Dynamic Oscillogram simulation conservée */}
-              <div className="h-14 flex items-center justify-between gap-1 px-2 bg-slate-950/70 rounded-xl border border-slate-800/60 my-1">
+              {/* Dynamic Oscillogram Waveform */}
+              <div className="h-14 flex items-center justify-between gap-1 px-3 bg-slate-950/40 rounded-xl my-2">
                 {[40, 65, 30, 85, 95, 45, 70, 100, 60, 40, 80, 55, 90, 35, 75, 50].map(
                   (h, i) => (
                     <span
                       key={i}
                       style={{ height: `${h}%` }}
-                      className="w-1 bg-gradient-to-t from-emerald-500 to-cyan-400 rounded-full opacity-80 group-hover:opacity-100 transition-all duration-300"
+                      className="w-1 bg-gradient-to-t from-emerald-500 to-cyan-400 rounded-full opacity-80"
                     />
                   )
                 )}
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-slate-400 mt-1 min-h-[24px]">
-                <span className="flex items-center gap-1 text-emerald-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  {/* Espace Statut */}
-                </span>
+              <div className="flex items-center justify-between">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
                 <button
                   onClick={handleTestVoice}
                   disabled={isPlayingAudio}
-                  aria-label="Tester"
-                  className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold flex items-center gap-1 transition-colors h-6"
+                  aria-label="Tester la voix"
+                  className="p-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition-colors"
                 >
-                  <Play size={10} />
+                  <Play size={12} />
                 </button>
               </div>
             </div>
 
-            {/* Card 2: Emplacement Widget Gauche Bas (ex: Chronologie) */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[220px] flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Calendar size={15} className="text-cyan-400" />
-                  <span className="text-xs font-bold tracking-wider uppercase text-slate-200">
-                    {/* Espace Titre 2 */}
-                  </span>
-                </div>
-                <span className="text-[10px] text-slate-400 font-mono min-w-[20px]"></span>
+            {/* Card 2: Espace Gauche Bas (Intérieur totalement lisse sans sous-cadres) */}
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[220px] flex flex-col">
+              <div className="flex items-center justify-between mb-4">
+                <Calendar size={16} className="text-cyan-400" />
               </div>
-
-              <div className="space-y-2 text-xs flex-1 flex flex-col justify-around">
-                <div className="p-3 rounded-xl bg-slate-950/60 border border-emerald-500/20 min-h-[44px] flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-white"></p>
-                    <p className="text-[11px] text-slate-400"></p>
-                  </div>
-                  <span className="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md text-[11px] min-w-[40px] h-4"></span>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 min-h-[44px] flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-slate-200"></p>
-                    <p className="text-[11px] text-cyan-400"></p>
-                  </div>
-                  <span className="font-mono text-cyan-400 font-bold bg-cyan-500/10 px-2 py-0.5 rounded-md text-[11px] min-w-[40px] h-4"></span>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 min-h-[44px] flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-slate-300"></p>
-                    <p className="text-[11px] text-slate-500"></p>
-                  </div>
-                  <span className="font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md text-[11px] min-w-[40px] h-4"></span>
-                </div>
-              </div>
+              <div className="flex-1 w-full" />
             </div>
 
           </div>
@@ -193,7 +143,7 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Digital Time & System Sync Badge directly beneath Watch */}
+              {/* Digital Time & System Sync Badge */}
               <div className="mt-4 px-6 py-3 rounded-2xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-2xl flex items-center gap-4 text-center">
                 <div className="flex items-center gap-2 text-emerald-400">
                   <Clock size={18} className="animate-spin-slow" />
@@ -217,14 +167,12 @@ export default function Hero() {
 
           </div>
 
-          {/* RIGHT COLUMN: Founder Office Photo (Top Right) + 2 Reserved Widget Spaces (4 cols) */}
+          {/* RIGHT COLUMN: Founder Office Photo (Top Right) + 2 Smooth Cards (4 cols) */}
           <div className="lg:col-span-4 flex flex-col gap-5 order-3">
             
-            {/* 📸 Top Right Highlighted Card: Founder Office Desk Photo */}
+            {/* 📸 Top Right: Photo Fondateur au bureau (Propre, lisse et sans barre superposée) */}
             <div className="relative rounded-3xl p-1.5 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/70 group overflow-hidden">
-              
               <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/10]">
-                {/* Official Founder Photo */}
                 <Image
                   src="/images/founder-desk-official.jpg"
                   alt="Le Fondateur au bureau"
@@ -233,72 +181,23 @@ export default function Hero() {
                   priority
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-
-                {/* Subtle vignette & sleek corner tag (espace préservé) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/20 pointer-events-none" />
-
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between bg-slate-900/90 backdrop-blur-md px-3 py-2 rounded-xl border border-emerald-500/30 min-h-[36px]">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <div>
-                      {/* Espace réservé pour votre texte fondateur */}
-                    </div>
-                  </div>
-                  <span className="text-[10px] font-mono text-emerald-300 px-2 py-0.5 rounded font-bold">
-                    {/* Espace badge */}
-                  </span>
-                </div>
               </div>
-
             </div>
 
-            {/* Card 4: Emplacement Widget Droite Milieu (ex: Transcription) */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[140px] flex flex-col justify-between">
+            {/* Card 3: Espace Droite Milieu (Totalement lisse à l'intérieur) */}
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl hover:border-slate-700 transition-all shadow-xl shadow-black/40 min-h-[140px] flex flex-col">
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Volume2 size={15} className="text-emerald-400" />
-                  <span className="text-xs font-bold tracking-wider uppercase text-slate-200">
-                    {/* Espace Titre 3 */}
-                  </span>
-                </div>
-                <span className="text-[10px] text-emerald-400 font-mono"></span>
+                <Volume2 size={16} className="text-emerald-400" />
               </div>
-
-              <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs text-slate-300 leading-relaxed italic min-h-[44px]">
-                {/* Espace Texte 3 */}
-              </div>
-
-              <div className="flex items-center gap-2 text-[11px] text-emerald-400 font-medium mt-2 min-h-[18px]">
-                {/* Espace Sous-titre 3 */}
-              </div>
+              <div className="flex-1 w-full" />
             </div>
 
-            {/* Card 5: Emplacement Widget Droite Bas (ex: Actions & Tâches) */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 min-h-[150px] flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={15} className="text-cyan-400" />
-                  <span className="text-xs font-bold tracking-wider uppercase text-slate-200">
-                    {/* Espace Titre 4 */}
-                  </span>
-                </div>
-                <span className="text-[10px] font-mono text-cyan-400"></span>
+            {/* Card 4: Espace Droite Bas (Totalement lisse à l'intérieur) */}
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/20 backdrop-blur-xl hover:border-emerald-500/40 transition-all shadow-xl shadow-black/40 min-h-[150px] flex flex-col">
+              <div className="flex items-center justify-between mb-2">
+                <Sparkles size={16} className="text-cyan-400" />
               </div>
-
-              <div className="space-y-2 text-xs flex-1 flex flex-col justify-around">
-                <div className="flex items-center gap-2.5 text-slate-200 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/70 min-h-[34px]">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  {/* Espace Tâche 1 */}
-                </div>
-                <div className="flex items-center gap-2.5 text-slate-200 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/70 min-h-[34px]">
-                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                  {/* Espace Tâche 2 */}
-                </div>
-                <div className="flex items-center gap-2.5 text-slate-200 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/70 min-h-[34px]">
-                  <div className="w-1.5 h-1.5 rounded-full bg-teal-400" />
-                  {/* Espace Tâche 3 */}
-                </div>
-              </div>
+              <div className="flex-1 w-full" />
             </div>
 
           </div>
