@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Clock,
   Radio,
@@ -9,6 +10,7 @@ import {
   MessageSquare,
   CalendarCheck,
   Zap,
+  ArrowRight,
 } from "lucide-react";
 
 export default function Hero() {
@@ -37,21 +39,23 @@ export default function Hero() {
     : "SAM. 12 SEPT.";
 
   return (
-    <section className="relative w-full bg-[#05070c] text-white pt-8 pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden font-sans">
+    <section className="relative w-full bg-[#05070c] text-white pt-6 pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden font-sans">
       {/* Background Matrix & Subtle Glow Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:36px_36px] opacity-10 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none -z-10" />
       <div className="absolute top-20 right-1/4 w-80 h-80 bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
 
-      {/* Main Stage Container (Garantit que rien ne déborde des bords de l'écran) */}
-      <div className="max-w-6xl mx-auto flex flex-col items-center">
+      {/* Main Stage Container */}
+      <div className="max-w-7xl mx-auto flex flex-col items-center">
 
-        {/* Cockpit Grid Responsive : Horloge Digitale + Montre + Photo Fondateur */}
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center justify-items-center">
+        {/* Cockpit Grid Responsive (Gauche: Horloge + Titre | Centre: Montre | Droite: Photo) */}
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
-          {/* A. ⌚ Module Digital Ultra-Pro (Gauche - 100% visible, bien cadré) */}
-          <div className="lg:col-span-3 w-full flex justify-center lg:justify-end">
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border border-emerald-500/35 backdrop-blur-2xl shadow-2xl shadow-black/80 w-full max-w-[230px] group hover:border-emerald-400/50 transition-all duration-300">
+          {/* A. Colonne Gauche : Horloge IA Rehaussée + Grand Titre & Sous-titre Personnalisés */}
+          <div className="lg:col-span-4 flex flex-col items-start justify-center pr-0 lg:pr-2">
+            
+            {/* 1. Module Digital Horloge IA (Rehaussé en haut) */}
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-b from-slate-900/95 to-black/95 border border-emerald-500/35 backdrop-blur-2xl shadow-xl shadow-black/80 w-full max-w-[240px] mb-5 group hover:border-emerald-400/50 transition-all duration-300">
               
               {/* Header avec signal actif */}
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80">
@@ -70,9 +74,9 @@ export default function Hero() {
               </div>
 
               {/* Affichage de l'Heure */}
-              <div className="flex items-baseline justify-between px-0.5 my-1 font-mono">
+              <div className="flex items-baseline justify-between px-0.5 my-0.5 font-mono">
                 <div className="flex items-baseline gap-0.5">
-                  <span className="text-2xl sm:text-[1.75rem] font-black text-white tracking-tight drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+                  <span className="text-2xl sm:text-[1.65rem] font-black text-white tracking-tight drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
                     {formattedHours}:{formattedMinutes}
                   </span>
                   <span className="text-base sm:text-lg font-bold text-emerald-400">
@@ -85,7 +89,7 @@ export default function Hero() {
               </div>
 
               {/* Date & Latence */}
-              <div className="mt-2 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
+              <div className="mt-1.5 pt-1.5 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
                 <span className="text-slate-300 text-[10px]">{formattedDate}</span>
                 <span className="text-emerald-400 flex items-center gap-1 text-[10px]">
                   <Zap size={10} /> &lt;0.1ms
@@ -93,11 +97,34 @@ export default function Hero() {
               </div>
 
             </div>
+
+            {/* 2. Grand Titre Personnalisé (Style référence modernisé en mode sombre) */}
+            <h1 className="text-2xl sm:text-3xl lg:text-[2rem] xl:text-[2.25rem] font-black text-white tracking-tight leading-[1.2] mb-3">
+              Ne manquez plus aucun{" "}
+              <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+                rendez-vous important
+              </span>
+            </h1>
+
+            {/* 3. Sous-titre explicatif fluide */}
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-5 max-w-md">
+              L&apos;assistant vocal IA intelligent pour une gestion d&apos;agenda sans effort, précise et automatisée.
+            </p>
+
+            {/* 4. Bouton d'action */}
+            <Link
+              href="/register"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:from-emerald-300 hover:to-teal-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/35 hover:-translate-y-0.5 transition-all"
+            >
+              <span>En savoir plus</span>
+              <ArrowRight size={14} />
+            </Link>
+
           </div>
 
-          {/* B. Montre Mécanique Squelette (Centre - Majestueuse et bien proportionnée) */}
-          <div className="lg:col-span-5 w-full flex justify-center items-center py-2">
-            <div className="relative w-[260px] h-[260px] sm:w-[310px] sm:h-[310px] md:w-[340px] md:h-[340px] rounded-full p-2 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
+          {/* B. Colonne Centre : Montre Mécanique Squelette Lumineuse */}
+          <div className="lg:col-span-4 w-full flex justify-center items-center py-2">
+            <div className="relative w-[260px] h-[260px] sm:w-[300px] sm:h-[300px] md:w-[330px] md:h-[330px] rounded-full p-2 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
               <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-emerald-500/40 bg-[#070b10] flex items-center justify-center">
                 <Image
                   src="/images/dark-hud-watch.jpg"
@@ -112,9 +139,9 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* C. Photo Fondateur au bureau (Droite - Nette, visible et sans coupure) */}
-          <div className="lg:col-span-4 w-full flex justify-center lg:justify-start">
-            <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-full max-w-[320px] sm:max-w-[360px]">
+          {/* C. Colonne Droite : Photo Fondateur au Bureau */}
+          <div className="lg:col-span-4 w-full flex justify-center lg:justify-end">
+            <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-full max-w-[320px] sm:max-w-[350px]">
               <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/11]">
                 <Image
                   src="/images/founder-desk-official.jpg"
@@ -130,7 +157,7 @@ export default function Hero() {
 
         </div>
 
-        {/* 3. Les 3 Tableaux : Bien Décollés et Centrés */}
+        {/* 3. Les 3 Tableaux : Décollés, Centrés et Parfaitement Espacés */}
         <div 
           style={{ marginTop: "70px", marginBottom: "20px" }}
           className="w-full flex justify-center items-center flex-shrink-0"
