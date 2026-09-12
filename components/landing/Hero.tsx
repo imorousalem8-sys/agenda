@@ -147,6 +147,11 @@ export default function Hero() {
                   priority
                 />
                 <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/60 pointer-events-none" />
+                {/* Mini Sas / Porte Temporelle de l'Horloge pour les Riders */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-full bg-slate-950/90 border border-emerald-400/60 backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.6)] flex items-center gap-1.5 z-20 pointer-events-none">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+                  <span className="text-[9px] font-mono font-bold text-emerald-300 tracking-wider">SAS HORLOGE IA</span>
+                </div>
               </div>
             </div>
           </div>

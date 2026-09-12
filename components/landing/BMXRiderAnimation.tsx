@@ -4,48 +4,65 @@ import React from "react";
 
 export default function BMXRiderAnimation() {
   return (
-    <div className="relative w-full h-32 overflow-visible pointer-events-none select-none my-2">
+    <div className="relative w-full h-36 overflow-visible pointer-events-none select-none my-1">
       
       {/* ========================================================= */}
-      {/* 🛣️ PISTE DE GOUDRON STREET & TREMPLINS ("Petits trucs qui sautent") */}
+      {/* 🛣️ PISTE DE GOUDRON STREET & PORTE DE LA GRANDE HORLOGE */}
       {/* ========================================================= */}
-      <div className="absolute bottom-1 left-0 right-0 h-10 rounded-xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-y-2 border-emerald-500/40 shadow-inner shadow-black flex items-center justify-between px-4 overflow-hidden">
+      <div className="absolute bottom-2 left-0 right-0 h-11 rounded-xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-y-2 border-emerald-500/50 shadow-[0_10px_25px_rgba(0,0,0,0.8)] flex items-center justify-between px-3 overflow-visible">
         
-        {/* Texture Asphalte & Grain Goudron */}
-        <div className="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:8px_8px] opacity-40" />
+        {/* Texture Asphalte & Grain Bitume Réaliste */}
+        <div className="absolute inset-0 bg-[radial-gradient(#475569_1px,transparent_1px)] [background-size:6px_6px] opacity-45 rounded-xl" />
         
-        {/* Ligne Blanche & Jaune discontinue de la Route (Marquage au sol) */}
-        <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 flex items-center justify-around z-0">
-          <span className="w-12 h-[3px] bg-amber-400/80 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
-          <span className="w-12 h-[3px] bg-white/70 rounded-full" />
-          <span className="w-12 h-[3px] bg-amber-400/80 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
-          <span className="w-12 h-[3px] bg-white/70 rounded-full" />
-          <span className="w-12 h-[3px] bg-amber-400/80 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
-          <span className="w-12 h-[3px] bg-white/70 rounded-full" />
+        {/* Lignes Blanches & Jaunes de la Route (Marquage au sol) */}
+        <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 flex items-center justify-around z-0 px-8">
+          <span className="w-10 h-[3px] bg-amber-400 rounded-full shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
+          <span className="w-10 h-[3px] bg-white/80 rounded-full" />
+          <span className="w-10 h-[3px] bg-amber-400 rounded-full shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
+          <span className="w-10 h-[3px] bg-white/80 rounded-full" />
+          <span className="w-10 h-[3px] bg-amber-400 rounded-full shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
         </div>
 
-        {/* 🛹 Tremplin / Kicker 1 (Ramp Jump gauche) */}
-        <div className="absolute bottom-0 left-[26%] w-10 h-5 bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-400 rounded-tr-lg border-r-2 border-t-2 border-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.8)] flex items-center justify-center transform -skew-x-12">
+        {/* 🚪 PORTAIL GAUCHE : Porte de Sortie Temporelle (Réapparition sur le goudron) */}
+        <div className="absolute -left-3 bottom-0 h-16 w-8 rounded-r-2xl bg-gradient-to-r from-slate-950 to-slate-900 border-2 border-emerald-400/80 shadow-[0_0_15px_rgba(16,185,129,0.7)] flex flex-col items-center justify-center z-10">
+          <div className="w-2 h-10 bg-emerald-400/80 rounded-full animate-pulse blur-[1px]" />
+          <span className="text-[6px] font-mono font-black text-emerald-300 uppercase tracking-tighter -rotate-90 mt-1">SORTIE</span>
+        </div>
+
+        {/* 🛹 Tremplin / Kicker Jump Réaliste */}
+        <div className="absolute bottom-0 left-[38%] w-11 h-5 bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-400 rounded-tr-md border-r-2 border-t-2 border-emerald-200 shadow-[0_0_12px_rgba(16,185,129,0.8)] flex items-center justify-center transform -skew-x-12 z-10">
           <span className="text-[7px] font-mono font-black text-black tracking-tighter">▲ JUMP</span>
         </div>
 
-        {/* 🛹 Tremplin / Kicker 2 (Ramp Jump droite) */}
-        <div className="absolute bottom-0 left-[68%] w-10 h-5 bg-gradient-to-tr from-cyan-600 via-teal-500 to-emerald-400 rounded-tr-lg border-r-2 border-t-2 border-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.8)] flex items-center justify-center transform -skew-x-12">
-          <span className="text-[7px] font-mono font-black text-black tracking-tighter">▲ JUMP</span>
+        {/* 🚪 PORTAIL DROITE : LA PETITE PORTE DE LA GRANDE HORLOGE (Entrée secrète) */}
+        <div className="absolute -right-3 bottom-0 h-20 w-12 rounded-l-3xl bg-gradient-to-l from-slate-950 via-slate-900 to-emerald-950 border-2 border-cyan-400 shadow-[0_0_25px_rgba(6,182,212,0.9)] flex flex-col items-center justify-center z-30 overflow-hidden group">
+          
+          {/* Cadran d'horloge miniature sur la porte */}
+          <div className="absolute top-1.5 w-6 h-6 rounded-full border border-emerald-400/80 bg-black/80 flex items-center justify-center animate-spin-slow">
+            <div className="w-2.5 h-[1.5px] bg-emerald-400 origin-left rotate-45" />
+            <div className="w-1.5 h-[1.5px] bg-cyan-400 origin-left -rotate-90" />
+          </div>
+
+          {/* Vantaux de la porte motorisée (S'ouvrent à l'arrivée des riders) */}
+          <div className="w-full h-11 mt-6 flex items-center justify-between px-0.5 relative">
+            <div className="w-1/2 h-full bg-slate-950 border-r border-cyan-400/60 transition-all duration-300 animate-door-left" />
+            <div className="w-1/2 h-full bg-slate-950 border-l border-cyan-400/60 transition-all duration-300 animate-door-right" />
+            {/* Faisceau lumineux à l'intérieur de l'horloge */}
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/30 to-cyan-400/50 blur-sm pointer-events-none" />
+          </div>
+
+          <span className="text-[6px] font-mono font-black text-cyan-300 uppercase tracking-tighter mt-0.5">HORLOGE IA</span>
         </div>
 
-        {/* Étincelles & Particules de saut sur les tremplins */}
-        <div className="absolute bottom-4 left-[28%] w-2 h-2 rounded-full bg-emerald-300 blur-[1px] animate-ping" />
-        <div className="absolute bottom-4 left-[70%] w-2 h-2 rounded-full bg-cyan-300 blur-[1px] animate-ping" />
       </div>
 
       {/* ========================================================= */}
-      {/* 🚴‍♂️ RIDER 1 : "DOM" (Longs Wheelings du Bonheur & Sauts Tremplins) */}
+      {/* 🚴‍♂️ RIDER 1 : "DOM" (Streetwear Veste Bomber, Vrai Wheeling Ancré au Sol) */}
       {/* ========================================================= */}
-      <div className="absolute bottom-4 animate-dom-street-course flex flex-col items-center z-20">
+      <div className="absolute bottom-[17px] animate-dom-ground-ride flex flex-col items-center z-20">
         
         {/* Nom au-dessus du personnage : DOM */}
-        <div className="mb-0.5 px-2 py-0.5 rounded-full bg-slate-950/95 border border-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.8)] flex items-center gap-1 scale-90 -translate-y-1">
+        <div className="mb-0.5 px-2 py-0.5 rounded-full bg-slate-950 border border-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.8)] flex items-center gap-1 scale-90 -translate-y-1">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-[10px] font-black tracking-widest text-emerald-300 uppercase font-mono">
             DOM
@@ -53,38 +70,30 @@ export default function BMXRiderAnimation() {
           <span className="text-[8px] text-emerald-400 font-bold">⚡</span>
         </div>
 
-        {/* Badges Dynamiques de Tricks (Wheelings & Sauts) */}
-        <div className="absolute -top-6 animate-trick-dom-street px-2 py-0.5 bg-emerald-500/30 border border-emerald-400 rounded text-[9px] font-mono font-extrabold text-emerald-300 opacity-0 whitespace-nowrap shadow-[0_0_8px_rgba(16,185,129,0.6)]">
-          🔥 LONG WHEELING
+        {/* Badge Flottant du Vrai Wheeling */}
+        <div className="absolute -top-6 animate-trick-dom-ground px-2 py-0.5 bg-emerald-500/30 border border-emerald-400 rounded text-[9px] font-mono font-black text-emerald-300 opacity-0 whitespace-nowrap shadow-[0_0_10px_rgba(16,185,129,0.8)]">
+          🔥 VRAI WHEELING ARRIÈRE
         </div>
 
-        {/* Aura lumineuse & trace d'étincelles */}
-        <div className="absolute -bottom-1 left-2 w-14 h-3 bg-emerald-400/35 rounded-full blur-sm" />
+        {/* Aura de contact pneu/goudron */}
+        <div className="absolute bottom-0 left-2 w-14 h-2 bg-emerald-400/40 rounded-full blur-[2px]" />
 
-        {/* SVG BMX DOM */}
+        {/* SVG BMX PRO ULTRA-STYLÉ + RIDER HABILLÉ STREETWEAR */}
         <svg
-          viewBox="0 0 110 75"
-          className="w-20 h-14 overflow-visible drop-shadow-[0_0_10px_rgba(16,185,129,0.9)]"
+          viewBox="0 0 115 75"
+          className="w-20 h-14 overflow-visible drop-shadow-[0_0_10px_rgba(16,185,129,0.95)]"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Neon Light Speed Trail */}
-          <path
-            d="M 2 54 Q 18 50 35 52"
-            stroke="url(#trailDom)"
-            strokeWidth="3"
-            strokeLinecap="round"
-            className="animate-pulse"
-          />
-
           <defs>
-            <linearGradient id="neonEmeraldDom" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#34d399" />
+            <linearGradient id="neonDomBike" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#10b981" />
+              <stop offset="50%" stopColor="#34d399" />
               <stop offset="100%" stopColor="#06b6d4" />
             </linearGradient>
-            <linearGradient id="trailDom" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="transparent" />
-              <stop offset="100%" stopColor="#10b981" />
+            <linearGradient id="bomberJacketDom" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#064e3b" />
+              <stop offset="100%" stopColor="#022c22" />
             </linearGradient>
             <linearGradient id="skinDom" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#d4a373" />
@@ -92,76 +101,105 @@ export default function BMXRiderAnimation() {
             </linearGradient>
           </defs>
 
-          {/* Roue Arrière (Spinning) */}
+          {/* 🚲 ROUE ARRIÈRE PRO (Gomme noire + Rayons Néon + Pegs) */}
           <g className="animate-spin-wheel origin-[25px_54px]">
-            <circle cx="25" cy="54" r="12" stroke="#06b6d4" strokeWidth="2.5" />
-            <circle cx="25" cy="54" r="3" fill="#34d399" />
-            <line x1="25" y1="42" x2="25" y2="66" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
-            <line x1="13" y1="54" x2="37" y2="54" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
-            <line x1="16" y1="45" x2="34" y2="63" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
-            <line x1="16" y1="63" x2="34" y2="45" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
+            {/* Pneu gomme épaisse */}
+            <circle cx="25" cy="54" r="13" stroke="#090d16" strokeWidth="3" />
+            {/* Jante néon */}
+            <circle cx="25" cy="54" r="11" stroke="#06b6d4" strokeWidth="2" />
+            {/* Disque de frein & Moyeu */}
+            <circle cx="25" cy="54" r="4.5" fill="#022c22" stroke="#34d399" strokeWidth="1.5" />
+            {/* Rayons BMX */}
+            <line x1="25" y1="43" x2="25" y2="65" stroke="#38bdf8" strokeWidth="1.2" opacity="0.9" />
+            <line x1="14" y1="54" x2="36" y2="54" stroke="#38bdf8" strokeWidth="1.2" opacity="0.9" />
+            <line x1="17" y1="46" x2="33" y2="62" stroke="#34d399" strokeWidth="1" opacity="0.8" />
+            <line x1="17" y1="62" x2="33" y2="46" stroke="#34d399" strokeWidth="1" opacity="0.8" />
           </g>
+          {/* Peg arrière (Cale-pied cascadeur) */}
+          <rect x="23" y="52.5" width="4" height="3" rx="1" fill="#38bdf8" />
 
-          {/* Roue Avant (Spinning) */}
-          <g className="animate-spin-wheel origin-[75px_54px]">
-            <circle cx="75" cy="54" r="12" stroke="#10b981" strokeWidth="2.5" />
-            <circle cx="75" cy="54" r="3" fill="#06b6d4" />
-            <line x1="75" y1="42" x2="75" y2="66" stroke="#10b981" strokeWidth="1" opacity="0.8" />
-            <line x1="63" y1="54" x2="87" y2="54" stroke="#10b981" strokeWidth="1" opacity="0.8" />
-            <line x1="66" y1="45" x2="84" y2="63" stroke="#10b981" strokeWidth="1" opacity="0.8" />
-            <line x1="66" y1="63" x2="84" y2="45" stroke="#10b981" strokeWidth="1" opacity="0.8" />
+          {/* 🚲 ROUE AVANT PRO (Gomme noire + Rayons Néon + Pegs) */}
+          <g className="animate-spin-wheel origin-[78px_54px]">
+            <circle cx="78" cy="54" r="13" stroke="#090d16" strokeWidth="3" />
+            <circle cx="78" cy="54" r="11" stroke="#10b981" strokeWidth="2" />
+            <circle cx="78" cy="54" r="4.5" fill="#022c22" stroke="#06b6d4" strokeWidth="1.5" />
+            <line x1="78" y1="43" x2="78" y2="65" stroke="#34d399" strokeWidth="1.2" opacity="0.9" />
+            <line x1="67" y1="54" x2="89" y2="54" stroke="#34d399" strokeWidth="1.2" opacity="0.9" />
+            <line x1="70" y1="46" x2="86" y2="62" stroke="#38bdf8" strokeWidth="1" opacity="0.8" />
+            <line x1="70" y1="62" x2="86" y2="46" stroke="#38bdf8" strokeWidth="1" opacity="0.8" />
           </g>
+          <rect x="76" y="52.5" width="4" height="3" rx="1" fill="#10b981" />
 
-          {/* Cadre BMX */}
-          <path
-            d="M 25 54 L 44 52 L 68 36 L 46 36 L 25 54 Z"
-            stroke="url(#neonEmeraldDom)"
-            strokeWidth="3"
-            strokeLinejoin="round"
-          />
-          <path d="M 44 52 L 68 36 L 75 54" stroke="url(#neonEmeraldDom)" strokeWidth="3" strokeLinejoin="round" />
-          <path d="M 44 52 L 40 32" stroke="url(#neonEmeraldDom)" strokeWidth="3" />
-          <path d="M 33 30 L 45 32" stroke="#0f172a" strokeWidth="5" strokeLinecap="round" />
-          <path d="M 33 30 L 45 32" stroke="#34d399" strokeWidth="2" strokeLinecap="round" />
-          
-          <path d="M 68 36 L 66 22" stroke="url(#neonEmeraldDom)" strokeWidth="3" />
-          <path d="M 60 21 L 72 21" stroke="#38bdf8" strokeWidth="3.5" strokeLinecap="round" />
+          {/* 🚲 CADRE HYDROFORMÉ BMX LUXE */}
+          {/* Base & Haubans arrière */}
+          <path d="M 25 54 L 46 52 L 25 40 Z" stroke="url(#neonDomBike)" strokeWidth="2.5" strokeLinejoin="round" />
+          {/* Triangle avant */}
+          <path d="M 46 52 L 70 36 L 46 36 Z" stroke="url(#neonDomBike)" strokeWidth="3.2" strokeLinejoin="round" />
+          {/* Tube de direction & Fourche renforcée */}
+          <path d="M 70 36 L 78 54" stroke="url(#neonDomBike)" strokeWidth="3" strokeLinecap="round" />
+          <path d="M 70 36 L 68 21" stroke="url(#neonDomBike)" strokeWidth="3.2" />
 
-          {/* Pédalier & Pédalage */}
-          <circle cx="44" cy="52" r="3.5" fill="#0f172a" stroke="#34d399" strokeWidth="2" />
-          <line x1="44" y1="52" x2="49" y2="60" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" />
-          <circle cx="49" cy="60" r="2" fill="#34d399" />
+          {/* Tige de Selle & Selle Streetwear Cuir/Néon */}
+          <path d="M 46 52 L 40 31" stroke="url(#neonDomBike)" strokeWidth="3" />
+          <path d="M 32 29 L 45 31" stroke="#090d16" strokeWidth="5" strokeLinecap="round" />
+          <path d="M 33 29 L 44 31" stroke="#34d399" strokeWidth="2" strokeLinecap="round" />
 
-          {/* Jambes & Baskets */}
-          <path d="M 40 30 Q 42 44 49 58" stroke="#0f172a" strokeWidth="5.5" strokeLinecap="round" />
-          <path d="M 47 58 L 54 60" stroke="#10b981" strokeWidth="3.5" strokeLinecap="round" />
+          {/* Guidon BMX 4 pièces avec barre de renfort & poignées grip */}
+          <path d="M 62 20 L 74 20" stroke="#38bdf8" strokeWidth="4" strokeLinecap="round" />
+          <line x1="63" y1="23" x2="73" y2="23" stroke="#34d399" strokeWidth="1.5" />
+          {/* Grips néon aux extrémités */}
+          <line x1="62" y1="20" x2="64" y2="20" stroke="#10b981" strokeWidth="5" strokeLinecap="round" />
+          <line x1="72" y1="20" x2="74" y2="20" stroke="#10b981" strokeWidth="5" strokeLinecap="round" />
 
-          {/* Corps / Hoodie */}
-          <path d="M 42 28 C 45 18 56 16 60 21 L 52 34 Z" fill="#090d16" stroke="#10b981" strokeWidth="1.5" />
-          <path d="M 46 23 L 53 27" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" />
+          {/* Pédalier & Chaîne chromée */}
+          <circle cx="46" cy="52" r="4.5" fill="#090d16" stroke="#34d399" strokeWidth="2" />
+          <line x1="25" y1="54" x2="46" y2="52" stroke="#34d399" strokeWidth="1.2" strokeDasharray="2 2" />
+          {/* Manivelle & Pédale avec bande réfléchissante */}
+          <line x1="46" y1="52" x2="51" y2="61" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" />
+          <rect x="49" y="60" width="5" height="2" rx="1" fill="#10b981" />
 
-          {/* Bras & Mains */}
-          <path d="M 52 21 L 66 23" stroke="#0f172a" strokeWidth="4.5" strokeLinecap="round" />
-          <circle cx="66" cy="23" r="2.5" fill="url(#skinDom)" />
+          {/* 👕 VÊTEMENTS STREETWEAR DOM (Veste Bomber + Pantalon Cargo + Baskets Chunky) */}
+          {/* Jambe arrière & Pantalon Cargo avec poche latérale */}
+          <path d="M 42 29 Q 44 45 51 59" stroke="#0f172a" strokeWidth="6" strokeLinecap="round" />
+          {/* Bande réfléchissante sur pantalon */}
+          <path d="M 45 42 L 48 44" stroke="#34d399" strokeWidth="1.5" />
+          {/* Basket montante Sneaker Chunky (Semelle épaisse verte) */}
+          <path d="M 49 59 L 57 61" stroke="#10b981" strokeWidth="4" strokeLinecap="round" />
+          <path d="M 50 61 L 57 61" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
 
-          {/* Tête */}
-          <circle cx="56" cy="14" r="5.5" fill="url(#skinDom)" />
+          {/* Veste Bomber Streetwear (Coupe stylée avec col et taille côtelés) */}
+          <path d="M 43 27 C 46 17 58 15 62 20 L 53 35 Z" fill="url(#bomberJacketDom)" stroke="#10b981" strokeWidth="1.5" />
+          {/* Logo / Blason poitrine */}
+          <circle cx="56" cy="22" r="1.5" fill="#38bdf8" />
+          {/* Zip central dorure néon */}
+          <path d="M 52 18 L 48 30" stroke="#34d399" strokeWidth="1.2" strokeLinecap="round" />
 
-          {/* 🧢 Casquette tournée en arrière Bad Boy */}
-          <path d="M 51 13 C 51 7 61 7 62 13 Z" fill="#10b981" stroke="#06b6d4" strokeWidth="1" />
-          <path d="M 51 13 Q 41 14 40 11" stroke="#06b6d4" strokeWidth="3" strokeLinecap="round" />
-          {/* Lunettes de soleil noires */}
-          <path d="M 56 14 L 61 14" stroke="#000" strokeWidth="2" strokeLinecap="round" />
+          {/* Bras avec manche de bomber & Poignet de maintien */}
+          <path d="M 54 20 L 68 21" stroke="url(#bomberJacketDom)" strokeWidth="5" strokeLinecap="round" />
+          {/* Montre connectée au poignet */}
+          <rect x="66" y="20" width="2" height="3" fill="#34d399" />
+          {/* Main sur le grip */}
+          <circle cx="69" cy="21" r="2.2" fill="url(#skinDom)" />
+
+          {/* Tête & Cou */}
+          <circle cx="58" cy="13" r="5.5" fill="url(#skinDom)" />
+
+          {/* 🧢 Casquette tournée en arrière Bad Boy (Snapback avec visière arrière) */}
+          <path d="M 53 12 C 53 6 63 6 64 12 Z" fill="#10b981" stroke="#06b6d4" strokeWidth="1" />
+          {/* Visière incurvée tournée vers l'arrière */}
+          <path d="M 53 12 Q 43 13 41 10" stroke="#06b6d4" strokeWidth="3" strokeLinecap="round" />
+          {/* Lunettes de soleil noires Bad Boy */}
+          <path d="M 58 13 L 63 13" stroke="#000" strokeWidth="2.2" strokeLinecap="round" />
         </svg>
       </div>
 
       {/* ========================================================= */}
-      {/* 🚴‍♂️ RIDER 2 : "SALEM" (Wheelings en Poursuite & Backflip Kicker) */}
+      {/* 🚴‍♂️ RIDER 2 : "SALEM" (Streetwear Coupe-Vent Cyan, Wheeling & Poursuite) */}
       {/* ========================================================= */}
-      <div className="absolute bottom-4 animate-salem-street-course flex flex-col items-center z-10">
+      <div className="absolute bottom-[17px] animate-salem-ground-ride flex flex-col items-center z-10">
         
         {/* Nom au-dessus du personnage : SALEM */}
-        <div className="mb-0.5 px-2 py-0.5 rounded-full bg-slate-950/95 border border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.8)] flex items-center gap-1 scale-90 -translate-y-1">
+        <div className="mb-0.5 px-2 py-0.5 rounded-full bg-slate-950 border border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.8)] flex items-center gap-1 scale-90 -translate-y-1">
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
           <span className="text-[10px] font-black tracking-widest text-cyan-300 uppercase font-mono">
             SALEM
@@ -169,38 +207,30 @@ export default function BMXRiderAnimation() {
           <span className="text-[8px] text-cyan-400 font-bold">🚀</span>
         </div>
 
-        {/* Badges Dynamiques de Tricks */}
-        <div className="absolute -top-6 animate-trick-salem-street px-2 py-0.5 bg-cyan-500/30 border border-cyan-400 rounded text-[9px] font-mono font-extrabold text-cyan-300 opacity-0 whitespace-nowrap shadow-[0_0_8px_rgba(6,182,212,0.6)]">
-          ⚡ 360 KICKER AIR
+        {/* Badge Flottant du Vrai Wheeling */}
+        <div className="absolute -top-6 animate-trick-salem-ground px-2 py-0.5 bg-cyan-500/30 border border-cyan-400 rounded text-[9px] font-mono font-black text-cyan-300 opacity-0 whitespace-nowrap shadow-[0_0_10px_rgba(6,182,212,0.8)]">
+          ⚡ WHEELING CABRÉ PRO
         </div>
 
-        {/* Aura lumineuse */}
-        <div className="absolute -bottom-1 left-2 w-14 h-3 bg-cyan-400/35 rounded-full blur-sm" />
+        {/* Aura de contact pneu/goudron */}
+        <div className="absolute bottom-0 left-2 w-14 h-2 bg-cyan-400/40 rounded-full blur-[2px]" />
 
-        {/* SVG BMX SALEM */}
+        {/* SVG BMX PRO SALEM */}
         <svg
-          viewBox="0 0 110 75"
-          className="w-20 h-14 overflow-visible drop-shadow-[0_0_10px_rgba(6,182,212,0.9)]"
+          viewBox="0 0 115 75"
+          className="w-20 h-14 overflow-visible drop-shadow-[0_0_10px_rgba(6,182,212,0.95)]"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Neon Light Speed Trail */}
-          <path
-            d="M 2 54 Q 18 50 35 52"
-            stroke="url(#trailSalem)"
-            strokeWidth="3"
-            strokeLinecap="round"
-            className="animate-pulse"
-          />
-
           <defs>
-            <linearGradient id="neonCyanSalem" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#38bdf8" />
+            <linearGradient id="neonSalemBike" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#06b6d4" />
+              <stop offset="50%" stopColor="#38bdf8" />
               <stop offset="100%" stopColor="#a855f7" />
             </linearGradient>
-            <linearGradient id="trailSalem" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="transparent" />
-              <stop offset="100%" stopColor="#06b6d4" />
+            <linearGradient id="windbreakerSalem" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#083344" />
+              <stop offset="100%" stopColor="#1e1b4b" />
             </linearGradient>
             <linearGradient id="skinSalem" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#e0ac69" />
@@ -208,307 +238,304 @@ export default function BMXRiderAnimation() {
             </linearGradient>
           </defs>
 
-          {/* Roue Arrière (Spinning) */}
+          {/* Roue Arrière Pro */}
           <g className="animate-spin-wheel origin-[25px_54px]">
-            <circle cx="25" cy="54" r="12" stroke="#a855f7" strokeWidth="2.5" />
-            <circle cx="25" cy="54" r="3" fill="#06b6d4" />
-            <line x1="25" y1="42" x2="25" y2="66" stroke="#a855f7" strokeWidth="1" opacity="0.8" />
-            <line x1="13" y1="54" x2="37" y2="54" stroke="#a855f7" strokeWidth="1" opacity="0.8" />
-            <line x1="16" y1="45" x2="34" y2="63" stroke="#a855f7" strokeWidth="1" opacity="0.8" />
-            <line x1="16" y1="63" x2="34" y2="45" stroke="#a855f7" strokeWidth="1" opacity="0.8" />
+            <circle cx="25" cy="54" r="13" stroke="#090d16" strokeWidth="3" />
+            <circle cx="25" cy="54" r="11" stroke="#a855f7" strokeWidth="2" />
+            <circle cx="25" cy="54" r="4.5" fill="#1e1b4b" stroke="#06b6d4" strokeWidth="1.5" />
+            <line x1="25" y1="43" x2="25" y2="65" stroke="#06b6d4" strokeWidth="1.2" opacity="0.9" />
+            <line x1="14" y1="54" x2="36" y2="54" stroke="#06b6d4" strokeWidth="1.2" opacity="0.9" />
+            <line x1="17" y1="46" x2="33" y2="62" stroke="#a855f7" strokeWidth="1" opacity="0.8" />
+            <line x1="17" y1="62" x2="33" y2="46" stroke="#a855f7" strokeWidth="1" opacity="0.8" />
           </g>
+          <rect x="23" y="52.5" width="4" height="3" rx="1" fill="#a855f7" />
 
-          {/* Roue Avant (Spinning) */}
-          <g className="animate-spin-wheel origin-[75px_54px]">
-            <circle cx="75" cy="54" r="12" stroke="#06b6d4" strokeWidth="2.5" />
-            <circle cx="75" cy="54" r="3" fill="#a855f7" />
-            <line x1="75" y1="42" x2="75" y2="66" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
-            <line x1="63" y1="54" x2="87" y2="54" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
-            <line x1="66" y1="45" x2="84" y2="63" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
-            <line x1="66" y1="63" x2="84" y2="45" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
+          {/* Roue Avant Pro */}
+          <g className="animate-spin-wheel origin-[78px_54px]">
+            <circle cx="78" cy="54" r="13" stroke="#090d16" strokeWidth="3" />
+            <circle cx="78" cy="54" r="11" stroke="#06b6d4" strokeWidth="2" />
+            <circle cx="78" cy="54" r="4.5" fill="#1e1b4b" stroke="#a855f7" strokeWidth="1.5" />
+            <line x1="78" y1="43" x2="78" y2="65" stroke="#a855f7" strokeWidth="1.2" opacity="0.9" />
+            <line x1="67" y1="54" x2="89" y2="54" stroke="#a855f7" strokeWidth="1.2" opacity="0.9" />
+            <line x1="70" y1="46" x2="86" y2="62" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
+            <line x1="70" y1="62" x2="86" y2="46" stroke="#06b6d4" strokeWidth="1" opacity="0.8" />
           </g>
+          <rect x="76" y="52.5" width="4" height="3" rx="1" fill="#06b6d4" />
 
-          {/* Cadre BMX */}
-          <path
-            d="M 25 54 L 44 52 L 68 36 L 46 36 L 25 54 Z"
-            stroke="url(#neonCyanSalem)"
-            strokeWidth="3"
-            strokeLinejoin="round"
-          />
-          <path d="M 44 52 L 68 36 L 75 54" stroke="url(#neonCyanSalem)" strokeWidth="3" strokeLinejoin="round" />
-          <path d="M 44 52 L 40 32" stroke="url(#neonCyanSalem)" strokeWidth="3" />
-          <path d="M 33 30 L 45 32" stroke="#0f172a" strokeWidth="5" strokeLinecap="round" />
-          <path d="M 33 30 L 45 32" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" />
-          
-          <path d="M 68 36 L 66 22" stroke="url(#neonCyanSalem)" strokeWidth="3" />
-          <path d="M 60 21 L 72 21" stroke="#a855f7" strokeWidth="3.5" strokeLinecap="round" />
+          {/* Cadre BMX Salem */}
+          <path d="M 25 54 L 46 52 L 25 40 Z" stroke="url(#neonSalemBike)" strokeWidth="2.5" strokeLinejoin="round" />
+          <path d="M 46 52 L 70 36 L 46 36 Z" stroke="url(#neonSalemBike)" strokeWidth="3.2" strokeLinejoin="round" />
+          <path d="M 70 36 L 78 54" stroke="url(#neonSalemBike)" strokeWidth="3" strokeLinecap="round" />
+          <path d="M 70 36 L 68 21" stroke="url(#neonSalemBike)" strokeWidth="3.2" />
 
-          {/* Pédalier */}
-          <circle cx="44" cy="52" r="3.5" fill="#0f172a" stroke="#06b6d4" strokeWidth="2" />
-          <line x1="44" y1="52" x2="49" y2="60" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round" />
-          <circle cx="49" cy="60" r="2" fill="#06b6d4" />
+          {/* Tige & Selle */}
+          <path d="M 46 52 L 40 31" stroke="url(#neonSalemBike)" strokeWidth="3" />
+          <path d="M 32 29 L 45 31" stroke="#090d16" strokeWidth="5" strokeLinecap="round" />
+          <path d="M 33 29 L 44 31" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" />
 
-          {/* Jambes & Baskets */}
-          <path d="M 40 30 Q 42 44 49 58" stroke="#0f172a" strokeWidth="5.5" strokeLinecap="round" />
-          <path d="M 47 58 L 54 60" stroke="#06b6d4" strokeWidth="3.5" strokeLinecap="round" />
+          {/* Guidon & Grips */}
+          <path d="M 62 20 L 74 20" stroke="#a855f7" strokeWidth="4" strokeLinecap="round" />
+          <line x1="63" y1="23" x2="73" y2="23" stroke="#06b6d4" strokeWidth="1.5" />
+          <line x1="62" y1="20" x2="64" y2="20" stroke="#06b6d4" strokeWidth="5" strokeLinecap="round" />
+          <line x1="72" y1="20" x2="74" y2="20" stroke="#06b6d4" strokeWidth="5" strokeLinecap="round" />
 
-          {/* Hoodie Body */}
-          <path d="M 42 28 C 45 18 56 16 60 21 L 52 34 Z" fill="#090d16" stroke="#06b6d4" strokeWidth="1" />
-          <path d="M 46 23 L 53 27" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" />
+          {/* Pédalier & Chaîne */}
+          <circle cx="46" cy="52" r="4.5" fill="#090d16" stroke="#06b6d4" strokeWidth="2" />
+          <line x1="25" y1="54" x2="46" y2="52" stroke="#06b6d4" strokeWidth="1.2" strokeDasharray="2 2" />
+          <line x1="46" y1="52" x2="51" y2="61" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round" />
+          <rect x="49" y="60" width="5" height="2" rx="1" fill="#06b6d4" />
 
-          {/* Bras & Mains */}
-          <path d="M 52 21 L 66 23" stroke="#0f172a" strokeWidth="4.5" strokeLinecap="round" />
-          <circle cx="66" cy="23" r="2.5" fill="url(#skinSalem)" />
+          {/* 👕 VÊTEMENTS STREETWEAR SALEM (Coupe-Vent Cyan + Jogger + Sneakers) */}
+          <path d="M 42 29 Q 44 45 51 59" stroke="#0f172a" strokeWidth="6" strokeLinecap="round" />
+          <path d="M 45 42 L 48 44" stroke="#a855f7" strokeWidth="1.5" />
+          {/* Sneaker Air Cyan */}
+          <path d="M 49 59 L 57 61" stroke="#06b6d4" strokeWidth="4" strokeLinecap="round" />
+          <path d="M 50 61 L 57 61" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
+
+          {/* Coupe-vent stylé */}
+          <path d="M 43 27 C 46 17 58 15 62 20 L 53 35 Z" fill="url(#windbreakerSalem)" stroke="#06b6d4" strokeWidth="1.5" />
+          <circle cx="56" cy="22" r="1.5" fill="#a855f7" />
+          <path d="M 52 18 L 48 30" stroke="#06b6d4" strokeWidth="1.2" strokeLinecap="round" />
+
+          {/* Bras */}
+          <path d="M 54 20 L 68 21" stroke="url(#windbreakerSalem)" strokeWidth="5" strokeLinecap="round" />
+          <circle cx="69" cy="21" r="2.2" fill="url(#skinSalem)" />
 
           {/* Tête */}
-          <circle cx="56" cy="14" r="5.5" fill="url(#skinSalem)" />
+          <circle cx="58" cy="13" r="5.5" fill="url(#skinSalem)" />
 
-          {/* 🧢 Casquette tournée en arrière Cyan */}
-          <path d="M 51 13 C 51 7 61 7 62 13 Z" fill="#06b6d4" stroke="#a855f7" strokeWidth="1" />
-          <path d="M 51 13 Q 41 14 40 11" stroke="#a855f7" strokeWidth="3" strokeLinecap="round" />
-          {/* Lunettes de soleil noires */}
-          <path d="M 56 14 L 61 14" stroke="#000" strokeWidth="2" strokeLinecap="round" />
+          {/* 🧢 Casquette tournée en arrière Cyan Bad Boy */}
+          <path d="M 53 12 C 53 6 63 6 64 12 Z" fill="#06b6d4" stroke="#a855f7" strokeWidth="1" />
+          <path d="M 53 12 Q 43 13 41 10" stroke="#a855f7" strokeWidth="3" strokeLinecap="round" />
+          <path d="M 58 13 L 63 13" stroke="#000" strokeWidth="2.2" strokeLinecap="round" />
         </svg>
       </div>
 
       <style jsx>{`
         /* ===================================================
-           PARCOURS RUE / GOUDRON & LONGS WHEELINGS DU BONHEUR : DOM
-           (Descente depuis l'horloge -> Entrée sur Goudron ->
-            LONG WHEELING CABRÉ -> Tremplin 1 -> Grand Saut 360 ->
-            Atterrissage & Manual -> Tremplin 2 -> Monster Tailwhip ->
-            Wheeling de sortie -> Boucle infinie)
+           TRAJET RÉEL SUR LE GOUDRON + VRAIS WHEELINGS + ENTRÉE DANS L'HORLOGE : DOM
+           (Sortie du portail gauche -> Roulage au sol sur le bitume ->
+            LONG VRAI WHEELING ANCRÉ AU SOL -> Tremplin Kicker ->
+            Saut -> Atterrissage sur goudron -> ENTRÉE DANS LA PORTE DE L'HORLOGE)
            =================================================== */
-        @keyframes domStreetCourse {
+        @keyframes domGroundRide {
           0% {
-            left: -15%;
-            top: -20px;
-            transform: translateY(0px) rotate(12deg);
+            /* Sortie du portail gauche directement sur le goudron */
+            left: -4%;
+            opacity: 0;
+            transform: translateY(0px) rotate(0deg) scale(0.9);
           }
-          8% {
-            /* Descente depuis l'horloge vers la route goudronnée */
-            left: 2%;
-            top: 0px;
-            transform: translateY(0px) rotate(0deg);
+          6% {
+            /* Roulage normal : les 2 roues collées sur le goudron */
+            left: 5%;
+            opacity: 1;
+            transform: translateY(0px) rotate(0deg) scale(1);
           }
-          16% {
-            /* DÉBUT DU LONG WHEELING DU BONHEUR (Cabrage roue arrière à 35°) */
-            left: 10%;
-            top: 0px;
-            transform: translateY(-12px) rotate(-35deg);
+          14% {
+            /* DÉBUT DU VRAI WHEELING : Roue arrière collée au goudron, roue avant levée haut */
+            left: 14%;
+            opacity: 1;
+            transform: translateY(0px) rotate(-34deg);
+            transform-origin: 25px 54px; /* Pivot parfait sur la roue arrière ! */
           }
-          24% {
-            /* MAINTIEN DU WHEELING SUR PLUSIEURS MÈTRES */
-            left: 20%;
-            top: 0px;
-            transform: translateY(-14px) rotate(-38deg);
-          }
-          27% {
-            /* Descente de la roue avant à l'approche du Tremplin 1 */
-            left: 25%;
-            top: 0px;
-            transform: translateY(0px) rotate(0deg);
+          26% {
+            /* MAINTIEN DU WHEELING AU SOL SUR PLUSIEURS MÈTRES */
+            left: 28%;
+            opacity: 1;
+            transform: translateY(0px) rotate(-36deg);
+            transform-origin: 25px 54px;
           }
           32% {
-            /* 🚀 ENVOI SUR TREMPLIN 1 (Grand Saut Acrobatique en l'air) */
-            left: 31%;
-            top: 0px;
-            transform: translateY(-48px) rotate(-22deg);
-          }
-          38% {
-            /* 360 Spin en plein vol au-dessus du goudron */
-            left: 38%;
-            top: 0px;
-            transform: translateY(-52px) rotate(340deg);
-          }
-          45% {
-            /* Atterrissage souple sur le goudron */
-            left: 46%;
-            top: 0px;
+            /* Repose de la roue avant sur le goudron à l'approche du tremplin */
+            left: 35%;
+            opacity: 1;
             transform: translateY(0px) rotate(0deg);
           }
-          52% {
-            /* 2ÈME WHEELING RAPIDE & MANUAL */
-            left: 56%;
-            top: 0px;
-            transform: translateY(-10px) rotate(-30deg);
+          38% {
+            /* 🚀 ENVOI SUR TREMPLIN : Décollage en l'air */
+            left: 44%;
+            opacity: 1;
+            transform: translateY(-36px) rotate(-22deg);
           }
-          66% {
-            /* Arrivée sur Tremplin 2 (Kicker 2) */
-            left: 67%;
-            top: 0px;
+          46% {
+            /* Atterrissage franc et net sur le goudron */
+            left: 54%;
+            opacity: 1;
+            transform: translateY(0px) rotate(0deg);
+          }
+          54% {
+            /* Mini wheeling de relance au sol vers la grande horloge */
+            left: 65%;
+            opacity: 1;
+            transform: translateY(0px) rotate(-28deg);
+            transform-origin: 25px 54px;
+          }
+          64% {
+            /* Roulage à vive allure face à la porte de l'horloge */
+            left: 78%;
+            opacity: 1;
             transform: translateY(0px) rotate(0deg);
           }
           72% {
-            /* 🚀 ENVOI TREMPLIN 2 : MONSTER AIR TAILWHIP */
-            left: 74%;
-            top: 0px;
-            transform: translateY(-50px) rotate(-32deg);
+            /* 🚪 ENTRÉE DANS LA PORTE DE LA GRANDE HORLOGE */
+            left: 88%;
+            opacity: 1;
+            transform: translateY(0px) rotate(0deg) scale(0.95);
           }
-          80% {
-            /* Extension Superman en l'air */
-            left: 82%;
-            top: 0px;
-            transform: translateY(-38px) rotate(14deg);
-          }
-          88% {
-            /* Réception et dernier Wheeling de célébration */
-            left: 92%;
-            top: 0px;
-            transform: translateY(-8px) rotate(-26deg);
-          }
-          96% {
-            /* Sortie à droite */
-            left: 105%;
-            top: 0px;
-            transform: translateY(0px) rotate(0deg);
+          78% {
+            /* Absorption à l'intérieur de l'horloge */
+            left: 95%;
+            opacity: 0;
+            transform: translateY(-4px) rotate(0deg) scale(0.65);
           }
           100% {
-            /* Bouclage propre au départ à gauche */
-            left: 118%;
-            top: -20px;
-            transform: translateY(0px) rotate(0deg);
+            /* Transition invisible et réapparition au départ à gauche */
+            left: 95%;
+            opacity: 0;
+            transform: translateY(0px) rotate(0deg) scale(0.65);
           }
         }
 
         /* ===================================================
-           PARCOURS RUE / GOUDRON & WHEELINGS EN SÉRIE : SALEM
-           (Descente -> Poursuite -> Wheeling -> Kicker 1 ->
-            Air Backflip -> Manual -> Kicker 2 -> 360 Air -> Sortie)
+           TRAJET RÉEL SUR LE GOUDRON + VRAIS WHEELINGS + ENTRÉE DANS L'HORLOGE : SALEM
            =================================================== */
-        @keyframes salemStreetCourse {
+        @keyframes salemGroundRide {
           0% {
-            left: -22%;
-            top: -20px;
-            transform: translateY(0px) rotate(10deg);
+            left: -4%;
+            opacity: 0;
+            transform: translateY(0px) rotate(0deg) scale(0.9);
           }
-          10% {
-            /* Arrivée sur le goudron */
-            left: 0%;
-            top: 0px;
+          6% {
+            left: 5%;
+            opacity: 1;
+            transform: translateY(0px) rotate(0deg) scale(1);
+          }
+          16% {
+            /* VRAI WHEELING ARRIÈRE SALEM */
+            left: 16%;
+            opacity: 1;
+            transform: translateY(0px) rotate(-35deg);
+            transform-origin: 25px 54px;
+          }
+          28% {
+            /* Maintien wheeling au sol */
+            left: 30%;
+            opacity: 1;
+            transform: translateY(0px) rotate(-38deg);
+            transform-origin: 25px 54px;
+          }
+          34% {
+            left: 36%;
+            opacity: 1;
             transform: translateY(0px) rotate(0deg);
-          }
-          18% {
-            /* GRAND WHEELING CABRÉ SALEM */
-            left: 12%;
-            top: 0px;
-            transform: translateY(-14px) rotate(-38deg);
-          }
-          26% {
-            /* Maintien équilibre sur 1 roue */
-            left: 22%;
-            top: 0px;
-            transform: translateY(-14px) rotate(-36deg);
-          }
-          31% {
-            /* Tremplin 1 : BACKFLIP PÉRILLEUX DANS LES AIRS */
-            left: 29%;
-            top: 0px;
-            transform: translateY(-50px) rotate(-350deg);
           }
           40% {
-            /* Réception propre sur le bitume */
-            left: 40%;
-            top: 0px;
-            transform: translateY(0px) rotate(0deg);
+            /* 🚀 ENVOI SUR TREMPLIN */
+            left: 45%;
+            opacity: 1;
+            transform: translateY(-38px) rotate(-24deg);
           }
           48% {
-            /* Double Bunny hop Rebond */
-            left: 49%;
-            top: 0px;
-            transform: translateY(-24px) rotate(-16deg);
+            /* Atterrissage sur le goudron */
+            left: 56%;
+            opacity: 1;
+            transform: translateY(0px) rotate(0deg);
           }
           56% {
-            /* Wheeling de relance */
-            left: 58%;
-            top: 0px;
-            transform: translateY(-12px) rotate(-28deg);
+            left: 68%;
+            opacity: 1;
+            transform: translateY(0px) rotate(-26deg);
+            transform-origin: 25px 54px;
           }
-          69% {
-            /* 🚀 ENVOI SUR TREMPLIN 2 (Mega Air 360 Tabletop) */
-            left: 71%;
-            top: 0px;
-            transform: translateY(-54px) rotate(350deg);
-          }
-          78% {
-            /* Plané horizontal en altitude */
+          66% {
             left: 80%;
-            top: 0px;
-            transform: translateY(-40px) rotate(22deg);
-          }
-          88% {
-            /* Réception & Power Slide avec étincelles */
-            left: 90%;
-            top: 0px;
-            transform: translateY(0px) rotate(-4deg);
-          }
-          96% {
-            left: 104%;
-            top: 0px;
+            opacity: 1;
             transform: translateY(0px) rotate(0deg);
+          }
+          74% {
+            /* 🚪 ENTRÉE DANS LA PORTE DE LA GRANDE HORLOGE */
+            left: 89%;
+            opacity: 1;
+            transform: translateY(0px) rotate(0deg) scale(0.95);
+          }
+          80% {
+            left: 95%;
+            opacity: 0;
+            transform: translateY(-4px) rotate(0deg) scale(0.65);
           }
           100% {
-            left: 120%;
-            top: -20px;
-            transform: translateY(0px) rotate(0deg);
-          }
-        }
-
-        /* Badges de tricks synchronisés aux wheelings et sauts */
-        @keyframes popTrickDomStreet {
-          0%, 12%, 46%, 64%, 86%, 100% {
+            left: 95%;
             opacity: 0;
-            transform: translateY(6px) scale(0.7);
-          }
-          16%, 24% {
-            opacity: 1;
-            transform: translateY(-12px) scale(1.05);
-          }
-          32%, 40% {
-            opacity: 1;
-            transform: translateY(-16px) scale(1.1);
-          }
-          72%, 80% {
-            opacity: 1;
-            transform: translateY(-16px) scale(1.1);
+            transform: translateY(0px) rotate(0deg) scale(0.65);
           }
         }
 
-        @keyframes popTrickSalemStreet {
-          0%, 14%, 42%, 66%, 86%, 100% {
+        /* Animation d'ouverture synchronisée des portes de l'horloge */
+        @keyframes doorLeftOpen {
+          0%, 60%, 85%, 100% {
+            transform: translateX(0%);
+          }
+          68%, 80% {
+            transform: translateX(-90%);
+          }
+        }
+
+        @keyframes doorRightOpen {
+          0%, 60%, 85%, 100% {
+            transform: translateX(0%);
+          }
+          68%, 80% {
+            transform: translateX(90%);
+          }
+        }
+
+        .animate-door-left {
+          animation: doorLeftOpen 10s ease-in-out infinite;
+        }
+
+        .animate-door-right {
+          animation: doorRightOpen 10s ease-in-out infinite;
+        }
+
+        /* Badges de tricks synchronisés aux wheelings */
+        @keyframes popTrickDomGround {
+          0%, 12%, 30%, 100% {
             opacity: 0;
-            transform: translateY(6px) scale(0.7);
+            transform: translateY(4px) scale(0.8);
           }
-          18%, 26% {
+          15%, 27% {
             opacity: 1;
-            transform: translateY(-12px) scale(1.05);
+            transform: translateY(-10px) scale(1.05);
           }
-          32%, 39% {
+        }
+
+        @keyframes popTrickSalemGround {
+          0%, 14%, 32%, 100% {
+            opacity: 0;
+            transform: translateY(4px) scale(0.8);
+          }
+          17%, 29% {
             opacity: 1;
-            transform: translateY(-16px) scale(1.1);
-          }
-          70%, 78% {
-            opacity: 1;
-            transform: translateY(-16px) scale(1.1);
+            transform: translateY(-10px) scale(1.05);
           }
         }
 
-        .animate-dom-street-course {
-          animation: domStreetCourse 11s cubic-bezier(0.38, 0, 0.22, 1) infinite;
+        .animate-dom-ground-ride {
+          animation: domGroundRide 10s cubic-bezier(0.35, 0, 0.25, 1) infinite;
         }
 
-        .animate-salem-street-course {
-          animation: salemStreetCourse 11s cubic-bezier(0.38, 0, 0.22, 1) infinite;
-          animation-delay: 2.6s;
+        .animate-salem-ground-ride {
+          animation: salemGroundRide 10s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+          animation-delay: 2.5s;
         }
 
-        .animate-trick-dom-street {
-          animation: popTrickDomStreet 11s ease-in-out infinite;
+        .animate-trick-dom-ground {
+          animation: popTrickDomGround 10s ease-in-out infinite;
         }
 
-        .animate-trick-salem-street {
-          animation: popTrickSalemStreet 11s ease-in-out infinite;
-          animation-delay: 2.6s;
+        .animate-trick-salem-ground {
+          animation: popTrickSalemGround 10s ease-in-out infinite;
+          animation-delay: 2.5s;
         }
 
         @keyframes spinWheel {
@@ -521,7 +548,20 @@ export default function BMXRiderAnimation() {
         }
 
         .animate-spin-wheel {
-          animation: spinWheel 0.3s linear infinite;
+          animation: spinWheel 0.28s linear infinite;
+        }
+
+        @keyframes spinSlow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        .animate-spin-slow {
+          animation: spinSlow 8s linear infinite;
         }
       `}</style>
     </div>
