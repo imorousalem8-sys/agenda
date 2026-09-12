@@ -38,17 +38,6 @@ export default function Hero() {
       {/* Main Centered Stage */}
       <div className="max-w-6xl mx-auto flex flex-col items-center">
         
-        {/* 1. Top HUD Status Bar */}
-        <div className="w-full max-w-2xl mb-8 flex-shrink-0">
-          <div className="flex items-center justify-between py-2 px-5 rounded-2xl bg-slate-900/50 border border-slate-800/70 backdrop-blur-xl shadow-xl">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            </div>
-            <div className="flex items-center gap-2">
-              <Radio size={13} className="text-emerald-400 animate-pulse" />
-            </div>
-          </div>
-        </div>
 
         {/* 2. Cockpit : Agrandissement Majestueux & Parfaitement Équilibré */}
         <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-14 relative flex-shrink-0">
