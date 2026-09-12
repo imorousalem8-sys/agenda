@@ -29,7 +29,7 @@ export default function Hero() {
   const ampm = time && time.getHours() >= 12 ? "PM" : "AM";
 
   return (
-    <section className="relative w-full bg-[#05070c] text-white pt-6 pb-36 px-6 sm:px-10 lg:px-16 overflow-hidden font-sans">
+    <section className="relative w-full bg-[#05070c] text-white pt-6 pb-32 px-6 sm:px-10 lg:px-16 overflow-hidden font-sans">
       {/* Background Matrix & Subtle Glow Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:36px_36px] opacity-10 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none -z-10" />
@@ -39,7 +39,7 @@ export default function Hero() {
       <div className="max-w-5xl mx-auto flex flex-col items-center">
         
         {/* 1. Top HUD Status Bar */}
-        <div className="w-full max-w-2xl mb-8">
+        <div className="w-full max-w-2xl mb-8 flex-shrink-0">
           <div className="flex items-center justify-between py-2 px-5 rounded-2xl bg-slate-900/50 border border-slate-800/70 backdrop-blur-xl shadow-xl">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -51,7 +51,7 @@ export default function Hero() {
         </div>
 
         {/* 2. Cockpit : Badge Heure en Haut à Gauche + Montre Centrée + Photo à Droite */}
-        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-12 relative pb-8">
+        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-12 relative flex-shrink-0">
           
           {/* A. 🕒 Badge Heure Numérique (Placé en haut à gauche de la montre) */}
           <div className="flex flex-col justify-center items-center lg:items-end self-center lg:self-start lg:pt-2">
@@ -76,8 +76,8 @@ export default function Hero() {
           </div>
 
           {/* B. Montre Mécanique Centrée */}
-          <div className="flex flex-col items-center group">
-            <div className="relative w-[210px] h-[210px] sm:w-[250px] sm:h-[250px] rounded-full p-2 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
+          <div className="flex flex-col items-center group flex-shrink-0">
+            <div className="relative w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] rounded-full p-2 bg-gradient-to-b from-slate-700 via-slate-900 to-black shadow-2xl shadow-black border-4 border-slate-700/80 flex items-center justify-center">
               <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-emerald-500/40 bg-[#070b10] flex items-center justify-center">
                 <Image
                   src="/images/dark-hud-watch.jpg"
@@ -93,8 +93,8 @@ export default function Hero() {
           </div>
 
           {/* C. Photo Fondateur au bureau */}
-          <div className="flex flex-col items-center justify-center">
-            <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-[260px] sm:w-[300px] md:w-[330px]">
+          <div className="flex flex-col items-center justify-center flex-shrink-0">
+            <div className="relative rounded-3xl p-1 bg-gradient-to-br from-emerald-500/40 via-cyan-500/20 to-slate-800 shadow-2xl shadow-black/80 group overflow-hidden w-[250px] sm:w-[290px] md:w-[320px]">
               <div className="relative rounded-[1.35rem] overflow-hidden bg-slate-950 aspect-[16/11]">
                 <Image
                   src="/images/founder-desk-official.jpg"
@@ -110,8 +110,11 @@ export default function Hero() {
 
         </div>
 
-        {/* 3. Les 3 Tableaux : Fortement redescendus avec une séparation majeure de 100px */}
-        <div className="w-full flex justify-center items-center mt-20 sm:mt-28 lg:mt-32">
+        {/* 3. Les 3 Tableaux : Fortement descendus vers le bas (Séparation absolue de 140px garantie) */}
+        <div 
+          style={{ marginTop: "140px", marginBottom: "40px" }}
+          className="w-full flex justify-center items-center flex-shrink-0"
+        >
           <div className="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4">
             
             {/* Tableau 1: Rappels Vocaux IA */}
