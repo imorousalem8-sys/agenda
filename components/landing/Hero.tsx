@@ -51,7 +51,15 @@ export default function Hero() {
 
   return (
     <section className="w-full bg-gradient-to-b from-white via-[#f8fafc] to-white text-slate-900 pt-8 sm:pt-12 pb-20 sm:pb-28 font-sans overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+      {/* Conteneur avec marges garanties de chaque côté */}
+      <div
+        className="mx-auto"
+        style={{
+          maxWidth: "1280px",
+          paddingLeft: "clamp(24px, 5vw, 64px)",
+          paddingRight: "clamp(24px, 5vw, 64px)",
+        }}
+      >
         
         {/* =========================================================
             1. HERO STAGE : 2 COLONNES HAUTE COUTURE
@@ -72,8 +80,8 @@ export default function Hero() {
               </span>
             </div>
 
-            {/* Grand Titre (Typographie Élégante & Impactante) */}
-            <h1 className="text-3xl sm:text-5xl lg:text-[46px] xl:text-[50px] font-black text-[#09132b] tracking-tight leading-[1.14] mb-5 text-left">
+            {/* Grand Titre (Typographie Élégante & Cadrée) */}
+            <h1 className="text-3xl sm:text-4xl lg:text-[44px] xl:text-[48px] font-black text-[#09132b] tracking-tight leading-[1.14] mb-5 text-left">
               Ne manquez plus aucun <br className="hidden sm:inline" />
               <span className="bg-gradient-to-r from-[#09132b] via-[#1d4ed8] to-[#2563eb] bg-clip-text text-transparent">
                 rendez-vous important
@@ -106,17 +114,17 @@ export default function Hero() {
             </div>
 
             {/* Micro-Preuve Sociale */}
-            <div className="flex items-center gap-5 text-xs text-slate-500 font-medium">
+            <div className="flex items-center gap-5 text-xs text-slate-500 font-medium flex-wrap">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 size={15} className="text-emerald-600" />
+                <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
                 Installation en 1 min
               </span>
               <span className="flex items-center gap-1.5">
-                <ShieldCheck size={15} className="text-blue-600" />
+                <ShieldCheck size={15} className="text-blue-600 shrink-0" />
                 Conforme RGPD
               </span>
               <span className="flex items-center gap-1.5">
-                <Zap size={15} className="text-amber-500" />
+                <Zap size={15} className="text-amber-500 shrink-0" />
                 Zéro friction
               </span>
             </div>

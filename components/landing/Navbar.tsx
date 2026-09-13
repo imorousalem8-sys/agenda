@@ -6,7 +6,14 @@ import { ArrowRight, Sparkles } from "lucide-react";
 export default function Navbar() {
   return (
     <header className="w-full bg-white/90 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+      <div
+        className="mx-auto"
+        style={{
+          maxWidth: "1280px",
+          paddingLeft: "clamp(24px, 5vw, 64px)",
+          paddingRight: "clamp(24px, 5vw, 64px)",
+        }}
+      >
         <div className="flex items-center justify-between h-20">
           
           {/* Logo Alamajonda Exécutif */}

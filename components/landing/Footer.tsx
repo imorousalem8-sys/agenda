@@ -6,7 +6,14 @@ import { Sparkles, ShieldCheck } from "lucide-react";
 export default function Footer() {
   return (
     <footer className="bg-slate-950 border-t border-slate-800 text-slate-400 py-12 text-sm font-sans">
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+      <div
+        className="mx-auto"
+        style={{
+          maxWidth: "1280px",
+          paddingLeft: "clamp(24px, 5vw, 64px)",
+          paddingRight: "clamp(24px, 5vw, 64px)",
+        }}
+      >
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-800">
           
           {/* Logo & Description */}
