@@ -9,25 +9,25 @@ export default function Hero() {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   return (
-    <section className="relative w-full bg-white text-slate-900 pt-6 sm:pt-10 pb-20 sm:pb-28 px-4 sm:px-6 lg:px-8 font-sans overflow-hidden">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative w-full bg-white text-slate-900 pt-8 sm:pt-12 pb-16 sm:pb-24 font-sans overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
         
         {/* =========================================================
-            1. HERO SECTION : 2 COLONNES (TEXTE GAUCHE / PHOTO DROITE)
+            1. HERO STAGE : 2 COLONNES (TEXTE GAUCHE / PHOTO DROITE)
            ========================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-12 lg:mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-10 sm:mb-14">
           
           {/* A. Colonne Gauche : Titre + Sous-Titre + Bouton En Savoir Plus */}
-          <div className="lg:col-span-6 flex flex-col items-start justify-center pr-0 lg:pr-4">
+          <div className="lg:col-span-6 flex flex-col items-start justify-center pr-0 lg:pr-2 z-10">
             
             {/* Grand Titre Exact (Identique à la maquette) */}
-            <h1 className="text-3xl sm:text-5xl lg:text-[3.35rem] font-black text-[#0b152e] tracking-tight leading-[1.15] mb-4">
-              Ne manquez plus aucun <br className="hidden sm:block" />
+            <h1 className="text-3xl sm:text-4xl lg:text-[44px] xl:text-[46px] font-black text-[#0b152e] tracking-tight leading-[1.18] mb-4 text-left">
+              Ne manquez plus aucun <br className="hidden sm:inline" />
               rendez-vous important
             </h1>
 
             {/* Sous-titre Exact */}
-            <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed mb-8 max-w-lg">
+            <p className="text-base lg:text-[17px] text-slate-600 font-normal leading-relaxed mb-8 max-w-[480px] text-left">
               L&apos;assistant vocal IA intelligent pour une gestion d&apos;agenda sans effort, précise et automatisée.
             </p>
 
@@ -36,7 +36,7 @@ export default function Hero() {
               <button
                 type="button"
                 onClick={() => setShowDetailsModal(true)}
-                className="inline-flex items-center justify-center px-7 py-3.5 rounded-lg font-semibold text-sm text-white bg-[#155dfc] hover:bg-blue-700 shadow-md hover:shadow-lg transition-all cursor-pointer"
+                className="inline-flex items-center justify-center px-6 sm:px-7 py-3 rounded-xl font-semibold text-sm sm:text-base text-white bg-[#155dfc] hover:bg-blue-700 shadow-md hover:shadow-lg transition-all cursor-pointer"
               >
                 En savoir plus
               </button>
@@ -45,7 +45,7 @@ export default function Hero() {
 
           {/* B. Colonne Droite : Femme d'Affaires + Bulle Appel Vocal */}
           <div className="lg:col-span-6 relative flex items-center justify-center lg:justify-end">
-            <div className="relative w-full max-w-[540px] aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
+            <div className="relative w-full max-w-[520px] aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl bg-slate-100">
               <Image
                 src="/images/hero-businesswoman.jpg"
                 alt="Femme professionnelle utilisant l'assistant vocal Alamajonda"
@@ -55,7 +55,7 @@ export default function Hero() {
               />
 
               {/* Bulle d'Appel Vocal Flottante (Identique à la maquette) */}
-              <div className="absolute top-1/2 -translate-y-1/2 left-4 sm:left-6 bg-[#ebf3ff]/95 backdrop-blur-md border border-[#c7dfff] rounded-2xl p-3 sm:p-4 shadow-xl flex items-center gap-3 z-20 max-w-[260px] sm:max-w-[280px]">
+              <div className="absolute top-1/2 -translate-y-1/2 left-3 sm:left-6 bg-[#ebf3ff]/95 backdrop-blur-md border border-[#c7dfff] rounded-2xl p-3 sm:p-3.5 shadow-xl flex items-center gap-3 z-20 max-w-[250px] sm:max-w-[270px]">
                 {/* Icône Onde Sonore Bleue */}
                 <div className="flex items-center gap-0.5 h-6 px-1">
                   <span className="w-1 h-3 bg-[#155dfc] rounded-full" />
@@ -80,16 +80,16 @@ export default function Hero() {
         </div>
 
         {/* =========================================================
-            2. LES 3 CARTES BLANCHES FLOTTANTES (Exactement comme le plan)
+            2. LES 3 CARTES BLANCHES FLOTTANTES DU BAS (Identique 1:1)
            ========================================================= */}
-        <div id="fonctionnalites" className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+        <div id="fonctionnalites" className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-7 w-full max-w-5xl">
           
           {/* CARTE 1 : Rappels Vocaux IA */}
-          <div className="bg-white rounded-2xl p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] border border-slate-100/80 hover:shadow-[0_20px_45px_rgba(0,0,0,0.1)] transition-all flex flex-col justify-between">
+          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-[0_12px_35px_rgba(0,0,0,0.06)] border border-slate-100/90 hover:shadow-[0_16px_45px_rgba(0,0,0,0.09)] transition-all flex flex-col justify-between">
             <div>
               {/* Icône Micro avec Ondes Bleues */}
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4">
+                <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   {/* Micro central */}
                   <rect x="15" y="8" width="10" height="16" rx="5" fill="#155dfc" />
                   <path d="M10 18C10 23.5228 14.4772 28 20 28C25.5228 28 30 23.5228 30 18" stroke="#155dfc" strokeWidth="3" strokeLinecap="round" />
@@ -101,22 +101,22 @@ export default function Hero() {
                 </svg>
               </div>
 
-              <h3 className="text-lg font-bold text-[#0b152e] mb-2">
+              <h3 className="text-base sm:text-lg font-bold text-[#0b152e] mb-1.5">
                 Rappels Vocaux IA
               </h3>
               
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Planifiez des rappels vocaux clairs et naturels en quelques secondes.
               </p>
             </div>
           </div>
 
           {/* CARTE 2 : Multi-Canaux SMS */}
-          <div className="bg-white rounded-2xl p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] border border-slate-100/80 hover:shadow-[0_20px_45px_rgba(0,0,0,0.1)] transition-all flex flex-col justify-between">
+          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-[0_12px_35px_rgba(0,0,0,0.06)] border border-slate-100/90 hover:shadow-[0_16px_45px_rgba(0,0,0,0.09)] transition-all flex flex-col justify-between">
             <div>
               {/* Icône Téléphone avec Bulle SMS Bleue */}
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4">
+                <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   {/* Téléphone */}
                   <rect x="8" y="6" width="16" height="28" rx="3.5" stroke="#155dfc" strokeWidth="3" fill="none" />
                   <circle cx="16" cy="29" r="1.5" fill="#155dfc" />
@@ -128,22 +128,22 @@ export default function Hero() {
                 </svg>
               </div>
 
-              <h3 className="text-lg font-bold text-[#0b152e] mb-2">
+              <h3 className="text-base sm:text-lg font-bold text-[#0b152e] mb-1.5">
                 Multi-Canaux SMS
               </h3>
               
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Envoyez des confirmations et rappels automatiques par SMS pour une portée maximale.
               </p>
             </div>
           </div>
 
           {/* CARTE 3 : Agenda Intelligent */}
-          <div className="bg-white rounded-2xl p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] border border-slate-100/80 hover:shadow-[0_20px_45px_rgba(0,0,0,0.1)] transition-all flex flex-col justify-between">
+          <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-[0_12px_35px_rgba(0,0,0,0.06)] border border-slate-100/90 hover:shadow-[0_16px_45px_rgba(0,0,0,0.09)] transition-all flex flex-col justify-between">
             <div>
               {/* Icône Calendrier avec Engrenage & Coche Bleue */}
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4">
+                <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   {/* Calendrier */}
                   <rect x="7" y="10" width="22" height="22" rx="4" stroke="#155dfc" strokeWidth="3" fill="none" />
                   <line x1="7" y1="17" x2="29" y2="17" stroke="#155dfc" strokeWidth="2.5" />
@@ -156,11 +156,11 @@ export default function Hero() {
                 </svg>
               </div>
 
-              <h3 className="text-lg font-bold text-[#0b152e] mb-2">
+              <h3 className="text-base sm:text-lg font-bold text-[#0b152e] mb-1.5">
                 Agenda Intelligent
               </h3>
               
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Organisez vos rendez-vous, réunions et tâches avec une planification intelligente.
               </p>
             </div>
