@@ -22,11 +22,9 @@ import {
   ChevronRight,
   Phone,
 } from "lucide-react";
-import AppDetailsModal from "./AppDetailsModal";
 import { speakAIText, playAlertChime } from "@/lib/voice";
 
 export default function Hero() {
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
 
   const handlePlayVoiceDemo = () => {
@@ -254,12 +252,6 @@ export default function Hero() {
         </div>
 
       </div>
-
-      {/* Modale En Savoir Plus */}
-      <AppDetailsModal
-        isOpen={showDetailsModal}
-        onClose={() => setShowDetailsModal(false)}
-      />
     </section>
   );
 }
