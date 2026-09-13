@@ -231,26 +231,6 @@ export default function Hero() {
 
         </div>
 
-        {/* =========================================================
-            3. BANDEAU DE MÉTRIQUES & GAIN DE TEMPS
-           ========================================================= */}
-        <div className="mt-14 sm:mt-20 p-6 sm:p-8 rounded-3xl bg-slate-900 text-white shadow-2xl flex flex-col sm:flex-row items-center justify-around gap-6 text-center">
-          <div>
-            <div className="text-2xl sm:text-3xl font-black text-blue-400 mb-1">+5.2 Heures</div>
-            <div className="text-xs sm:text-sm text-slate-300 font-medium">Économisées par semaine</div>
-          </div>
-          <div className="w-[1px] h-10 bg-slate-800 hidden sm:block" />
-          <div>
-            <div className="text-2xl sm:text-3xl font-black text-emerald-400 mb-1">99.8%</div>
-            <div className="text-xs sm:text-sm text-slate-300 font-medium">Ponctualité des rappels</div>
-          </div>
-          <div className="w-[1px] h-10 bg-slate-800 hidden sm:block" />
-          <div>
-            <div className="text-2xl sm:text-3xl font-black text-white mb-1">0 Oubli</div>
-            <div className="text-xs sm:text-sm text-slate-300 font-medium">Sérénité d&apos;esprit totale</div>
-          </div>
-        </div>
-
       </div>
     </section>
   );
