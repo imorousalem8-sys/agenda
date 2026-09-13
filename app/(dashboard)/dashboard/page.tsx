@@ -9,7 +9,6 @@ import {
   Plus,
   ArrowRight,
   Sparkles,
-  CheckCircle2,
   Clock,
   Activity,
   User,
@@ -26,7 +25,14 @@ import {
   RotateCcw,
   Target,
   Flame,
-  CheckCircle,
+  CloudSun,
+  Sun,
+  Moon,
+  TrendingUp,
+  Cpu,
+  Radio,
+  Sliders,
+  CheckCircle2,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import EventFormModal from "@/components/forms/EventFormModal";
@@ -66,12 +72,17 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
+  const [currentDateFormatted, setCurrentDateFormatted] = useState("");
   const [greeting, setGreeting] = useState("Bonjour");
   const [isPlayingBriefing, setIsPlayingBriefing] = useState(false);
 
   // Focus / Pomodoro Timer State (25 mins = 1500s)
   const [focusSeconds, setFocusSeconds] = useState(25 * 60);
   const [isFocusRunning, setIsFocusRunning] = useState(false);
+
+  // Quick Task Input state
+  const [quickTaskText, setQuickTaskText] = useState("");
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
 
   const userName = session?.user?.name ? session.user.name.split(" ")[0] : "Salem";
 
@@ -80,6 +91,14 @@ export default function DashboardPage() {
       const now = new Date();
       setCurrentTime(
         now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+      );
+      setCurrentDateFormatted(
+        now.toLocaleDateString("fr-FR", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
       );
       const h = now.getHours();
       if (h >= 5 && h < 12) setGreeting("Bonjour");
@@ -94,17 +113,19 @@ export default function DashboardPage() {
 
   // Pomodoro Focus Timer
   useEffect(() => {
-    let timer: any;
+    let timer: NodeJS.Timeout | null = null;
     if (isFocusRunning && focusSeconds > 0) {
       timer = setInterval(() => {
         setFocusSeconds((prev) => prev - 1);
       }, 1000);
-    } else if (focusSeconds === 0) {
+    } else if (focusSeconds === 0 && isFocusRunning) {
       setIsFocusRunning(false);
       playAlertChime();
       speakAIText("Session Focus terminée avec succès ! Prenez une pause de 5 minutes.");
     }
-    return () => clearInterval(timer);
+    return () => {
+      if (timer) clearInterval(timer);
+    };
   }, [isFocusRunning, focusSeconds]);
 
   useEffect(() => {
@@ -162,7 +183,8 @@ export default function DashboardPage() {
 
     const eventCount = events.length || 3;
     const reminderCount = reminders.length || 2;
-    const briefingText = `${greeting} ${userName} ! Voici votre briefing exécutif. Vous avez ${eventCount} rendez-vous planifiés aujourd'hui et ${reminderCount} rappels vocaux actifs. Votre premier créneau commence dans la matinée. Tout est sous contrôle.`;
+    const taskCount = tasks.length || 4;
+    const briefingText = `${greeting} ${userName} ! Bienvenue dans votre cockpit exécutif Alamajonda. Vous avez ${eventCount} événements à venir, ${reminderCount} rappels vocaux actifs, et ${taskCount} priorités en cours. Vos systèmes sont opérationnels à cent pour cent. Excellente journée à vous !`;
 
     speakAIText(briefingText, {
       gender: "FEMALE",
@@ -188,6 +210,31 @@ export default function DashboardPage() {
     }
   };
 
+  const handleCreateQuickTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickTaskText.trim() || isCreatingTask) return;
+
+    setIsCreatingTask(true);
+    try {
+      const res = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: quickTaskText.trim(),
+          priority: "HIGH",
+        }),
+      });
+      if (res.ok) {
+        setQuickTaskText("");
+        loadDashboard();
+      }
+    } catch (err) {
+      console.error("Error creating quick task:", err);
+    } finally {
+      setIsCreatingTask(false);
+    }
+  };
+
   const formatFocusTime = (secs: number) => {
     const m = Math.floor(secs / 60).toString().padStart(2, "0");
     const s = (secs % 60).toString().padStart(2, "0");
@@ -195,419 +242,668 @@ export default function DashboardPage() {
   };
 
   const completedCount = tasks.filter((t) => t.isDone).length;
-  const taskCompletionRate = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 80;
+  const totalTasksCount = tasks.length || 1;
+  const taskCompletionRate = Math.min(100, Math.round(((totalTasksCount - tasks.length + completedCount) / (totalTasksCount + 2)) * 100) || 82);
 
   return (
-    <div style={{ padding: "28px 36px", maxWidth: "1550px", margin: "0 auto", width: "100%" }}>
-      {/* 1. Ultra-Clean Executive Command Header */}
+    <div
+      style={{
+        padding: "24px 32px 60px",
+        maxWidth: "1600px",
+        margin: "0 auto",
+        width: "100%",
+        position: "relative",
+      }}
+    >
+      {/* Background Ambient Cyber Glows */}
       <div
         style={{
-          background: "linear-gradient(135deg, #0b152e 0%, #1d4ed8 55%, #2563eb 100%)",
-          borderRadius: "22px",
-          padding: "24px 30px",
-          boxShadow: "0 15px 35px -5px rgba(37, 99, 235, 0.35)",
-          border: "1px solid rgba(255, 255, 255, 0.18)",
-          marginBottom: "24px",
-          position: "relative",
-          overflow: "hidden",
-          color: "#ffffff",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "18px",
+          position: "fixed",
+          top: "5%",
+          right: "10%",
+          width: "450px",
+          height: "450px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, rgba(99, 102, 241, 0.03) 50%, transparent 70%)",
+          pointerEvents: "none",
+          filter: "blur(50px)",
+          zIndex: 0,
         }}
-      >
-        <div style={{ position: "relative", zIndex: 2 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
-            <span
+      />
+      <div
+        style={{
+          position: "fixed",
+          bottom: "10%",
+          left: "15%",
+          width: "500px",
+          height: "500px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(139, 92, 246, 0.07) 0%, rgba(6, 182, 212, 0.02) 50%, transparent 70%)",
+          pointerEvents: "none",
+          filter: "blur(60px)",
+          zIndex: 0,
+        }}
+      />
+
+      <div style={{ position: "relative", zIndex: 1 }}>
+        {/* =========================================================================
+            1. HERO COMMAND CENTER (Cyber Luxury Executive Header)
+           ========================================================================= */}
+        <div
+          className="cyber-card"
+          style={{
+            padding: "26px 32px",
+            marginBottom: "24px",
+            background: "linear-gradient(135deg, rgba(8, 16, 38, 0.9) 0%, rgba(12, 24, 58, 0.85) 50%, rgba(6, 10, 24, 0.95) 100%)",
+            border: "1px solid rgba(56, 189, 248, 0.25)",
+            borderRadius: "24px",
+            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(6, 182, 212, 0.12)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "20px",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          {/* Subtle Top Border Gradient Line */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: "2px",
+              background: "linear-gradient(90deg, transparent, #06b6d4, #818cf8, #c084fc, transparent)",
+            }}
+          />
+
+          {/* Left Title & Status */}
+          <div style={{ flex: 1, minWidth: "300px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px", flexWrap: "wrap" }}>
+              <span
+                style={{
+                  fontSize: "10px",
+                  fontWeight: "800",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  background: "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%)",
+                  border: "1px solid rgba(56, 189, 248, 0.4)",
+                  padding: "3px 10px",
+                  borderRadius: "20px",
+                  color: "#38bdf8",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                  boxShadow: "0 0 12px rgba(6, 182, 212, 0.2)",
+                }}
+              >
+                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 8px #10b981" }} />
+                COCKPIT EXÉCUTIF OPÉRATIONNEL
+              </span>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontSize: "12px",
+                  color: "#94a3b8",
+                  fontWeight: "600",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  padding: "3px 10px",
+                  borderRadius: "12px",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                }}
+              >
+                <Clock size={12} style={{ color: "#38bdf8" }} />
+                <span style={{ fontFamily: "monospace", letterSpacing: "0.05em", color: "#f8fafc" }}>
+                  {currentTime || "12:00:00"}
+                </span>
+              </div>
+            </div>
+
+            <h1
               style={{
-                fontSize: "11px",
-                fontWeight: "800",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                background: "rgba(255, 255, 255, 0.2)",
-                padding: "3px 10px",
-                borderRadius: "20px",
-                color: "#e0f2fe",
+                fontSize: "28px",
+                fontWeight: "900",
+                letterSpacing: "-0.03em",
+                color: "#ffffff",
+                margin: "0 0 6px 0",
+                lineHeight: 1.2,
               }}
             >
-              Cockpit Exécutif
-            </span>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "#bae6fd", fontWeight: "600" }}>
-              <Clock size={13} />
-              <span>{currentTime || "12:00:00"}</span>
-            </div>
+              {greeting},{" "}
+              <span
+                style={{
+                  background: "linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                {userName}
+              </span>{" "}
+              ⚡
+            </h1>
+
+            <p style={{ fontSize: "13.5px", color: "#94a3b8", margin: 0, fontWeight: "500", textTransform: "capitalize" }}>
+              {currentDateFormatted || "Dimanche 13 Septembre"} · <span style={{ color: "#38bdf8" }}>Synchronisation active</span>
+            </p>
           </div>
 
-          <h1 style={{ fontSize: "26px", fontWeight: "800", letterSpacing: "-0.02em", color: "#ffffff", margin: 0 }}>
-            {greeting}, {userName} ! 👋
-          </h1>
-          <p style={{ fontSize: "13.5px", color: "#e0f2fe", marginTop: "2px", fontWeight: "500" }}>
-            Votre espace de travail est synchronisé. Tous vos créneaux sont sous contrôle.
-          </p>
-        </div>
-
-        {/* Executive Power Tools Buttons */}
-        <div style={{ position: "relative", zIndex: 2, display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
-          {/* Briefing Vocal */}
-          <button
-            onClick={handlePlayDailyBriefing}
-            style={{
-              padding: "10px 18px",
-              borderRadius: "12px",
-              background: "rgba(255, 255, 255, 0.18)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
-              color: "#ffffff",
-              fontWeight: "700",
-              fontSize: "13px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-            }}
-            className="hover:bg-white/30"
-            title="Écouter le résumé vocal de la journée"
-          >
-            <Volume2 size={16} />
-            <span>{isPlayingBriefing ? "Briefing en cours..." : "Briefing Vocal du Jour"}</span>
-          </button>
-
-          {/* Export Calendrier .ICS */}
-          <button
-            onClick={handleExportICS}
-            style={{
-              padding: "10px 18px",
-              borderRadius: "12px",
-              background: "rgba(255, 255, 255, 0.18)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
-              color: "#ffffff",
-              fontWeight: "700",
-              fontSize: "13px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-            }}
-            className="hover:bg-white/30"
-            title="Exporter l'agenda vers Google Calendar, Apple Calendar ou Outlook (.ics)"
-          >
-            <Download size={15} />
-            <span>Exporter l&apos;agenda (.ICS)</span>
-          </button>
-
-          {/* Assistant IA */}
-          <button
-            onClick={handleOpenAI}
-            style={{
-              padding: "10px 20px",
-              borderRadius: "12px",
-              background: "#ffffff",
-              color: "#1d4ed8",
-              fontWeight: "800",
-              fontSize: "13px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              border: "none",
-              cursor: "pointer",
-              boxShadow: "0 6px 20px rgba(0, 0, 0, 0.2)",
-              transition: "transform 0.15s ease",
-            }}
-            className="hover:scale-105"
-          >
-            <Sparkles size={16} style={{ color: "#2563eb" }} />
-            <span>Parler à l&apos;IA</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 2. Precision Quick-Action Strip (4 Polished Cards) */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          gap: "14px",
-          marginBottom: "24px",
-        }}
-      >
-        <button
-          onClick={() => setShowEventForm(true)}
-          style={{
-            padding: "16px",
-            borderRadius: "14px",
-            background: "var(--bg-surface)",
-            border: "1px solid var(--border-subtle)",
-            boxShadow: "var(--shadow-card)",
-            display: "flex",
-            alignItems: "center",
-            gap: "14px",
-            cursor: "pointer",
-            textAlign: "left",
-            transition: "all 0.15s ease",
-          }}
-          className="hover:border-blue-500 hover:shadow-md"
-        >
-          <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <CalendarIcon size={20} />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "13.5px", fontWeight: "700", color: "var(--text-primary)" }}>Nouveau créneau</div>
-            <div style={{ fontSize: "11.5px", color: "var(--text-muted)" }}>Planifier un rendez-vous</div>
-          </div>
-          <ArrowRight size={15} style={{ color: "#94a3b8" }} />
-        </button>
-
-        <Link
-          href="/reminders"
-          style={{
-            padding: "16px",
-            borderRadius: "14px",
-            background: "var(--bg-surface)",
-            border: "1px solid var(--border-subtle)",
-            boxShadow: "var(--shadow-card)",
-            display: "flex",
-            alignItems: "center",
-            gap: "14px",
-            cursor: "pointer",
-            textAlign: "left",
-            textDecoration: "none",
-            transition: "all 0.15s ease",
-          }}
-          className="hover:border-amber-500 hover:shadow-md"
-        >
-          <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Bell size={20} />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "13.5px", fontWeight: "700", color: "var(--text-primary)" }}>Rappel vocal</div>
-            <div style={{ fontSize: "11.5px", color: "var(--text-muted)" }}>Annonce à voix haute</div>
-          </div>
-          <ArrowRight size={15} style={{ color: "#94a3b8" }} />
-        </Link>
-
-        <Link
-          href="/tasks"
-          style={{
-            padding: "16px",
-            borderRadius: "14px",
-            background: "var(--bg-surface)",
-            border: "1px solid var(--border-subtle)",
-            boxShadow: "var(--shadow-card)",
-            display: "flex",
-            alignItems: "center",
-            gap: "14px",
-            cursor: "pointer",
-            textAlign: "left",
-            textDecoration: "none",
-            transition: "all 0.15s ease",
-          }}
-          className="hover:border-emerald-500 hover:shadow-md"
-        >
-          <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <CheckSquare size={20} />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "13.5px", fontWeight: "700", color: "var(--text-primary)" }}>Ajouter une tâche</div>
-            <div style={{ fontSize: "11.5px", color: "var(--text-muted)" }}>Matrice des priorités</div>
-          </div>
-          <ArrowRight size={15} style={{ color: "#94a3b8" }} />
-        </Link>
-
-        {/* Focus Mode Trigger Card */}
-        <div
-          onClick={() => setIsFocusRunning(!isFocusRunning)}
-          style={{
-            padding: "16px",
-            borderRadius: "14px",
-            background: isFocusRunning ? "rgba(37, 99, 235, 0.1)" : "var(--bg-surface)",
-            border: isFocusRunning ? "1.5px solid #2563eb" : "1px solid var(--border-subtle)",
-            boxShadow: "var(--shadow-card)",
-            display: "flex",
-            alignItems: "center",
-            gap: "14px",
-            cursor: "pointer",
-            textAlign: "left",
-            transition: "all 0.15s ease",
-          }}
-          className="hover:border-blue-500 hover:shadow-md"
-        >
-          <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Target size={20} />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "13.5px", fontWeight: "700", color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "6px" }}>
-              <span>Mode Focus</span>
-              <span style={{ fontSize: "10px", background: isFocusRunning ? "#2563eb" : "#e2e8f0", color: isFocusRunning ? "#ffffff" : "#475569", padding: "1px 6px", borderRadius: "6px" }}>
-                {formatFocusTime(focusSeconds)}
-              </span>
-            </div>
-            <div style={{ fontSize: "11.5px", color: "var(--text-muted)" }}>
-              {isFocusRunning ? "Session en cours (Pause)" : "Démarrer 25 min de concentration"}
-            </div>
-          </div>
-          {isFocusRunning ? <Pause size={16} color="#2563eb" /> : <Play size={16} color="#94a3b8" />}
-        </div>
-      </div>
-
-      {/* 3. Main Cockpit Layout (3 Structured Columns) */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
-          gap: "20px",
-          alignItems: "start",
-        }}
-      >
-        {/* COLUMN 1: Agenda & Prochains Rendez-vous */}
-        <div
-          style={{
-            background: "var(--bg-surface)",
-            borderRadius: "18px",
-            border: "1px solid var(--border-subtle)",
-            boxShadow: "var(--shadow-card)",
-            padding: "22px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "18px" }}>
-            <div>
-              <h2 style={{ fontSize: "15.5px", fontWeight: "800", color: "var(--text-primary)" }}>
-                Prochains rendez-vous
-              </h2>
-              <p style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: "1px" }}>
-                Créneaux confirmés et synchronisés
-              </p>
-            </div>
-            <Link
-              href="/calendar"
+          {/* Right Action Matrix */}
+          <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+            {/* Briefing Vocal IA */}
+            <button
+              onClick={handlePlayDailyBriefing}
+              disabled={isPlayingBriefing}
               style={{
-                fontSize: "12px",
-                color: "#2563eb",
+                padding: "10px 18px",
+                borderRadius: "14px",
+                background: isPlayingBriefing
+                  ? "linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(99, 102, 241, 0.3) 100%)"
+                  : "rgba(15, 28, 63, 0.8)",
+                border: "1px solid rgba(56, 189, 248, 0.3)",
+                color: "#ffffff",
                 fontWeight: "700",
-                textDecoration: "none",
+                fontSize: "13px",
                 display: "flex",
                 alignItems: "center",
-                gap: "4px",
-                background: "rgba(37, 99, 235, 0.08)",
-                padding: "5px 10px",
+                gap: "8px",
+                cursor: "pointer",
+                boxShadow: isPlayingBriefing ? "0 0 20px rgba(6, 182, 212, 0.4)" : "0 4px 15px rgba(0, 0, 0, 0.3)",
+                transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}
+              className="hover:border-cyan-400 hover:scale-[1.02]"
+              title="Écouter la synthèse vocale de la journée"
+            >
+              <Volume2
+                size={16}
+                style={{
+                  color: "#38bdf8",
+                  animation: isPlayingBriefing ? "pulse 1s infinite" : "none",
+                }}
+              />
+              <span>{isPlayingBriefing ? "Briefing en cours..." : "Briefing Vocal"}</span>
+            </button>
+
+            {/* Export ICS */}
+            <button
+              onClick={handleExportICS}
+              style={{
+                padding: "10px 16px",
+                borderRadius: "14px",
+                background: "rgba(15, 28, 63, 0.8)",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                color: "#cbd5e1",
+                fontWeight: "600",
+                fontSize: "13px",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+              }}
+              className="hover:bg-slate-800 hover:text-white hover:border-slate-600"
+              title="Exporter l'agenda vers Google Calendar / Apple Calendar"
+            >
+              <Download size={15} style={{ color: "#94a3b8" }} />
+              <span>Export .ICS</span>
+            </button>
+
+            {/* Assistant IA Launcher */}
+            <button
+              onClick={handleOpenAI}
+              style={{
+                padding: "10px 22px",
+                borderRadius: "14px",
+                background: "linear-gradient(135deg, #06b6d4 0%, #6366f1 100%)",
+                color: "#ffffff",
+                fontWeight: "800",
+                fontSize: "13px",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                border: "none",
+                cursor: "pointer",
+                boxShadow: "0 0 25px rgba(6, 182, 212, 0.4)",
+                transition: "transform 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}
+              className="hover:scale-105 hover:brightness-110"
+            >
+              <Sparkles size={16} />
+              <span>Parler à l&apos;IA</span>
+            </button>
+          </div>
+        </div>
+
+        {/* =========================================================================
+            2. BENTO ROW 1: DYNAMIC WIDGETS (Météo, Score, Focus, Tâche Flash)
+           ========================================================================= */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "16px",
+            marginBottom: "24px",
+          }}
+        >
+          {/* WIDGET A: Météo & Climat Cockpit */}
+          <div
+            className="cyber-card"
+            style={{
+              padding: "18px 20px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              background: "linear-gradient(135deg, rgba(12, 24, 54, 0.7) 0%, rgba(8, 14, 32, 0.8) 100%)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+              <div
+                style={{
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "12px",
+                  background: "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(99, 102, 241, 0.15) 100%)",
+                  border: "1px solid rgba(56, 189, 248, 0.3)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#38bdf8",
+                  boxShadow: "0 0 15px rgba(6, 182, 212, 0.2)",
+                }}
+              >
+                <CloudSun size={22} />
+              </div>
+              <div>
+                <div style={{ fontSize: "14px", fontWeight: "800", color: "#ffffff" }}>
+                  21°C · Ciel Dégagé
+                </div>
+                <div style={{ fontSize: "11.5px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "4px" }}>
+                  <MapPin size={11} style={{ color: "#38bdf8" }} />
+                  <span>Environnement optimal · Liège</span>
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                fontSize: "11px",
+                fontWeight: "700",
+                color: "#10b981",
+                background: "rgba(16, 185, 129, 0.12)",
+                padding: "3px 8px",
                 borderRadius: "8px",
+                border: "1px solid rgba(16, 185, 129, 0.25)",
               }}
             >
-              <span>Ouvrir l&apos;agenda</span>
-              <ArrowRight size={12} />
-            </Link>
+              100% IA
+            </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {events.length === 0 ? (
-              <>
-                <div
-                  style={{
-                    padding: "12px 14px",
-                    borderRadius: "12px",
-                    border: "1px solid var(--border-subtle)",
-                    background: "var(--bg-hover)",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                  }}
-                >
-                  <div
+          {/* WIDGET B: Score de Productivité Cyber & Flamme */}
+          <div
+            className="cyber-card"
+            style={{
+              padding: "18px 20px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              background: "linear-gradient(135deg, rgba(12, 24, 54, 0.7) 0%, rgba(8, 14, 32, 0.8) 100%)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+              <div
+                style={{
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "12px",
+                  background: "linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(239, 68, 68, 0.15) 100%)",
+                  border: "1px solid rgba(245, 158, 11, 0.3)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#f59e0b",
+                  boxShadow: "0 0 15px rgba(245, 158, 11, 0.2)",
+                }}
+              >
+                <Flame size={22} />
+              </div>
+              <div>
+                <div style={{ fontSize: "14px", fontWeight: "800", color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span>Efficacité : {taskCompletionRate}%</span>
+                  <TrendingUp size={14} style={{ color: "#10b981" }} />
+                </div>
+                <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>
+                  Série active : <span style={{ color: "#f59e0b", fontWeight: "700" }}>🔥 7 jours</span>
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                width: "42px",
+                height: "6px",
+                background: "rgba(255, 255, 255, 0.1)",
+                borderRadius: "3px",
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ width: `${taskCompletionRate}%`, height: "100%", background: "linear-gradient(90deg, #06b6d4, #10b981)" }} />
+            </div>
+          </div>
+
+          {/* WIDGET C: Pomodoro Focus Cyber Pod */}
+          <div
+            className="cyber-card"
+            style={{
+              padding: "16px 20px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              background: isFocusRunning
+                ? "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(99, 102, 241, 0.15) 100%)"
+                : "linear-gradient(135deg, rgba(12, 24, 54, 0.7) 0%, rgba(8, 14, 32, 0.8) 100%)",
+              border: isFocusRunning ? "1px solid rgba(6, 182, 212, 0.5)" : "1px solid rgba(56, 189, 248, 0.16)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div
+                onClick={() => setIsFocusRunning(!isFocusRunning)}
+                style={{
+                  width: "42px",
+                  height: "42px",
+                  borderRadius: "12px",
+                  background: isFocusRunning
+                    ? "linear-gradient(135deg, #06b6d4, #6366f1)"
+                    : "rgba(255, 255, 255, 0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#ffffff",
+                  cursor: "pointer",
+                  boxShadow: isFocusRunning ? "0 0 15px rgba(6, 182, 212, 0.5)" : "none",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                {isFocusRunning ? <Pause size={18} /> : <Play size={18} />}
+              </div>
+              <div>
+                <div style={{ fontSize: "14px", fontWeight: "800", color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span>Focus Pod</span>
+                  <span
                     style={{
-                      width: "40px",
-                      height: "44px",
-                      borderRadius: "8px",
-                      background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
-                      color: "#ffffff",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontWeight: "800",
-                      fontSize: "12px",
-                      lineHeight: "1.1",
-                      flexShrink: 0,
+                      fontFamily: "monospace",
+                      fontSize: "13px",
+                      color: isFocusRunning ? "#38bdf8" : "#94a3b8",
+                      fontWeight: "700",
                     }}
                   >
-                    <span style={{ fontSize: "9px", opacity: 0.85 }}>MAR</span>
-                    <span>09</span>
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "13.5px", fontWeight: "700", color: "var(--text-primary)" }}>
-                      Rendez-vous avec Paul
-                    </div>
-                    <div style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: "2px" }}>
-                      10:00 · Atelier Liège
-                    </div>
-                  </div>
-                  <span style={{ fontSize: "10.5px", fontWeight: "700", color: "#16a34a", background: "rgba(22, 163, 74, 0.12)", padding: "3px 8px", borderRadius: "6px" }}>
-                    À venir
+                    {formatFocusTime(focusSeconds)}
                   </span>
                 </div>
+                <div style={{ fontSize: "11px", color: "#94a3b8" }}>
+                  {isFocusRunning ? "Session 25min active" : "Concentration profonde"}
+                </div>
+              </div>
+            </div>
 
+            <button
+              onClick={() => {
+                setIsFocusRunning(false);
+                setFocusSeconds(25 * 60);
+              }}
+              style={{
+                padding: "6px 8px",
+                borderRadius: "8px",
+                background: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                color: "#94a3b8",
+                cursor: "pointer",
+              }}
+              title="Réinitialiser le Focus"
+            >
+              <RotateCcw size={13} />
+            </button>
+          </div>
+        </div>
+
+        {/* =========================================================================
+            3. ACTION MATRIX (4 Glass Launchers)
+           ========================================================================= */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
+            gap: "14px",
+            marginBottom: "24px",
+          }}
+        >
+          {/* Action 1: Nouveau Rendez-vous */}
+          <button
+            onClick={() => setShowEventForm(true)}
+            className="cyber-card"
+            style={{
+              padding: "16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "14px",
+              cursor: "pointer",
+              textAlign: "left",
+              color: "#ffffff",
+              border: "1px solid rgba(56, 189, 248, 0.18)",
+            }}
+          >
+            <div
+              style={{
+                width: "42px",
+                height: "42px",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(37, 99, 235, 0.2) 100%)",
+                border: "1px solid rgba(56, 189, 248, 0.3)",
+                color: "#38bdf8",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CalendarIcon size={20} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Nouveau Créneau</div>
+              <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>Planifier l&apos;agenda</div>
+            </div>
+            <ArrowRight size={15} style={{ color: "#38bdf8" }} />
+          </button>
+
+          {/* Action 2: Rappel Vocal Flash */}
+          <Link
+            href="/reminders"
+            className="cyber-card"
+            style={{
+              padding: "16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "14px",
+              cursor: "pointer",
+              textAlign: "left",
+              textDecoration: "none",
+              color: "#ffffff",
+              border: "1px solid rgba(245, 158, 11, 0.18)",
+            }}
+          >
+            <div
+              style={{
+                width: "42px",
+                height: "42px",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(239, 68, 68, 0.2) 100%)",
+                border: "1px solid rgba(245, 158, 11, 0.3)",
+                color: "#f59e0b",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Bell size={20} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Rappels Vocaux</div>
+              <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>Annonce à voix haute</div>
+            </div>
+            <ArrowRight size={15} style={{ color: "#f59e0b" }} />
+          </Link>
+
+          {/* Action 3: Matrice des Tâches */}
+          <Link
+            href="/tasks"
+            className="cyber-card"
+            style={{
+              padding: "16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "14px",
+              cursor: "pointer",
+              textAlign: "left",
+              textDecoration: "none",
+              color: "#ffffff",
+              border: "1px solid rgba(16, 185, 129, 0.18)",
+            }}
+          >
+            <div
+              style={{
+                width: "42px",
+                height: "42px",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)",
+                border: "1px solid rgba(16, 185, 129, 0.3)",
+                color: "#10b981",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CheckSquare size={20} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Tâches &amp; Focus</div>
+              <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>Matrice des priorités</div>
+            </div>
+            <ArrowRight size={15} style={{ color: "#10b981" }} />
+          </Link>
+
+          {/* Action 4: Assistant IA & Vocal */}
+          <div
+            onClick={handleOpenAI}
+            className="cyber-card"
+            style={{
+              padding: "16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "14px",
+              cursor: "pointer",
+              textAlign: "left",
+              color: "#ffffff",
+              border: "1px solid rgba(139, 92, 246, 0.25)",
+            }}
+          >
+            <div
+              style={{
+                width: "42px",
+                height: "42px",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)",
+                border: "1px solid rgba(139, 92, 246, 0.35)",
+                color: "#c084fc",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Sparkles size={20} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Assistant Vocal IA</div>
+              <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>Scan &amp; Conversation</div>
+            </div>
+            <ArrowRight size={15} style={{ color: "#c084fc" }} />
+          </div>
+        </div>
+
+        {/* =========================================================================
+            4. MAIN COCKPIT GRID (3 Columns: Agenda / Rappels / Tâches & Gain)
+           ========================================================================= */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
+            gap: "20px",
+            alignItems: "start",
+          }}
+        >
+          {/* COLUMN 1: Agenda & Prochains Créneaux */}
+          <div
+            className="cyber-card"
+            style={{
+              padding: "24px",
+              background: "linear-gradient(135deg, rgba(10, 20, 46, 0.8) 0%, rgba(6, 12, 28, 0.9) 100%)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "18px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <div
                   style={{
-                    padding: "12px 14px",
-                    borderRadius: "12px",
-                    border: "1px solid var(--border-subtle)",
-                    background: "var(--bg-hover)",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "8px",
+                    background: "rgba(6, 182, 212, 0.15)",
+                    color: "#38bdf8",
                     display: "flex",
                     alignItems: "center",
-                    gap: "12px",
+                    justifyContent: "center",
                   }}
                 >
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "44px",
-                      borderRadius: "8px",
-                      background: "linear-gradient(135deg, #4f46e5, #4338ca)",
-                      color: "#ffffff",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontWeight: "800",
-                      fontSize: "12px",
-                      lineHeight: "1.1",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <span style={{ fontSize: "9px", opacity: 0.85 }}>MAR</span>
-                    <span>09</span>
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "13.5px", fontWeight: "700", color: "var(--text-primary)" }}>
-                      Consultation Dentiste
-                    </div>
-                    <div style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: "2px" }}>
-                      14:00 · Clinique Sainte-Rosalie
-                    </div>
-                  </div>
-                  <span style={{ fontSize: "10.5px", fontWeight: "700", color: "#16a34a", background: "rgba(22, 163, 74, 0.12)", padding: "3px 8px", borderRadius: "6px" }}>
-                    À venir
-                  </span>
+                  <CalendarIcon size={16} />
                 </div>
-              </>
-            ) : (
-              events.slice(0, 4).map((event) => {
-                const date = new Date(event.startAt);
-                const month = date.toLocaleDateString("fr-FR", { month: "short" }).toUpperCase();
-                const day = date.getDate().toString().padStart(2, "0");
-                const time = date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+                <div>
+                  <h2 style={{ fontSize: "15px", fontWeight: "800", color: "#ffffff", margin: 0 }}>
+                    Prochains Rendez-vous
+                  </h2>
+                  <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>
+                    Créneaux confirmés &amp; synchronisés
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/calendar"
+                style={{
+                  fontSize: "12px",
+                  color: "#38bdf8",
+                  fontWeight: "700",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  background: "rgba(6, 182, 212, 0.1)",
+                  padding: "5px 10px",
+                  borderRadius: "8px",
+                  border: "1px solid rgba(56, 189, 248, 0.2)",
+                }}
+              >
+                <span>Agenda</span>
+                <ArrowRight size={12} />
+              </Link>
+            </div>
 
-                return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {events.length === 0 ? (
+                <>
                   <div
-                    key={event.id}
                     style={{
                       padding: "12px 14px",
-                      borderRadius: "12px",
-                      border: "1px solid var(--border-subtle)",
-                      background: "var(--bg-hover)",
+                      borderRadius: "14px",
+                      border: "1px solid rgba(56, 189, 248, 0.12)",
+                      background: "rgba(15, 28, 63, 0.5)",
                       display: "flex",
                       alignItems: "center",
                       gap: "12px",
@@ -615,10 +911,10 @@ export default function DashboardPage() {
                   >
                     <div
                       style={{
-                        width: "40px",
-                        height: "44px",
-                        borderRadius: "8px",
-                        background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+                        width: "42px",
+                        height: "46px",
+                        borderRadius: "10px",
+                        background: "linear-gradient(135deg, #06b6d4, #3b82f6)",
                         color: "#ffffff",
                         display: "flex",
                         flexDirection: "column",
@@ -628,96 +924,230 @@ export default function DashboardPage() {
                         fontSize: "12px",
                         lineHeight: "1.1",
                         flexShrink: 0,
+                        boxShadow: "0 0 10px rgba(6, 182, 212, 0.3)",
                       }}
                     >
-                      <span style={{ fontSize: "9px", opacity: 0.85 }}>{month}</span>
-                      <span>{day}</span>
+                      <span style={{ fontSize: "9px", opacity: 0.85 }}>MAR</span>
+                      <span>09</span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: "13.5px", fontWeight: "700", color: "var(--text-primary)" }}>
-                        {event.title}
+                      <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>
+                        Rendez-vous avec Paul
                       </div>
-                      <div style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: "2px" }}>
-                        {time} {event.location ? `· ${event.location}` : ""}
+                      <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
+                        10:00 · Atelier Liège
                       </div>
                     </div>
-                    <span style={{ fontSize: "10.5px", fontWeight: "700", color: "#16a34a", background: "rgba(22, 163, 74, 0.12)", padding: "3px 8px", borderRadius: "6px" }}>
-                      Confirmé
+                    <span style={{ fontSize: "10.5px", fontWeight: "700", color: "#10b981", background: "rgba(16, 185, 129, 0.12)", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
+                      À venir
                     </span>
                   </div>
-                );
-              })
-            )}
-          </div>
-        </div>
 
-        {/* COLUMN 2: Rappels Vocaux & Mode Focus */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {/* Rappels Vocaux */}
+                  <div
+                    style={{
+                      padding: "12px 14px",
+                      borderRadius: "14px",
+                      border: "1px solid rgba(56, 189, 248, 0.12)",
+                      background: "rgba(15, 28, 63, 0.5)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "42px",
+                        height: "46px",
+                        borderRadius: "10px",
+                        background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                        color: "#ffffff",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: "800",
+                        fontSize: "12px",
+                        lineHeight: "1.1",
+                        flexShrink: 0,
+                        boxShadow: "0 0 10px rgba(99, 102, 241, 0.3)",
+                      }}
+                    >
+                      <span style={{ fontSize: "9px", opacity: 0.85 }}>MAR</span>
+                      <span>09</span>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>
+                        Consultation Dentiste
+                      </div>
+                      <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
+                        14:00 · Clinique Sainte-Rosalie
+                      </div>
+                    </div>
+                    <span style={{ fontSize: "10.5px", fontWeight: "700", color: "#10b981", background: "rgba(16, 185, 129, 0.12)", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
+                      À venir
+                    </span>
+                  </div>
+                </>
+              ) : (
+                events.slice(0, 4).map((event) => {
+                  const date = new Date(event.startAt);
+                  const month = date.toLocaleDateString("fr-FR", { month: "short" }).toUpperCase();
+                  const day = date.getDate().toString().padStart(2, "0");
+                  const time = date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+
+                  return (
+                    <div
+                      key={event.id}
+                      style={{
+                        padding: "12px 14px",
+                        borderRadius: "14px",
+                        border: "1px solid rgba(56, 189, 248, 0.12)",
+                        background: "rgba(15, 28, 63, 0.5)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "42px",
+                          height: "46px",
+                          borderRadius: "10px",
+                          background: "linear-gradient(135deg, #06b6d4, #3b82f6)",
+                          color: "#ffffff",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontWeight: "800",
+                          fontSize: "12px",
+                          lineHeight: "1.1",
+                          flexShrink: 0,
+                          boxShadow: "0 0 10px rgba(6, 182, 212, 0.3)",
+                        }}
+                      >
+                        <span style={{ fontSize: "9px", opacity: 0.85 }}>{month}</span>
+                        <span>{day}</span>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>
+                          {event.title}
+                        </div>
+                        <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
+                          {time} {event.location ? `· ${event.location}` : ""}
+                        </div>
+                      </div>
+                      <span style={{ fontSize: "10.5px", fontWeight: "700", color: "#10b981", background: "rgba(16, 185, 129, 0.12)", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
+                        Confirmé
+                      </span>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          {/* COLUMN 2: Rappels Vocaux Proactifs */}
           <div
+            className="cyber-card"
             style={{
-              background: "var(--bg-surface)",
-              borderRadius: "18px",
-              border: "1px solid var(--border-subtle)",
-              boxShadow: "var(--shadow-card)",
-              padding: "22px",
+              padding: "24px",
+              background: "linear-gradient(135deg, rgba(10, 20, 46, 0.8) 0%, rgba(6, 12, 28, 0.9) 100%)",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Volume2 size={16} color="#ea580c" />
-                <h2 style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-primary)" }}>
-                  Rappels Vocaux Proactifs
-                </h2>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "18px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "8px",
+                    background: "rgba(245, 158, 11, 0.15)",
+                    color: "#f59e0b",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Volume2 size={16} />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: "15px", fontWeight: "800", color: "#ffffff", margin: 0 }}>
+                    Rappels Vocaux IA
+                  </h2>
+                  <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>
+                    Annonces proactives programmées
+                  </p>
+                </div>
               </div>
-              <Link href="/reminders" style={{ fontSize: "12px", color: "#2563eb", fontWeight: "700", textDecoration: "none" }}>
-                Gérer
+              <Link
+                href="/reminders"
+                style={{
+                  fontSize: "12px",
+                  color: "#f59e0b",
+                  fontWeight: "700",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  background: "rgba(245, 158, 11, 0.1)",
+                  padding: "5px 10px",
+                  borderRadius: "8px",
+                  border: "1px solid rgba(245, 158, 11, 0.2)",
+                }}
+              >
+                <span>Gérer</span>
+                <ArrowRight size={12} />
               </Link>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {reminders.length === 0 ? (
                 <>
                   <div
                     style={{
-                      padding: "10px 12px",
-                      borderRadius: "10px",
-                      border: "1px solid var(--border-subtle)",
-                      background: "var(--bg-hover)",
+                      padding: "12px 14px",
+                      borderRadius: "14px",
+                      border: "1px solid rgba(245, 158, 11, 0.15)",
+                      background: "rgba(15, 28, 63, 0.5)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-primary)" }}>
+                      <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>
                         Acheter pièces atelier
                       </div>
-                      <div style={{ fontSize: "11px", color: "#ea580c", fontWeight: "600" }}>18:00 · Annonce vocale</div>
+                      <div style={{ fontSize: "11px", color: "#f59e0b", fontWeight: "600", marginTop: "2px" }}>
+                        18:00 · Synthèse Vocale
+                      </div>
                     </div>
-                    <span style={{ fontSize: "10px", background: "rgba(37, 99, 235, 0.1)", color: "#2563eb", fontWeight: "700", padding: "2px 6px", borderRadius: "4px" }}>
+                    <span style={{ fontSize: "10.5px", background: "rgba(6, 182, 212, 0.15)", color: "#38bdf8", fontWeight: "700", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(56, 189, 248, 0.25)" }}>
                       Actif
                     </span>
                   </div>
 
                   <div
                     style={{
-                      padding: "10px 12px",
-                      borderRadius: "10px",
-                      border: "1px solid var(--border-subtle)",
-                      background: "var(--bg-hover)",
+                      padding: "12px 14px",
+                      borderRadius: "14px",
+                      border: "1px solid rgba(245, 158, 11, 0.15)",
+                      background: "rgba(15, 28, 63, 0.5)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-primary)" }}>
+                      <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>
                         Rappeler Jean (Urgent)
                       </div>
-                      <div style={{ fontSize: "11px", color: "#ea580c", fontWeight: "600" }}>20:00 · Annonce vocale</div>
+                      <div style={{ fontSize: "11px", color: "#f59e0b", fontWeight: "600", marginTop: "2px" }}>
+                        20:00 · Synthèse Vocale
+                      </div>
                     </div>
-                    <span style={{ fontSize: "10px", background: "rgba(37, 99, 235, 0.1)", color: "#2563eb", fontWeight: "700", padding: "2px 6px", borderRadius: "4px" }}>
+                    <span style={{ fontSize: "10.5px", background: "rgba(6, 182, 212, 0.15)", color: "#38bdf8", fontWeight: "700", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(56, 189, 248, 0.25)" }}>
                       Actif
                     </span>
                   </div>
@@ -729,20 +1159,22 @@ export default function DashboardPage() {
                     <div
                       key={r.id}
                       style={{
-                        padding: "10px 12px",
-                        borderRadius: "10px",
-                        border: "1px solid var(--border-subtle)",
-                        background: "var(--bg-hover)",
+                        padding: "12px 14px",
+                        borderRadius: "14px",
+                        border: "1px solid rgba(245, 158, 11, 0.15)",
+                        background: "rgba(15, 28, 63, 0.5)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
                       }}
                     >
                       <div>
-                        <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-primary)" }}>{r.title}</div>
-                        <div style={{ fontSize: "11px", color: "#ea580c", fontWeight: "600" }}>{time} · Vocal</div>
+                        <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>{r.title}</div>
+                        <div style={{ fontSize: "11px", color: "#f59e0b", fontWeight: "600", marginTop: "2px" }}>
+                          {time} · Vocal
+                        </div>
                       </div>
-                      <span style={{ fontSize: "10px", background: "rgba(37, 99, 235, 0.1)", color: "#2563eb", fontWeight: "700", padding: "2px 6px", borderRadius: "4px" }}>
+                      <span style={{ fontSize: "10.5px", background: "rgba(6, 182, 212, 0.15)", color: "#38bdf8", fontWeight: "700", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(56, 189, 248, 0.25)" }}>
                         Actif
                       </span>
                     </div>
@@ -752,154 +1184,209 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Minuteur Focus Pomodoro */}
+          {/* COLUMN 3: Tâches Prioritaires & Métriques */}
           <div
+            className="cyber-card"
             style={{
-              background: "var(--bg-surface)",
-              borderRadius: "18px",
-              border: "1px solid var(--border-subtle)",
-              boxShadow: "var(--shadow-card)",
-              padding: "20px",
+              padding: "24px",
+              background: "linear-gradient(135deg, rgba(10, 20, 46, 0.8) 0%, rgba(6, 12, 28, 0.9) 100%)",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Target size={16} color="#2563eb" />
-                <span style={{ fontSize: "14px", fontWeight: "800", color: "var(--text-primary)" }}>Session Focus</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "8px",
+                    background: "rgba(16, 185, 129, 0.15)",
+                    color: "#10b981",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CheckSquare size={16} />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: "15px", fontWeight: "800", color: "#ffffff", margin: 0 }}>
+                    Tâches Prioritaires
+                  </h2>
+                  <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>
+                    Planification directe
+                  </p>
+                </div>
               </div>
-              <span style={{ fontSize: "16px", fontWeight: "900", color: "#2563eb" }}>
-                {formatFocusTime(focusSeconds)}
-              </span>
-            </div>
-
-            <div style={{ display: "flex", gap: "8px" }}>
-              <button
-                onClick={() => setIsFocusRunning(!isFocusRunning)}
-                style={{
-                  flex: 1,
-                  padding: "8px",
-                  borderRadius: "8px",
-                  background: isFocusRunning ? "#ea580c" : "#2563eb",
-                  color: "#ffffff",
-                  fontWeight: "700",
-                  fontSize: "12px",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "6px",
-                }}
-              >
-                {isFocusRunning ? <Pause size={13} /> : <Play size={13} />}
-                <span>{isFocusRunning ? "Pause" : "Démarrer"}</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsFocusRunning(false);
-                  setFocusSeconds(25 * 60);
-                }}
-                style={{
-                  padding: "8px 12px",
-                  borderRadius: "8px",
-                  background: "var(--bg-hover)",
-                  border: "1px solid var(--border-subtle)",
-                  color: "var(--text-secondary)",
-                  cursor: "pointer",
-                }}
-                title="Réinitialiser"
-              >
-                <RotateCcw size={13} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* COLUMN 3: Matrice des Tâches & Efficacité IA */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {/* Tâches Prioritaires */}
-          <div
-            style={{
-              background: "var(--bg-surface)",
-              borderRadius: "18px",
-              border: "1px solid var(--border-subtle)",
-              boxShadow: "var(--shadow-card)",
-              padding: "22px",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-              <h2 style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-primary)" }}>
-                Tâches Prioritaires
-              </h2>
-              <span style={{ fontSize: "12.5px", fontWeight: "800", color: "#2563eb" }}>
+              <span style={{ fontSize: "13px", fontWeight: "900", color: "#10b981" }}>
                 {taskCompletionRate}%
               </span>
             </div>
 
-            <div style={{ width: "100%", height: "6px", background: "var(--border-subtle)", borderRadius: "3px", overflow: "hidden", marginBottom: "14px" }}>
-              <div style={{ width: `${taskCompletionRate}%`, height: "100%", background: "#2563eb", borderRadius: "3px" }} />
-            </div>
+            {/* Quick Task Creation Form */}
+            <form onSubmit={handleCreateQuickTask} style={{ marginBottom: "14px", display: "flex", gap: "8px" }}>
+              <input
+                type="text"
+                placeholder="Ajouter une tâche rapide..."
+                value={quickTaskText}
+                onChange={(e) => setQuickTaskText(e.target.value)}
+                style={{
+                  flex: 1,
+                  padding: "8px 12px",
+                  borderRadius: "10px",
+                  background: "rgba(15, 28, 63, 0.7)",
+                  border: "1px solid rgba(56, 189, 248, 0.2)",
+                  color: "#ffffff",
+                  fontSize: "12.5px",
+                  outline: "none",
+                }}
+              />
+              <button
+                type="submit"
+                disabled={!quickTaskText.trim() || isCreatingTask}
+                style={{
+                  padding: "8px 12px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #06b6d4, #10b981)",
+                  color: "#ffffff",
+                  border: "none",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Plus size={16} />
+              </button>
+            </form>
 
+            {/* Task Checklist */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  padding: "8px 10px",
-                  borderRadius: "8px",
-                  background: "var(--bg-hover)",
-                }}
-              >
-                <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff" }}>
-                  <Check size={10} />
-                </div>
-                <span style={{ fontSize: "12.5px", color: "var(--text-primary)", fontWeight: "500", textDecoration: "line-through", opacity: 0.7 }}>
-                  Vérifier les factures fournisseurs
-                </span>
-              </div>
+              {tasks.length === 0 ? (
+                <>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "10px 12px",
+                      borderRadius: "10px",
+                      background: "rgba(15, 28, 63, 0.5)",
+                      border: "1px solid rgba(255, 255, 255, 0.05)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "18px",
+                        height: "18px",
+                        borderRadius: "6px",
+                        background: "#10b981",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#ffffff",
+                      }}
+                    >
+                      <Check size={12} />
+                    </div>
+                    <span style={{ fontSize: "12.5px", color: "#cbd5e1", textDecoration: "line-through", opacity: 0.7 }}>
+                      Vérifier les factures fournisseurs
+                    </span>
+                  </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  padding: "8px 10px",
-                  borderRadius: "8px",
-                  background: "var(--bg-hover)",
-                }}
-              >
-                <div style={{ width: "16px", height: "16px", borderRadius: "50%", border: "2px solid #cbd5e1" }} />
-                <span style={{ fontSize: "12.5px", color: "var(--text-primary)", fontWeight: "600" }}>
-                  Préparer les pièces pour l&apos;atelier
-                </span>
-              </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "10px 12px",
+                      borderRadius: "10px",
+                      background: "rgba(15, 28, 63, 0.5)",
+                      border: "1px solid rgba(56, 189, 248, 0.2)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "18px",
+                        height: "18px",
+                        borderRadius: "6px",
+                        border: "2px solid #38bdf8",
+                      }}
+                    />
+                    <span style={{ fontSize: "12.5px", color: "#ffffff", fontWeight: "600" }}>
+                      Préparer les pièces pour l&apos;atelier
+                    </span>
+                  </div>
+                </>
+              ) : (
+                tasks.slice(0, 4).map((task) => (
+                  <div
+                    key={task.id}
+                    onClick={() => handleToggleTask(task.id, task.isDone)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "10px 12px",
+                      borderRadius: "10px",
+                      background: "rgba(15, 28, 63, 0.5)",
+                      border: task.isDone ? "1px solid rgba(255, 255, 255, 0.05)" : "1px solid rgba(56, 189, 248, 0.2)",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "18px",
+                        height: "18px",
+                        borderRadius: "6px",
+                        background: task.isDone ? "#10b981" : "transparent",
+                        border: task.isDone ? "none" : "2px solid #38bdf8",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#ffffff",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {task.isDone && <Check size={12} />}
+                    </div>
+                    <span
+                      style={{
+                        fontSize: "12.5px",
+                        color: task.isDone ? "#94a3b8" : "#ffffff",
+                        textDecoration: task.isDone ? "line-through" : "none",
+                        fontWeight: task.isDone ? "400" : "600",
+                        flex: 1,
+                      }}
+                    >
+                      {task.title}
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
-          </div>
 
-          {/* Efficacité & Impact */}
-          <div
-            style={{
-              background: "var(--bg-surface)",
-              borderRadius: "18px",
-              border: "1px solid var(--border-subtle)",
-              boxShadow: "var(--shadow-card)",
-              padding: "20px",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-              <Activity size={16} color="#2563eb" />
-              <h3 style={{ fontSize: "14px", fontWeight: "800", color: "var(--text-primary)" }}>Impact &amp; Gain de Temps</h3>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            {/* Impact Metric Strip */}
+            <div
+              style={{
+                marginTop: "16px",
+                padding: "12px 14px",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%)",
+                border: "1px solid rgba(56, 189, 248, 0.2)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <div>
-                <div style={{ fontSize: "20px", fontWeight: "900", color: "#16a34a" }}>+4.5h / sem.</div>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Temps économisé grâce à l&apos;IA</div>
+                <div style={{ fontSize: "16px", fontWeight: "900", color: "#10b981" }}>+5.2h / sem.</div>
+                <div style={{ fontSize: "10.5px", color: "#94a3b8" }}>Gain de temps IA</div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "20px", fontWeight: "900", color: "#2563eb" }}>98.4%</div>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Précision des alertes</div>
+                <div style={{ fontSize: "16px", fontWeight: "900", color: "#38bdf8" }}>99.4%</div>
+                <div style={{ fontSize: "10.5px", color: "#94a3b8" }}>Fiabilité cockpit</div>
               </div>
             </div>
           </div>

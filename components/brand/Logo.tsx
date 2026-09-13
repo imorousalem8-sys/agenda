@@ -9,17 +9,17 @@ interface LogoProps {
 }
 
 export default function Logo({
-  size = 36,
+  size = 38,
   showText = true,
-  animated = false,
+  animated = true,
   className = "",
 }: LogoProps) {
   return (
     <div
-      className={`flex items-center gap-3 select-none ${className}`}
-      style={{ display: "flex", alignItems: "center", gap: `${Math.max(8, size * 0.28)}px` }}
+      className={`flex items-center select-none ${className}`}
+      style={{ display: "flex", alignItems: "center", gap: `${Math.max(10, size * 0.28)}px` }}
     >
-      {/* SVG Icon */}
+      {/* SVG Icon Container with Ambient Halo */}
       <div
         style={{
           width: `${size}px`,
@@ -31,13 +31,13 @@ export default function Logo({
           flexShrink: 0,
         }}
       >
-        {/* Subtle Ambient Glow */}
+        {/* Cyber Neon Glow Layer */}
         <div
           style={{
             position: "absolute",
-            inset: "-15%",
-            background: "radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(52, 211, 153, 0.08) 50%, transparent 70%)",
-            filter: "blur(6px)",
+            inset: "-20%",
+            background: "radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(139, 92, 246, 0.2) 45%, transparent 70%)",
+            filter: "blur(8px)",
             borderRadius: "50%",
             zIndex: 0,
             animation: animated ? "pulseGlow 3s ease-in-out infinite alternate" : undefined,
@@ -53,102 +53,123 @@ export default function Logo({
           style={{ position: "relative", zIndex: 1, overflow: "visible" }}
         >
           <defs>
-            {/* Developer Titanium & Steel Gradient */}
-            <linearGradient id="logo-grad-primary" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="50%" stopColor="#94a3b8" />
-              <stop offset="100%" stopColor="#34d399" />
+            {/* Cyber Gradient */}
+            <linearGradient id="cyber-grad-frame" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#38bdf8" />
+              <stop offset="50%" stopColor="#818cf8" />
+              <stop offset="100%" stopColor="#c084fc" />
             </linearGradient>
 
-            {/* Neural Emerald Accent */}
-            <linearGradient id="logo-sparkle" x1="20" y1="12" x2="28" y2="36" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="100%" stopColor="#34d399" />
+            {/* Inner Dark Glass */}
+            <linearGradient id="cyber-glass-fill" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#081026" />
+              <stop offset="100%" stopColor="#030712" />
             </linearGradient>
 
-            {/* Subtle drop shadow */}
-            <filter id="logo-glow-filter" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#ffffff" floodOpacity="0.2" />
+            {/* Neon Accent */}
+            <linearGradient id="cyber-needle-grad" x1="24" y1="12" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#06b6d4" />
+              <stop offset="100%" stopColor="#a855f7" />
+            </linearGradient>
+
+            {/* Drop Shadow & Glow */}
+            <filter id="cyber-glow-filter" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#06b6d4" floodOpacity="0.4" />
             </filter>
           </defs>
 
-          {/* Outer Titanium Squircle Frame */}
+          {/* Squircle Frame */}
           <rect
             x="3"
             y="3"
             width="42"
             height="42"
-            rx="12"
-            fill="#09090b"
-            stroke="url(#logo-grad-primary)"
-            strokeWidth="1.8"
-            filter="url(#logo-glow-filter)"
+            rx="13"
+            fill="url(#cyber-glass-fill)"
+            stroke="url(#cyber-grad-frame)"
+            strokeWidth="1.75"
+            filter="url(#cyber-glow-filter)"
           />
 
-          {/* Chrono Orbit Ring */}
+          {/* Chrono Orbit Grid */}
           <circle
             cx="24"
             cy="24"
-            r="14"
-            stroke="rgba(255, 255, 255, 0.12)"
-            strokeWidth="1.2"
+            r="15"
+            stroke="rgba(56, 189, 248, 0.18)"
+            strokeWidth="1"
             strokeDasharray="3 3"
           />
 
-          {/* Precision Markers */}
-          <line x1="24" y1="8" x2="24" y2="10.5" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
-          <line x1="40" y1="24" x2="37.5" y2="24" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="24" y1="40" x2="24" y2="37.5" stroke="#34d399" strokeWidth="2" strokeLinecap="round" />
-          <line x1="8" y1="24" x2="10.5" y2="24" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
+          {/* High-Precision Chrono Marks */}
+          <circle cx="24" cy="8" r="1.5" fill="#38bdf8" />
+          <circle cx="40" cy="24" r="1.5" fill="#818cf8" />
+          <circle cx="24" cy="40" r="1.5" fill="#34d399" />
+          <circle cx="8" cy="24" r="1.5" fill="#818cf8" />
 
-          {/* Clock Hands */}
+          {/* Stylized Chrono Needles */}
           <path
-            d="M24 24L32 16"
-            stroke="url(#logo-sparkle)"
-            strokeWidth="2.2"
+            d="M24 24L33 15"
+            stroke="url(#cyber-needle-grad)"
+            strokeWidth="2.5"
             strokeLinecap="round"
           />
           <path
-            d="M24 24L17 21"
-            stroke="#ffffff"
+            d="M24 24L16 20"
+            stroke="#f8fafc"
             strokeWidth="2.2"
             strokeLinecap="round"
           />
 
-          {/* Center Pivot */}
-          <circle cx="24" cy="24" r="3" fill="#ffffff" />
-          <circle cx="24" cy="24" r="1.2" fill="#09090b" />
-
-          {/* Active Emerald Dot */}
-          <circle cx="32" cy="16" r="2" fill="#34d399" />
+          {/* Core Gem Pivot */}
+          <circle cx="24" cy="24" r="3.2" fill="#06b6d4" />
+          <circle cx="24" cy="24" r="1.5" fill="#ffffff" />
+          <circle cx="33" cy="15" r="2.2" fill="#38bdf8" />
         </svg>
       </div>
 
-      {/* Brand Text */}
+      {/* Brand Text & Executive Tag */}
       {showText && (
-        <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+        <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
             <span
               style={{
-                fontSize: `${Math.max(16, size * 0.48)}px`,
-                fontWeight: "800",
+                fontSize: `${Math.max(16, size * 0.46)}px`,
+                fontWeight: "900",
                 letterSpacing: "-0.03em",
-                color: "#ffffff",
+                background: "linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #38bdf8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
               }}
             >
               Alamajonda
             </span>
+            <span
+              style={{
+                fontSize: "9px",
+                fontWeight: "700",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                padding: "2px 6px",
+                borderRadius: "6px",
+                background: "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)",
+                border: "1px solid rgba(56, 189, 248, 0.35)",
+                color: "#38bdf8",
+              }}
+            >
+              EXECUTIVE
+            </span>
           </div>
           <span
             style={{
-              fontSize: `${Math.max(10, size * 0.24)}px`,
+              fontSize: `${Math.max(10, size * 0.22)}px`,
               fontWeight: "500",
               color: "#94a3b8",
-              letterSpacing: "0.01em",
-              marginTop: "2px",
+              letterSpacing: "0.02em",
+              marginTop: "1px",
             }}
           >
-            Ton assistant, ton quotidien
+            Cockpit Personnel & IA
           </span>
         </div>
       )}

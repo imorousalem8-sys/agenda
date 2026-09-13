@@ -165,13 +165,13 @@ export default function DashboardLayout({
         />
       )}
 
-      {/* Sidebar (Midnight Navy #0b152e) */}
+      {/* Sidebar (Dark Cyber Luxury Glass) */}
       <aside
         style={{
-          width: "250px",
+          width: "260px",
           flexShrink: 0,
-          background: "#0b152e",
-          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "linear-gradient(180deg, #02050e 0%, #060e22 50%, #040918 100%)",
+          borderRight: "1px solid rgba(56, 189, 248, 0.14)",
           display: "flex",
           flexDirection: "column",
           position: "sticky",
@@ -179,21 +179,22 @@ export default function DashboardLayout({
           height: "100vh",
           zIndex: 45,
           transition: "transform 0.2s ease",
+          boxShadow: "4px 0 25px rgba(0, 0, 0, 0.6)",
         }}
         className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}
       >
         {/* Brand Header */}
         <div
           style={{
-            padding: "22px 18px",
-            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+            padding: "20px 18px",
+            borderBottom: "1px solid rgba(56, 189, 248, 0.12)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
           }}
         >
           <Link href="/" title="Retourner à la page d'accueil" style={{ textDecoration: "none" }}>
-            <Logo size={28} showText={true} />
+            <Logo size={32} showText={true} />
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -206,7 +207,7 @@ export default function DashboardLayout({
         </div>
 
         {/* Navigation Links */}
-        <nav style={{ flex: 1, padding: "14px 12px", overflowY: "auto" }}>
+        <nav style={{ flex: 1, padding: "16px 12px", overflowY: "auto" }}>
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
@@ -221,23 +222,27 @@ export default function DashboardLayout({
                   justifyContent: "space-between",
                   gap: "12px",
                   padding: "10px 14px",
-                  borderRadius: "10px",
-                  marginBottom: "4px",
+                  borderRadius: "12px",
+                  marginBottom: "6px",
                   fontSize: "13.5px",
                   fontWeight: isActive ? "700" : "500",
-                  color: "#ffffff",
-                  background: isActive ? "#2563eb" : "transparent",
-                  boxShadow: isActive ? "0 4px 16px rgba(37, 99, 235, 0.4)" : "none",
-                  transition: "all 0.15s ease",
+                  color: isActive ? "#ffffff" : "#94a3b8",
+                  background: isActive
+                    ? "linear-gradient(135deg, rgba(6, 182, 212, 0.22) 0%, rgba(99, 102, 241, 0.18) 100%)"
+                    : "transparent",
+                  border: isActive ? "1px solid rgba(56, 189, 248, 0.4)" : "1px solid transparent",
+                  boxShadow: isActive ? "0 0 20px rgba(6, 182, 212, 0.22)" : "none",
+                  transition: "all 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
                   textDecoration: "none",
                 }}
-                className={isActive ? "" : "hover:bg-slate-800/60"}
+                className={isActive ? "" : "hover:bg-slate-800/50 hover:text-white hover:border-slate-700/50"}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <Icon
                     size={18}
                     style={{
-                      color: isActive ? "#ffffff" : "#94a3b8",
+                      color: isActive ? "#38bdf8" : "#94a3b8",
+                      filter: isActive ? "drop-shadow(0 0 6px rgba(56, 189, 248, 0.6))" : "none",
                       flexShrink: 0,
                     }}
                   />
@@ -247,12 +252,15 @@ export default function DashboardLayout({
                 {link.badge && (
                   <span
                     style={{
-                      fontSize: "10px",
-                      fontWeight: "700",
-                      background: "#38bdf8",
-                      color: "#0f172a",
-                      padding: "2px 6px",
+                      fontSize: "9.5px",
+                      fontWeight: "800",
+                      letterSpacing: "0.04em",
+                      textTransform: "uppercase",
+                      background: "linear-gradient(135deg, #06b6d4, #6366f1)",
+                      color: "#ffffff",
+                      padding: "2px 7px",
                       borderRadius: "6px",
+                      boxShadow: "0 0 10px rgba(6, 182, 212, 0.4)",
                     }}
                   >
                     {link.badge}
@@ -262,7 +270,7 @@ export default function DashboardLayout({
             );
           })}
 
-          <div style={{ height: "1px", background: "rgba(255, 255, 255, 0.08)", margin: "14px 4px" }} />
+          <div style={{ height: "1px", background: "rgba(56, 189, 248, 0.12)", margin: "14px 4px" }} />
 
           {/* Bouton de Thème Nuit / Jour Réel */}
           <button
@@ -279,19 +287,20 @@ export default function DashboardLayout({
               fontWeight: "500",
               color: "#94a3b8",
               background: "transparent",
-              border: "none",
+              border: "1px solid transparent",
               cursor: "pointer",
               textAlign: "left",
               marginBottom: "4px",
+              transition: "all 0.15s ease",
             }}
-            className="hover:bg-slate-800/60 hover:text-white"
+            className="hover:bg-slate-800/60 hover:text-white hover:border-slate-700/50"
             title={theme === "light" ? "Activer le Mode Nuit (Sombre)" : "Activer le Mode Jour (Clair)"}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               {theme === "light" ? <Moon size={17} style={{ color: "#38bdf8" }} /> : <Sun size={17} style={{ color: "#f59e0b" }} />}
               <span>{theme === "light" ? "Mode Nuit (Sombre)" : "Mode Jour (Clair)"}</span>
             </div>
-            <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "6px", background: "rgba(255, 255, 255, 0.1)", color: "#cbd5e1" }}>
+            <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "6px", background: "rgba(255, 255, 255, 0.08)", color: "#cbd5e1" }}>
               {theme === "light" ? "OFF" : "ON"}
             </span>
           </button>
@@ -310,15 +319,16 @@ export default function DashboardLayout({
               fontWeight: "500",
               color: "#94a3b8",
               background: "transparent",
-              border: "none",
+              border: "1px solid transparent",
               cursor: "pointer",
               textAlign: "left",
               marginBottom: "4px",
+              transition: "all 0.15s ease",
             }}
-            className="hover:bg-slate-800/60 hover:text-white"
+            className="hover:bg-slate-800/60 hover:text-white hover:border-slate-700/50"
           >
-            <Volume2 size={17} style={{ color: "#94a3b8" }} />
-            <span>Voix & Synthèse</span>
+            <Volume2 size={17} style={{ color: "#38bdf8" }} />
+            <span>Voix & Synthèse IA</span>
           </button>
 
           <button
@@ -334,14 +344,15 @@ export default function DashboardLayout({
               fontWeight: "500",
               color: "#94a3b8",
               background: "transparent",
-              border: "none",
+              border: "1px solid transparent",
               cursor: "pointer",
               textAlign: "left",
+              transition: "all 0.15s ease",
             }}
-            className="hover:bg-slate-800/60 hover:text-white"
+            className="hover:bg-slate-800/60 hover:text-white hover:border-slate-700/50"
           >
-            <Settings size={17} style={{ color: "#94a3b8" }} />
-            <span>Paramètres</span>
+            <Settings size={17} style={{ color: "#818cf8" }} />
+            <span>Paramètres Cockpit</span>
           </button>
         </nav>
 
@@ -350,30 +361,32 @@ export default function DashboardLayout({
           <QuotaIndicator />
         </div>
 
-        {/* User Footer (Salem Imorou / Compte Gratuit) */}
+        {/* User Footer (Cyber Executive Profile) */}
         <div
           style={{
             padding: "14px",
-            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+            borderTop: "1px solid rgba(56, 189, 248, 0.12)",
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            background: "rgba(0, 0, 0, 0.2)",
+            background: "rgba(4, 9, 24, 0.8)",
+            backdropFilter: "blur(8px)",
           }}
         >
           <div
             style={{
-              width: "34px",
-              height: "34px",
-              borderRadius: "9px",
-              background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+              width: "36px",
+              height: "36px",
+              borderRadius: "10px",
+              background: "linear-gradient(135deg, #06b6d4 0%, #6366f1 100%)",
               color: "#ffffff",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontWeight: "700",
-              fontSize: "13px",
+              fontWeight: "800",
+              fontSize: "14px",
               flexShrink: 0,
+              boxShadow: "0 0 12px rgba(6, 182, 212, 0.35)",
             }}
           >
             {userName[0]?.toUpperCase() || "S"}
@@ -383,8 +396,9 @@ export default function DashboardLayout({
             <div style={{ fontSize: "13px", fontWeight: "700", color: "#ffffff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {userName}
             </div>
-            <div style={{ fontSize: "11px", color: isPro ? "#10b981" : "#94a3b8", fontWeight: "500" }}>
-              {isPro ? "✓ Compte Pro" : "Utilisateur"}
+            <div style={{ fontSize: "11px", color: "#38bdf8", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981" }} />
+              {isPro ? "Executive Pro" : "Membre VIP"}
             </div>
           </div>
 
