@@ -93,25 +93,6 @@ export default function Hero() {
               L&apos;assistant vocal IA intelligent pour une gestion d&apos;agenda sans effort, précise et automatisée. Dictez vos créneaux en langage naturel, l&apos;IA synchronise vos calendriers et <strong className="text-slate-900 font-semibold">vous appelle directement par téléphone</strong> pour vous dicter vos urgences.
             </p>
 
-            {/* Boutons d'Action Principaux */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto mb-8">
-              <Link
-                href="/register"
-                className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-bold text-sm text-white bg-[#1d4ed8] hover:bg-[#1e40af] shadow-lg shadow-blue-600/25 hover:shadow-blue-600/35 hover:-translate-y-0.5 transition-all duration-200"
-              >
-                <span>Commencer Gratuitement</span>
-                <ArrowRight size={15} />
-              </Link>
-
-              <button
-                type="button"
-                onClick={() => setShowDetailsModal(true)}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 shadow-sm hover:shadow transition-all duration-200 cursor-pointer"
-              >
-                <span>En savoir plus</span>
-                <Sparkles size={14} className="text-blue-600" />
-              </button>
-            </div>
 
             {/* Micro-Preuve Sociale */}
             <div className="flex items-center gap-5 text-xs text-slate-500 font-medium flex-wrap">
