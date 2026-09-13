@@ -3,25 +3,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Sparkles,
-  ArrowRight,
-  ShieldCheck,
-  Mic,
-  PhoneCall,
-  Calendar,
-  CheckCircle2,
-  Clock,
-  Play,
-  Pause,
-  Volume2,
-  Zap,
-  TrendingUp,
-  MessageSquare,
-  Lock,
-  ChevronRight,
-  Phone,
-} from "lucide-react";
 import { speakAIText, playAlertChime } from "@/lib/voice";
 
 export default function Hero() {
@@ -48,8 +29,8 @@ export default function Hero() {
   };
 
   return (
-    <section className="w-full bg-gradient-to-b from-white via-[#f8fafc] to-white text-slate-900 pt-8 sm:pt-12 pb-20 sm:pb-28 font-sans overflow-hidden">
-      {/* Conteneur avec marges garanties de chaque côté */}
+    <section className="w-full bg-gradient-to-b from-white via-[#fcfdff] to-white text-slate-900 pt-6 sm:pt-10 pb-16 sm:pb-24 font-sans overflow-hidden">
+      {/* Conteneur fluide et cadré */}
       <div
         className="mx-auto"
         style={{
@@ -60,94 +41,73 @@ export default function Hero() {
       >
         
         {/* =========================================================
-            1. HERO STAGE : 2 COLONNES HAUTE COUTURE
+            1. HERO STAGE : 2 COLONNES (STYLE MAQUETTE ORIGINALE)
            ========================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center mb-14 sm:mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-10 sm:mb-16">
           
-          {/* A. Colonne Gauche : Eyebrow + Grand Titre + Pitch + CTAs */}
+          {/* A. Colonne Gauche : Grand Titre + Pitch + Bouton En savoir plus */}
           <div className="lg:col-span-6 flex flex-col items-start justify-center pr-0 lg:pr-4 z-10">
             
-            {/* Eyebrow Badge Exécutif */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 mb-6 shadow-sm">
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-              </span>
-              <span className="text-xs font-bold text-blue-950 uppercase tracking-wider">
-                NOUVELLE GÉNÉRATION D&apos;AGENDA IA
-              </span>
-            </div>
-
-            {/* Grand Titre (Typographie Élégante & Cadrée) */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[44px] xl:text-[48px] font-black text-[#09132b] tracking-tight leading-[1.14] mb-5 text-left">
+            {/* Grand Titre Exact */}
+            <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-extrabold text-[#09132b] tracking-tight leading-[1.12] mb-6 text-left">
               Ne manquez plus aucun <br className="hidden sm:inline" />
-              <span className="bg-gradient-to-r from-[#09132b] via-[#1d4ed8] to-[#2563eb] bg-clip-text text-transparent">
-                rendez-vous important
-              </span>
+              rendez-vous important
             </h1>
 
             {/* Sous-titre Explicatif */}
-            <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed mb-8 max-w-xl text-left">
-              L&apos;assistant vocal IA intelligent pour une gestion d&apos;agenda sans effort, précise et automatisée. Dictez vos créneaux en langage naturel, l&apos;IA synchronise vos calendriers et <strong className="text-slate-900 font-semibold">vous appelle directement par téléphone</strong> pour vous dicter vos urgences.
+            <p className="text-base sm:text-[18px] text-slate-600 font-normal leading-relaxed mb-8 max-w-lg text-left">
+              L&apos;assistant vocal IA intelligent pour une gestion d&apos;agenda sans effort, précise et automatisée.
             </p>
 
-
-            {/* Micro-Preuve Sociale */}
-            <div className="flex items-center gap-5 text-xs text-slate-500 font-medium flex-wrap">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
-                Installation en 1 min
-              </span>
-              <span className="flex items-center gap-1.5">
-                <ShieldCheck size={15} className="text-blue-600 shrink-0" />
-                Conforme RGPD
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Zap size={15} className="text-amber-500 shrink-0" />
-                Zéro friction
-              </span>
-            </div>
+            {/* Bouton d'action "En savoir plus" */}
+            <Link
+              href="/register"
+              className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl text-base font-bold text-white bg-[#1d4ed8] hover:bg-[#1e40af] shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/35 hover:-translate-y-0.5 transition-all"
+            >
+              En savoir plus
+            </Link>
 
           </div>
 
-          {/* B. Colonne Droite : Photo Haute Définition & Bulle Vocale Interactive */}
+          {/* B. Colonne Droite : Photo Femme d'Affaires & Bulle d'Appel Vocal */}
           <div className="lg:col-span-6 relative flex items-center justify-center lg:justify-end">
             
-            {/* Halo Décoratif Subtil */}
-            <div className="absolute -inset-4 bg-gradient-to-tr from-blue-100/60 via-indigo-50/40 to-transparent rounded-[2.5rem] blur-2xl -z-10" />
-
             {/* Cadre Photo Professionnel */}
-            <div className="relative w-full max-w-[540px] aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-slate-900/15 border border-slate-200/80 bg-slate-100 group">
+            <div className="relative w-full max-w-[560px] aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-slate-900/10 bg-slate-100 group">
               <Image
                 src="/images/hero-businesswoman.jpg"
-                alt="Femme professionnelle utilisant l'assistant vocal IA Alamajonda"
+                alt="Femme d'affaires souriante au bureau utilisant l'assistant vocal IA Alamajonda"
                 fill
                 priority
-                className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                className="object-cover object-center group-hover:scale-102 transition-transform duration-700"
               />
 
-              {/* Bulle d'Appel Vocal Flottante (Design iOS / Haute Finition) */}
+              {/* Bulle d'Appel Vocal Flottante (Style Maquette avec pointeur) */}
               <div
                 onClick={handlePlayVoiceDemo}
-                className="absolute top-1/2 -translate-y-1/2 left-4 sm:left-6 bg-white/95 backdrop-blur-xl border border-blue-200/80 rounded-2xl p-3.5 sm:p-4 shadow-xl shadow-slate-900/10 flex items-center gap-3.5 z-20 max-w-[270px] sm:max-w-[300px] cursor-pointer hover:scale-105 transition-all"
+                className="absolute top-[38%] left-4 sm:left-6 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 shadow-[0_12px_30px_rgba(0,0,0,0.12)] border border-blue-100/60 flex items-center gap-3.5 z-20 max-w-[260px] sm:max-w-[280px] cursor-pointer hover:scale-105 transition-all group/bubble"
                 title="Cliquer pour écouter l'annonce vocale"
               >
-                {/* Icône Onde Sonore Bleue */}
-                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-500/30">
-                  {isPlayingVoice ? <Pause size={18} /> : <Volume2 size={18} />}
+                {/* Icône Ondes Sonores Bleues */}
+                <div className="flex items-center gap-0.5 text-blue-600 px-1 py-2">
+                  <span className={`w-1 bg-blue-600 rounded-full ${isPlayingVoice ? 'h-5 animate-pulse' : 'h-3'}`}></span>
+                  <span className={`w-1 bg-blue-600 rounded-full ${isPlayingVoice ? 'h-7 animate-pulse delay-75' : 'h-5'}`}></span>
+                  <span className={`w-1 bg-blue-600 rounded-full ${isPlayingVoice ? 'h-9 animate-pulse delay-150' : 'h-7'}`}></span>
+                  <span className={`w-1 bg-blue-600 rounded-full ${isPlayingVoice ? 'h-6 animate-pulse delay-100' : 'h-4'}`}></span>
+                  <span className={`w-1 bg-blue-600 rounded-full ${isPlayingVoice ? 'h-3 animate-pulse delay-200' : 'h-2'}`}></span>
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs sm:text-sm font-bold text-slate-900 flex items-center justify-between">
-                    <span>Appel Vocal IA</span>
-                    <span className="text-[10px] font-mono text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-bold">
-                      {isPlayingVoice ? "EN LECTURE" : "14h30"}
-                    </span>
+                  <div className="text-sm sm:text-[15px] font-bold text-[#09132b] leading-snug">
+                    Appel Vocal
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
-                    {isPlayingVoice ? "Écoute de la voix en cours..." : "Programmé · Rendez-vous client"}
+                  <div className="text-xs text-slate-500 font-medium truncate mt-0.5">
+                    {isPlayingVoice ? "Lecture en cours..." : "Programmé à 14h30"}
                   </div>
                 </div>
+
+                {/* Petite flèche indicatrice de bulle pointant vers le téléphone */}
+                <div className="absolute -bottom-2 left-10 w-4 h-4 bg-white rotate-45 border-r border-b border-blue-100/60 -z-10"></div>
               </div>
             </div>
 
@@ -156,110 +116,81 @@ export default function Hero() {
         </div>
 
         {/* =========================================================
-            2. LES 3 GRANDS PILIERS BENTO (Cartes de Luxe & Typographie Agrandie)
+            2. LES 3 TABLEAUX FLOTTANTS STYLISÉS (Copie Conforme de la Maquette)
            ========================================================= */}
-        <div id="fonctionnalites" className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full mt-4">
+        <div id="fonctionnalites" className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full pt-4">
           
           {/* CARTE 1 : Rappels Vocaux IA */}
-          <div className="bg-white rounded-3xl p-8 sm:p-9 shadow-[0_15px_45px_rgba(11,21,46,0.06)] border border-slate-200/80 hover:border-blue-300 hover:shadow-[0_25px_60px_rgba(37,99,235,0.12)] transition-all duration-300 flex flex-col justify-between group">
-            <div>
-              {/* Icône Micro Stylisée */}
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100/80 flex items-center justify-center text-[#1d4ed8] mb-6 group-hover:scale-110 transition-transform shadow-sm">
-                <Mic size={26} />
-              </div>
-
-              <h3 className="text-xl sm:text-2xl font-black text-[#09132b] mb-3 group-hover:text-blue-600 transition-colors tracking-tight">
-                Rappels Vocaux IA
-              </h3>
-              
-              <p className="text-base sm:text-[16px] text-slate-600 leading-relaxed font-normal mb-4">
-                Dictez simplement vos rappels et vos engagements à haute voix. Notre intelligence artificielle comprend vos phrases en langage naturel, identifie les dates, les heures et les urgences avec une précision absolue.
-              </p>
-
-              <div className="flex flex-col gap-2 pt-2 text-sm text-slate-500 font-medium">
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
-                  Compréhension vocale naturelle
-                </span>
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
-                  Synthèse vocale HD ultra-réaliste
-                </span>
-              </div>
+          <div className="bg-white rounded-2xl sm:rounded-[22px] p-7 sm:p-8 shadow-[0_12px_35px_rgba(15,23,42,0.06)] hover:shadow-[0_20px_45px_rgba(37,99,235,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-start group">
+            {/* Icône Stylisée Micro + Ondes Bleues */}
+            <div className="mb-5 text-blue-600">
+              <svg className="w-11 h-11" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="15" y="6" width="14" height="22" rx="7" fill="#2563eb"/>
+                <path d="M9 20C9 27.1797 14.8203 33 22 33C29.1797 33 35 27.1797 35 20" stroke="#2563eb" strokeWidth="3.5" strokeLinecap="round"/>
+                <path d="M22 33V39M15 39H29" stroke="#2563eb" strokeWidth="3.5" strokeLinecap="round"/>
+                {/* Ondes latérales */}
+                <path d="M4 17C4 17 2 19 2 21C2 23 4 25 4 25" stroke="#93c5fd" strokeWidth="2.5" strokeLinecap="round"/>
+                <path d="M40 17C40 17 42 19 42 21C42 23 40 25 40 25" stroke="#93c5fd" strokeWidth="2.5" strokeLinecap="round"/>
+              </svg>
             </div>
 
-            <div className="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between text-sm font-bold text-blue-600">
-              <span>Voix Haute Définition</span>
-              <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform" />
-            </div>
+            <h3 className="text-xl sm:text-[21px] font-bold text-[#09132b] mb-3 group-hover:text-blue-600 transition-colors tracking-tight">
+              Rappels Vocaux IA
+            </h3>
+            
+            <p className="text-sm sm:text-[15px] text-slate-500 leading-relaxed font-normal">
+              Planifiez des rappels vocaux clairs et naturels en quelques secondes.
+            </p>
           </div>
 
-          {/* CARTE 2 : Multi-Canaux SMS & Appels */}
-          <div className="bg-white rounded-3xl p-8 sm:p-9 shadow-[0_15px_45px_rgba(11,21,46,0.06)] border border-slate-200/80 hover:border-blue-300 hover:shadow-[0_25px_60px_rgba(37,99,235,0.12)] transition-all duration-300 flex flex-col justify-between group">
-            <div>
-              {/* Icône Téléphone Stylisée */}
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100/80 flex items-center justify-center text-[#1d4ed8] mb-6 group-hover:scale-110 transition-transform shadow-sm">
-                <PhoneCall size={26} />
-              </div>
-
-              <h3 className="text-xl sm:text-2xl font-black text-[#09132b] mb-3 group-hover:text-blue-600 transition-colors tracking-tight">
-                Appels &amp; Alertes SMS
-              </h3>
-              
-              <p className="text-base sm:text-[16px] text-slate-600 leading-relaxed font-normal mb-4">
-                Ne manquez plus jamais un créneau décisif. Votre assistant vous appelle directement sur votre mobile et vous transmet vos alertes par SMS et WhatsApp à la seconde près.
-              </p>
-
-              <div className="flex flex-col gap-2 pt-2 text-sm text-slate-500 font-medium">
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
-                  Appel vocal automatisé sur téléphone
-                </span>
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
-                  Notifications SMS &amp; WhatsApp instantanées
-                </span>
-              </div>
+          {/* CARTE 2 : Multi-Canaux SMS */}
+          <div className="bg-white rounded-2xl sm:rounded-[22px] p-7 sm:p-8 shadow-[0_12px_35px_rgba(15,23,42,0.06)] hover:shadow-[0_20px_45px_rgba(37,99,235,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-start group">
+            {/* Icône Stylisée Téléphone + Bulle SMS */}
+            <div className="mb-5 text-blue-600">
+              <svg className="w-11 h-11" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="7" y="6" width="20" height="32" rx="4" fill="#2563eb"/>
+                <circle cx="17" cy="33" r="1.5" fill="white"/>
+                <rect x="11" y="10" width="12" height="18" rx="2" fill="white"/>
+                {/* Bulle SMS flottante */}
+                <rect x="18" y="14" width="20" height="15" rx="4" fill="#1d4ed8"/>
+                <circle cx="24" cy="21.5" r="1.5" fill="white"/>
+                <circle cx="28" cy="21.5" r="1.5" fill="white"/>
+                <circle cx="32" cy="21.5" r="1.5" fill="white"/>
+              </svg>
             </div>
 
-            <div className="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between text-sm font-bold text-blue-600">
-              <span>Téléphonie &amp; Multi-Canaux</span>
-              <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform" />
-            </div>
+            <h3 className="text-xl sm:text-[21px] font-bold text-[#09132b] mb-3 group-hover:text-blue-600 transition-colors tracking-tight">
+              Multi-Canaux SMS
+            </h3>
+            
+            <p className="text-sm sm:text-[15px] text-slate-500 leading-relaxed font-normal">
+              Envoyez des confirmations et rappels automatiques par SMS pour une portée maximale.
+            </p>
           </div>
 
-          {/* CARTE 3 : Agenda Intelligent & Anti-Conflits */}
-          <div className="bg-white rounded-3xl p-8 sm:p-9 shadow-[0_15px_45px_rgba(11,21,46,0.06)] border border-slate-200/80 hover:border-blue-300 hover:shadow-[0_25px_60px_rgba(37,99,235,0.12)] transition-all duration-300 flex flex-col justify-between group">
-            <div>
-              {/* Icône Calendrier Stylisée */}
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100/80 flex items-center justify-center text-[#1d4ed8] mb-6 group-hover:scale-110 transition-transform shadow-sm">
-                <Calendar size={26} />
-              </div>
-
-              <h3 className="text-xl sm:text-2xl font-black text-[#09132b] mb-3 group-hover:text-blue-600 transition-colors tracking-tight">
-                Agenda Intelligent
-              </h3>
-              
-              <p className="text-base sm:text-[16px] text-slate-600 leading-relaxed font-normal mb-4">
-                Centralisez vos rendez-vous, réunions et tâches professionnelles en toute simplicité. Synchronisation bidirectionnelle fluide avec Google Calendar, Apple Calendar (.ICS) et Outlook.
-              </p>
-
-              <div className="flex flex-col gap-2 pt-2 text-sm text-slate-500 font-medium">
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
-                  Détection automatique des conflits d&apos;horaires
-                </span>
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
-                  Synchronisation Google &amp; Apple 24/7
-                </span>
-              </div>
+          {/* CARTE 3 : Agenda Intelligent */}
+          <div className="bg-white rounded-2xl sm:rounded-[22px] p-7 sm:p-8 shadow-[0_12px_35px_rgba(15,23,42,0.06)] hover:shadow-[0_20px_45px_rgba(37,99,235,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-start group">
+            {/* Icône Stylisée Calendrier + Engrenage */}
+            <div className="mb-5 text-blue-600">
+              <svg className="w-11 h-11" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="10" width="28" height="26" rx="5" fill="#2563eb"/>
+                <rect x="5" y="10" width="28" height="8" rx="4" fill="#1d4ed8"/>
+                <rect x="11" y="5" width="4" height="8" rx="2" fill="#93c5fd"/>
+                <rect x="23" y="5" width="4" height="8" rx="2" fill="#93c5fd"/>
+                <path d="M12 24L16 28L25 19" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                {/* Engrenage / Paramètre stylisé */}
+                <circle cx="33" cy="31" r="7" fill="#1e40af"/>
+                <circle cx="33" cy="31" r="3" fill="white"/>
+              </svg>
             </div>
 
-            <div className="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between text-sm font-bold text-blue-600">
-              <span>Synchronisation Universelle</span>
-              <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform" />
-            </div>
+            <h3 className="text-xl sm:text-[21px] font-bold text-[#09132b] mb-3 group-hover:text-blue-600 transition-colors tracking-tight">
+              Agenda Intelligent
+            </h3>
+            
+            <p className="text-sm sm:text-[15px] text-slate-500 leading-relaxed font-normal">
+              Organisez vos rendez-vous, réunions et tâches avec une planification intelligente.
+            </p>
           </div>
 
         </div>
