@@ -1,59 +1,60 @@
 "use client";
 
 import Link from "next/link";
-import { Mic } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export default function Navbar() {
   return (
-    <header className="w-full bg-white border-b border-slate-100 sticky top-0 z-50">
-      <div className="max-w-[1180px] mx-auto px-6 sm:px-8 lg:px-10">
+    <header className="w-full bg-white/90 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
         <div className="flex items-center justify-between h-20">
           
-          {/* Logo Alamajonda (Icône Bleue Stylisée + Nom) */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            {/* SVG Logo Identique à la maquette */}
-            <div className="w-9 h-9 flex items-center justify-center">
-              <svg width="34" height="34" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Stylized 'A' with audio wave */}
-                <path d="M7 26L18 6L29 26" stroke="#155dfc" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 18H24" stroke="#155dfc" strokeWidth="3" strokeLinecap="round"/>
-                {/* Audio Wave Pillars */}
-                <line x1="4" y1="18" x2="4" y2="22" stroke="#155dfc" strokeWidth="2.5" strokeLinecap="round"/>
-                <line x1="32" y1="18" x2="32" y2="22" stroke="#155dfc" strokeWidth="2.5" strokeLinecap="round"/>
-                <circle cx="18" cy="18" r="3" fill="#155dfc" />
-              </svg>
+          {/* Logo Alamajonda Exécutif */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1d4ed8] to-[#2563eb] flex items-center justify-center text-white shadow-md shadow-blue-500/25 group-hover:scale-105 transition-transform">
+              <Sparkles size={20} />
             </div>
-            <span className="text-2xl font-bold tracking-tight text-[#0b152e]">
-              Alamajonda
-            </span>
+            <div className="flex flex-col">
+              <span className="text-xl font-black tracking-tight text-[#09132b]">
+                Alamajonda
+              </span>
+              <span className="text-[10px] font-semibold text-blue-600 tracking-wider uppercase -mt-0.5">
+                Executive IA
+              </span>
+            </div>
           </Link>
 
-          {/* Menu Central (Identique à la maquette) */}
-          <nav className="hidden md:flex items-center gap-7 lg:gap-9 text-[15px] font-medium text-slate-700">
-            <Link href="#fonctionnalites" className="hover:text-[#155dfc] transition-colors">
+          {/* Menu Central */}
+          <nav className="hidden md:flex items-center gap-8 text-[15px] font-semibold text-slate-600">
+            <Link href="#fonctionnalites" className="hover:text-[#1d4ed8] transition-colors">
               Fonctionnalités
             </Link>
-            <Link href="#tarifs" className="hover:text-[#155dfc] transition-colors">
+            <Link href="/pricing" className="hover:text-[#1d4ed8] transition-colors">
               Tarifs
             </Link>
-            <Link href="#solutions" className="hover:text-[#155dfc] transition-colors">
+            <Link href="#solutions" className="hover:text-[#1d4ed8] transition-colors">
               Solutions
             </Link>
-            <Link href="#tutoriels" className="hover:text-[#155dfc] transition-colors">
-              Tutoriels
-            </Link>
-            <Link href="#blog" className="hover:text-[#155dfc] transition-colors">
-              Blog
+            <Link href="#temoignages" className="hover:text-[#1d4ed8] transition-colors">
+              Témoignages
             </Link>
           </nav>
 
-          {/* Bouton Droite (Identique à la maquette) */}
+          {/* Actions Droite */}
           <div className="flex items-center gap-4">
             <Link
-              href="/register"
-              className="inline-flex items-center justify-center px-5 sm:px-6 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#155dfc] hover:bg-blue-700 transition-all shadow-sm"
+              href="/login"
+              className="text-sm font-semibold text-slate-700 hover:text-[#1d4ed8] transition-colors hidden sm:inline-block px-3 py-2"
             >
-              Commencer Gratuitement
+              Se connecter
+            </Link>
+
+            <Link
+              href="/register"
+              className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-[#1d4ed8] hover:bg-[#1e40af] shadow-md shadow-blue-600/20 hover:shadow-lg hover:shadow-blue-600/30 hover:-translate-y-0.5 transition-all"
+            >
+              <span>Commencer Gratuitement</span>
+              <ArrowRight size={14} />
             </Link>
           </div>
 
