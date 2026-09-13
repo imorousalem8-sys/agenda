@@ -8,34 +8,35 @@ export default function Hero() {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   return (
-    <section className="relative w-full bg-white text-slate-900 pt-6 sm:pt-10 pb-16 sm:pb-24 font-sans overflow-hidden">
-      <div className="max-w-[1360px] mx-auto px-6 sm:px-10 lg:px-12">
+    <section className="w-full bg-white text-slate-900 pt-6 sm:pt-8 pb-14 sm:pb-20 font-sans overflow-hidden">
+      {/* Conteneur Centré avec 1cm+ d'espace sur les côtés */}
+      <div className="max-w-[1180px] mx-auto px-6 sm:px-8 lg:px-10">
         
         {/* =========================================================
             1. HERO TOP ROW : TEXTE À GAUCHE & PHOTO À DROITE
            ========================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center mb-6 lg:mb-8">
           
           {/* A. Colonne Gauche : Titre + Sous-Titre + Bouton En Savoir Plus */}
-          <div className="lg:col-span-6 flex flex-col items-start pt-4 lg:pt-8 pr-0 lg:pr-4 z-10">
+          <div className="lg:col-span-6 flex flex-col items-start pt-2 pr-0 lg:pr-2 z-10">
             
-            {/* Grand Titre (Identique à la maquette) */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[46px] xl:text-[48px] font-black text-[#0b152e] tracking-tight leading-[1.15] mb-4 text-left">
+            {/* Grand Titre (Calibré sur 2 lignes nettes) */}
+            <h1 className="text-2xl sm:text-3xl lg:text-[38px] xl:text-[40px] font-black text-[#0b152e] tracking-tight leading-[1.18] mb-3.5 text-left">
               Ne manquez plus aucun <br className="hidden sm:inline" />
               rendez-vous important
             </h1>
 
             {/* Sous-titre */}
-            <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed mb-8 max-w-[460px] text-left">
+            <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed mb-6 max-w-[420px] text-left">
               L&apos;assistant vocal IA intelligent pour une gestion d&apos;agenda sans effort, précise et automatisée.
             </p>
 
             {/* Bouton Bleu En savoir plus */}
-            <div className="mb-10 lg:mb-12">
+            <div className="mb-4 lg:mb-6">
               <button
                 type="button"
                 onClick={() => setShowDetailsModal(true)}
-                className="inline-flex items-center justify-center px-7 py-3 rounded-lg font-semibold text-sm sm:text-base text-white bg-[#155dfc] hover:bg-blue-700 shadow-md hover:shadow-lg transition-all cursor-pointer"
+                className="inline-flex items-center justify-center px-6 py-2.5 rounded-lg font-semibold text-sm text-white bg-[#155dfc] hover:bg-blue-700 shadow-sm transition-all cursor-pointer"
               >
                 En savoir plus
               </button>
@@ -44,7 +45,7 @@ export default function Hero() {
 
           {/* B. Colonne Droite : Photo Exacte de la Maquette */}
           <div className="lg:col-span-6 relative flex items-center justify-center lg:justify-end">
-            <div className="relative w-full max-w-[580px] aspect-[1.08] rounded-3xl overflow-hidden shadow-2xl bg-slate-50">
+            <div className="relative w-full max-w-[480px] aspect-[1.12] rounded-3xl overflow-hidden shadow-xl bg-slate-50">
               <Image
                 src="/images/businesswoman-reference-photo.jpg"
                 alt="Femme professionnelle utilisant l'assistant vocal Alamajonda"
@@ -60,14 +61,14 @@ export default function Hero() {
         {/* =========================================================
             2. LES 3 CARTES BLANCHES DU BAS (Avec la 3e qui chevauche la photo)
            ========================================================= */}
-        <div id="fonctionnalites" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 lg:gap-6 max-w-[900px] -mt-6 lg:-mt-24 relative z-30">
+        <div id="fonctionnalites" className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5 w-full max-w-[780px] -mt-4 lg:-mt-20 relative z-20">
           
           {/* CARTE 1 : Rappels Vocaux IA */}
-          <div className="bg-white rounded-2xl p-6 shadow-[0_15px_35px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100/90 hover:shadow-[0_20px_45px_rgba(0,0,0,0.09)] transition-all flex flex-col justify-between">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.06),0_2px_6px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-[0_15px_35px_rgba(0,0,0,0.09)] transition-all flex flex-col justify-between min-h-[190px]">
             <div>
               {/* Icône Micro avec Ondes Bleues */}
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4">
-                <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3">
+                <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="15" y="8" width="10" height="16" rx="5" fill="#155dfc" />
                   <path d="M10 18C10 23.5228 14.4772 28 20 28C25.5228 28 30 23.5228 30 18" stroke="#155dfc" strokeWidth="3" strokeLinecap="round" />
                   <line x1="20" y1="28" x2="20" y2="34" stroke="#155dfc" strokeWidth="3" strokeLinecap="round" />
@@ -77,7 +78,7 @@ export default function Hero() {
                 </svg>
               </div>
 
-              <h3 className="text-base font-bold text-[#0b152e] mb-1.5">
+              <h3 className="text-sm sm:text-base font-bold text-[#0b152e] mb-1">
                 Rappels Vocaux IA
               </h3>
               
@@ -88,11 +89,11 @@ export default function Hero() {
           </div>
 
           {/* CARTE 2 : Multi-Canaux SMS */}
-          <div className="bg-white rounded-2xl p-6 shadow-[0_15px_35px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100/90 hover:shadow-[0_20px_45px_rgba(0,0,0,0.09)] transition-all flex flex-col justify-between">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.06),0_2px_6px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-[0_15px_35px_rgba(0,0,0,0.09)] transition-all flex flex-col justify-between min-h-[190px]">
             <div>
               {/* Icône Téléphone avec Bulle SMS Bleue */}
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4">
-                <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3">
+                <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="8" y="6" width="16" height="28" rx="3.5" stroke="#155dfc" strokeWidth="3" fill="none" />
                   <circle cx="16" cy="29" r="1.5" fill="#155dfc" />
                   <rect x="18" y="10" width="16" height="12" rx="3" fill="#155dfc" />
@@ -102,7 +103,7 @@ export default function Hero() {
                 </svg>
               </div>
 
-              <h3 className="text-base font-bold text-[#0b152e] mb-1.5">
+              <h3 className="text-sm sm:text-base font-bold text-[#0b152e] mb-1">
                 Multi-Canaux SMS
               </h3>
               
@@ -112,12 +113,12 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* CARTE 3 : Agenda Intelligent (Chevauche la photo comme sur la maquette) */}
-          <div className="bg-white rounded-2xl p-6 shadow-[0_15px_35px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100/90 hover:shadow-[0_20px_45px_rgba(0,0,0,0.09)] transition-all flex flex-col justify-between">
+          {/* CARTE 3 : Agenda Intelligent (Chevauchement subtil sur la photo) */}
+          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.06),0_2px_6px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-[0_15px_35px_rgba(0,0,0,0.09)] transition-all flex flex-col justify-between min-h-[190px]">
             <div>
               {/* Icône Calendrier avec Engrenage & Coche Bleue */}
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4">
-                <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3">
+                <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="7" y="10" width="22" height="22" rx="4" stroke="#155dfc" strokeWidth="3" fill="none" />
                   <line x1="7" y1="17" x2="29" y2="17" stroke="#155dfc" strokeWidth="2.5" />
                   <line x1="12" y1="6" x2="12" y2="11" stroke="#155dfc" strokeWidth="3" strokeLinecap="round" />
@@ -127,7 +128,7 @@ export default function Hero() {
                 </svg>
               </div>
 
-              <h3 className="text-base font-bold text-[#0b152e] mb-1.5">
+              <h3 className="text-sm sm:text-base font-bold text-[#0b152e] mb-1">
                 Agenda Intelligent
               </h3>
               

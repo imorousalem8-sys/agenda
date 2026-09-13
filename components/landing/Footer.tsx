@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="bg-white border-t border-slate-100 py-8 text-slate-500 text-xs font-sans">
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
+      <div className="max-w-[1180px] mx-auto px-6 sm:px-8 lg:px-10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           
           {/* Logo Alamajonda */}
