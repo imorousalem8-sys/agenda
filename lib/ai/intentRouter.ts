@@ -153,6 +153,25 @@ export function routeUserIntent(
     };
   }
 
+  // 5b. Demande de conseils d'organisation ou questions d'aide générales
+  if (/^(conseils?|comment (m'organiser|mieux organiser|g[eé]rer mon temps|fonctionne|utiliser)|aide-moi [aà] (organiser|planifier)|que peux-tu faire|quelles sont tes fonctionnalit[eé]s)/i.test(normalized) && !hasTimeIndicator) {
+    return {
+      intent: "GREETING_CASUAL",
+      isFastRoute: true,
+      fastResponse: {
+        reply: "Je suis votre Copilote d'Agenda Exécutif ! ⏱️ Voici comment je peux vous aider au quotidien :\n\n" +
+          "• **Planification vocale** : Dites-moi simplement « *Prends rdv avec Paul demain à 15h* ».\n" +
+          "• **Alarmes & Rappels précis** : « *Rappelle-moi de partir dans 20 minutes* ».\n" +
+          "• **Gestion de tâches** : « *Ajoute une tâche urgente : finaliser le contrat* ».\n" +
+          "• **Consultation instantanée** : « *Quel est mon programme d'aujourd'hui ?* ».\n\n" +
+          "Par quoi souhaitez-vous commencer ?",
+        spokenReply: "Je peux planifier vos rendez-vous, programmer des alarmes précises et gérer vos tâches. Que souhaitez-vous faire ?",
+        action: null,
+        executed: false,
+      },
+    };
+  }
+
   // 6. Détection des demandes de rendez-vous SANS date ni heure (Exigence 22 - Clarification)
   const appointmentMissingTimePatterns = [
     /^(prends|planifie|fixe|cr[eé]e|ajoute|mets|programme).*(rendez-vous|rdv|un rdv).*(avec|pour|chez)\s+([a-zà-ÿ0-9_\-\s]+)$/i,

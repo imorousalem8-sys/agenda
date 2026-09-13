@@ -16,18 +16,26 @@ export async function GET(_req: NextRequest) {
   try {
     const now = new Date();
 
-    // Find all pending reminders that should have fired
+    // Find all pending reminders that should have fired (using composite index [userId, status, fireAt])
     const dueReminders = await prisma.reminder.findMany({
       where: {
         userId: session.user.id,
         status: "PENDING",
         fireAt: { lte: now },
       },
-      include: { event: true, task: true },
+      take: 20,
+      include: {
+        event: {
+          select: { id: true, title: true, startAt: true, location: true },
+        },
+        task: {
+          select: { id: true, title: true, dueAt: true },
+        },
+      },
     });
 
     if (dueReminders.length > 0) {
-      // Mark them as FIRED
+      // Mark them as FIRED in a single batch
       await prisma.reminder.updateMany({
         where: {
           id: { in: dueReminders.map((r) => r.id) },
@@ -36,7 +44,14 @@ export async function GET(_req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ reminders: dueReminders });
+    return NextResponse.json(
+      { reminders: dueReminders },
+      {
+        headers: {
+          "Cache-Control": "private, no-cache, no-store, must-revalidate",
+        },
+      }
+    );
   } catch (err) {
     console.warn("Reminders check non-fatal error:", err);
     return NextResponse.json({ reminders: [] });
