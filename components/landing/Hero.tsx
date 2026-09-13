@@ -156,76 +156,109 @@ export default function Hero() {
         </div>
 
         {/* =========================================================
-            2. LES 3 GRANDS PILIERS BENTO (Cartes Blanches de Luxe)
+            2. LES 3 GRANDS PILIERS BENTO (Cartes de Luxe & Typographie Agrandie)
            ========================================================= */}
-        <div id="fonctionnalites" className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full">
+        <div id="fonctionnalites" className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full mt-4">
           
           {/* CARTE 1 : Rappels Vocaux IA */}
-          <div className="bg-white rounded-3xl p-7 sm:p-8 shadow-[0_15px_40px_rgba(11,21,46,0.06)] border border-slate-100 hover:border-blue-200 hover:shadow-[0_20px_50px_rgba(11,21,46,0.1)] transition-all duration-300 flex flex-col justify-between group">
+          <div className="bg-white rounded-3xl p-8 sm:p-9 shadow-[0_15px_45px_rgba(11,21,46,0.06)] border border-slate-200/80 hover:border-blue-300 hover:shadow-[0_25px_60px_rgba(37,99,235,0.12)] transition-all duration-300 flex flex-col justify-between group">
             <div>
               {/* Icône Micro Stylisée */}
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1d4ed8] mb-5 group-hover:scale-110 transition-transform">
-                <Mic size={22} />
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100/80 flex items-center justify-center text-[#1d4ed8] mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                <Mic size={26} />
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold text-[#09132b] mb-2.5 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-xl sm:text-2xl font-black text-[#09132b] mb-3 group-hover:text-blue-600 transition-colors tracking-tight">
                 Rappels Vocaux IA
               </h3>
               
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Planifiez des rappels vocaux clairs et naturels en quelques secondes. Parlez librement, l&apos;IA structure vos horaires et vos priorités instantanément.
+              <p className="text-base sm:text-[16px] text-slate-600 leading-relaxed font-normal mb-4">
+                Dictez simplement vos rappels et vos engagements à haute voix. Notre intelligence artificielle comprend vos phrases en langage naturel, identifie les dates, les heures et les urgences avec une précision absolue.
               </p>
+
+              <div className="flex flex-col gap-2 pt-2 text-sm text-slate-500 font-medium">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
+                  Compréhension vocale naturelle
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
+                  Synthèse vocale HD ultra-réaliste
+                </span>
+              </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600">
-              <span>Voix HD Naturelle</span>
-              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            <div className="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between text-sm font-bold text-blue-600">
+              <span>Voix Haute Définition</span>
+              <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform" />
             </div>
           </div>
 
           {/* CARTE 2 : Multi-Canaux SMS & Appels */}
-          <div className="bg-white rounded-3xl p-7 sm:p-8 shadow-[0_15px_40px_rgba(11,21,46,0.06)] border border-slate-100 hover:border-blue-200 hover:shadow-[0_20px_50px_rgba(11,21,46,0.1)] transition-all duration-300 flex flex-col justify-between group">
+          <div className="bg-white rounded-3xl p-8 sm:p-9 shadow-[0_15px_45px_rgba(11,21,46,0.06)] border border-slate-200/80 hover:border-blue-300 hover:shadow-[0_25px_60px_rgba(37,99,235,0.12)] transition-all duration-300 flex flex-col justify-between group">
             <div>
               {/* Icône Téléphone Stylisée */}
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1d4ed8] mb-5 group-hover:scale-110 transition-transform">
-                <PhoneCall size={22} />
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100/80 flex items-center justify-center text-[#1d4ed8] mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                <PhoneCall size={26} />
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold text-[#09132b] mb-2.5 group-hover:text-blue-600 transition-colors">
-                Multi-Canaux SMS &amp; Appels
+              <h3 className="text-xl sm:text-2xl font-black text-[#09132b] mb-3 group-hover:text-blue-600 transition-colors tracking-tight">
+                Appels &amp; Alertes SMS
               </h3>
               
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Votre téléphone sonne à l&apos;heure exacte et reçoit des confirmations SMS et WhatsApp. Une transmission fiable pour ne plus jamais rien oublier.
+              <p className="text-base sm:text-[16px] text-slate-600 leading-relaxed font-normal mb-4">
+                Ne manquez plus jamais un créneau décisif. Votre assistant vous appelle directement sur votre mobile et vous transmet vos alertes par SMS et WhatsApp à la seconde près.
               </p>
+
+              <div className="flex flex-col gap-2 pt-2 text-sm text-slate-500 font-medium">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
+                  Appel vocal automatisé sur téléphone
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
+                  Notifications SMS &amp; WhatsApp instantanées
+                </span>
+              </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600">
-              <span>Téléphone &amp; SMS</span>
-              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            <div className="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between text-sm font-bold text-blue-600">
+              <span>Téléphonie &amp; Multi-Canaux</span>
+              <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform" />
             </div>
           </div>
 
           {/* CARTE 3 : Agenda Intelligent & Anti-Conflits */}
-          <div className="bg-white rounded-3xl p-7 sm:p-8 shadow-[0_15px_40px_rgba(11,21,46,0.06)] border border-slate-100 hover:border-blue-200 hover:shadow-[0_20px_50px_rgba(11,21,46,0.1)] transition-all duration-300 flex flex-col justify-between group">
+          <div className="bg-white rounded-3xl p-8 sm:p-9 shadow-[0_15px_45px_rgba(11,21,46,0.06)] border border-slate-200/80 hover:border-blue-300 hover:shadow-[0_25px_60px_rgba(37,99,235,0.12)] transition-all duration-300 flex flex-col justify-between group">
             <div>
               {/* Icône Calendrier Stylisée */}
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1d4ed8] mb-5 group-hover:scale-110 transition-transform">
-                <Calendar size={22} />
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100/80 flex items-center justify-center text-[#1d4ed8] mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                <Calendar size={26} />
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold text-[#09132b] mb-2.5 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-xl sm:text-2xl font-black text-[#09132b] mb-3 group-hover:text-blue-600 transition-colors tracking-tight">
                 Agenda Intelligent
               </h3>
               
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Orchestrez vos rendez-vous, réunions et tâches avec une planification intelligente. Synchronisation automatique Google Calendar &amp; Apple Calendar (.ICS).
+              <p className="text-base sm:text-[16px] text-slate-600 leading-relaxed font-normal mb-4">
+                Centralisez vos rendez-vous, réunions et tâches professionnelles en toute simplicité. Synchronisation bidirectionnelle fluide avec Google Calendar, Apple Calendar (.ICS) et Outlook.
               </p>
+
+              <div className="flex flex-col gap-2 pt-2 text-sm text-slate-500 font-medium">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
+                  Détection automatique des conflits d&apos;horaires
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
+                  Synchronisation Google &amp; Apple 24/7
+                </span>
+              </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600">
-              <span>Synchronisation 24/7</span>
-              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            <div className="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between text-sm font-bold text-blue-600">
+              <span>Synchronisation Universelle</span>
+              <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform" />
             </div>
           </div>
 
