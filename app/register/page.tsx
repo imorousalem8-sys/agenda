@@ -206,30 +206,30 @@ export default function RegisterPage() {
         </Link>
       </div>
 
-      {/* Main Registration Card */}
+      {/* Main Registration Card - Transparent Glassmorphism Style */}
       <div
         style={{
           width: "100%",
           maxWidth: "460px",
-          background: "rgba(13, 27, 62, 0.75)",
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
-          border: "1px solid rgba(56, 189, 248, 0.3)",
-          borderRadius: "24px",
-          boxShadow: "0 25px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(37, 99, 235, 0.2)",
-          padding: "36px 32px",
+          background: "rgba(255, 255, 255, 0.03)",
+          backdropFilter: "blur(30px) saturate(160%)",
+          WebkitBackdropFilter: "blur(30px) saturate(160%)",
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          borderRadius: "28px",
+          boxShadow: "0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+          padding: "38px 32px",
           position: "relative",
           zIndex: 2,
         }}
       >
         <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <h1 style={{ fontSize: "22px", fontWeight: "800", color: "#ffffff", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontSize: "23px", fontWeight: "800", color: "#ffffff", letterSpacing: "-0.02em" }}>
             {otpStep ? "Vérification de sécurité" : "Créer votre compte"}
           </h1>
-          <p style={{ fontSize: "13px", color: "#94a3b8", marginTop: "4px" }}>
+          <p style={{ fontSize: "13.5px", color: "#94a3b8", marginTop: "6px" }}>
             {otpStep
               ? `Un code de confirmation a été envoyé à ${pendingRegData?.email}`
-              : "Rejoignez Alamajonda et pilotez vos journées à la voix"}
+              : "Rejoignez AlarmAgenda et pilotez vos journées à la voix"}
           </p>
         </div>
 
@@ -237,7 +237,7 @@ export default function RegisterPage() {
           <div
             style={{
               padding: "12px 14px",
-              borderRadius: "10px",
+              borderRadius: "12px",
               background: "rgba(239, 68, 68, 0.15)",
               border: "1px solid rgba(239, 68, 68, 0.35)",
               color: "#fca5a5",
@@ -255,7 +255,7 @@ export default function RegisterPage() {
           <div
             style={{
               padding: "12px 14px",
-              borderRadius: "10px",
+              borderRadius: "12px",
               background: "rgba(16, 185, 129, 0.15)",
               border: "1px solid rgba(16, 185, 129, 0.35)",
               color: "#6ee7b7",
@@ -271,10 +271,10 @@ export default function RegisterPage() {
 
         {/* Step 1: Account Information */}
         {!otpStep ? (
-          <form onSubmit={handleSubmit(onSendOtp)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <form onSubmit={handleSubmit(onSendOtp)} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
             {/* Full Name */}
             <div>
-              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#cbd5e1", display: "block", marginBottom: "6px" }}>
+              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#e2e8f0", display: "block", marginBottom: "6px" }}>
                 Nom et Prénom
               </label>
               <div style={{ position: "relative" }}>
@@ -286,9 +286,10 @@ export default function RegisterPage() {
                   style={{
                     width: "100%",
                     padding: "12px 14px 12px 40px",
-                    borderRadius: "12px",
-                    background: "rgba(6, 11, 27, 0.8)",
-                    border: errors.name ? "1.5px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.15)",
+                    borderRadius: "14px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    backdropFilter: "blur(12px)",
+                    border: errors.name ? "1.5px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.12)",
                     color: "#ffffff",
                     fontSize: "14px",
                     outline: "none",
@@ -300,7 +301,7 @@ export default function RegisterPage() {
 
             {/* Email */}
             <div>
-              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#cbd5e1", display: "block", marginBottom: "6px" }}>
+              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#e2e8f0", display: "block", marginBottom: "6px" }}>
                 Adresse Email
               </label>
               <div style={{ position: "relative" }}>
@@ -312,9 +313,10 @@ export default function RegisterPage() {
                   style={{
                     width: "100%",
                     padding: "12px 14px 12px 40px",
-                    borderRadius: "12px",
-                    background: "rgba(6, 11, 27, 0.8)",
-                    border: errors.email ? "1.5px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.15)",
+                    borderRadius: "14px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    backdropFilter: "blur(12px)",
+                    border: errors.email ? "1.5px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.12)",
                     color: "#ffffff",
                     fontSize: "14px",
                     outline: "none",
@@ -326,7 +328,7 @@ export default function RegisterPage() {
 
             {/* Password */}
             <div>
-              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#cbd5e1", display: "block", marginBottom: "6px" }}>
+              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#e2e8f0", display: "block", marginBottom: "6px" }}>
                 Mot de Passe (6 caractères min.)
               </label>
               <div style={{ position: "relative" }}>
@@ -338,9 +340,10 @@ export default function RegisterPage() {
                   style={{
                     width: "100%",
                     padding: "12px 40px 12px 40px",
-                    borderRadius: "12px",
-                    background: "rgba(6, 11, 27, 0.8)",
-                    border: errors.password ? "1.5px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.15)",
+                    borderRadius: "14px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    backdropFilter: "blur(12px)",
+                    border: errors.password ? "1.5px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.12)",
                     color: "#ffffff",
                     fontSize: "14px",
                     outline: "none",
@@ -371,19 +374,20 @@ export default function RegisterPage() {
               disabled={loading}
               style={{
                 marginTop: "10px",
-                padding: "13px",
-                borderRadius: "12px",
+                padding: "14px",
+                borderRadius: "14px",
                 background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                boxShadow: "0 6px 20px rgba(37, 99, 235, 0.4)",
+                boxShadow: "0 8px 25px rgba(37, 99, 235, 0.45)",
                 color: "#ffffff",
                 fontWeight: "800",
-                fontSize: "14.5px",
+                fontSize: "15px",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "8px",
+                transition: "all 0.2s ease",
               }}
             >
               {loading ? <Loader2 size={18} className="animate-spin" /> : <span>Continuer</span>}
@@ -394,7 +398,7 @@ export default function RegisterPage() {
           /* Step 2: OTP Verification */
           <form onSubmit={onVerifyOtp} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
-              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#cbd5e1", display: "block", marginBottom: "6px" }}>
+              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#e2e8f0", display: "block", marginBottom: "6px" }}>
                 Code de validation à 6 chiffres
               </label>
               <div style={{ position: "relative" }}>
@@ -409,8 +413,9 @@ export default function RegisterPage() {
                   style={{
                     width: "100%",
                     padding: "13px 14px 13px 40px",
-                    borderRadius: "12px",
-                    background: "rgba(6, 11, 27, 0.8)",
+                    borderRadius: "14px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    backdropFilter: "blur(12px)",
                     border: "1.5px solid #38bdf8",
                     color: "#ffffff",
                     fontSize: "20px",
@@ -428,13 +433,13 @@ export default function RegisterPage() {
               disabled={loading || otpCode.length < 6}
               style={{
                 marginTop: "6px",
-                padding: "13px",
-                borderRadius: "12px",
+                padding: "14px",
+                borderRadius: "14px",
                 background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                boxShadow: "0 6px 20px rgba(37, 99, 235, 0.4)",
+                boxShadow: "0 8px 25px rgba(37, 99, 235, 0.45)",
                 color: "#ffffff",
                 fontWeight: "800",
-                fontSize: "14.5px",
+                fontSize: "15px",
                 border: "none",
                 cursor: otpCode.length === 6 ? "pointer" : "not-allowed",
                 opacity: otpCode.length === 6 ? 1 : 0.6,
@@ -444,7 +449,7 @@ export default function RegisterPage() {
                 gap: "8px",
               }}
             >
-              {loading ? <Loader2 size={18} className="animate-spin" /> : <span>Valider et Accéder à Alamajonda</span>}
+              {loading ? <Loader2 size={18} className="animate-spin" /> : <span>Valider et Accéder à AlarmAgenda</span>}
             </button>
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "10px" }}>

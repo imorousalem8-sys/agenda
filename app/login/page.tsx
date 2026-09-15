@@ -179,31 +179,31 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      {/* Main Login Card */}
+      {/* Main Login Card - Transparent Glassmorphism Style */}
       <div
         style={{
           width: "100%",
           maxWidth: "460px",
-          background: "rgba(13, 27, 62, 0.75)",
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
-          border: "1px solid rgba(56, 189, 248, 0.3)",
-          borderRadius: "24px",
-          boxShadow: "0 25px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(37, 99, 235, 0.2)",
-          padding: "36px 32px",
+          background: "rgba(255, 255, 255, 0.03)",
+          backdropFilter: "blur(30px) saturate(160%)",
+          WebkitBackdropFilter: "blur(30px) saturate(160%)",
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          borderRadius: "28px",
+          boxShadow: "0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+          padding: "38px 32px",
           position: "relative",
           zIndex: 2,
         }}
       >
         <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <h1 style={{ fontSize: "22px", fontWeight: "800", color: "#ffffff", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontSize: "23px", fontWeight: "800", color: "#ffffff", letterSpacing: "-0.02em" }}>
             {mode === "LOGIN"
               ? "Connexion à votre espace"
               : mode === "FORGOT"
               ? "Mot de passe oublié"
               : "Nouveau mot de passe"}
           </h1>
-          <p style={{ fontSize: "13px", color: "#94a3b8", marginTop: "4px" }}>
+          <p style={{ fontSize: "13.5px", color: "#94a3b8", marginTop: "6px" }}>
             {mode === "LOGIN"
               ? "Accédez à votre agenda et copilote IA"
               : mode === "FORGOT"
@@ -216,7 +216,7 @@ export default function LoginPage() {
           <div
             style={{
               padding: "12px 14px",
-              borderRadius: "10px",
+              borderRadius: "12px",
               background: "rgba(239, 68, 68, 0.15)",
               border: "1px solid rgba(239, 68, 68, 0.35)",
               color: "#fca5a5",
@@ -234,7 +234,7 @@ export default function LoginPage() {
           <div
             style={{
               padding: "12px 14px",
-              borderRadius: "10px",
+              borderRadius: "12px",
               background: "rgba(16, 185, 129, 0.15)",
               border: "1px solid rgba(16, 185, 129, 0.35)",
               color: "#6ee7b7",
@@ -250,9 +250,9 @@ export default function LoginPage() {
 
         {/* 1. Mode LOGIN */}
         {mode === "LOGIN" && (
-          <form onSubmit={handleSubmit(onLogin)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <form onSubmit={handleSubmit(onLogin)} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
             <div>
-              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#cbd5e1", display: "block", marginBottom: "6px" }}>
+              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#e2e8f0", display: "block", marginBottom: "6px" }}>
                 Adresse Email
               </label>
               <div style={{ position: "relative" }}>
@@ -264,9 +264,10 @@ export default function LoginPage() {
                   style={{
                     width: "100%",
                     padding: "12px 14px 12px 40px",
-                    borderRadius: "12px",
-                    background: "rgba(6, 11, 27, 0.8)",
-                    border: errors.email ? "1.5px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.15)",
+                    borderRadius: "14px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    backdropFilter: "blur(12px)",
+                    border: errors.email ? "1.5px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.12)",
                     color: "#ffffff",
                     fontSize: "14px",
                     outline: "none",
@@ -278,7 +279,7 @@ export default function LoginPage() {
 
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#cbd5e1" }}>
+                <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#e2e8f0" }}>
                   Mot de Passe
                 </label>
                 <button
@@ -301,9 +302,10 @@ export default function LoginPage() {
                   style={{
                     width: "100%",
                     padding: "12px 40px 12px 40px",
-                    borderRadius: "12px",
-                    background: "rgba(6, 11, 27, 0.8)",
-                    border: errors.password ? "1.5px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.15)",
+                    borderRadius: "14px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    backdropFilter: "blur(12px)",
+                    border: errors.password ? "1.5px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.12)",
                     color: "#ffffff",
                     fontSize: "14px",
                     outline: "none",
@@ -334,19 +336,20 @@ export default function LoginPage() {
               disabled={loading}
               style={{
                 marginTop: "10px",
-                padding: "13px",
-                borderRadius: "12px",
+                padding: "14px",
+                borderRadius: "14px",
                 background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                boxShadow: "0 6px 20px rgba(37, 99, 235, 0.4)",
+                boxShadow: "0 8px 25px rgba(37, 99, 235, 0.45)",
                 color: "#ffffff",
                 fontWeight: "800",
-                fontSize: "14.5px",
+                fontSize: "15px",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "8px",
+                transition: "all 0.2s ease",
               }}
             >
               {loading ? <Loader2 size={18} className="animate-spin" /> : <span>Se connecter</span>}
@@ -359,7 +362,7 @@ export default function LoginPage() {
         {mode === "FORGOT" && (
           <form onSubmit={onForgotSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
-              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#cbd5e1", display: "block", marginBottom: "6px" }}>
+              <label style={{ fontSize: "12.5px", fontWeight: "700", color: "#e2e8f0", display: "block", marginBottom: "6px" }}>
                 Adresse Email de récupération
               </label>
               <div style={{ position: "relative" }}>
@@ -373,9 +376,10 @@ export default function LoginPage() {
                   style={{
                     width: "100%",
                     padding: "12px 14px 12px 40px",
-                    borderRadius: "12px",
-                    background: "rgba(6, 11, 27, 0.8)",
-                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                    borderRadius: "14px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    backdropFilter: "blur(12px)",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
                     color: "#ffffff",
                     fontSize: "14px",
                     outline: "none",
@@ -389,13 +393,13 @@ export default function LoginPage() {
               disabled={loading}
               style={{
                 marginTop: "6px",
-                padding: "13px",
-                borderRadius: "12px",
+                padding: "14px",
+                borderRadius: "14px",
                 background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                boxShadow: "0 6px 20px rgba(37, 99, 235, 0.4)",
+                boxShadow: "0 8px 25px rgba(37, 99, 235, 0.45)",
                 color: "#ffffff",
                 fontWeight: "800",
-                fontSize: "14.5px",
+                fontSize: "15px",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
@@ -424,7 +428,7 @@ export default function LoginPage() {
         {mode === "RESET" && (
           <form onSubmit={onResetSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div>
-              <label style={{ fontSize: "12px", fontWeight: "700", color: "#cbd5e1", display: "block", marginBottom: "4px" }}>
+              <label style={{ fontSize: "12px", fontWeight: "700", color: "#e2e8f0", display: "block", marginBottom: "4px" }}>
                 Code à 6 chiffres
               </label>
               <div style={{ position: "relative" }}>
@@ -439,8 +443,9 @@ export default function LoginPage() {
                   style={{
                     width: "100%",
                     padding: "12px 14px 12px 40px",
-                    borderRadius: "12px",
-                    background: "rgba(6, 11, 27, 0.8)",
+                    borderRadius: "14px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    backdropFilter: "blur(12px)",
                     border: "1.5px solid #38bdf8",
                     color: "#ffffff",
                     fontSize: "18px",
@@ -454,7 +459,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label style={{ fontSize: "12px", fontWeight: "700", color: "#cbd5e1", display: "block", marginBottom: "4px" }}>
+              <label style={{ fontSize: "12px", fontWeight: "700", color: "#e2e8f0", display: "block", marginBottom: "4px" }}>
                 Nouveau mot de passe
               </label>
               <input
@@ -465,9 +470,10 @@ export default function LoginPage() {
                 style={{
                   width: "100%",
                   padding: "11px 14px",
-                  borderRadius: "12px",
-                  background: "rgba(6, 11, 27, 0.8)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  borderRadius: "14px",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
                   color: "#ffffff",
                   fontSize: "14px",
                   outline: "none",
@@ -476,7 +482,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label style={{ fontSize: "12px", fontWeight: "700", color: "#cbd5e1", display: "block", marginBottom: "4px" }}>
+              <label style={{ fontSize: "12px", fontWeight: "700", color: "#e2e8f0", display: "block", marginBottom: "4px" }}>
                 Confirmer le mot de passe
               </label>
               <input
@@ -487,9 +493,10 @@ export default function LoginPage() {
                 style={{
                   width: "100%",
                   padding: "11px 14px",
-                  borderRadius: "12px",
-                  background: "rgba(6, 11, 27, 0.8)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  borderRadius: "14px",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
                   color: "#ffffff",
                   fontSize: "14px",
                   outline: "none",
@@ -502,13 +509,13 @@ export default function LoginPage() {
               disabled={loading}
               style={{
                 marginTop: "6px",
-                padding: "13px",
-                borderRadius: "12px",
+                padding: "14px",
+                borderRadius: "14px",
                 background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                boxShadow: "0 6px 20px rgba(37, 99, 235, 0.4)",
+                boxShadow: "0 8px 25px rgba(37, 99, 235, 0.45)",
                 color: "#ffffff",
                 fontWeight: "800",
-                fontSize: "14.5px",
+                fontSize: "15px",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
