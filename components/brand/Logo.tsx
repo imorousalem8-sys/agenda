@@ -138,30 +138,27 @@ export default function Logo({
           <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
             <span
               style={{
-                fontSize: `${Math.max(16, size * 0.46)}px`,
+                fontSize: `${Math.max(17, size * 0.48)}px`,
                 fontWeight: "900",
                 letterSpacing: "-0.03em",
-                background: isLight
-                  ? "linear-gradient(135deg, #09132b 0%, #1e3a8a 60%, #2563eb 100%)"
-                  : "linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #38bdf8 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
+                color: isLight ? "#09132b" : "#ffffff",
+                display: "inline-flex",
+                alignItems: "center",
               }}
             >
-              AlarmAgenda
+              <span>Alarm</span>
+              <span style={{ color: "#2563eb", marginLeft: "1px" }}>Agenda</span>
             </span>
             <span
               style={{
-                fontSize: "9px",
-                fontWeight: "700",
+                fontSize: "9.5px",
+                fontWeight: "800",
                 textTransform: "uppercase",
                 letterSpacing: "0.08em",
-                padding: "2px 6px",
+                padding: "2.5px 7px",
                 borderRadius: "6px",
-                background: isLight
-                  ? "rgba(37, 99, 235, 0.1)"
-                  : "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)",
-                border: isLight ? "1px solid rgba(37, 99, 235, 0.25)" : "1px solid rgba(56, 189, 248, 0.35)",
+                background: isLight ? "rgba(37, 99, 235, 0.12)" : "rgba(56, 189, 248, 0.2)",
+                border: isLight ? "1px solid rgba(37, 99, 235, 0.3)" : "1px solid rgba(56, 189, 248, 0.4)",
                 color: isLight ? "#1d4ed8" : "#38bdf8",
               }}
             >
@@ -170,11 +167,11 @@ export default function Logo({
           </div>
           <span
             style={{
-              fontSize: `${Math.max(10, size * 0.22)}px`,
+              fontSize: `${Math.max(10.5, size * 0.23)}px`,
               fontWeight: "600",
               color: isLight ? "#475569" : "#94a3b8",
-              letterSpacing: "0.02em",
-              marginTop: "1px",
+              letterSpacing: "0.01em",
+              marginTop: "2px",
             }}
           >
             Cockpit Personnel & IA
