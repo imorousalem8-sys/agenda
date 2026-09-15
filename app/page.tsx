@@ -3,7 +3,7 @@ import Hero from "@/components/landing/Hero";
 import Footer from "@/components/landing/Footer";
 
 export const metadata = {
-  title: "Alamajonda — Ne manquez plus aucun rendez-vous important",
+  title: "AlarmAgenda — Ne manquez plus aucun rendez-vous important",
   description: "L'assistant vocal IA intelligent pour une gestion d'agenda sans effort, précise et automatisée.",
 };
 

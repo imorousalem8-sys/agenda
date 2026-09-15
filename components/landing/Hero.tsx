@@ -18,7 +18,7 @@ export default function Hero() {
       playAlertChime();
       setIsPlayingVoice(true);
       const utterance = new SpeechSynthesisUtterance(
-        "Bonjour ! C'est votre assistant personnel Alamajonda. Vous avez votre rendez-vous client important prévu à 14 heures 30. Souhaitez-vous le confirmer ou le reporter de dix minutes ?"
+        "Bonjour ! C'est votre assistant personnel AlarmAgenda. Vous avez votre rendez-vous client important prévu à 14 heures 30. Souhaitez-vous le confirmer ou le reporter de dix minutes ?"
       );
       utterance.lang = "fr-FR";
       utterance.rate = 1.05;
@@ -76,7 +76,7 @@ export default function Hero() {
             <div className="relative w-full max-w-[560px] aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-slate-900/10 bg-slate-100 group">
               <Image
                 src="/images/hero-businesswoman.jpg"
-                alt="Femme d'affaires souriante au bureau utilisant l'assistant vocal IA Alamajonda"
+                alt="Femme d'affaires souriante au bureau utilisant l'assistant vocal IA AlarmAgenda"
                 fill
                 priority
                 className="object-cover object-center group-hover:scale-102 transition-transform duration-700"

@@ -16,7 +16,7 @@ export default function Navbar() {
       >
         <div className="flex items-center justify-between h-20">
           
-          {/* Logo Alamajonda avec Icône Onde Vocale */}
+          {/* Logo AlarmAgenda avec Icône Onde Vocale */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="flex items-center justify-center text-[#1d4ed8]">
               {/* Icône A & Ondes stylisées */}
@@ -29,7 +29,7 @@ export default function Navbar() {
               </svg>
             </div>
             <span className="text-2xl font-extrabold tracking-tight text-[#09132b]">
-              Alamajonda
+              AlarmAgenda
             </span>
           </Link>
 

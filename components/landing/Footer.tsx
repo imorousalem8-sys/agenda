@@ -22,7 +22,7 @@ export default function Footer() {
               <Sparkles size={16} />
             </div>
             <div>
-              <span className="font-bold text-white text-base">Alamajonda</span>
+              <span className="font-bold text-white text-base">AlarmAgenda</span>
               <span className="text-xs text-slate-500 ml-2">© {new Date().getFullYear()} Tous droits réservés.</span>
             </div>
           </div>
@@ -38,7 +38,7 @@ export default function Footer() {
             <Link href="/privacy" className="hover:text-blue-400 transition-colors">
               Confidentialité &amp; RGPD
             </Link>
-            <a href="mailto:contact@alamajonda.app" className="hover:text-blue-400 transition-colors">
+            <a href="mailto:contact@alarmagenda.app" className="hover:text-blue-400 transition-colors">
               Support technique
             </a>
           </div>
