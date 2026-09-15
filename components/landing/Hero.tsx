@@ -61,7 +61,7 @@ export default function Hero() {
 
             {/* Bouton d'action "En savoir plus" */}
             <Link
-              href="/register"
+              href="#fonctionnalites"
               className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl text-base font-bold text-white bg-[#1d4ed8] hover:bg-[#1e40af] shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/35 hover:-translate-y-0.5 transition-all"
             >
               En savoir plus
