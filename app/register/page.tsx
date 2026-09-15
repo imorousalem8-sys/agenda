@@ -171,7 +171,10 @@ export default function RegisterPage() {
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #f0f4ff 0%, #e2ecfd 50%, #f8fafc 100%)",
+        backgroundImage: "url('/images/auth-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center 30%",
+        backgroundRepeat: "no-repeat",
         color: "#09132b",
         fontFamily: "'Inter', system-ui, sans-serif",
         display: "flex",
@@ -182,27 +185,39 @@ export default function RegisterPage() {
         position: "relative",
       }}
     >
-      {/* Background ambient light and halos */}
+      {/* Darkening & Soft Ambient Tint Overlay for Optimal Contrast */}
       <div
         style={{
           position: "absolute",
-          top: "10%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "700px",
-          height: "550px",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(147, 197, 253, 0.45) 0%, rgba(191, 219, 254, 0.25) 45%, transparent 70%)",
-          filter: "blur(90px)",
-          pointerEvents: "none",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "linear-gradient(135deg, rgba(15, 23, 42, 0.45) 0%, rgba(30, 58, 138, 0.35) 50%, rgba(15, 23, 42, 0.5) 100%)",
+          backdropFilter: "blur(3px)",
+          WebkitBackdropFilter: "blur(3px)",
           zIndex: 0,
         }}
       />
 
       {/* Brand Header */}
-      <div style={{ position: "relative", zIndex: 2, marginBottom: "26px", textAlign: "center" }}>
-        <Link href="/" style={{ textDecoration: "none", display: "inline-block" }}>
-          <Logo size={40} showText={true} />
+      <div style={{ position: "relative", zIndex: 2, marginBottom: "24px", textAlign: "center" }}>
+        <Link
+          href="/"
+          style={{
+            textDecoration: "none",
+            display: "inline-flex",
+            alignItems: "center",
+            background: "rgba(255, 255, 255, 0.8)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            padding: "8px 20px",
+            borderRadius: "999px",
+            border: "1px solid rgba(255, 255, 255, 0.9)",
+            boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
+          }}
+        >
+          <Logo size={36} showText={true} />
         </Link>
       </div>
 
