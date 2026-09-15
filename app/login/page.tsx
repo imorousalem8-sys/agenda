@@ -155,55 +155,71 @@ export default function LoginPage() {
         position: "relative",
       }}
     >
-      {/* Background ambient halos */}
+      {/* Background ambient light and halos */}
       <div
         style={{
           position: "absolute",
-          top: "15%",
+          top: "10%",
           left: "50%",
           transform: "translateX(-50%)",
-          width: "650px",
-          height: "450px",
+          width: "700px",
+          height: "550px",
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(147, 197, 253, 0.12) 50%, transparent 75%)",
-          filter: "blur(80px)",
+          background: "radial-gradient(circle, rgba(147, 197, 253, 0.45) 0%, rgba(191, 219, 254, 0.25) 45%, transparent 70%)",
+          filter: "blur(90px)",
           pointerEvents: "none",
           zIndex: 0,
         }}
       />
 
       {/* Brand Header */}
-      <div style={{ position: "relative", zIndex: 2, marginBottom: "28px", textAlign: "center" }}>
+      <div style={{ position: "relative", zIndex: 2, marginBottom: "26px", textAlign: "center" }}>
         <Link href="/" style={{ textDecoration: "none", display: "inline-block" }}>
-          <Logo size={38} showText={true} />
+          <Logo size={40} showText={true} />
         </Link>
       </div>
 
-      {/* Main Login Card - Pure Frosted White Glass Style */}
+      {/* Main Login Card - 3D Ultra Liquid Frosted Glass Style */}
       <div
         style={{
           width: "100%",
           maxWidth: "460px",
-          background: "rgba(255, 255, 255, 0.68)",
-          backdropFilter: "blur(32px) saturate(180%)",
-          WebkitBackdropFilter: "blur(32px) saturate(180%)",
-          border: "1px solid rgba(255, 255, 255, 0.85)",
-          borderRadius: "28px",
-          boxShadow: "0 25px 65px rgba(30, 58, 138, 0.09), 0 4px 12px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.95)",
-          padding: "38px 32px",
+          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.18) 100%)",
+          backdropFilter: "blur(38px) saturate(190%)",
+          WebkitBackdropFilter: "blur(38px) saturate(190%)",
+          border: "1.5px solid rgba(255, 255, 255, 0.75)",
+          borderRadius: "36px",
+          boxShadow: "0 35px 80px -15px rgba(2, 44, 115, 0.12), 0 10px 25px -5px rgba(0, 0, 0, 0.04), inset 0 1.5px 2px rgba(255, 255, 255, 0.95), inset 0 -2px 5px rgba(255, 255, 255, 0.4)",
+          padding: "42px 34px",
           position: "relative",
           zIndex: 2,
+          overflow: "hidden",
         }}
       >
-        <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#09132b", letterSpacing: "-0.02em" }}>
+        {/* Specular Diagonal Glass Light Streak */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            borderRadius: "36px",
+            background: "linear-gradient(125deg, transparent 38%, rgba(255, 255, 255, 0.42) 48%, rgba(255, 255, 255, 0.05) 54%, transparent 62%)",
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        />
+
+        <div style={{ textAlign: "center", marginBottom: "26px", position: "relative", zIndex: 2 }}>
+          <h1 style={{ fontSize: "27px", fontWeight: "800", color: "#09132b", letterSpacing: "-0.03em" }}>
             {mode === "LOGIN"
               ? "Connexion à votre espace"
               : mode === "FORGOT"
               ? "Mot de passe oublié"
               : "Nouveau mot de passe"}
           </h1>
-          <p style={{ fontSize: "14px", color: "#64748b", marginTop: "6px" }}>
+          <p style={{ fontSize: "14.5px", color: "#64748b", marginTop: "6px", fontWeight: "500" }}>
             {mode === "LOGIN"
               ? "Accédez à votre agenda et copilote IA"
               : mode === "FORGOT"
@@ -215,15 +231,18 @@ export default function LoginPage() {
         {error && (
           <div
             style={{
-              padding: "12px 14px",
-              borderRadius: "12px",
-              background: "rgba(254, 242, 242, 0.9)",
-              border: "1px solid rgba(239, 68, 68, 0.3)",
+              padding: "13px 16px",
+              borderRadius: "16px",
+              background: "rgba(254, 242, 242, 0.85)",
+              backdropFilter: "blur(8px)",
+              border: "1px solid rgba(239, 68, 68, 0.35)",
               color: "#b91c1c",
-              fontSize: "13px",
-              marginBottom: "18px",
+              fontSize: "13.5px",
+              marginBottom: "20px",
               textAlign: "center",
               fontWeight: "600",
+              position: "relative",
+              zIndex: 2,
             }}
           >
             {error}
@@ -233,15 +252,18 @@ export default function LoginPage() {
         {forgotSuccess && (
           <div
             style={{
-              padding: "12px 14px",
-              borderRadius: "12px",
-              background: "rgba(236, 253, 245, 0.9)",
-              border: "1px solid rgba(16, 185, 129, 0.3)",
+              padding: "13px 16px",
+              borderRadius: "16px",
+              background: "rgba(236, 253, 245, 0.85)",
+              backdropFilter: "blur(8px)",
+              border: "1px solid rgba(16, 185, 129, 0.35)",
               color: "#047857",
-              fontSize: "13px",
-              marginBottom: "18px",
+              fontSize: "13.5px",
+              marginBottom: "20px",
               textAlign: "center",
               fontWeight: "600",
+              position: "relative",
+              zIndex: 2,
             }}
           >
             {forgotSuccess}
@@ -250,37 +272,40 @@ export default function LoginPage() {
 
         {/* 1. Mode LOGIN */}
         {mode === "LOGIN" && (
-          <form onSubmit={handleSubmit(onLogin)} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+          <form onSubmit={handleSubmit(onLogin)} style={{ display: "flex", flexDirection: "column", gap: "20px", position: "relative", zIndex: 2 }}>
             <div>
-              <label style={{ fontSize: "13px", fontWeight: "700", color: "#1e293b", display: "block", marginBottom: "6px" }}>
+              <label style={{ fontSize: "14px", fontWeight: "700", color: "#09132b", display: "block", marginBottom: "8px" }}>
                 Adresse Email
               </label>
               <div style={{ position: "relative" }}>
-                <Mail size={16} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
+                <Mail size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
                 <input
                   type="email"
-                  placeholder="nom@exemple.com"
+                  placeholder="imorousalem8@gmail.com"
                   {...register("email")}
                   style={{
                     width: "100%",
-                    padding: "12px 14px 12px 40px",
-                    borderRadius: "14px",
-                    background: "rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(12px)",
-                    border: errors.email ? "1.5px solid #ef4444" : "1px solid rgba(203, 213, 225, 0.85)",
+                    padding: "15px 18px 15px 48px",
+                    borderRadius: "20px",
+                    background: "rgba(255, 255, 255, 0.32)",
+                    backdropFilter: "blur(14px)",
+                    WebkitBackdropFilter: "blur(14px)",
+                    border: errors.email ? "1.5px solid #ef4444" : "1.5px solid rgba(255, 255, 255, 0.8)",
+                    boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 8px rgba(0, 30, 80, 0.03)",
                     color: "#09132b",
-                    fontSize: "14.5px",
+                    fontSize: "15px",
+                    fontWeight: "500",
                     outline: "none",
-                    boxShadow: "inset 0 1px 2px rgba(0,0,0,0.02)",
+                    transition: "all 0.2s ease",
                   }}
                 />
               </div>
-              {errors.email && <p style={{ fontSize: "12px", color: "#dc2626", marginTop: "4px", fontWeight: "500" }}>{errors.email.message}</p>}
+              {errors.email && <p style={{ fontSize: "12px", color: "#dc2626", marginTop: "5px", fontWeight: "600" }}>{errors.email.message}</p>}
             </div>
 
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: "700", color: "#1e293b" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                <label style={{ fontSize: "14px", fontWeight: "700", color: "#09132b" }}>
                   Mot de Passe
                 </label>
                 <button
@@ -289,28 +314,31 @@ export default function LoginPage() {
                     setError("");
                     setMode("FORGOT");
                   }}
-                  style={{ background: "transparent", border: "none", color: "#2563eb", fontSize: "12.5px", fontWeight: "700", cursor: "pointer" }}
+                  style={{ background: "transparent", border: "none", color: "#2563eb", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}
                 >
                   Mot de passe oublié ?
                 </button>
               </div>
               <div style={{ position: "relative" }}>
-                <Lock size={16} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
+                <Lock size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   {...register("password")}
                   style={{
                     width: "100%",
-                    padding: "12px 40px 12px 40px",
-                    borderRadius: "14px",
-                    background: "rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(12px)",
-                    border: errors.password ? "1.5px solid #ef4444" : "1px solid rgba(203, 213, 225, 0.85)",
+                    padding: "15px 48px 15px 48px",
+                    borderRadius: "20px",
+                    background: "rgba(255, 255, 255, 0.32)",
+                    backdropFilter: "blur(14px)",
+                    WebkitBackdropFilter: "blur(14px)",
+                    border: errors.password ? "1.5px solid #ef4444" : "1.5px solid rgba(255, 255, 255, 0.8)",
+                    boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 8px rgba(0, 30, 80, 0.03)",
                     color: "#09132b",
-                    fontSize: "14.5px",
+                    fontSize: "15px",
+                    fontWeight: "500",
                     outline: "none",
-                    boxShadow: "inset 0 1px 2px rgba(0,0,0,0.02)",
+                    transition: "all 0.2s ease",
                   }}
                 />
                 <button
@@ -318,19 +346,22 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   style={{
                     position: "absolute",
-                    right: "12px",
+                    right: "16px",
                     top: "50%",
                     transform: "translateY(-50%)",
                     background: "transparent",
                     border: "none",
                     color: "#64748b",
                     cursor: "pointer",
+                    padding: "4px",
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              {errors.password && <p style={{ fontSize: "12px", color: "#dc2626", marginTop: "4px", fontWeight: "500" }}>{errors.password.message}</p>}
+              {errors.password && <p style={{ fontSize: "12px", color: "#dc2626", marginTop: "5px", fontWeight: "600" }}>{errors.password.message}</p>}
             </div>
 
             <button
@@ -338,54 +369,56 @@ export default function LoginPage() {
               disabled={loading}
               style={{
                 marginTop: "10px",
-                padding: "14px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                boxShadow: "0 8px 25px rgba(37, 99, 235, 0.35)",
+                padding: "16px 24px",
+                borderRadius: "20px",
+                background: "linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%)",
+                boxShadow: "0 12px 28px -4px rgba(37, 99, 235, 0.45), inset 0 1px 1.5px rgba(255, 255, 255, 0.6)",
+                border: "1px solid rgba(255, 255, 255, 0.3)",
                 color: "#ffffff",
-                fontWeight: "800",
-                fontSize: "15px",
-                border: "none",
-                cursor: "pointer",
+                fontWeight: "700",
+                fontSize: "16px",
+                cursor: loading ? "not-allowed" : "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: "8px",
+                gap: "10px",
                 transition: "all 0.2s ease",
               }}
             >
               {loading ? <Loader2 size={18} className="animate-spin" /> : <span>Se connecter</span>}
-              {!loading && <ArrowRight size={16} />}
+              {!loading && <ArrowRight size={18} />}
             </button>
           </form>
         )}
 
         {/* 2. Mode FORGOT */}
         {mode === "FORGOT" && (
-          <form onSubmit={onForgotSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <form onSubmit={onForgotSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px", position: "relative", zIndex: 2 }}>
             <div>
-              <label style={{ fontSize: "13px", fontWeight: "700", color: "#1e293b", display: "block", marginBottom: "6px" }}>
+              <label style={{ fontSize: "14px", fontWeight: "700", color: "#09132b", display: "block", marginBottom: "8px" }}>
                 Adresse Email de récupération
               </label>
               <div style={{ position: "relative" }}>
-                <Mail size={16} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
+                <Mail size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
                 <input
                   type="email"
-                  placeholder="nom@exemple.com"
+                  placeholder="imorousalem8@gmail.com"
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
                   autoFocus
                   style={{
                     width: "100%",
-                    padding: "12px 14px 12px 40px",
-                    borderRadius: "14px",
-                    background: "rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid rgba(203, 213, 225, 0.85)",
+                    padding: "15px 18px 15px 48px",
+                    borderRadius: "20px",
+                    background: "rgba(255, 255, 255, 0.32)",
+                    backdropFilter: "blur(14px)",
+                    WebkitBackdropFilter: "blur(14px)",
+                    border: "1.5px solid rgba(255, 255, 255, 0.8)",
+                    boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 8px rgba(0, 30, 80, 0.03)",
                     color: "#09132b",
-                    fontSize: "14.5px",
+                    fontSize: "15px",
+                    fontWeight: "500",
                     outline: "none",
-                    boxShadow: "inset 0 1px 2px rgba(0,0,0,0.02)",
                   }}
                 />
               </div>
@@ -396,19 +429,19 @@ export default function LoginPage() {
               disabled={loading}
               style={{
                 marginTop: "6px",
-                padding: "14px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                boxShadow: "0 8px 25px rgba(37, 99, 235, 0.35)",
+                padding: "16px 24px",
+                borderRadius: "20px",
+                background: "linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%)",
+                boxShadow: "0 12px 28px -4px rgba(37, 99, 235, 0.45), inset 0 1px 1.5px rgba(255, 255, 255, 0.6)",
+                border: "1px solid rgba(255, 255, 255, 0.3)",
                 color: "#ffffff",
-                fontWeight: "800",
-                fontSize: "15px",
-                border: "none",
+                fontWeight: "700",
+                fontSize: "16px",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: "8px",
+                gap: "10px",
               }}
             >
               {loading ? <Loader2 size={18} className="animate-spin" /> : <span>Recevoir le code</span>}
@@ -420,7 +453,7 @@ export default function LoginPage() {
                 setError("");
                 setMode("LOGIN");
               }}
-              style={{ background: "transparent", border: "none", color: "#64748b", fontSize: "13px", cursor: "pointer", marginTop: "4px", fontWeight: "600" }}
+              style={{ background: "transparent", border: "none", color: "#64748b", fontSize: "13.5px", cursor: "pointer", marginTop: "6px", fontWeight: "600" }}
             >
               ← Retour à la connexion
             </button>
@@ -429,13 +462,13 @@ export default function LoginPage() {
 
         {/* 3. Mode RESET */}
         {mode === "RESET" && (
-          <form onSubmit={onResetSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          <form onSubmit={onResetSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px", position: "relative", zIndex: 2 }}>
             <div>
-              <label style={{ fontSize: "13px", fontWeight: "700", color: "#1e293b", display: "block", marginBottom: "4px" }}>
+              <label style={{ fontSize: "14px", fontWeight: "700", color: "#09132b", display: "block", marginBottom: "8px" }}>
                 Code à 6 chiffres
               </label>
               <div style={{ position: "relative" }}>
-                <KeyRound size={16} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
+                <KeyRound size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
                 <input
                   type="text"
                   maxLength={6}
@@ -445,11 +478,13 @@ export default function LoginPage() {
                   autoFocus
                   style={{
                     width: "100%",
-                    padding: "13px 14px 13px 40px",
-                    borderRadius: "14px",
-                    background: "rgba(255, 255, 255, 0.9)",
-                    backdropFilter: "blur(12px)",
+                    padding: "15px 18px 15px 48px",
+                    borderRadius: "20px",
+                    background: "rgba(255, 255, 255, 0.4)",
+                    backdropFilter: "blur(14px)",
+                    WebkitBackdropFilter: "blur(14px)",
                     border: "2px solid #2563eb",
+                    boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 10px rgba(37, 99, 235, 0.1)",
                     color: "#09132b",
                     fontSize: "22px",
                     letterSpacing: "0.25em",
@@ -462,7 +497,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label style={{ fontSize: "13px", fontWeight: "700", color: "#1e293b", display: "block", marginBottom: "4px" }}>
+              <label style={{ fontSize: "14px", fontWeight: "700", color: "#09132b", display: "block", marginBottom: "8px" }}>
                 Nouveau mot de passe
               </label>
               <input
@@ -472,21 +507,23 @@ export default function LoginPage() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 style={{
                   width: "100%",
-                  padding: "11px 14px",
-                  borderRadius: "14px",
-                  background: "rgba(255, 255, 255, 0.8)",
-                  backdropFilter: "blur(12px)",
-                  border: "1px solid rgba(203, 213, 225, 0.85)",
+                  padding: "15px 18px",
+                  borderRadius: "20px",
+                  background: "rgba(255, 255, 255, 0.32)",
+                  backdropFilter: "blur(14px)",
+                  WebkitBackdropFilter: "blur(14px)",
+                  border: "1.5px solid rgba(255, 255, 255, 0.8)",
+                  boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 8px rgba(0, 30, 80, 0.03)",
                   color: "#09132b",
-                  fontSize: "14.5px",
+                  fontSize: "15px",
+                  fontWeight: "500",
                   outline: "none",
-                  boxShadow: "inset 0 1px 2px rgba(0,0,0,0.02)",
                 }}
               />
             </div>
 
             <div>
-              <label style={{ fontSize: "13px", fontWeight: "700", color: "#1e293b", display: "block", marginBottom: "4px" }}>
+              <label style={{ fontSize: "14px", fontWeight: "700", color: "#09132b", display: "block", marginBottom: "8px" }}>
                 Confirmer le mot de passe
               </label>
               <input
@@ -496,15 +533,17 @@ export default function LoginPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 style={{
                   width: "100%",
-                  padding: "11px 14px",
-                  borderRadius: "14px",
-                  background: "rgba(255, 255, 255, 0.8)",
-                  backdropFilter: "blur(12px)",
-                  border: "1px solid rgba(203, 213, 225, 0.85)",
+                  padding: "15px 18px",
+                  borderRadius: "20px",
+                  background: "rgba(255, 255, 255, 0.32)",
+                  backdropFilter: "blur(14px)",
+                  WebkitBackdropFilter: "blur(14px)",
+                  border: "1.5px solid rgba(255, 255, 255, 0.8)",
+                  boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 8px rgba(0, 30, 80, 0.03)",
                   color: "#09132b",
-                  fontSize: "14.5px",
+                  fontSize: "15px",
+                  fontWeight: "500",
                   outline: "none",
-                  boxShadow: "inset 0 1px 2px rgba(0,0,0,0.02)",
                 }}
               />
             </div>
@@ -514,19 +553,19 @@ export default function LoginPage() {
               disabled={loading}
               style={{
                 marginTop: "6px",
-                padding: "14px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-                boxShadow: "0 8px 25px rgba(37, 99, 235, 0.35)",
+                padding: "16px 24px",
+                borderRadius: "20px",
+                background: "linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%)",
+                boxShadow: "0 12px 28px -4px rgba(37, 99, 235, 0.45), inset 0 1px 1.5px rgba(255, 255, 255, 0.6)",
+                border: "1px solid rgba(255, 255, 255, 0.3)",
                 color: "#ffffff",
-                fontWeight: "800",
-                fontSize: "15px",
-                border: "none",
+                fontWeight: "700",
+                fontSize: "16px",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: "8px",
+                gap: "10px",
               }}
             >
               {loading ? <Loader2 size={18} className="animate-spin" /> : <span>Réinitialiser et Se Connecter</span>}
@@ -535,8 +574,8 @@ export default function LoginPage() {
         )}
 
         {/* Footer link to Register */}
-        <div style={{ marginTop: "24px", paddingTop: "18px", borderTop: "1px solid rgba(226, 232, 240, 0.8)", textAlign: "center" }}>
-          <p style={{ fontSize: "13.5px", color: "#64748b", margin: 0 }}>
+        <div style={{ marginTop: "28px", textAlign: "center", position: "relative", zIndex: 2 }}>
+          <p style={{ fontSize: "14px", color: "#64748b", margin: 0, fontWeight: "500" }}>
             Pas encore de compte ?{" "}
             <Link href="/register" style={{ color: "#2563eb", fontWeight: "700", textDecoration: "none" }}>
               Créer un compte
