@@ -168,16 +168,16 @@ export default function LoginPage() {
             textDecoration: "none",
             display: "inline-flex",
             alignItems: "center",
-            background: "rgba(255, 255, 255, 0.85)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            padding: "8px 22px",
+            background: "rgba(255, 255, 255, 0.9)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            padding: "8px 24px",
             borderRadius: "999px",
-            border: "1.5px solid rgba(255, 255, 255, 0.95)",
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.18)",
+            border: "1.5px solid rgba(255, 255, 255, 1)",
+            boxShadow: "0 12px 35px rgba(0, 0, 0, 0.2)",
           }}
         >
-          <Logo size={36} showText={true} />
+          <Logo size={36} showText={true} theme="light" />
         </Link>
       </div>
 
@@ -186,12 +186,12 @@ export default function LoginPage() {
         style={{
           width: "100%",
           maxWidth: "460px",
-          background: "rgba(255, 255, 255, 0.72)",
-          backdropFilter: "blur(28px) saturate(190%)",
-          WebkitBackdropFilter: "blur(28px) saturate(190%)",
-          border: "1.5px solid rgba(255, 255, 255, 0.9)",
+          background: "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(32px) saturate(200%)",
+          WebkitBackdropFilter: "blur(32px) saturate(200%)",
+          border: "1.5px solid rgba(255, 255, 255, 0.95)",
           borderRadius: "36px",
-          boxShadow: "0 30px 70px rgba(0, 0, 0, 0.22), 0 10px 25px rgba(0, 0, 0, 0.1), inset 0 1.5px 2px rgba(255, 255, 255, 0.95), inset 0 -2px 5px rgba(255, 255, 255, 0.4)",
+          boxShadow: "0 35px 80px rgba(0, 0, 0, 0.28), 0 10px 30px rgba(0, 0, 0, 0.12), inset 0 2px 3px rgba(255, 255, 255, 0.95), inset 0 -2px 5px rgba(255, 255, 255, 0.4)",
           padding: "42px 34px",
           position: "relative",
           zIndex: 2,
@@ -207,21 +207,21 @@ export default function LoginPage() {
             bottom: 0,
             left: 0,
             borderRadius: "36px",
-            background: "linear-gradient(125deg, transparent 38%, rgba(255, 255, 255, 0.42) 48%, rgba(255, 255, 255, 0.05) 54%, transparent 62%)",
+            background: "linear-gradient(125deg, transparent 38%, rgba(255, 255, 255, 0.45) 48%, rgba(255, 255, 255, 0.05) 54%, transparent 62%)",
             pointerEvents: "none",
             zIndex: 1,
           }}
         />
 
         <div style={{ textAlign: "center", marginBottom: "26px", position: "relative", zIndex: 2 }}>
-          <h1 style={{ fontSize: "27px", fontWeight: "800", color: "#09132b", letterSpacing: "-0.03em" }}>
+          <h1 style={{ fontSize: "27px", fontWeight: "900", color: "#09132b", letterSpacing: "-0.03em" }}>
             {mode === "LOGIN"
               ? "Connexion à votre espace"
               : mode === "FORGOT"
               ? "Mot de passe oublié"
               : "Nouveau mot de passe"}
           </h1>
-          <p style={{ fontSize: "14.5px", color: "#64748b", marginTop: "6px", fontWeight: "500" }}>
+          <p style={{ fontSize: "14px", color: "#475569", marginTop: "6px", fontWeight: "600" }}>
             {mode === "LOGIN"
               ? "Accédez à votre agenda et copilote IA"
               : mode === "FORGOT"
@@ -235,14 +235,14 @@ export default function LoginPage() {
             style={{
               padding: "13px 16px",
               borderRadius: "16px",
-              background: "rgba(254, 242, 242, 0.85)",
+              background: "rgba(254, 242, 242, 0.92)",
               backdropFilter: "blur(8px)",
-              border: "1px solid rgba(239, 68, 68, 0.35)",
+              border: "1px solid rgba(239, 68, 68, 0.4)",
               color: "#b91c1c",
               fontSize: "13.5px",
               marginBottom: "20px",
               textAlign: "center",
-              fontWeight: "600",
+              fontWeight: "700",
               position: "relative",
               zIndex: 2,
             }}
@@ -256,14 +256,14 @@ export default function LoginPage() {
             style={{
               padding: "13px 16px",
               borderRadius: "16px",
-              background: "rgba(236, 253, 245, 0.85)",
+              background: "rgba(236, 253, 245, 0.92)",
               backdropFilter: "blur(8px)",
-              border: "1px solid rgba(16, 185, 129, 0.35)",
+              border: "1px solid rgba(16, 185, 129, 0.4)",
               color: "#047857",
               fontSize: "13.5px",
               marginBottom: "20px",
               textAlign: "center",
-              fontWeight: "600",
+              fontWeight: "700",
               position: "relative",
               zIndex: 2,
             }}
@@ -280,7 +280,7 @@ export default function LoginPage() {
                 Adresse Email
               </label>
               <div style={{ position: "relative" }}>
-                <Mail size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
+                <Mail size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#475569" }} />
                 <input
                   type="email"
                   placeholder="imorousalem8@gmail.com"
@@ -289,14 +289,14 @@ export default function LoginPage() {
                     width: "100%",
                     padding: "15px 18px 15px 48px",
                     borderRadius: "20px",
-                    background: "rgba(255, 255, 255, 0.32)",
+                    background: "rgba(255, 255, 255, 0.8)",
                     backdropFilter: "blur(14px)",
                     WebkitBackdropFilter: "blur(14px)",
-                    border: errors.email ? "1.5px solid #ef4444" : "1.5px solid rgba(255, 255, 255, 0.8)",
-                    boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 8px rgba(0, 30, 80, 0.03)",
+                    border: errors.email ? "1.5px solid #ef4444" : "1.5px solid rgba(255, 255, 255, 0.95)",
+                    boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.03)",
                     color: "#09132b",
                     fontSize: "15px",
-                    fontWeight: "500",
+                    fontWeight: "600",
                     outline: "none",
                     transition: "all 0.2s ease",
                   }}
@@ -316,13 +316,13 @@ export default function LoginPage() {
                     setError("");
                     setMode("FORGOT");
                   }}
-                  style={{ background: "transparent", border: "none", color: "#2563eb", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}
+                  style={{ background: "transparent", border: "none", color: "#1d4ed8", fontSize: "13px", fontWeight: "800", cursor: "pointer" }}
                 >
                   Mot de passe oublié ?
                 </button>
               </div>
               <div style={{ position: "relative" }}>
-                <Lock size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
+                <Lock size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#475569" }} />
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
@@ -331,14 +331,14 @@ export default function LoginPage() {
                     width: "100%",
                     padding: "15px 48px 15px 48px",
                     borderRadius: "20px",
-                    background: "rgba(255, 255, 255, 0.32)",
+                    background: "rgba(255, 255, 255, 0.8)",
                     backdropFilter: "blur(14px)",
                     WebkitBackdropFilter: "blur(14px)",
-                    border: errors.password ? "1.5px solid #ef4444" : "1.5px solid rgba(255, 255, 255, 0.8)",
-                    boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 8px rgba(0, 30, 80, 0.03)",
+                    border: errors.password ? "1.5px solid #ef4444" : "1.5px solid rgba(255, 255, 255, 0.95)",
+                    boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.03)",
                     color: "#09132b",
                     fontSize: "15px",
-                    fontWeight: "500",
+                    fontWeight: "600",
                     outline: "none",
                     transition: "all 0.2s ease",
                   }}
@@ -353,7 +353,7 @@ export default function LoginPage() {
                     transform: "translateY(-50%)",
                     background: "transparent",
                     border: "none",
-                    color: "#64748b",
+                    color: "#475569",
                     cursor: "pointer",
                     padding: "4px",
                     display: "flex",
@@ -401,7 +401,7 @@ export default function LoginPage() {
                 Adresse Email de récupération
               </label>
               <div style={{ position: "relative" }}>
-                <Mail size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
+                <Mail size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#475569" }} />
                 <input
                   type="email"
                   placeholder="imorousalem8@gmail.com"
@@ -412,14 +412,14 @@ export default function LoginPage() {
                     width: "100%",
                     padding: "15px 18px 15px 48px",
                     borderRadius: "20px",
-                    background: "rgba(255, 255, 255, 0.32)",
+                    background: "rgba(255, 255, 255, 0.8)",
                     backdropFilter: "blur(14px)",
                     WebkitBackdropFilter: "blur(14px)",
-                    border: "1.5px solid rgba(255, 255, 255, 0.8)",
-                    boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 8px rgba(0, 30, 80, 0.03)",
+                    border: "1.5px solid rgba(255, 255, 255, 0.95)",
+                    boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.03)",
                     color: "#09132b",
                     fontSize: "15px",
-                    fontWeight: "500",
+                    fontWeight: "600",
                     outline: "none",
                   }}
                 />
@@ -455,7 +455,7 @@ export default function LoginPage() {
                 setError("");
                 setMode("LOGIN");
               }}
-              style={{ background: "transparent", border: "none", color: "#64748b", fontSize: "13.5px", cursor: "pointer", marginTop: "6px", fontWeight: "600" }}
+              style={{ background: "transparent", border: "none", color: "#475569", fontSize: "13.5px", cursor: "pointer", marginTop: "6px", fontWeight: "700" }}
             >
               ← Retour à la connexion
             </button>
@@ -470,7 +470,7 @@ export default function LoginPage() {
                 Code à 6 chiffres
               </label>
               <div style={{ position: "relative" }}>
-                <KeyRound size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
+                <KeyRound size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#475569" }} />
                 <input
                   type="text"
                   maxLength={6}
@@ -482,11 +482,11 @@ export default function LoginPage() {
                     width: "100%",
                     padding: "15px 18px 15px 48px",
                     borderRadius: "20px",
-                    background: "rgba(255, 255, 255, 0.4)",
+                    background: "rgba(255, 255, 255, 0.9)",
                     backdropFilter: "blur(14px)",
                     WebkitBackdropFilter: "blur(14px)",
                     border: "2px solid #2563eb",
-                    boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 10px rgba(37, 99, 235, 0.1)",
+                    boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.05), 0 2px 10px rgba(37, 99, 235, 0.12)",
                     color: "#09132b",
                     fontSize: "22px",
                     letterSpacing: "0.25em",
@@ -511,14 +511,14 @@ export default function LoginPage() {
                   width: "100%",
                   padding: "15px 18px",
                   borderRadius: "20px",
-                  background: "rgba(255, 255, 255, 0.32)",
+                  background: "rgba(255, 255, 255, 0.8)",
                   backdropFilter: "blur(14px)",
                   WebkitBackdropFilter: "blur(14px)",
-                  border: "1.5px solid rgba(255, 255, 255, 0.8)",
-                  boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 8px rgba(0, 30, 80, 0.03)",
+                  border: "1.5px solid rgba(255, 255, 255, 0.95)",
+                  boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.03)",
                   color: "#09132b",
                   fontSize: "15px",
-                  fontWeight: "500",
+                  fontWeight: "600",
                   outline: "none",
                 }}
               />
@@ -537,14 +537,14 @@ export default function LoginPage() {
                   width: "100%",
                   padding: "15px 18px",
                   borderRadius: "20px",
-                  background: "rgba(255, 255, 255, 0.32)",
+                  background: "rgba(255, 255, 255, 0.8)",
                   backdropFilter: "blur(14px)",
                   WebkitBackdropFilter: "blur(14px)",
-                  border: "1.5px solid rgba(255, 255, 255, 0.8)",
-                  boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.7), 0 2px 8px rgba(0, 30, 80, 0.03)",
+                  border: "1.5px solid rgba(255, 255, 255, 0.95)",
+                  boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.03)",
                   color: "#09132b",
                   fontSize: "15px",
-                  fontWeight: "500",
+                  fontWeight: "600",
                   outline: "none",
                 }}
               />
@@ -577,9 +577,9 @@ export default function LoginPage() {
 
         {/* Footer link to Register */}
         <div style={{ marginTop: "28px", textAlign: "center", position: "relative", zIndex: 2 }}>
-          <p style={{ fontSize: "14px", color: "#64748b", margin: 0, fontWeight: "500" }}>
+          <p style={{ fontSize: "14px", color: "#475569", margin: 0, fontWeight: "600" }}>
             Pas encore de compte ?{" "}
-            <Link href="/register" style={{ color: "#2563eb", fontWeight: "700", textDecoration: "none" }}>
+            <Link href="/register" style={{ color: "#1d4ed8", fontWeight: "800", textDecoration: "none" }}>
               Créer un compte
             </Link>
           </p>

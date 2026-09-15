@@ -6,6 +6,7 @@ interface LogoProps {
   textClassName?: string;
   animated?: boolean;
   className?: string;
+  theme?: "dark" | "light";
 }
 
 export default function Logo({
@@ -13,7 +14,10 @@ export default function Logo({
   showText = true,
   animated = true,
   className = "",
+  theme = "dark",
 }: LogoProps) {
+  const isLight = theme === "light";
+
   return (
     <div
       className={`flex items-center select-none ${className}`}
@@ -36,7 +40,7 @@ export default function Logo({
           style={{
             position: "absolute",
             inset: "-20%",
-            background: "radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(139, 92, 246, 0.2) 45%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, rgba(59, 130, 246, 0.2) 45%, transparent 70%)",
             filter: "blur(8px)",
             borderRadius: "50%",
             zIndex: 0,
@@ -56,25 +60,25 @@ export default function Logo({
             {/* Cyber Gradient */}
             <linearGradient id="cyber-grad-frame" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#38bdf8" />
-              <stop offset="50%" stopColor="#818cf8" />
-              <stop offset="100%" stopColor="#c084fc" />
+              <stop offset="50%" stopColor="#3b82f6" />
+              <stop offset="100%" stopColor="#1d4ed8" />
             </linearGradient>
 
-            {/* Inner Dark Glass */}
+            {/* Inner Glass */}
             <linearGradient id="cyber-glass-fill" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#081026" />
+              <stop offset="0%" stopColor="#0a1532" />
               <stop offset="100%" stopColor="#030712" />
             </linearGradient>
 
             {/* Neon Accent */}
             <linearGradient id="cyber-needle-grad" x1="24" y1="12" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#06b6d4" />
-              <stop offset="100%" stopColor="#a855f7" />
+              <stop offset="0%" stopColor="#38bdf8" />
+              <stop offset="100%" stopColor="#2563eb" />
             </linearGradient>
 
             {/* Drop Shadow & Glow */}
             <filter id="cyber-glow-filter" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#06b6d4" floodOpacity="0.4" />
+              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#2563eb" floodOpacity="0.4" />
             </filter>
           </defs>
 
@@ -96,16 +100,16 @@ export default function Logo({
             cx="24"
             cy="24"
             r="15"
-            stroke="rgba(56, 189, 248, 0.18)"
+            stroke="rgba(56, 189, 248, 0.25)"
             strokeWidth="1"
             strokeDasharray="3 3"
           />
 
           {/* High-Precision Chrono Marks */}
           <circle cx="24" cy="8" r="1.5" fill="#38bdf8" />
-          <circle cx="40" cy="24" r="1.5" fill="#818cf8" />
-          <circle cx="24" cy="40" r="1.5" fill="#34d399" />
-          <circle cx="8" cy="24" r="1.5" fill="#818cf8" />
+          <circle cx="40" cy="24" r="1.5" fill="#60a5fa" />
+          <circle cx="24" cy="40" r="1.5" fill="#38bdf8" />
+          <circle cx="8" cy="24" r="1.5" fill="#60a5fa" />
 
           {/* Stylized Chrono Needles */}
           <path
@@ -122,9 +126,9 @@ export default function Logo({
           />
 
           {/* Core Gem Pivot */}
-          <circle cx="24" cy="24" r="3.2" fill="#06b6d4" />
+          <circle cx="24" cy="24" r="3.2" fill="#38bdf8" />
           <circle cx="24" cy="24" r="1.5" fill="#ffffff" />
-          <circle cx="33" cy="15" r="2.2" fill="#38bdf8" />
+          <circle cx="33" cy="15" r="2.2" fill="#60a5fa" />
         </svg>
       </div>
 
@@ -137,12 +141,14 @@ export default function Logo({
                 fontSize: `${Math.max(16, size * 0.46)}px`,
                 fontWeight: "900",
                 letterSpacing: "-0.03em",
-                background: "linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #38bdf8 100%)",
+                background: isLight
+                  ? "linear-gradient(135deg, #09132b 0%, #1e3a8a 60%, #2563eb 100%)"
+                  : "linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #38bdf8 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
             >
-              Alamajonda
+              AlarmAgenda
             </span>
             <span
               style={{
@@ -152,9 +158,11 @@ export default function Logo({
                 letterSpacing: "0.08em",
                 padding: "2px 6px",
                 borderRadius: "6px",
-                background: "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)",
-                border: "1px solid rgba(56, 189, 248, 0.35)",
-                color: "#38bdf8",
+                background: isLight
+                  ? "rgba(37, 99, 235, 0.1)"
+                  : "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)",
+                border: isLight ? "1px solid rgba(37, 99, 235, 0.25)" : "1px solid rgba(56, 189, 248, 0.35)",
+                color: isLight ? "#1d4ed8" : "#38bdf8",
               }}
             >
               EXECUTIVE
@@ -163,8 +171,8 @@ export default function Logo({
           <span
             style={{
               fontSize: `${Math.max(10, size * 0.22)}px`,
-              fontWeight: "500",
-              color: "#94a3b8",
+              fontWeight: "600",
+              color: isLight ? "#475569" : "#94a3b8",
               letterSpacing: "0.02em",
               marginTop: "1px",
             }}
