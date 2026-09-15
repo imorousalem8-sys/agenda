@@ -144,50 +144,37 @@ export default function LoginPage() {
     <div
       style={{
         minHeight: "100vh",
+        width: "100%",
         backgroundImage: "url('/images/auth-bg.jpg')",
         backgroundSize: "cover",
-        backgroundPosition: "center 30%",
+        backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
         color: "#09132b",
         fontFamily: "'Inter', system-ui, sans-serif",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "24px",
+        padding: "32px 16px",
         position: "relative",
       }}
     >
-      {/* Darkening & Soft Ambient Tint Overlay for Optimal Contrast */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "linear-gradient(135deg, rgba(15, 23, 42, 0.45) 0%, rgba(30, 58, 138, 0.35) 50%, rgba(15, 23, 42, 0.5) 100%)",
-          backdropFilter: "blur(3px)",
-          WebkitBackdropFilter: "blur(3px)",
-          zIndex: 0,
-        }}
-      />
-
       {/* Brand Header */}
-      <div style={{ position: "relative", zIndex: 2, marginBottom: "24px", textAlign: "center" }}>
+      <div style={{ position: "relative", zIndex: 2, marginBottom: "20px", textAlign: "center" }}>
         <Link
           href="/"
           style={{
             textDecoration: "none",
             display: "inline-flex",
             alignItems: "center",
-            background: "rgba(255, 255, 255, 0.8)",
+            background: "rgba(255, 255, 255, 0.85)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
-            padding: "8px 20px",
+            padding: "8px 22px",
             borderRadius: "999px",
-            border: "1px solid rgba(255, 255, 255, 0.9)",
-            boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
+            border: "1.5px solid rgba(255, 255, 255, 0.95)",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.18)",
           }}
         >
           <Logo size={36} showText={true} />
@@ -199,12 +186,12 @@ export default function LoginPage() {
         style={{
           width: "100%",
           maxWidth: "460px",
-          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.18) 100%)",
-          backdropFilter: "blur(38px) saturate(190%)",
-          WebkitBackdropFilter: "blur(38px) saturate(190%)",
-          border: "1.5px solid rgba(255, 255, 255, 0.75)",
+          background: "rgba(255, 255, 255, 0.72)",
+          backdropFilter: "blur(28px) saturate(190%)",
+          WebkitBackdropFilter: "blur(28px) saturate(190%)",
+          border: "1.5px solid rgba(255, 255, 255, 0.9)",
           borderRadius: "36px",
-          boxShadow: "0 35px 80px -15px rgba(2, 44, 115, 0.12), 0 10px 25px -5px rgba(0, 0, 0, 0.04), inset 0 1.5px 2px rgba(255, 255, 255, 0.95), inset 0 -2px 5px rgba(255, 255, 255, 0.4)",
+          boxShadow: "0 30px 70px rgba(0, 0, 0, 0.22), 0 10px 25px rgba(0, 0, 0, 0.1), inset 0 1.5px 2px rgba(255, 255, 255, 0.95), inset 0 -2px 5px rgba(255, 255, 255, 0.4)",
           padding: "42px 34px",
           position: "relative",
           zIndex: 2,
