@@ -1,93 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { taskSchema } from "@/lib/validations";
-import { parseISO } from "date-fns";
+import { createApiHandler } from "@/server/core/api-handler";
+import { apiSuccess, apiCreated } from "@/server/core/api-response";
+import { TasksService } from "@/server/services/tasks.service";
+import { taskSchema } from "@/server/schemas/tasks.schema";
 
 // GET /api/tasks
-export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  }
-
+export const GET = createApiHandler({ requireAuth: true }, async (req, { user }) => {
   const { searchParams } = new URL(req.url);
   const done = searchParams.get("done");
 
-  const tasks = await prisma.task.findMany({
-    where: {
-      userId: session.user.id,
-      ...(done !== null ? { isDone: done === "true" } : {}),
-    },
-    include: { reminders: true },
-    orderBy: [{ isDone: "asc" }, { dueAt: "asc" }, { createdAt: "desc" }],
-  });
-
-  return NextResponse.json({ tasks });
-}
+  const tasks = await TasksService.listTasks(user!.id, done);
+  return apiSuccess({ tasks });
+});
 
 // POST /api/tasks
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  }
+export const POST = createApiHandler({ requireAuth: true }, async (req, { user }) => {
+  const body = await req.json();
+  const data = taskSchema.parse(body);
 
-  try {
-    const body = await req.json();
-    const data = taskSchema.parse(body);
-
-    let dueAtDate: Date | null = null;
-    if (data.dueAt && typeof data.dueAt === "string" && data.dueAt.trim().length > 3) {
-      try {
-        const parsed = parseISO(data.dueAt.trim());
-        if (!isNaN(parsed.getTime())) {
-          dueAtDate = parsed;
-        } else {
-          const nativeDate = new Date(data.dueAt.trim());
-          if (!isNaN(nativeDate.getTime())) {
-            dueAtDate = nativeDate;
-          }
-        }
-      } catch {
-        dueAtDate = null;
-      }
-    }
-
-    const task = await prisma.task.create({
-      data: {
-        userId: session.user.id,
-        title: data.title,
-        notes: data.notes || null,
-        dueAt: dueAtDate,
-        priority: data.priority || "NORMAL",
-        mode: data.mode || "PERSONAL",
-        items: data.items ? JSON.stringify(data.items) : null,
-      },
-    });
-
-    // If dueAt is defined, automatically create a Reminder so the alarm / AI call triggers!
-    if (dueAtDate) {
-      await prisma.reminder.create({
-        data: {
-          userId: session.user.id,
-          taskId: task.id,
-          title: task.title,
-          body: data.notes ? `Note: ${data.notes}` : "Échéance de votre tâche",
-          fireAt: dueAtDate,
-          method: "VOICE", // Default to AI Voice call reminder
-          status: "PENDING",
-        },
-      });
-    }
-
-    return NextResponse.json({ task }, { status: 201 });
-  } catch (error: any) {
-    console.error("Create task error:", error);
-    const message = error?.errors?.[0]?.message || error?.message || "Erreur lors de la création de la tâche";
-    return NextResponse.json(
-      { error: message },
-      { status: 400 }
-    );
-  }
-}
+  const task = await TasksService.createTask(user!.id, data);
+  return apiCreated({ task });
+});

@@ -153,6 +153,9 @@ export function routeUserIntent(
     };
   }
 
+  // Indicateur temporel
+  const hasTimeIndicator = /\b(\d{1,2}h|\d{1,2}:\d{2}|demain|aujourd'hui|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|matin|apr[eè]s-midi|soir|dans \d+)/i.test(normalized);
+
   // 5b. Demande de conseils d'organisation ou questions d'aide générales
   if (/^(conseils?|comment (m'organiser|mieux organiser|g[eé]rer mon temps|fonctionne|utiliser)|aide-moi [aà] (organiser|planifier)|que peux-tu faire|quelles sont tes fonctionnalit[eé]s)/i.test(normalized) && !hasTimeIndicator) {
     return {
@@ -177,8 +180,6 @@ export function routeUserIntent(
     /^(prends|planifie|fixe|cr[eé]e|ajoute|mets|programme).*(rendez-vous|rdv|un rdv).*(avec|pour|chez)\s+([a-zà-ÿ0-9_\-\s]+)$/i,
     /^(prends|planifie|fixe|cr[eé]e|ajoute|mets|programme)\s+(mon|le)\s+(rendez-vous|rdv)\s+(avec|pour|chez)\s+([a-zà-ÿ0-9_\-\s]+)$/i,
   ];
-
-  const hasTimeIndicator = /\b(\d{1,2}h|\d{1,2}:\d{2}|demain|aujourd'hui|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|matin|apr[eè]s-midi|soir|dans \d+)/i.test(normalized);
 
   for (const pat of appointmentMissingTimePatterns) {
     const match = normalized.match(pat);

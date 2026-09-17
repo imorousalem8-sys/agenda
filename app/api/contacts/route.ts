@@ -1,32 +1,19 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { createApiHandler } from "@/server/core/api-handler";
+import { apiSuccess, apiCreated } from "@/server/core/api-response";
+import { ContactsService } from "@/server/services/contacts.service";
+import { contactSchema } from "@/server/schemas/contacts.schema";
 
-export async function GET(_req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  const contacts = await prisma.contact.findMany({
-    where: { userId: session.user.id },
-    orderBy: { firstName: "asc" },
-  });
-  return NextResponse.json({ contacts });
-}
+// GET /api/contacts
+export const GET = createApiHandler({ requireAuth: true }, async (_req, { user }) => {
+  const contacts = await ContactsService.listContacts(user!.id);
+  return apiSuccess({ contacts });
+});
 
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+// POST /api/contacts
+export const POST = createApiHandler({ requireAuth: true }, async (req, { user }) => {
   const body = await req.json();
-  const contact = await prisma.contact.create({
-    data: {
-      userId: session.user.id,
-      firstName: body.firstName,
-      lastName: body.lastName || null,
-      phone: body.phone || null,
-      email: body.email || null,
-      company: body.company || null,
-      address: body.address || null,
-      notes: body.notes || null,
-    },
-  });
-  return NextResponse.json({ contact }, { status: 201 });
-}
+  const data = contactSchema.parse(body);
+
+  const contact = await ContactsService.createContact(user!.id, data);
+  return apiCreated({ contact });
+});
