@@ -65,14 +65,8 @@ export default function RegisterPage() {
       }
 
       setPendingRegData(data);
-      const devOtp = json.data?.devOtp || json.devOtp;
-      if (devOtp) {
-        setOtpCode(devOtp);
-        setDevOtpNotice(`⚡ Mode local actif : Votre code à 6 chiffres est ${devOtp} (pré-rempli automatiquement pour une utilisation instantanée sans attente).`);
-      } else {
-        setOtpCode("");
-        setDevOtpNotice("");
-      }
+      setOtpCode("");
+      setDevOtpNotice("");
       setOtpStep(true);
       setLoading(false);
       setResendCooldown(60);
@@ -115,14 +109,9 @@ export default function RegisterPage() {
         return;
       }
 
-      const devOtp = json.data?.devOtp || json.devOtp;
-      if (devOtp) {
-        setOtpCode(devOtp);
-        setDevOtpNotice(`⚡ Nouveau code généré : ${devOtp} (pré-rempli automatiquement).`);
-        setResendSuccess("Code renouvelé avec succès !");
-      } else {
-        setResendSuccess("Un nouveau code à 6 chiffres a été envoyé par email.");
-      }
+      setOtpCode("");
+      setDevOtpNotice("");
+      setResendSuccess("Un nouveau code à 6 chiffres a été envoyé à votre adresse email.");
       setLoading(false);
       setResendCooldown(60);
 

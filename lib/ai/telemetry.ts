@@ -30,9 +30,9 @@ export class AITelemetryTracker {
   private isFastRoute: boolean = false;
   private message: string = "";
 
-  constructor(userMessage: string) {
+  constructor(userMessage?: string) {
     this.startTime = performance.now();
-    this.message = userMessage.slice(0, 80);
+    this.message = String(userMessage || "").slice(0, 80);
   }
 
   public startIntentTimer() {

@@ -85,14 +85,8 @@ export default function LoginPage() {
         return;
       }
 
-      const devOtp = data.data?.devOtp || data.devOtp;
-      if (devOtp) {
-        setResetCode(devOtp);
-        setDevResetNotice(`⚡ Mode local actif : Votre code à 6 chiffres est ${devOtp} (pré-rempli automatiquement).`);
-      } else {
-        setResetCode("");
-        setDevResetNotice("");
-      }
+      setResetCode("");
+      setDevResetNotice("");
 
       setForgotSuccess("Un code de confirmation vous a été envoyé par email !");
       setMode("RESET");

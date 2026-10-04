@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { APP_CONFIG } from "@/lib/config";
+import { isDbKnownDown, markDbUnreachable } from "@/lib/dbUser";
 
 export interface QuotaStatus {
   used: number;
@@ -16,6 +17,17 @@ export interface QuotaStatus {
  */
 export async function checkAndIncrementQuota(userId: string): Promise<QuotaStatus> {
   const defaultLimit = APP_CONFIG.QUOTAS.FREE_MONTHLY_LIMIT;
+
+  if (isDbKnownDown()) {
+    return {
+      used: 1,
+      limit: defaultLimit,
+      remaining: defaultLimit - 1,
+      plan: "FREE",
+      resetAt: null,
+      isExceeded: false,
+    };
+  }
 
   try {
     const user = await prisma.user.findUnique({
@@ -68,7 +80,7 @@ export async function checkAndIncrementQuota(userId: string): Promise<QuotaStatu
       isExceeded,
     };
   } catch (err) {
-    console.warn("checkAndIncrementQuota database fallback:", err);
+    markDbUnreachable();
     return {
       used: 1,
       limit: defaultLimit,
@@ -85,6 +97,17 @@ export async function checkAndIncrementQuota(userId: string): Promise<QuotaStatu
  */
 export async function getQuotaStatus(userId: string): Promise<QuotaStatus> {
   const defaultLimit = APP_CONFIG.QUOTAS.FREE_MONTHLY_LIMIT;
+
+  if (isDbKnownDown()) {
+    return {
+      used: 0,
+      limit: defaultLimit,
+      remaining: defaultLimit,
+      plan: "FREE",
+      resetAt: null,
+      isExceeded: false,
+    };
+  }
 
   try {
     const user = await prisma.user.findUnique({
@@ -114,7 +137,7 @@ export async function getQuotaStatus(userId: string): Promise<QuotaStatus> {
       isExceeded: remaining <= 0,
     };
   } catch (err) {
-    console.warn("getQuotaStatus database fallback:", err);
+    markDbUnreachable();
     return {
       used: 0,
       limit: defaultLimit,

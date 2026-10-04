@@ -66,6 +66,41 @@ export async function sendOtpEmail({ to, name, code }: SendOtpEmailParams) {
     }
   }
 
+  // 0. Envoi via SMTP direct (Nodemailer) si configuré (Gmail, Brevo SMTP, OVH, etc.)
+  const smtpHost = process.env.SMTP_HOST || (process.env.GMAIL_USER ? "smtp.gmail.com" : "");
+  const smtpUser = process.env.SMTP_USER || process.env.GMAIL_USER || "";
+  const smtpPass = process.env.SMTP_PASS || process.env.GMAIL_PASS || process.env.GMAIL_APP_PASSWORD || "";
+  const smtpPort = parseInt(process.env.SMTP_PORT || "587", 10);
+  const smtpFrom = process.env.SMTP_FROM || process.env.GMAIL_USER || "AlarmAgenda <contact@alarmagenda.ai>";
+
+  if (smtpHost && smtpUser && smtpPass) {
+    try {
+      const nodemailer = await import("nodemailer");
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+        connectionTimeout: 4000,
+      });
+
+      const info = await transporter.sendMail({
+        from: smtpFrom,
+        to: recipientEmail,
+        subject: `${code} est votre code de confirmation AlarmAgenda`,
+        html: emailHtml,
+      });
+
+      console.log(`[Email] SMTP delivery SUCCESS for ${recipientEmail}:`, info.messageId);
+      return { success: true, provider: "smtp", id: info.messageId };
+    } catch (smtpErr) {
+      console.warn("[Email] SMTP delivery notice:", (smtpErr as any)?.message || smtpErr);
+    }
+  }
+
   // 1. Envoi direct via Resend API
   if (RESEND_API_KEY) {
     try {

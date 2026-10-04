@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { isDbKnownDown, markDbUnreachable } from "@/lib/dbUser";
 
 /**
  * Log an agent action to the database.
@@ -13,6 +14,8 @@ export async function logAgentAction(
   errorMsg?: string,
   aiRequestId?: string
 ): Promise<void> {
+  if (isDbKnownDown()) return;
+
   try {
     // Sanitize params: remove any potential secrets
     const sanitized = { ...params };
@@ -26,19 +29,23 @@ export async function logAgentAction(
     // Truncate params to prevent oversized logs
     const paramsStr = JSON.stringify(sanitized).slice(0, 2000);
 
-    await prisma.agentLog.create({
-      data: {
-        userId,
-        tool,
-        params: paramsStr,
-        success,
-        errorMsg: errorMsg?.slice(0, 500),
-        durationMs,
-        aiRequestId,
-      },
-    });
+    // Fire and forget, never block response
+    prisma.agentLog
+      .create({
+        data: {
+          userId,
+          tool,
+          params: paramsStr,
+          success,
+          errorMsg: errorMsg?.slice(0, 500),
+          durationMs,
+          aiRequestId,
+        },
+      })
+      .catch((err) => {
+        markDbUnreachable();
+      });
   } catch (err) {
     // Never let logging errors break the main flow
-    console.error("AgentLog write error (non-blocking):", err);
   }
 }

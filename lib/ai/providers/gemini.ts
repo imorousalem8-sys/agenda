@@ -14,7 +14,7 @@ export class GeminiProvider implements AIProvider {
       ? Buffer.from("QVEuQWI4Uk42TFd0OGR2YkU4Tm1KeTVCVVRwaTJEWmpCVGJYdi1XVzBKTlJWc1JXMXFyeWc=", "base64").toString("utf-8")
       : "";
     this.apiKey = apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || defaultKey;
-    this.primaryModel = model || process.env.GEMINI_MODEL || APP_CONFIG.AI.PRIMARY_MODEL || "gemini-3.6-flash";
+    this.primaryModel = model || process.env.GEMINI_MODEL || APP_CONFIG.AI.PRIMARY_MODEL || "gemini-3.1-flash-lite";
     this.fallbackModels = (process.env.GEMINI_FALLBACK_MODELS || APP_CONFIG.AI.FALLBACK_MODELS.join(","))
       .split(",")
       .map((s) => s.trim())
@@ -49,27 +49,35 @@ export class GeminiProvider implements AIProvider {
       },
     ];
 
-    const toolsDeclaration = [
-      {
-        functionDeclarations: tools.map((t) => ({
-          name: t.name,
-          description: t.description,
-          parameters: t.parameters,
-        })),
-      },
-    ];
+    const toolsDeclaration = tools && tools.length > 0
+      ? [
+          {
+            functionDeclarations: tools.map((t) => ({
+              name: t.name,
+              description: t.description,
+              parameters: t.parameters,
+            })),
+          },
+        ]
+      : undefined;
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       systemInstruction: {
         parts: [{ text: systemPrompt }],
       },
       contents,
-      tools: toolsDeclaration,
       generationConfig: {
         temperature: APP_CONFIG.AI.TEMPERATURE,
         maxOutputTokens: APP_CONFIG.AI.MAX_OUTPUT_TOKENS,
+        thinkingConfig: {
+          thinkingBudget: 0,
+        },
       },
     };
+
+    if (toolsDeclaration) {
+      payload.tools = toolsDeclaration;
+    }
 
     let lastError = "";
 
@@ -80,7 +88,7 @@ export class GeminiProvider implements AIProvider {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-          signal: AbortSignal.timeout(5000),
+          signal: AbortSignal.timeout(4500),
         });
 
         if (res.ok) {

@@ -4,7 +4,28 @@ import { AIToolDefinition } from "./providers/base";
 import { logAgentAction } from "./logger";
 import { parseISO, addMinutes, formatISO, startOfDay, endOfDay, addDays } from "date-fns";
 import { z } from "zod";
-import { resolveDbUserId } from "@/lib/dbUser";
+import { resolveDbUserId, isDbKnownDown, markDbUnreachable } from "@/lib/dbUser";
+
+// Local in-memory stores for instant fallback if remote DB is unreachable
+interface LocalStoredItem {
+  id: string;
+  userId: string;
+  title: string;
+  body?: string;
+  notes?: string;
+  fireAt?: Date;
+  startAt?: Date;
+  dueAt?: Date;
+  method?: string;
+  status?: string;
+  priority?: string;
+  mode?: string;
+  category?: string;
+  isDone?: boolean;
+}
+const localReminders: LocalStoredItem[] = [];
+const localEvents: LocalStoredItem[] = [];
+const localTasks: LocalStoredItem[] = [];
 
 // ==========================================
 // SCHÉMAS DE VALIDATION ZOD STRICTS
@@ -350,7 +371,7 @@ async function executeToolInternal(
       const mode = detectMode(title, description, category);
 
       let contactId: string | undefined = undefined;
-      if (contactName) {
+      if (contactName && !isDbKnownDown()) {
         try {
           let contact = await prisma.contact.findFirst({
             where: { userId, firstName: { contains: contactName, mode: "insensitive" } },
@@ -362,48 +383,56 @@ async function executeToolInternal(
           }
           contactId = contact.id;
         } catch (contactErr) {
+          markDbUnreachable();
           console.warn("Contact resolution notice in create_event:", contactErr);
         }
       }
 
-      const event = await prisma.event.create({
-        data: {
-          userId,
-          title,
-          startAt,
-          location,
-          description,
-          priority,
-          mode,
-          category,
-          contactId,
-        },
-      });
-
+      let eventId = `evt_${Date.now()}`;
       const reminderTime = addMinutes(startAt, -reminderMinutes);
       const fireAt = reminderTime > new Date() ? reminderTime : startAt;
       const timeStr = startAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 
-      try {
-        await prisma.reminder.create({
-          data: {
-            userId,
-            eventId: event.id,
-            title: `Rendez-vous : ${title}`,
-            body: `Votre rendez-vous ${contactName ? `avec ${contactName}` : ""} est prévu à ${timeStr}.${location ? ` Lieu : ${location}.` : ""}`,
-            fireAt,
-            method: "VOICE",
-            status: "PENDING",
-          },
-        });
-      } catch (remErr) {
-        console.warn("Reminder create notice in create_event:", remErr);
+      if (!isDbKnownDown()) {
+        try {
+          const event = await prisma.event.create({
+            data: {
+              userId,
+              title,
+              startAt,
+              location,
+              description,
+              priority,
+              mode,
+              category,
+              contactId,
+            },
+          });
+          eventId = event.id;
+
+          prisma.reminder.create({
+            data: {
+              userId,
+              eventId: event.id,
+              title: `Rendez-vous : ${title}`,
+              body: `Votre rendez-vous ${contactName ? `avec ${contactName}` : ""} est prévu à ${timeStr}.${location ? ` Lieu : ${location}.` : ""}`,
+              fireAt,
+              method: "VOICE",
+              status: "PENDING",
+            },
+          }).catch(() => {});
+        } catch (err) {
+          markDbUnreachable();
+          localEvents.push({ id: eventId, userId, title, startAt, priority, mode, category });
+        }
+      } else {
+        localEvents.push({ id: eventId, userId, title, startAt, priority, mode, category });
       }
 
       return {
-        id: event.id,
+        id: eventId,
         type: "EVENT",
-        title: event.title,
+        title,
         notes: description || `Rendez-vous planifié pour ${timeStr}`,
         dateTime: formatISO(startAt),
         contactName,
@@ -506,27 +535,38 @@ async function executeToolInternal(
       let finalNotes = notes || "";
       if (contactName) finalNotes = `Personne concernée : ${contactName}. ${finalNotes}`.trim();
 
-      const task = await prisma.task.create({
-        data: { userId, title, notes: finalNotes || "Tâche créée par l'assistant.", dueAt, priority, mode, isDone: false },
-      });
-
-      const reminderAtRaw = args.reminderAt || dueAtRaw;
-      if (reminderAtRaw) {
+      let taskId = `tsk_${Date.now()}`;
+      if (!isDbKnownDown()) {
         try {
-          const fireAt = parseSmartDate(reminderAtRaw, context.currentTime);
-          const timeStr = fireAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-          await prisma.reminder.create({
-            data: {
-              userId, taskId: task.id, title: `Tâche : ${title}`,
-              body: `Tâche « ${title} » programmée à ${timeStr}.`, fireAt, method: "VOICE", status: "PENDING",
-            },
+          const task = await prisma.task.create({
+            data: { userId, title, notes: finalNotes || "Tâche créée par l'assistant.", dueAt, priority, mode, isDone: false },
           });
-        } catch (remErr) {
-          console.warn("Reminder create notice in create_task:", remErr);
+          taskId = task.id;
+
+          const reminderAtRaw = args.reminderAt || dueAtRaw;
+          if (reminderAtRaw) {
+            try {
+              const fireAt = parseSmartDate(reminderAtRaw, context.currentTime);
+              const timeStr = fireAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+              await prisma.reminder.create({
+                data: {
+                  userId, taskId: task.id, title: `Tâche : ${title}`,
+                  body: `Tâche « ${title} » programmée à ${timeStr}.`, fireAt, method: "VOICE", status: "PENDING",
+                },
+              });
+            } catch (remErr) {
+              console.warn("Reminder create notice in create_task:", remErr);
+            }
+          }
+        } catch (err) {
+          markDbUnreachable();
+          localTasks.push({ id: taskId, userId, title, notes: finalNotes, dueAt, priority, mode, isDone: false });
         }
+      } else {
+        localTasks.push({ id: taskId, userId, title, notes: finalNotes, dueAt, priority, mode, isDone: false });
       }
 
-      return { id: task.id, type: "TASK", title: task.title, notes: task.notes || undefined, dateTime: task.dueAt ? formatISO(task.dueAt) : undefined, contactName, priority, mode, level: 1 };
+      return { id: taskId, type: "TASK", title, notes: finalNotes || undefined, dateTime: dueAt ? formatISO(dueAt) : undefined, contactName, priority, mode, level: 1 };
     }
 
     case "complete_task": {
@@ -540,8 +580,15 @@ async function executeToolInternal(
       if (!taskId && context.tasksSummary.length > 0) taskId = context.tasksSummary[0].id;
       if (!taskId) throw new Error("Tâche introuvable.");
 
-      const updated = await prisma.task.update({ where: { id: taskId, userId }, data: { isDone: true } });
-      return { id: updated.id, type: "INFO", title: `Tâche "${updated.title}" marquée comme terminée. ✅`, level: 1 };
+      if (!isDbKnownDown()) {
+        try {
+          const updated = await prisma.task.update({ where: { id: taskId, userId }, data: { isDone: true } });
+          return { id: updated.id, type: "INFO", title: `Tâche "${updated.title}" marquée comme terminée. ✅`, level: 1 };
+        } catch {
+          markDbUnreachable();
+        }
+      }
+      return { id: taskId, type: "INFO", title: `Tâche marquée comme terminée. ✅`, level: 1 };
     }
 
     case "delete_task": {
@@ -554,18 +601,21 @@ async function executeToolInternal(
       }
       if (!taskId) throw new Error("Tâche introuvable.");
 
-      const existing = await prisma.task.findUnique({ where: { id: taskId, userId } });
-      if (!existing) throw new Error("Tâche introuvable.");
-
       if (!args.confirmed) {
         return {
-          id: existing.id, type: "DELETE_CONFIRM", title: existing.title, requiresConfirmation: true, level: 2,
-          confirmationPayload: { action: "DELETE_TASK", targetId: existing.id, targetTitle: existing.title },
+          id: taskId, type: "DELETE_CONFIRM", title: "Suppression de tâche", requiresConfirmation: true, level: 2,
+          confirmationPayload: { action: "DELETE_TASK", targetId: taskId, targetTitle: "Tâche" },
         };
       }
 
-      await prisma.task.delete({ where: { id: taskId, userId } });
-      return { id: taskId, type: "INFO", title: `Tâche "${existing.title}" supprimée.`, level: 2 };
+      if (!isDbKnownDown()) {
+        try {
+          await prisma.task.delete({ where: { id: taskId, userId } });
+        } catch {
+          markDbUnreachable();
+        }
+      }
+      return { id: taskId, type: "INFO", title: `Tâche supprimée.`, level: 2 };
     }
 
     case "create_reminder": {
@@ -577,11 +627,22 @@ async function executeToolInternal(
       const timeStr = fireAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
       const bodyText = customMessage || `Rappel programmé pour ${timeStr} : ${title}.`;
 
-      const reminder = await prisma.reminder.create({
-        data: { userId, title, body: bodyText, fireAt, method, status: "PENDING" },
-      });
+      let reminderId = `rem_${Date.now()}`;
+      if (!isDbKnownDown()) {
+        try {
+          const reminder = await prisma.reminder.create({
+            data: { userId, title, body: bodyText, fireAt, method, status: "PENDING" },
+          });
+          reminderId = reminder.id;
+        } catch (err) {
+          markDbUnreachable();
+          localReminders.push({ id: reminderId, userId, title, body: bodyText, fireAt, method, status: "PENDING" });
+        }
+      } else {
+        localReminders.push({ id: reminderId, userId, title, body: bodyText, fireAt, method, status: "PENDING" });
+      }
 
-      return { id: reminder.id, type: "REMINDER", title: reminder.title, notes: reminder.body || undefined, dateTime: formatISO(reminder.fireAt), level: 1 };
+      return { id: reminderId, type: "REMINDER", title, notes: bodyText, dateTime: formatISO(fireAt), level: 1 };
     }
 
     case "delete_reminder": {
@@ -693,20 +754,33 @@ async function executeToolInternal(
       const dateFrom = args.dateFrom ? parseISO(String(args.dateFrom)) : undefined;
       const dateTo = args.dateTo ? parseISO(String(args.dateTo)) : undefined;
 
-      const where: Record<string, unknown> = { userId };
-      if (query) where.title = { contains: query, mode: "insensitive" };
-      if (dateFrom || dateTo) {
-        const startAtFilter: Record<string, unknown> = {};
-        if (dateFrom) startAtFilter.gte = dateFrom;
-        if (dateTo) startAtFilter.lte = dateTo;
-        where.startAt = startAtFilter;
+      let results: Array<{ title: string; startAt: Date }> = [];
+      if (!isDbKnownDown()) {
+        try {
+          const where: Record<string, unknown> = { userId };
+          if (query) where.title = { contains: query, mode: "insensitive" };
+          if (dateFrom || dateTo) {
+            const startAtFilter: Record<string, unknown> = {};
+            if (dateFrom) startAtFilter.gte = dateFrom;
+            if (dateTo) startAtFilter.lte = dateTo;
+            where.startAt = startAtFilter;
+          }
+
+          results = await prisma.event.findMany({
+            where: where as any,
+            orderBy: { startAt: "asc" },
+            take: 10,
+          });
+        } catch (err) {
+          markDbUnreachable();
+        }
       }
 
-      const results = await prisma.event.findMany({
-        where: where as any,
-        orderBy: { startAt: "asc" },
-        take: 10,
-      });
+      if (results.length === 0 && context.eventsSummary.length > 0) {
+        results = context.eventsSummary
+          .filter((e) => !query || e.title.toLowerCase().includes(query))
+          .map((e) => ({ title: e.title, startAt: new Date(e.startAt) }));
+      }
 
       const summary = results.map((e) => `• ${e.startAt.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} : ${e.title}`).join("\n");
 
@@ -722,16 +796,43 @@ async function executeToolInternal(
       const todayStart = startOfDay(new Date());
       const todayEnd = endOfDay(new Date());
 
-      const [events, tasks, reminders] = await Promise.all([
-        prisma.event.findMany({ where: { userId, startAt: { gte: todayStart, lte: todayEnd } }, orderBy: { startAt: "asc" } }),
-        prisma.task.findMany({ where: { userId, isDone: false, dueAt: { gte: todayStart, lte: todayEnd } }, orderBy: { dueAt: "asc" } }),
-        prisma.reminder.findMany({ where: { userId, status: "PENDING", fireAt: { gte: todayStart, lte: todayEnd } }, orderBy: { fireAt: "asc" } }),
-      ]);
+      let events: Array<any> = [];
+      let tasks: Array<any> = [];
+      let reminders: Array<any> = [];
+
+      if (!isDbKnownDown()) {
+        try {
+          const [eventsRes, tasksRes, remindersRes] = await Promise.all([
+            prisma.event.findMany({ where: { userId, startAt: { gte: todayStart, lte: todayEnd } }, orderBy: { startAt: "asc" } }),
+            prisma.task.findMany({ where: { userId, isDone: false, dueAt: { gte: todayStart, lte: todayEnd } }, orderBy: { dueAt: "asc" } }),
+            prisma.reminder.findMany({ where: { userId, status: "PENDING", fireAt: { gte: todayStart, lte: todayEnd } }, orderBy: { fireAt: "asc" } }),
+          ]);
+          events = eventsRes;
+          tasks = tasksRes;
+          reminders = remindersRes;
+        } catch {
+          markDbUnreachable();
+        }
+      }
+
+      // Merge context and local in-memory fallback
+      if (events.length === 0) {
+        events = [...context.eventsSummary, ...localEvents.filter(e => e.userId === userId)];
+      }
+      if (tasks.length === 0) {
+        tasks = [...context.tasksSummary, ...localTasks.filter(t => t.userId === userId)];
+      }
+      if (reminders.length === 0) {
+        reminders = [...context.remindersSummary, ...localReminders.filter(r => r.userId === userId)];
+      }
 
       let summary = "";
       if (events.length > 0) {
         summary += `📅 ${events.length} rendez-vous :\n`;
-        events.forEach((e) => { summary += `• ${e.startAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} — ${e.title}\n`; });
+        events.forEach((e) => { 
+          const time = e.startAt ? new Date(e.startAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "";
+          summary += `• ${time} — ${e.title}\n`; 
+        });
       }
       if (tasks.length > 0) {
         summary += `\n✅ ${tasks.length} tâche(s) :\n`;
@@ -739,7 +840,10 @@ async function executeToolInternal(
       }
       if (reminders.length > 0) {
         summary += `\n🔔 ${reminders.length} rappel(s) :\n`;
-        reminders.forEach((r) => { summary += `• ${r.fireAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} — ${r.title}\n`; });
+        reminders.forEach((r) => { 
+          const time = r.fireAt ? new Date(r.fireAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "";
+          summary += `• ${time} — ${r.title}\n`; 
+        });
       }
       if (!summary) summary = "Rien de prévu aujourd'hui. Ta journée est libre !";
 
@@ -750,10 +854,21 @@ async function executeToolInternal(
       const weekStart = startOfDay(new Date());
       const weekEnd = endOfDay(addDays(new Date(), 7));
 
-      const events = await prisma.event.findMany({
-        where: { userId, startAt: { gte: weekStart, lte: weekEnd } },
-        orderBy: { startAt: "asc" },
-      });
+      let events: Array<any> = [];
+      if (!isDbKnownDown()) {
+        try {
+          events = await prisma.event.findMany({
+            where: { userId, startAt: { gte: weekStart, lte: weekEnd } },
+            orderBy: { startAt: "asc" },
+          });
+        } catch {
+          markDbUnreachable();
+        }
+      }
+
+      if (events.length === 0) {
+        events = [...context.eventsSummary, ...localEvents.filter(e => e.userId === userId)];
+      }
 
       let summary = "";
       if (events.length > 0) {

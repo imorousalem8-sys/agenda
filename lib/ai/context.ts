@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { AIUserContext } from "./types";
 import { getQuotaStatus } from "./quotas";
 import { addDays, subHours, startOfDay, endOfDay } from "date-fns";
-import { resolveDbUserId } from "@/lib/dbUser";
+import { resolveDbUserId, isDbKnownDown, markDbUnreachable } from "@/lib/dbUser";
 import { DetectedIntentType } from "./intentRouter";
 
 // Cache utilisateur en mémoire (5 minutes) pour éviter des requêtes répétées
@@ -35,7 +35,7 @@ export async function buildSelectiveAIContext(
   if (cached && now.getTime() - cached.cachedAt < CACHE_TTL_MS) {
     userName = cached.name;
     timezone = cached.timezone;
-  } else {
+  } else if (!isDbKnownDown()) {
     try {
       dbQueriesCount++;
       const user = await prisma.user.findUnique({
@@ -48,6 +48,7 @@ export async function buildSelectiveAIContext(
         userProfileCache.set(userId, { name: userName, timezone, cachedAt: now.getTime() });
       }
     } catch (err) {
+      markDbUnreachable();
       console.warn("User profile fetch notice:", err);
     }
   }
@@ -58,8 +59,9 @@ export async function buildSelectiveAIContext(
   let contacts: Array<any> = [];
   let memories: Array<{ key: string; value: string }> = [];
 
-  // 2. Requêtes sélectives conditionnées par l'intention détectée
-  try {
+  // 2. Requêtes sélectives conditionnées par l'intention détectée (seulement si la BD est joignable)
+  if (!isDbKnownDown()) {
+    try {
     if (intent === "CALENDAR_VIEW" || intent === "RESCHEDULE_ACTION") {
       dbQueriesCount++;
       const rangeStart = targetDate ? startOfDay(targetDate) : subHours(now, 2);
@@ -111,8 +113,10 @@ export async function buildSelectiveAIContext(
       reminders = remindersRes;
     }
     // Pour CREATE_EVENT / CREATE_REMINDER / CREATE_TASK : 0 requête supplémentaire requise avant l'insertion !
-  } catch (err) {
-    console.warn("Selective AI context fetch notice:", err);
+    } catch (err) {
+      markDbUnreachable();
+      console.warn("Selective AI context fetch notice:", err);
+    }
   }
 
   const quotaStatus = await getQuotaStatus(userId);

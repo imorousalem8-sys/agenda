@@ -17,11 +17,11 @@ export const APP_CONFIG = {
     MAX_HISTORY_MESSAGES: 10, // Tronquage de l'historique pour limiter les tokens
   },
 
-  // AI Models & Fallback Chain
+  // AI Models & Fallback Chain (Cloud Ultra-Rapide)
   AI: {
-    PRIMARY_MODEL: process.env.AI_PRIMARY_MODEL || "gemini-3.6-flash",
-    FALLBACK_MODELS: (process.env.AI_FALLBACK_MODELS || "gemini-3.6-flash,gemini-1.5-flash,gemini-1.5-pro").split(",").map((s) => s.trim()),
-    TEMPERATURE: 0.2,
-    MAX_OUTPUT_TOKENS: 1000,
+    PRIMARY_MODEL: process.env.AI_PRIMARY_MODEL || "gemini-3.1-flash-lite",
+    FALLBACK_MODELS: (process.env.AI_FALLBACK_MODELS || "gemini-3.1-flash-lite,gemini-3.8-flash,gemini-flash-latest").split(",").map((s) => s.trim()),
+    TEMPERATURE: 0.3,
+    MAX_OUTPUT_TOKENS: 800,
   },
 };

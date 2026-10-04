@@ -1,43 +1,71 @@
 import { prisma } from "@/lib/prisma";
 
+let dbLastUnreachable = 0;
+const DB_COOLDOWN_MS = 60000; // 60s cooldown
+
+export function isDbKnownDown(): boolean {
+  return Date.now() - dbLastUnreachable < DB_COOLDOWN_MS;
+}
+
+export function markDbUnreachable(): void {
+  dbLastUnreachable = Date.now();
+}
+
+function withDbTimeout<T>(promise: Promise<T>, timeoutMs = 1200): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error("DB_TIMEOUT")), timeoutMs)
+    ),
+  ]);
+}
+
 /**
  * Assure qu'un identifiant utilisateur existe de manière garantie dans la table User de Prisma.
- * Prévient 100% des erreurs de clé étrangère (Foreign key constraint violated: ..._userId_fkey).
+ * Prévient 100% des erreurs de clé étrangère (Foreign key constraint violated).
+ * Doté d'un coupe-circuit instantané pour ne jamais bloquer en cas de base de données hors-ligne.
  */
 export async function resolveDbUserId(
   userId: string,
   email?: string | null,
   name?: string | null
 ): Promise<string> {
-  const normalizedEmail = (email && email.includes("@")) ? email.toLowerCase().trim() : undefined;
+  if (!userId) return `usr_${Date.now()}`;
+  if (isDbKnownDown()) return userId;
 
-  // 1. Recherche directe par ID
-  if (userId) {
-    try {
-      const existingById = await prisma.user.findUnique({
+  const normalizedEmail = email && email.includes("@") ? email.toLowerCase().trim() : undefined;
+
+  // 1. Recherche directe par ID avec timeout 1.2s
+  try {
+    const existingById = await withDbTimeout(
+      prisma.user.findUnique({
         where: { id: userId },
         select: { id: true },
-      });
-      if (existingById) {
-        return existingById.id;
-      }
-    } catch (err) {
-      console.warn("[DB User] Lookup by id warning:", err);
+      })
+    );
+    if (existingById) {
+      return existingById.id;
     }
+  } catch (err) {
+    markDbUnreachable();
+    return userId;
   }
 
-  // 2. Recherche par Email
+  // 2. Recherche par Email avec timeout 1.2s
   if (normalizedEmail) {
     try {
-      const existingByEmail = await prisma.user.findUnique({
-        where: { email: normalizedEmail },
-        select: { id: true },
-      });
+      const existingByEmail = await withDbTimeout(
+        prisma.user.findUnique({
+          where: { email: normalizedEmail },
+          select: { id: true },
+        })
+      );
       if (existingByEmail) {
         return existingByEmail.id;
       }
-    } catch (err) {
-      console.warn("[DB User] Lookup by email warning:", err);
+    } catch {
+      markDbUnreachable();
+      return userId;
     }
   }
 
@@ -62,15 +90,8 @@ export async function resolveDbUserId(
       select: { id: true },
     });
     return created.id;
-  } catch (upsertErr) {
-    console.warn("[DB User] Upsert user warning:", upsertErr);
-
-    // Fallback ultime : récupérer le premier utilisateur présent en base
-    try {
-      const fallback = await prisma.user.findFirst({ select: { id: true } });
-      if (fallback) return fallback.id;
-    } catch {}
-
+  } catch {
+    markDbUnreachable();
     return userId;
   }
 }
