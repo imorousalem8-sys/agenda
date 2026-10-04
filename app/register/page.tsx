@@ -33,6 +33,7 @@ export default function RegisterPage() {
   const [pendingRegData, setPendingRegData] = useState<RegisterInput | null>(null);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [resendSuccess, setResendSuccess] = useState("");
+  const [devOtpNotice, setDevOtpNotice] = useState("");
 
   const {
     register,
@@ -64,7 +65,14 @@ export default function RegisterPage() {
       }
 
       setPendingRegData(data);
-      setOtpCode("");
+      const devOtp = json.data?.devOtp || json.devOtp;
+      if (devOtp) {
+        setOtpCode(devOtp);
+        setDevOtpNotice(`⚡ Mode local actif : Votre code à 6 chiffres est ${devOtp} (pré-rempli automatiquement pour une utilisation instantanée sans attente).`);
+      } else {
+        setOtpCode("");
+        setDevOtpNotice("");
+      }
       setOtpStep(true);
       setLoading(false);
       setResendCooldown(60);
@@ -107,7 +115,14 @@ export default function RegisterPage() {
         return;
       }
 
-      setResendSuccess("Un nouveau code à 6 chiffres a été envoyé par email.");
+      const devOtp = json.data?.devOtp || json.devOtp;
+      if (devOtp) {
+        setOtpCode(devOtp);
+        setDevOtpNotice(`⚡ Nouveau code généré : ${devOtp} (pré-rempli automatiquement).`);
+        setResendSuccess("Code renouvelé avec succès !");
+      } else {
+        setResendSuccess("Un nouveau code à 6 chiffres a été envoyé par email.");
+      }
       setLoading(false);
       setResendCooldown(60);
 
@@ -437,6 +452,27 @@ export default function RegisterPage() {
         ) : (
           /* Step 2: OTP Verification */
           <form onSubmit={onVerifyOtp} style={{ display: "flex", flexDirection: "column", gap: "18px", position: "relative", zIndex: 2 }}>
+            {devOtpNotice && (
+              <div
+                style={{
+                  padding: "12px 16px",
+                  borderRadius: "14px",
+                  background: "rgba(16, 185, 129, 0.12)",
+                  border: "1px solid rgba(16, 185, 129, 0.35)",
+                  color: "#065f46",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  lineHeight: "1.5",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <CheckCircle2 size={18} style={{ color: "#10b981", flexShrink: 0 }} />
+                <span>{devOtpNotice}</span>
+              </div>
+            )}
+
             <div>
               <label style={{ fontSize: "14px", fontWeight: "700", color: "#09132b", display: "block", marginBottom: "8px" }}>
                 Code de validation à 6 chiffres
@@ -445,10 +481,12 @@ export default function RegisterPage() {
                 <KeyRound size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#475569" }} />
                 <input
                   type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
                   maxLength={6}
                   placeholder="123456"
                   value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   autoFocus
                   style={{
                     width: "100%",

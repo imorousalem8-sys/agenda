@@ -46,6 +46,8 @@ next-env.d.ts
 dev.db
 _tmp_init/
 scratch/
+/.data/
+Untitled*
 
 
 .vercel

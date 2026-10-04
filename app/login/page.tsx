@@ -30,6 +30,7 @@ export default function LoginPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [forgotSuccess, setForgotSuccess] = useState("");
+  const [devResetNotice, setDevResetNotice] = useState("");
 
   const {
     register,
@@ -84,7 +85,15 @@ export default function LoginPage() {
         return;
       }
 
-      setResetCode("");
+      const devOtp = data.data?.devOtp || data.devOtp;
+      if (devOtp) {
+        setResetCode(devOtp);
+        setDevResetNotice(`⚡ Mode local actif : Votre code à 6 chiffres est ${devOtp} (pré-rempli automatiquement).`);
+      } else {
+        setResetCode("");
+        setDevResetNotice("");
+      }
+
       setForgotSuccess("Un code de confirmation vous a été envoyé par email !");
       setMode("RESET");
       setLoading(false);
@@ -465,18 +474,41 @@ export default function LoginPage() {
         {/* 3. Mode RESET */}
         {mode === "RESET" && (
           <form onSubmit={onResetSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px", position: "relative", zIndex: 2 }}>
+            {devResetNotice && (
+              <div
+                style={{
+                  padding: "12px 16px",
+                  borderRadius: "14px",
+                  background: "rgba(16, 185, 129, 0.12)",
+                  border: "1px solid rgba(16, 185, 129, 0.35)",
+                  color: "#065f46",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  lineHeight: "1.5",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <ShieldCheck size={20} style={{ color: "#10b981", flexShrink: 0 }} />
+                <span>{devResetNotice}</span>
+              </div>
+            )}
+
             <div>
               <label style={{ fontSize: "14px", fontWeight: "700", color: "#09132b", display: "block", marginBottom: "8px" }}>
-                Code à 6 chiffres
+                Code de validation à 6 chiffres
               </label>
               <div style={{ position: "relative" }}>
                 <KeyRound size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#475569" }} />
                 <input
                   type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
                   maxLength={6}
                   placeholder="123456"
                   value={resetCode}
-                  onChange={(e) => setResetCode(e.target.value.replace(/\D/g, ""))}
+                  onChange={(e) => setResetCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   autoFocus
                   style={{
                     width: "100%",

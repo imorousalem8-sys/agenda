@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 const RESILIENT_POOLER_URL =
-  "postgresql://postgres.olcvcfselpcebqgrwkly:Ag3nda_Supab4se_9Xk2vL7mQp1R@aws-0-ca-central-1.pooler.supabase.com:6543/postgres?pgbouncer=true&sslmode=require&connection_limit=1";
+  "postgresql://postgres.olcvcfselpcebqgrwkly:Ag3nda_Supab4se_9Xk2vL7mQp1R@aws-0-ca-central-1.pooler.supabase.com:6543/postgres?pgbouncer=true&sslmode=require&connection_limit=1&connect_timeout=2";
 
 function getCleanDatabaseUrl(): string {
   let url = process.env.DATABASE_URL || "";

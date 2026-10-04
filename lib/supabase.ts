@@ -51,6 +51,16 @@ export function getDynamicBaseUrl(req?: NextRequest | Request): string {
   return "https://agenda-gamma-orpin.vercel.app";
 }
 
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 2000): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(id);
+  }
+}
+
 /**
  * Génère le code officiel OTP Supabase Auth via l'API Admin
  * (ZÉRO email envoyé par Supabase, ZÉRO lien magique, 100% sécurisé)
@@ -62,7 +72,7 @@ export async function generateOfficialSupabaseOtp(
 ): Promise<{ ok: boolean; otp?: string; user?: any; error?: string }> {
   try {
     const normalizedEmail = email.toLowerCase().trim();
-    let res = await fetch(`${supabaseUrl}/auth/v1/admin/generate_link`, {
+    let res = await fetchWithTimeout(`${supabaseUrl}/auth/v1/admin/generate_link`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -80,7 +90,7 @@ export async function generateOfficialSupabaseOtp(
 
     // Si l'utilisateur existe déjà dans Supabase Auth, générer le code via magiclink / recovery
     if (!res.ok && data?.error_code === "email_exists" && type === "signup") {
-      res = await fetch(`${supabaseUrl}/auth/v1/admin/generate_link`, {
+      res = await fetchWithTimeout(`${supabaseUrl}/auth/v1/admin/generate_link`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,14 +106,18 @@ export async function generateOfficialSupabaseOtp(
     }
 
     if (res.ok && data) {
-      const otp = data.email_otp || data.properties?.email_otp;
-      if (otp) {
-        return { ok: true, otp: String(otp), user: data };
+      const rawOtp = data.email_otp || data.properties?.email_otp;
+      if (rawOtp) {
+        const otpStr = String(rawOtp).trim();
+        // Validation stricte 6 chiffres
+        if (/^\d{6}$/.test(otpStr)) {
+          return { ok: true, otp: otpStr, user: data };
+        }
       }
     }
     return { ok: false, error: data?.msg || data?.message || "Erreur Supabase OTP" };
   } catch (err: unknown) {
-    console.warn("[Supabase Admin OTP] notice:", err);
+    console.warn("[Supabase Admin OTP] notice (offline fallback):", (err as any)?.message || err);
     return { ok: false, error: String(err) };
   }
 }
@@ -120,7 +134,7 @@ export async function verifySupabaseOtp(email: string, token: string): Promise<{
 
   for (const type of typesToTry) {
     try {
-      const res = await fetch(`${supabaseUrl}/auth/v1/verify`, {
+      const res = await fetchWithTimeout(`${supabaseUrl}/auth/v1/verify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,14 +146,14 @@ export async function verifySupabaseOtp(email: string, token: string): Promise<{
           email: normalizedEmail,
           token: cleanToken,
         }),
-      });
+      }, 1500);
 
       if (res.ok) {
         const data = await res.json();
         return { ok: true, user: data.user || data };
       }
     } catch (e) {
-      console.warn(`Supabase verify type=${type} warning:`, e);
+      // offline / timeout
     }
   }
 
@@ -152,7 +166,7 @@ export async function verifySupabaseOtp(email: string, token: string): Promise<{
  */
 export async function sendSupabasePasswordReset(email: string, redirectTo: string) {
   try {
-    const res = await fetch(`${supabaseUrl}/auth/v1/recover`, {
+    const res = await fetchWithTimeout(`${supabaseUrl}/auth/v1/recover`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -163,12 +177,12 @@ export async function sendSupabasePasswordReset(email: string, redirectTo: strin
         email: email.toLowerCase().trim(),
         redirect_to: redirectTo,
       }),
-    });
+    }, 2000);
 
     const data = await res.json().catch(() => ({}));
     return { ok: res.ok, status: res.status, data };
   } catch (err) {
-    console.warn("Supabase recover warning:", err);
+    console.warn("Supabase recover warning (offline fallback):", (err as any)?.message || err);
     return { ok: false, error: err };
   }
 }
@@ -188,18 +202,18 @@ export async function upsertSupabaseUserViaRest(userData: {
     const normalizedEmail = userData.email.toLowerCase().trim();
     
     // Vérifier si l'utilisateur existe déjà
-    const getRes = await fetch(`${supabaseUrl}/rest/v1/User?email=eq.${encodeURIComponent(normalizedEmail)}&select=*`, {
+    const getRes = await fetchWithTimeout(`${supabaseUrl}/rest/v1/User?email=eq.${encodeURIComponent(normalizedEmail)}&select=*`, {
       headers: {
         "apikey": supabaseServiceKey,
         "Authorization": `Bearer ${supabaseServiceKey}`,
       },
-    });
+    }, 2000);
 
     const existingUsers = await getRes.json().catch(() => []);
 
     if (Array.isArray(existingUsers) && existingUsers.length > 0) {
       // Update
-      const updateRes = await fetch(`${supabaseUrl}/rest/v1/User?email=eq.${encodeURIComponent(normalizedEmail)}`, {
+      const updateRes = await fetchWithTimeout(`${supabaseUrl}/rest/v1/User?email=eq.${encodeURIComponent(normalizedEmail)}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -212,13 +226,13 @@ export async function upsertSupabaseUserViaRest(userData: {
           ...(userData.password ? { password: userData.password } : {}),
           updatedAt: new Date().toISOString(),
         }),
-      });
+      }, 2000);
       const updated = await updateRes.json().catch(() => []);
       return { ok: updateRes.ok, user: Array.isArray(updated) ? updated[0] : existingUsers[0] };
     } else {
       // Insert
       const newId = `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      const insertRes = await fetch(`${supabaseUrl}/rest/v1/User`, {
+      const insertRes = await fetchWithTimeout(`${supabaseUrl}/rest/v1/User`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -236,7 +250,7 @@ export async function upsertSupabaseUserViaRest(userData: {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         }),
-      });
+      }, 2000);
       const inserted = await insertRes.json().catch(() => []);
       console.log(`[Supabase REST] User ${normalizedEmail} inserted successfully:`, insertRes.status);
       return { ok: insertRes.ok, user: Array.isArray(inserted) ? inserted[0] : { id: newId, email: normalizedEmail } };

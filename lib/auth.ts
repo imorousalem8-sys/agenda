@@ -59,18 +59,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // 4. Recherche via Supabase REST API HTTPS (Port 443)
         if (!user && supabaseServiceKey) {
           try {
+            const controller = new AbortController();
+            const tId = setTimeout(() => controller.abort(), 1500);
             const res = await fetch(`${supabaseUrl}/rest/v1/User?email=eq.${encodeURIComponent(email)}&select=*`, {
               headers: {
                 "apikey": supabaseServiceKey,
                 "Authorization": `Bearer ${supabaseServiceKey}`,
               },
-            });
+              signal: controller.signal,
+            }).finally(() => clearTimeout(tId));
             const users = await res.json().catch(() => []);
             if (Array.isArray(users) && users.length > 0) {
               user = users[0];
             }
           } catch (restErr) {
-            console.warn("[Auth] Supabase REST search exception:", restErr);
+            console.warn("[Auth] Supabase REST search notice (offline):", (restErr as any)?.message || restErr);
           }
         }
 

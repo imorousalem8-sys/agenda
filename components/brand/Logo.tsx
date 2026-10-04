@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface LogoProps {
   size?: number;
@@ -23,7 +24,7 @@ export default function Logo({
       className={`flex items-center select-none ${className}`}
       style={{ display: "flex", alignItems: "center", gap: `${Math.max(10, size * 0.28)}px` }}
     >
-      {/* SVG Icon Container with Ambient Halo */}
+      {/* Icon Container with Subtle Glow */}
       <div
         style={{
           width: `${size}px`,
@@ -35,101 +36,34 @@ export default function Logo({
           flexShrink: 0,
         }}
       >
-        {/* Cyber Neon Glow Layer */}
+        {/* Ambient Glow */}
         <div
           style={{
             position: "absolute",
-            inset: "-20%",
-            background: "radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, rgba(59, 130, 246, 0.2) 45%, transparent 70%)",
-            filter: "blur(8px)",
-            borderRadius: "50%",
+            inset: "-15%",
+            background: "radial-gradient(circle, rgba(37, 99, 235, 0.45) 0%, rgba(6, 182, 212, 0.25) 45%, transparent 75%)",
+            filter: "blur(6px)",
+            borderRadius: "14px",
             zIndex: 0,
             animation: animated ? "pulseGlow 3s ease-in-out infinite alternate" : undefined,
           }}
         />
 
-        <svg
+        {/* Official AlarmAgenda App Emblem */}
+        <Image
+          src="/icons/icon-192.png"
+          alt="AlarmAgenda Logo"
           width={size}
           height={size}
-          viewBox="0 0 48 48"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          style={{ position: "relative", zIndex: 1, overflow: "visible" }}
-        >
-          <defs>
-            {/* Cyber Gradient */}
-            <linearGradient id="cyber-grad-frame" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#38bdf8" />
-              <stop offset="50%" stopColor="#3b82f6" />
-              <stop offset="100%" stopColor="#1d4ed8" />
-            </linearGradient>
-
-            {/* Inner Glass */}
-            <linearGradient id="cyber-glass-fill" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#0a1532" />
-              <stop offset="100%" stopColor="#030712" />
-            </linearGradient>
-
-            {/* Neon Accent */}
-            <linearGradient id="cyber-needle-grad" x1="24" y1="12" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#38bdf8" />
-              <stop offset="100%" stopColor="#2563eb" />
-            </linearGradient>
-
-            {/* Drop Shadow & Glow */}
-            <filter id="cyber-glow-filter" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#2563eb" floodOpacity="0.4" />
-            </filter>
-          </defs>
-
-          {/* Squircle Frame */}
-          <rect
-            x="3"
-            y="3"
-            width="42"
-            height="42"
-            rx="13"
-            fill="url(#cyber-glass-fill)"
-            stroke="url(#cyber-grad-frame)"
-            strokeWidth="1.75"
-            filter="url(#cyber-glow-filter)"
-          />
-
-          {/* Chrono Orbit Grid */}
-          <circle
-            cx="24"
-            cy="24"
-            r="15"
-            stroke="rgba(56, 189, 248, 0.25)"
-            strokeWidth="1"
-            strokeDasharray="3 3"
-          />
-
-          {/* High-Precision Chrono Marks */}
-          <circle cx="24" cy="8" r="1.5" fill="#38bdf8" />
-          <circle cx="40" cy="24" r="1.5" fill="#60a5fa" />
-          <circle cx="24" cy="40" r="1.5" fill="#38bdf8" />
-          <circle cx="8" cy="24" r="1.5" fill="#60a5fa" />
-
-          {/* Stylized Chrono Needles */}
-          <path
-            d="M24 24L33 15"
-            stroke="url(#cyber-needle-grad)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M24 24L16 20"
-            stroke="#f8fafc"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-          />
-
-          {/* Core Gem Pivot */}
-          <circle cx="24" cy="24" r="3.2" fill="#38bdf8" />
-          <circle cx="24" cy="24" r="1.5" fill="#ffffff" />
-          <circle cx="33" cy="15" r="2.2" fill="#60a5fa" />
-        </svg>
+          priority
+          className="relative z-10 shadow-[0_4px_16px_rgba(37,99,235,0.35)]"
+          style={{
+            width: `${size}px`,
+            height: `${size}px`,
+            borderRadius: `${Math.max(8, size * 0.24)}px`,
+            objectFit: "cover",
+          }}
+        />
       </div>
 
       {/* Brand Text & Executive Tag */}

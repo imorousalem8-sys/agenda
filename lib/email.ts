@@ -56,10 +56,20 @@ export async function sendOtpEmail({ to, name, code }: SendOtpEmailParams) {
     </html>
   `;
 
+  async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 2000): Promise<Response> {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(id);
+    }
+  }
+
   // 1. Envoi direct via Resend API
   if (RESEND_API_KEY) {
     try {
-      const res = await fetch("https://api.resend.com/emails", {
+      const res = await fetchWithTimeout("https://api.resend.com/emails", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +81,7 @@ export async function sendOtpEmail({ to, name, code }: SendOtpEmailParams) {
           subject: `${code} est votre code de confirmation AlarmAgenda`,
           html: emailHtml,
         }),
-      });
+      }, 2000);
 
       const resData = await res.json().catch(() => ({}));
       if (res.ok) {
@@ -81,14 +91,14 @@ export async function sendOtpEmail({ to, name, code }: SendOtpEmailParams) {
         console.warn(`[Email] Resend status ${res.status} for ${recipientEmail}:`, resData);
       }
     } catch (e) {
-      console.warn("[Email] Resend fetch exception:", e);
+      console.warn("[Email] Resend fetch notice (offline/local fallback):", (e as any)?.message || e);
     }
   }
 
   // 2. Dispatch via Brevo API (if configured)
   if (process.env.BREVO_API_KEY) {
     try {
-      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      const res = await fetchWithTimeout("https://api.brevo.com/v3/smtp/email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,14 +110,18 @@ export async function sendOtpEmail({ to, name, code }: SendOtpEmailParams) {
           subject: `${code} est votre code de confirmation AlarmAgenda`,
           htmlContent: emailHtml,
         }),
-      });
+      }, 2000);
       if (res.ok) {
         return { success: true, provider: "brevo" };
       }
     } catch (e) {
-      console.warn("[Email] Brevo API exception:", e);
+      console.warn("[Email] Brevo API notice:", (e as any)?.message || e);
     }
   }
+
+  console.log(`\n======================================================`);
+  console.log(`🔑 [CODE OTP LOCAL] Destinataire: ${recipientEmail} | Code: [ ${code} ]`);
+  console.log(`======================================================\n`);
 
   return { success: false, provider: "none" };
 }
