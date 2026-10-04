@@ -105,7 +105,7 @@ export default function RemindersPage() {
       {/* Header Pro */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "16px", paddingBottom: "20px", borderBottom: "1px solid var(--border-subtle)" }}>
         <div>
-          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "#f8fafc", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
             Rappels & Alarmes Vocales
           </h1>
           <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
@@ -176,7 +176,7 @@ export default function RemindersPage() {
         </div>
 
         <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
-          Total : <strong style={{ color: "#f8fafc" }}>{reminders.length}</strong> rappels
+          Total : <strong style={{ color: "var(--text-primary)" }}>{reminders.length}</strong> rappels
         </div>
       </div>
 
@@ -222,7 +222,7 @@ export default function RemindersPage() {
                   <td className="data-td">
                     <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc" }}>
+                        <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>
                           {reminder.title}
                         </span>
                         {reminder.isVeille && (

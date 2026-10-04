@@ -165,13 +165,13 @@ export default function DashboardLayout({
         />
       )}
 
-      {/* Sidebar (Dark Cyber Luxury Glass) */}
+      {/* Sidebar (Clean Executive White & Light Modern) */}
       <aside
         style={{
           width: "260px",
           flexShrink: 0,
-          background: "linear-gradient(180deg, #02050e 0%, #060e22 50%, #040918 100%)",
-          borderRight: "1px solid rgba(56, 189, 248, 0.14)",
+          background: "var(--bg-sidebar)",
+          borderRight: "1px solid var(--border-default)",
           display: "flex",
           flexDirection: "column",
           position: "sticky",
@@ -179,7 +179,7 @@ export default function DashboardLayout({
           height: "100vh",
           zIndex: 45,
           transition: "transform 0.2s ease",
-          boxShadow: "4px 0 25px rgba(0, 0, 0, 0.6)",
+          boxShadow: "var(--shadow-card)",
         }}
         className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}
       >
@@ -187,7 +187,7 @@ export default function DashboardLayout({
         <div
           style={{
             padding: "20px 18px",
-            borderBottom: "1px solid rgba(56, 189, 248, 0.12)",
+            borderBottom: "1px solid var(--border-subtle)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -199,7 +199,7 @@ export default function DashboardLayout({
           <button
             onClick={() => setSidebarOpen(false)}
             className="btn btn-ghost"
-            style={{ padding: "4px", color: "#94a3b8" }}
+            style={{ padding: "4px", color: "var(--text-muted)" }}
             id="sidebar-close-btn"
           >
             <X size={18} />
@@ -226,23 +226,20 @@ export default function DashboardLayout({
                   marginBottom: "6px",
                   fontSize: "13.5px",
                   fontWeight: isActive ? "700" : "500",
-                  color: isActive ? "#ffffff" : "#94a3b8",
-                  background: isActive
-                    ? "linear-gradient(135deg, rgba(6, 182, 212, 0.22) 0%, rgba(99, 102, 241, 0.18) 100%)"
-                    : "transparent",
-                  border: isActive ? "1px solid rgba(56, 189, 248, 0.4)" : "1px solid transparent",
-                  boxShadow: isActive ? "0 0 20px rgba(6, 182, 212, 0.22)" : "none",
+                  color: isActive ? "#1d4ed8" : "var(--text-secondary)",
+                  background: isActive ? "#eff6ff" : "transparent",
+                  border: isActive ? "1px solid #bfdbfe" : "1px solid transparent",
+                  boxShadow: isActive ? "0 2px 8px rgba(29, 78, 216, 0.08)" : "none",
                   transition: "all 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
                   textDecoration: "none",
                 }}
-                className={isActive ? "" : "hover:bg-slate-800/50 hover:text-white hover:border-slate-700/50"}
+                className={isActive ? "" : "hover:bg-slate-100 hover:text-slate-900"}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <Icon
                     size={18}
                     style={{
-                      color: isActive ? "#38bdf8" : "#94a3b8",
-                      filter: isActive ? "drop-shadow(0 0 6px rgba(56, 189, 248, 0.6))" : "none",
+                      color: isActive ? "#1d4ed8" : "var(--text-muted)",
                       flexShrink: 0,
                     }}
                   />
@@ -256,11 +253,11 @@ export default function DashboardLayout({
                       fontWeight: "800",
                       letterSpacing: "0.04em",
                       textTransform: "uppercase",
-                      background: "linear-gradient(135deg, #06b6d4, #6366f1)",
+                      background: "linear-gradient(135deg, #1d4ed8, #4f46e5)",
                       color: "#ffffff",
                       padding: "2px 7px",
                       borderRadius: "6px",
-                      boxShadow: "0 0 10px rgba(6, 182, 212, 0.4)",
+                      boxShadow: "0 2px 6px rgba(29, 78, 216, 0.25)",
                     }}
                   >
                     {link.badge}
@@ -270,7 +267,7 @@ export default function DashboardLayout({
             );
           })}
 
-          <div style={{ height: "1px", background: "rgba(56, 189, 248, 0.12)", margin: "14px 4px" }} />
+          <div style={{ height: "1px", background: "var(--border-subtle)", margin: "14px 4px" }} />
 
           {/* Bouton de Thème Nuit / Jour Réel */}
           <button
@@ -361,16 +358,15 @@ export default function DashboardLayout({
           <QuotaIndicator />
         </div>
 
-        {/* User Footer (Cyber Executive Profile) */}
+        {/* User Footer (Clean Executive Profile) */}
         <div
           style={{
             padding: "14px",
-            borderTop: "1px solid rgba(56, 189, 248, 0.12)",
+            borderTop: "1px solid var(--border-default)",
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            background: "rgba(4, 9, 24, 0.8)",
-            backdropFilter: "blur(8px)",
+            background: "var(--bg-secondary)",
           }}
         >
           <div
@@ -378,7 +374,7 @@ export default function DashboardLayout({
               width: "36px",
               height: "36px",
               borderRadius: "10px",
-              background: "linear-gradient(135deg, #06b6d4 0%, #6366f1 100%)",
+              background: "linear-gradient(135deg, #1d4ed8 0%, #4f46e5 100%)",
               color: "#ffffff",
               display: "flex",
               alignItems: "center",
@@ -386,26 +382,26 @@ export default function DashboardLayout({
               fontWeight: "800",
               fontSize: "14px",
               flexShrink: 0,
-              boxShadow: "0 0 12px rgba(6, 182, 212, 0.35)",
+              boxShadow: "0 2px 8px rgba(29, 78, 216, 0.25)",
             }}
           >
             {userName[0]?.toUpperCase() || "S"}
           </div>
 
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "13px", fontWeight: "700", color: "#ffffff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {userName}
             </div>
-            <div style={{ fontSize: "11px", color: "#38bdf8", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
-              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981" }} />
-              {isPro ? "Executive Pro" : "Membre VIP"}
+            <div style={{ fontSize: "11px", color: "#1d4ed8", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block" }} />
+              {isPro ? "Compte Pro Actif" : "Membre Standard"}
             </div>
           </div>
 
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
             className="btn btn-ghost"
-            style={{ padding: "6px", color: "#94a3b8" }}
+            style={{ padding: "6px", color: "var(--text-muted)" }}
             title="Se déconnecter"
           >
             <LogOut size={16} />

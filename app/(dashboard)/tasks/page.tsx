@@ -99,7 +99,7 @@ export default function TasksPage() {
       {/* Header Pro */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "16px", paddingBottom: "20px", borderBottom: "1px solid var(--border-subtle)" }}>
         <div>
-          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "#f8fafc", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
             Gestionnaire de Tâches & Priorités
           </h1>
           <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
@@ -170,7 +170,7 @@ export default function TasksPage() {
         </div>
 
         <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
-          Total : <strong style={{ color: "#f8fafc" }}>{tasks.length}</strong> éléments
+          Total : <strong style={{ color: "var(--text-primary)" }}>{tasks.length}</strong> éléments
         </div>
       </div>
 
@@ -327,7 +327,7 @@ function TaskTableRow({
               style={{
                 fontSize: "13px",
                 fontWeight: "600",
-                color: done ? "var(--text-muted)" : "#f8fafc",
+                color: done ? "var(--text-muted)" : "var(--text-primary)",
                 textDecoration: done ? "line-through" : "none",
               }}
             >

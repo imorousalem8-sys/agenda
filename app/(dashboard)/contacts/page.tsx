@@ -79,7 +79,7 @@ export default function ContactsPage() {
       {/* Header Pro */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "16px", paddingBottom: "20px", borderBottom: "1px solid var(--border-subtle)" }}>
         <div>
-          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "#f8fafc", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
             Contacts & Répertoire
           </h1>
           <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
@@ -152,7 +152,7 @@ export default function ContactsPage() {
                   {/* Name & Company */}
                   <td className="data-td">
                     <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                      <span style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc" }}>
+                      <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>
                         {contact.firstName} {contact.lastName ?? ""}
                       </span>
                       {contact.company && (
@@ -236,7 +236,7 @@ export default function ContactsPage() {
         <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowForm(false)}>
           <div className="modal animate-scale-in" style={{ maxWidth: "520px" }}>
             <div style={{ padding: "20px 24px", borderBottom: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#f8fafc" }}>Nouveau contact</h2>
+              <h2 style={{ fontSize: "16px", fontWeight: "700", color: "var(--text-primary)" }}>Nouveau contact</h2>
               <button onClick={() => setShowForm(false)} className="btn btn-ghost" style={{ padding: "4px" }}><X size={18} /></button>
             </div>
             <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "14px" }}>

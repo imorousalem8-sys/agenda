@@ -11,28 +11,22 @@ import {
   Sparkles,
   Clock,
   Activity,
-  User,
   MapPin,
-  ChevronRight,
   Volume2,
   Zap,
-  PhoneCall,
-  ShieldCheck,
-  Check,
-  Download,
   Play,
   Pause,
   RotateCcw,
   Target,
   Flame,
   CloudSun,
-  Sun,
-  Moon,
+  Download,
   TrendingUp,
-  Cpu,
-  Radio,
-  Sliders,
+  Check,
   CheckCircle2,
+  AlertCircle,
+  PhoneCall,
+  User,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import EventFormModal from "@/components/forms/EventFormModal";
@@ -181,10 +175,10 @@ export default function DashboardPage() {
     setIsPlayingBriefing(true);
     await playAlertChime();
 
-    const eventCount = events.length || 3;
-    const reminderCount = reminders.length || 2;
-    const taskCount = tasks.length || 4;
-    const briefingText = `${greeting} ${userName} ! Bienvenue dans votre cockpit exécutif Alamajonda. Vous avez ${eventCount} événements à venir, ${reminderCount} rappels vocaux actifs, et ${taskCount} priorités en cours. Vos systèmes sont opérationnels à cent pour cent. Excellente journée à vous !`;
+    const eventCount = events.length || 0;
+    const reminderCount = reminders.length || 0;
+    const taskCount = tasks.length || 0;
+    const briefingText = `${greeting} ${userName} ! Vous avez ${eventCount} rendez-vous programmés, ${reminderCount} rappels vocaux actifs et ${taskCount} tâches en attente. Tout est parfaitement synchronisé. Excellente journée à vous !`;
 
     speakAIText(briefingText, {
       gender: "FEMALE",
@@ -200,13 +194,22 @@ export default function DashboardPage() {
   const handleToggleTask = async (id: string, currentStatus: boolean) => {
     try {
       await fetch(`/api/tasks/${id}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isDone: !currentStatus }),
       });
       loadDashboard();
     } catch (e) {
       console.error("Error toggling task:", e);
+    }
+  };
+
+  const handleDismissReminder = async (id: string) => {
+    try {
+      await fetch(`/api/reminders/${id}/dismiss`, { method: "PUT" });
+      loadDashboard();
+    } catch (e) {
+      console.error("Error dismissing reminder:", e);
     }
   };
 
@@ -243,1151 +246,503 @@ export default function DashboardPage() {
 
   const completedCount = tasks.filter((t) => t.isDone).length;
   const totalTasksCount = tasks.length || 1;
-  const taskCompletionRate = Math.min(100, Math.round(((totalTasksCount - tasks.length + completedCount) / (totalTasksCount + 2)) * 100) || 82);
+  const taskCompletionRate = Math.min(100, Math.round(((completedCount) / (totalTasksCount || 1)) * 100) || 85);
 
   return (
-    <div
-      style={{
-        padding: "24px 32px 60px",
-        maxWidth: "1600px",
-        margin: "0 auto",
-        width: "100%",
-        position: "relative",
-      }}
-    >
-      {/* Background Ambient Cyber Glows */}
-      <div
-        style={{
-          position: "fixed",
-          top: "5%",
-          right: "10%",
-          width: "450px",
-          height: "450px",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, rgba(99, 102, 241, 0.03) 50%, transparent 70%)",
-          pointerEvents: "none",
-          filter: "blur(50px)",
-          zIndex: 0,
-        }}
-      />
-      <div
-        style={{
-          position: "fixed",
-          bottom: "10%",
-          left: "15%",
-          width: "500px",
-          height: "500px",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(139, 92, 246, 0.07) 0%, rgba(6, 182, 212, 0.02) 50%, transparent 70%)",
-          pointerEvents: "none",
-          filter: "blur(60px)",
-          zIndex: 0,
-        }}
-      />
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      {/* =========================================================================
+          1. HEADER COCKPIT ÉXÉCUTIF BLANC & LUMINEUX
+         ========================================================================= */}
+      <div className="bg-white border border-slate-200/90 shadow-sm hover:shadow-md transition-all rounded-3xl p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div>
+          <div className="flex items-center gap-3 mb-3 flex-wrap">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-xs font-bold uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              COCKPIT OPÉRATIONNEL
+            </span>
 
-      <div style={{ position: "relative", zIndex: 1 }}>
-        {/* =========================================================================
-            1. HERO COMMAND CENTER (Cyber Luxury Executive Header)
-           ========================================================================= */}
-        <div
-          className="cyber-card"
-          style={{
-            padding: "26px 32px",
-            marginBottom: "24px",
-            background: "linear-gradient(135deg, rgba(8, 16, 38, 0.9) 0%, rgba(12, 24, 58, 0.85) 50%, rgba(6, 10, 24, 0.95) 100%)",
-            border: "1px solid rgba(56, 189, 248, 0.25)",
-            borderRadius: "24px",
-            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(6, 182, 212, 0.12)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "20px",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          {/* Subtle Top Border Gradient Line */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "2px",
-              background: "linear-gradient(90deg, transparent, #06b6d4, #818cf8, #c084fc, transparent)",
-            }}
-          />
-
-          {/* Left Title & Status */}
-          <div style={{ flex: 1, minWidth: "300px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px", flexWrap: "wrap" }}>
-              <span
-                style={{
-                  fontSize: "10px",
-                  fontWeight: "800",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                  background: "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%)",
-                  border: "1px solid rgba(56, 189, 248, 0.4)",
-                  padding: "3px 10px",
-                  borderRadius: "20px",
-                  color: "#38bdf8",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "5px",
-                  boxShadow: "0 0 12px rgba(6, 182, 212, 0.2)",
-                }}
-              >
-                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 8px #10b981" }} />
-                COCKPIT EXÉCUTIF OPÉRATIONNEL
-              </span>
-
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  fontSize: "12px",
-                  color: "#94a3b8",
-                  fontWeight: "600",
-                  background: "rgba(255, 255, 255, 0.05)",
-                  padding: "3px 10px",
-                  borderRadius: "12px",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
-                }}
-              >
-                <Clock size={12} style={{ color: "#38bdf8" }} />
-                <span style={{ fontFamily: "monospace", letterSpacing: "0.05em", color: "#f8fafc" }}>
-                  {currentTime || "12:00:00"}
-                </span>
-              </div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+              <Clock size={13} className="text-blue-600" />
+              <span className="font-mono">{currentTime || "12:00:00"}</span>
             </div>
-
-            <h1
-              style={{
-                fontSize: "28px",
-                fontWeight: "900",
-                letterSpacing: "-0.03em",
-                color: "#ffffff",
-                margin: "0 0 6px 0",
-                lineHeight: 1.2,
-              }}
-            >
-              {greeting},{" "}
-              <span
-                style={{
-                  background: "linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                {userName}
-              </span>{" "}
-              ⚡
-            </h1>
-
-            <p style={{ fontSize: "13.5px", color: "#94a3b8", margin: 0, fontWeight: "500", textTransform: "capitalize" }}>
-              {currentDateFormatted || "Dimanche 13 Septembre"} · <span style={{ color: "#38bdf8" }}>Synchronisation active</span>
-            </p>
           </div>
 
-          {/* Right Action Matrix */}
-          <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
-            {/* Briefing Vocal IA */}
-            <button
-              onClick={handlePlayDailyBriefing}
-              disabled={isPlayingBriefing}
-              style={{
-                padding: "10px 18px",
-                borderRadius: "14px",
-                background: isPlayingBriefing
-                  ? "linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(99, 102, 241, 0.3) 100%)"
-                  : "rgba(15, 28, 63, 0.8)",
-                border: "1px solid rgba(56, 189, 248, 0.3)",
-                color: "#ffffff",
-                fontWeight: "700",
-                fontSize: "13px",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                cursor: "pointer",
-                boxShadow: isPlayingBriefing ? "0 0 20px rgba(6, 182, 212, 0.4)" : "0 4px 15px rgba(0, 0, 0, 0.3)",
-                transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-              }}
-              className="hover:border-cyan-400 hover:scale-[1.02]"
-              title="Écouter la synthèse vocale de la journée"
-            >
-              <Volume2
-                size={16}
-                style={{
-                  color: "#38bdf8",
-                  animation: isPlayingBriefing ? "pulse 1s infinite" : "none",
-                }}
-              />
-              <span>{isPlayingBriefing ? "Briefing en cours..." : "Briefing Vocal"}</span>
-            </button>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+            {greeting}, <span className="text-[#1d4ed8]">{userName}</span> ⚡
+          </h1>
 
-            {/* Export ICS */}
-            <button
-              onClick={handleExportICS}
-              style={{
-                padding: "10px 16px",
-                borderRadius: "14px",
-                background: "rgba(15, 28, 63, 0.8)",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                color: "#cbd5e1",
-                fontWeight: "600",
-                fontSize: "13px",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-              }}
-              className="hover:bg-slate-800 hover:text-white hover:border-slate-600"
-              title="Exporter l'agenda vers Google Calendar / Apple Calendar"
-            >
-              <Download size={15} style={{ color: "#94a3b8" }} />
-              <span>Export .ICS</span>
-            </button>
-
-            {/* Assistant IA Launcher */}
-            <button
-              onClick={handleOpenAI}
-              style={{
-                padding: "10px 22px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, #06b6d4 0%, #6366f1 100%)",
-                color: "#ffffff",
-                fontWeight: "800",
-                fontSize: "13px",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                border: "none",
-                cursor: "pointer",
-                boxShadow: "0 0 25px rgba(6, 182, 212, 0.4)",
-                transition: "transform 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
-              }}
-              className="hover:scale-105 hover:brightness-110"
-            >
-              <Sparkles size={16} />
-              <span>Parler à l&apos;IA</span>
-            </button>
-          </div>
+          <p className="text-sm text-slate-500 font-medium capitalize mt-1">
+            {currentDateFormatted || "Dimanche 13 Septembre"} · <span className="text-blue-600 font-semibold">Système 100% synchronisé</span>
+          </p>
         </div>
 
-        {/* =========================================================================
-            2. BENTO ROW 1: DYNAMIC WIDGETS (Météo, Score, Focus, Tâche Flash)
-           ========================================================================= */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "16px",
-            marginBottom: "24px",
-          }}
-        >
-          {/* WIDGET A: Météo & Climat Cockpit */}
-          <div
-            className="cyber-card"
-            style={{
-              padding: "18px 20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              background: "linear-gradient(135deg, rgba(12, 24, 54, 0.7) 0%, rgba(8, 14, 32, 0.8) 100%)",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-              <div
-                style={{
-                  width: "44px",
-                  height: "44px",
-                  borderRadius: "12px",
-                  background: "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(99, 102, 241, 0.15) 100%)",
-                  border: "1px solid rgba(56, 189, 248, 0.3)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#38bdf8",
-                  boxShadow: "0 0 15px rgba(6, 182, 212, 0.2)",
-                }}
-              >
-                <CloudSun size={22} />
-              </div>
-              <div>
-                <div style={{ fontSize: "14px", fontWeight: "800", color: "#ffffff" }}>
-                  21°C · Ciel Dégagé
-                </div>
-                <div style={{ fontSize: "11.5px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "4px" }}>
-                  <MapPin size={11} style={{ color: "#38bdf8" }} />
-                  <span>Environnement optimal · Liège</span>
-                </div>
-              </div>
-            </div>
-            <div
-              style={{
-                fontSize: "11px",
-                fontWeight: "700",
-                color: "#10b981",
-                background: "rgba(16, 185, 129, 0.12)",
-                padding: "3px 8px",
-                borderRadius: "8px",
-                border: "1px solid rgba(16, 185, 129, 0.25)",
-              }}
-            >
-              100% IA
-            </div>
-          </div>
-
-          {/* WIDGET B: Score de Productivité Cyber & Flamme */}
-          <div
-            className="cyber-card"
-            style={{
-              padding: "18px 20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              background: "linear-gradient(135deg, rgba(12, 24, 54, 0.7) 0%, rgba(8, 14, 32, 0.8) 100%)",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-              <div
-                style={{
-                  width: "44px",
-                  height: "44px",
-                  borderRadius: "12px",
-                  background: "linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(239, 68, 68, 0.15) 100%)",
-                  border: "1px solid rgba(245, 158, 11, 0.3)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#f59e0b",
-                  boxShadow: "0 0 15px rgba(245, 158, 11, 0.2)",
-                }}
-              >
-                <Flame size={22} />
-              </div>
-              <div>
-                <div style={{ fontSize: "14px", fontWeight: "800", color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span>Efficacité : {taskCompletionRate}%</span>
-                  <TrendingUp size={14} style={{ color: "#10b981" }} />
-                </div>
-                <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>
-                  Série active : <span style={{ color: "#f59e0b", fontWeight: "700" }}>🔥 7 jours</span>
-                </div>
-              </div>
-            </div>
-            <div
-              style={{
-                width: "42px",
-                height: "6px",
-                background: "rgba(255, 255, 255, 0.1)",
-                borderRadius: "3px",
-                overflow: "hidden",
-              }}
-            >
-              <div style={{ width: `${taskCompletionRate}%`, height: "100%", background: "linear-gradient(90deg, #06b6d4, #10b981)" }} />
-            </div>
-          </div>
-
-          {/* WIDGET C: Pomodoro Focus Cyber Pod */}
-          <div
-            className="cyber-card"
-            style={{
-              padding: "16px 20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              background: isFocusRunning
-                ? "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(99, 102, 241, 0.15) 100%)"
-                : "linear-gradient(135deg, rgba(12, 24, 54, 0.7) 0%, rgba(8, 14, 32, 0.8) 100%)",
-              border: isFocusRunning ? "1px solid rgba(6, 182, 212, 0.5)" : "1px solid rgba(56, 189, 248, 0.16)",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div
-                onClick={() => setIsFocusRunning(!isFocusRunning)}
-                style={{
-                  width: "42px",
-                  height: "42px",
-                  borderRadius: "12px",
-                  background: isFocusRunning
-                    ? "linear-gradient(135deg, #06b6d4, #6366f1)"
-                    : "rgba(255, 255, 255, 0.08)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#ffffff",
-                  cursor: "pointer",
-                  boxShadow: isFocusRunning ? "0 0 15px rgba(6, 182, 212, 0.5)" : "none",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                {isFocusRunning ? <Pause size={18} /> : <Play size={18} />}
-              </div>
-              <div>
-                <div style={{ fontSize: "14px", fontWeight: "800", color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span>Focus Pod</span>
-                  <span
-                    style={{
-                      fontFamily: "monospace",
-                      fontSize: "13px",
-                      color: isFocusRunning ? "#38bdf8" : "#94a3b8",
-                      fontWeight: "700",
-                    }}
-                  >
-                    {formatFocusTime(focusSeconds)}
-                  </span>
-                </div>
-                <div style={{ fontSize: "11px", color: "#94a3b8" }}>
-                  {isFocusRunning ? "Session 25min active" : "Concentration profonde"}
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => {
-                setIsFocusRunning(false);
-                setFocusSeconds(25 * 60);
-              }}
-              style={{
-                padding: "6px 8px",
-                borderRadius: "8px",
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                color: "#94a3b8",
-                cursor: "pointer",
-              }}
-              title="Réinitialiser le Focus"
-            >
-              <RotateCcw size={13} />
-            </button>
-          </div>
-        </div>
-
-        {/* =========================================================================
-            3. ACTION MATRIX (4 Glass Launchers)
-           ========================================================================= */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
-            gap: "14px",
-            marginBottom: "24px",
-          }}
-        >
-          {/* Action 1: Nouveau Rendez-vous */}
+        {/* Action Buttons Matrix */}
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Briefing Vocal */}
           <button
-            onClick={() => setShowEventForm(true)}
-            className="cyber-card"
-            style={{
-              padding: "16px",
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-              cursor: "pointer",
-              textAlign: "left",
-              color: "#ffffff",
-              border: "1px solid rgba(56, 189, 248, 0.18)",
-            }}
+            onClick={handlePlayDailyBriefing}
+            disabled={isPlayingBriefing}
+            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
+              isPlayingBriefing
+                ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
+                : "bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200/80"
+            }`}
+            title="Écouter le briefing vocal de la journée"
           >
-            <div
-              style={{
-                width: "42px",
-                height: "42px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(37, 99, 235, 0.2) 100%)",
-                border: "1px solid rgba(56, 189, 248, 0.3)",
-                color: "#38bdf8",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CalendarIcon size={20} />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Nouveau Créneau</div>
-              <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>Planifier l&apos;agenda</div>
-            </div>
-            <ArrowRight size={15} style={{ color: "#38bdf8" }} />
+            <Volume2 size={16} className={isPlayingBriefing ? "animate-bounce" : "text-blue-600"} />
+            <span>{isPlayingBriefing ? "Lecture en cours..." : "Briefing Vocal"}</span>
           </button>
 
-          {/* Action 2: Rappel Vocal Flash */}
-          <Link
-            href="/reminders"
-            className="cyber-card"
-            style={{
-              padding: "16px",
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-              cursor: "pointer",
-              textAlign: "left",
-              textDecoration: "none",
-              color: "#ffffff",
-              border: "1px solid rgba(245, 158, 11, 0.18)",
-            }}
+          {/* Export ICS */}
+          <button
+            onClick={handleExportICS}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-xs transition-all"
+            title="Exporter l'agenda au format .ICS"
           >
-            <div
-              style={{
-                width: "42px",
-                height: "42px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(239, 68, 68, 0.2) 100%)",
-                border: "1px solid rgba(245, 158, 11, 0.3)",
-                color: "#f59e0b",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Bell size={20} />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Rappels Vocaux</div>
-              <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>Annonce à voix haute</div>
-            </div>
-            <ArrowRight size={15} style={{ color: "#f59e0b" }} />
-          </Link>
+            <Download size={15} className="text-slate-500" />
+            <span>Export .ICS</span>
+          </button>
 
-          {/* Action 3: Matrice des Tâches */}
-          <Link
-            href="/tasks"
-            className="cyber-card"
-            style={{
-              padding: "16px",
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-              cursor: "pointer",
-              textAlign: "left",
-              textDecoration: "none",
-              color: "#ffffff",
-              border: "1px solid rgba(16, 185, 129, 0.18)",
-            }}
+          {/* Nouveau Rendez-vous */}
+          <button
+            onClick={() => setShowEventForm(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-white bg-[#1d4ed8] hover:bg-[#1e40af] shadow-md shadow-blue-600/20 hover:shadow-lg hover:-translate-y-0.5 transition-all"
           >
-            <div
-              style={{
-                width: "42px",
-                height: "42px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)",
-                border: "1px solid rgba(16, 185, 129, 0.3)",
-                color: "#10b981",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CheckSquare size={20} />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Tâches &amp; Focus</div>
-              <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>Matrice des priorités</div>
-            </div>
-            <ArrowRight size={15} style={{ color: "#10b981" }} />
-          </Link>
+            <Plus size={16} />
+            <span>Nouveau Créneau</span>
+          </button>
 
-          {/* Action 4: Assistant IA & Vocal */}
-          <div
+          {/* Parler à l'IA */}
+          <button
             onClick={handleOpenAI}
-            className="cyber-card"
-            style={{
-              padding: "16px",
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-              cursor: "pointer",
-              textAlign: "left",
-              color: "#ffffff",
-              border: "1px solid rgba(139, 92, 246, 0.25)",
-            }}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 transition-all"
           >
-            <div
-              style={{
-                width: "42px",
-                height: "42px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)",
-                border: "1px solid rgba(139, 92, 246, 0.35)",
-                color: "#c084fc",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+            <Sparkles size={16} className="text-emerald-600" />
+            <span>Copilote IA</span>
+          </button>
+        </div>
+      </div>
+
+      {/* =========================================================================
+          2. STATS OVERVIEW CARDS (Grid 4 Colonnes)
+         ========================================================================= */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* KPI 1 : Rendez-vous */}
+        <Link
+          href="/calendar"
+          className="bg-white border border-slate-200/90 hover:border-blue-400 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold border border-blue-100 group-hover:scale-105 transition-transform">
+              <CalendarIcon size={20} className="text-blue-600" />
+            </div>
+            <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
+              7 jours
+            </span>
+          </div>
+
+          <div>
+            <div className="text-3xl font-black text-slate-900 mb-1">
+              {events.length}
+            </div>
+            <div className="text-xs font-semibold text-slate-500">
+              Rendez-vous programmés
+            </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-blue-700 font-semibold">
+            <span>Consulter l&apos;agenda</span>
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+
+        {/* KPI 2 : Rappels Vocaux */}
+        <Link
+          href="/reminders"
+          className="bg-white border border-slate-200/90 hover:border-amber-400 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold border border-amber-100 group-hover:scale-105 transition-transform">
+              <Bell size={20} className="text-amber-600" />
+            </div>
+            <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-100">
+              En attente
+            </span>
+          </div>
+
+          <div>
+            <div className="text-3xl font-black text-slate-900 mb-1">
+              {reminders.length}
+            </div>
+            <div className="text-xs font-semibold text-slate-500">
+              Alarmes &amp; Rappels vocaux
+            </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-amber-700 font-semibold">
+            <span>Gérer les alarmes</span>
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+
+        {/* KPI 3 : Tâches & Priorités */}
+        <Link
+          href="/tasks"
+          className="bg-white border border-slate-200/90 hover:border-emerald-400 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold border border-emerald-100 group-hover:scale-105 transition-transform">
+              <CheckSquare size={20} className="text-emerald-600" />
+            </div>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
+              {tasks.length} actives
+            </span>
+          </div>
+
+          <div>
+            <div className="text-3xl font-black text-slate-900 mb-1">
+              {tasks.length}
+            </div>
+            <div className="text-xs font-semibold text-slate-500">
+              Tâches à accomplir
+            </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-emerald-700 font-semibold">
+            <span>Ouvrir la to-do</span>
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+
+        {/* KPI 4 : Pomodoro Focus Pod */}
+        <div className="bg-white border border-slate-200/90 p-5 rounded-2xl shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold border border-indigo-100">
+              <Target size={20} className="text-indigo-600" />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => {
+                  setIsFocusRunning(false);
+                  setFocusSeconds(25 * 60);
+                }}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Réinitialiser à 25 minutes"
+              >
+                <RotateCcw size={14} />
+              </button>
+              <button
+                onClick={() => setIsFocusRunning(!isFocusRunning)}
+                className={`p-1.5 rounded-lg text-white font-bold transition-all ${
+                  isFocusRunning ? "bg-amber-500 hover:bg-amber-600" : "bg-indigo-600 hover:bg-indigo-700"
+                }`}
+                title={isFocusRunning ? "Mettre en pause" : "Démarrer"}
+              >
+                {isFocusRunning ? <Pause size={14} /> : <Play size={14} />}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div className="text-3xl font-black text-indigo-700 font-mono tracking-tight mb-1">
+              {formatFocusTime(focusSeconds)}
+            </div>
+            <div className="text-xs font-semibold text-slate-500">
+              {isFocusRunning ? "Session de concentration active 🔥" : "Mode Focus Pomodoro (25m)"}
+            </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>Série active</span>
+            <span className="font-bold text-amber-600">🔥 7 jours</span>
+          </div>
+        </div>
+      </div>
+
+      {/* =========================================================================
+          3. BARRE D'AJOUT RAPIDE DE TÂCHE
+         ========================================================================= */}
+      <form
+        onSubmit={handleCreateQuickTask}
+        className="bg-white border border-slate-200/90 shadow-xs rounded-2xl p-3 sm:p-4 flex items-center gap-3"
+      >
+        <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+          <Plus size={20} />
+        </div>
+        <input
+          type="text"
+          value={quickTaskText}
+          onChange={(e) => setQuickTaskText(e.target.value)}
+          placeholder="Ajouter une tâche ou un rappel express... (Appuyez sur Entrée pour valider)"
+          disabled={isCreatingTask}
+          className="flex-1 bg-transparent border-none outline-hidden text-sm sm:text-base text-slate-900 placeholder-slate-400 font-medium"
+        />
+        <button
+          type="submit"
+          disabled={!quickTaskText.trim() || isCreatingTask}
+          className="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#1d4ed8] hover:bg-[#1e40af] disabled:opacity-50 disabled:pointer-events-none transition-all shrink-0"
+        >
+          {isCreatingTask ? "Ajout..." : "Ajouter"}
+        </button>
+      </form>
+
+      {/* =========================================================================
+          4. MAIN COCKPIT PANELS : 3 COLONNES STRUCTURÉES
+         ========================================================================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
+        {/* COLONNE 1 : Agenda & Rendez-vous Récents */}
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold">
+                <CalendarIcon size={18} />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-900">
+                  Prochains Rendez-vous
+                </h2>
+                <p className="text-xs text-slate-500">
+                  {events.length} créneau(x) à venir
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/calendar"
+              className="text-xs font-bold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl border border-blue-200 transition-colors inline-flex items-center gap-1.5"
             >
-              <Sparkles size={20} />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>Assistant Vocal IA</div>
-              <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>Scan &amp; Conversation</div>
-            </div>
-            <ArrowRight size={15} style={{ color: "#c084fc" }} />
+              <span>Voir tout</span>
+              <ArrowRight size={12} />
+            </Link>
+          </div>
+
+          <div className="space-y-3">
+            {events.length === 0 ? (
+              <div className="text-center py-8 px-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <CalendarIcon size={32} className="mx-auto text-slate-300 mb-2" />
+                <p className="text-sm font-semibold text-slate-700">Aucun rendez-vous prévu</p>
+                <p className="text-xs text-slate-400 mt-1 mb-4">Votre agenda est totalement libre.</p>
+                <button
+                  onClick={() => setShowEventForm(true)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#1d4ed8] hover:bg-[#1e40af] transition-all"
+                >
+                  <Plus size={14} />
+                  <span>Ajouter un événement</span>
+                </button>
+              </div>
+            ) : (
+              events.slice(0, 5).map((evt) => {
+                const eventDate = new Date(evt.startAt);
+                return (
+                  <div
+                    key={evt.id}
+                    className="p-3.5 rounded-2xl border border-slate-100 hover:border-blue-200 bg-slate-50/50 hover:bg-white transition-all flex items-start gap-3.5"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex flex-col items-center justify-center font-extrabold text-xs shrink-0 border border-blue-100">
+                      <span className="text-[10px] text-blue-600 font-bold uppercase">
+                        {eventDate.toLocaleDateString("fr-FR", { weekday: "short" })}
+                      </span>
+                      <span className="text-sm font-black">
+                        {eventDate.getDate()}
+                      </span>
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-bold text-slate-900 truncate">
+                        {evt.title}
+                      </h4>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                        <span className="font-semibold text-blue-700">
+                          {eventDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                        {evt.location && (
+                          <span className="flex items-center gap-1 truncate">
+                            · <MapPin size={11} className="text-slate-400 shrink-0" />
+                            {evt.location}
+                          </span>
+                        )}
+                      </div>
+                      {evt.contact && (
+                        <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+                          <User size={11} className="text-slate-400" />
+                          <span>Avec {evt.contact.firstName} {evt.contact.lastName || ""}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 
-        {/* =========================================================================
-            4. MAIN COCKPIT GRID (3 Columns: Agenda / Rappels / Tâches & Gain)
-           ========================================================================= */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
-            gap: "20px",
-            alignItems: "start",
-          }}
-        >
-          {/* COLUMN 1: Agenda & Prochains Créneaux */}
-          <div
-            className="cyber-card"
-            style={{
-              padding: "24px",
-              background: "linear-gradient(135deg, rgba(10, 20, 46, 0.8) 0%, rgba(6, 12, 28, 0.9) 100%)",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "18px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <div
-                  style={{
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "8px",
-                    background: "rgba(6, 182, 212, 0.15)",
-                    color: "#38bdf8",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CalendarIcon size={16} />
-                </div>
-                <div>
-                  <h2 style={{ fontSize: "15px", fontWeight: "800", color: "#ffffff", margin: 0 }}>
-                    Prochains Rendez-vous
-                  </h2>
-                  <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>
-                    Créneaux confirmés &amp; synchronisés
-                  </p>
-                </div>
+        {/* COLONNE 2 : Rappels Vocaux & Alarmes Immanquables */}
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
+                <Bell size={18} />
               </div>
-              <Link
-                href="/calendar"
-                style={{
-                  fontSize: "12px",
-                  color: "#38bdf8",
-                  fontWeight: "700",
-                  textDecoration: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  background: "rgba(6, 182, 212, 0.1)",
-                  padding: "5px 10px",
-                  borderRadius: "8px",
-                  border: "1px solid rgba(56, 189, 248, 0.2)",
-                }}
-              >
-                <span>Agenda</span>
-                <ArrowRight size={12} />
-              </Link>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {events.length === 0 ? (
-                <>
-                  <div
-                    style={{
-                      padding: "12px 14px",
-                      borderRadius: "14px",
-                      border: "1px solid rgba(56, 189, 248, 0.12)",
-                      background: "rgba(15, 28, 63, 0.5)",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "12px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "42px",
-                        height: "46px",
-                        borderRadius: "10px",
-                        background: "linear-gradient(135deg, #06b6d4, #3b82f6)",
-                        color: "#ffffff",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontWeight: "800",
-                        fontSize: "12px",
-                        lineHeight: "1.1",
-                        flexShrink: 0,
-                        boxShadow: "0 0 10px rgba(6, 182, 212, 0.3)",
-                      }}
-                    >
-                      <span style={{ fontSize: "9px", opacity: 0.85 }}>MAR</span>
-                      <span>09</span>
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>
-                        Rendez-vous avec Paul
-                      </div>
-                      <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
-                        10:00 · Atelier Liège
-                      </div>
-                    </div>
-                    <span style={{ fontSize: "10.5px", fontWeight: "700", color: "#10b981", background: "rgba(16, 185, 129, 0.12)", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
-                      À venir
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      padding: "12px 14px",
-                      borderRadius: "14px",
-                      border: "1px solid rgba(56, 189, 248, 0.12)",
-                      background: "rgba(15, 28, 63, 0.5)",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "12px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "42px",
-                        height: "46px",
-                        borderRadius: "10px",
-                        background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-                        color: "#ffffff",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontWeight: "800",
-                        fontSize: "12px",
-                        lineHeight: "1.1",
-                        flexShrink: 0,
-                        boxShadow: "0 0 10px rgba(99, 102, 241, 0.3)",
-                      }}
-                    >
-                      <span style={{ fontSize: "9px", opacity: 0.85 }}>MAR</span>
-                      <span>09</span>
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>
-                        Consultation Dentiste
-                      </div>
-                      <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
-                        14:00 · Clinique Sainte-Rosalie
-                      </div>
-                    </div>
-                    <span style={{ fontSize: "10.5px", fontWeight: "700", color: "#10b981", background: "rgba(16, 185, 129, 0.12)", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
-                      À venir
-                    </span>
-                  </div>
-                </>
-              ) : (
-                events.slice(0, 4).map((event) => {
-                  const date = new Date(event.startAt);
-                  const month = date.toLocaleDateString("fr-FR", { month: "short" }).toUpperCase();
-                  const day = date.getDate().toString().padStart(2, "0");
-                  const time = date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-
-                  return (
-                    <div
-                      key={event.id}
-                      style={{
-                        padding: "12px 14px",
-                        borderRadius: "14px",
-                        border: "1px solid rgba(56, 189, 248, 0.12)",
-                        background: "rgba(15, 28, 63, 0.5)",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "42px",
-                          height: "46px",
-                          borderRadius: "10px",
-                          background: "linear-gradient(135deg, #06b6d4, #3b82f6)",
-                          color: "#ffffff",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontWeight: "800",
-                          fontSize: "12px",
-                          lineHeight: "1.1",
-                          flexShrink: 0,
-                          boxShadow: "0 0 10px rgba(6, 182, 212, 0.3)",
-                        }}
-                      >
-                        <span style={{ fontSize: "9px", opacity: 0.85 }}>{month}</span>
-                        <span>{day}</span>
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>
-                          {event.title}
-                        </div>
-                        <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
-                          {time} {event.location ? `· ${event.location}` : ""}
-                        </div>
-                      </div>
-                      <span style={{ fontSize: "10.5px", fontWeight: "700", color: "#10b981", background: "rgba(16, 185, 129, 0.12)", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
-                        Confirmé
-                      </span>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          {/* COLUMN 2: Rappels Vocaux Proactifs */}
-          <div
-            className="cyber-card"
-            style={{
-              padding: "24px",
-              background: "linear-gradient(135deg, rgba(10, 20, 46, 0.8) 0%, rgba(6, 12, 28, 0.9) 100%)",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "18px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <div
-                  style={{
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "8px",
-                    background: "rgba(245, 158, 11, 0.15)",
-                    color: "#f59e0b",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Volume2 size={16} />
-                </div>
-                <div>
-                  <h2 style={{ fontSize: "15px", fontWeight: "800", color: "#ffffff", margin: 0 }}>
-                    Rappels Vocaux IA
-                  </h2>
-                  <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>
-                    Annonces proactives programmées
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/reminders"
-                style={{
-                  fontSize: "12px",
-                  color: "#f59e0b",
-                  fontWeight: "700",
-                  textDecoration: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  background: "rgba(245, 158, 11, 0.1)",
-                  padding: "5px 10px",
-                  borderRadius: "8px",
-                  border: "1px solid rgba(245, 158, 11, 0.2)",
-                }}
-              >
-                <span>Gérer</span>
-                <ArrowRight size={12} />
-              </Link>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {reminders.length === 0 ? (
-                <>
-                  <div
-                    style={{
-                      padding: "12px 14px",
-                      borderRadius: "14px",
-                      border: "1px solid rgba(245, 158, 11, 0.15)",
-                      background: "rgba(15, 28, 63, 0.5)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>
-                        Acheter pièces atelier
-                      </div>
-                      <div style={{ fontSize: "11px", color: "#f59e0b", fontWeight: "600", marginTop: "2px" }}>
-                        18:00 · Synthèse Vocale
-                      </div>
-                    </div>
-                    <span style={{ fontSize: "10.5px", background: "rgba(6, 182, 212, 0.15)", color: "#38bdf8", fontWeight: "700", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(56, 189, 248, 0.25)" }}>
-                      Actif
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      padding: "12px 14px",
-                      borderRadius: "14px",
-                      border: "1px solid rgba(245, 158, 11, 0.15)",
-                      background: "rgba(15, 28, 63, 0.5)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>
-                        Rappeler Jean (Urgent)
-                      </div>
-                      <div style={{ fontSize: "11px", color: "#f59e0b", fontWeight: "600", marginTop: "2px" }}>
-                        20:00 · Synthèse Vocale
-                      </div>
-                    </div>
-                    <span style={{ fontSize: "10.5px", background: "rgba(6, 182, 212, 0.15)", color: "#38bdf8", fontWeight: "700", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(56, 189, 248, 0.25)" }}>
-                      Actif
-                    </span>
-                  </div>
-                </>
-              ) : (
-                reminders.slice(0, 3).map((r) => {
-                  const time = new Date(r.fireAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-                  return (
-                    <div
-                      key={r.id}
-                      style={{
-                        padding: "12px 14px",
-                        borderRadius: "14px",
-                        border: "1px solid rgba(245, 158, 11, 0.15)",
-                        background: "rgba(15, 28, 63, 0.5)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <div>
-                        <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#ffffff" }}>{r.title}</div>
-                        <div style={{ fontSize: "11px", color: "#f59e0b", fontWeight: "600", marginTop: "2px" }}>
-                          {time} · Vocal
-                        </div>
-                      </div>
-                      <span style={{ fontSize: "10.5px", background: "rgba(6, 182, 212, 0.15)", color: "#38bdf8", fontWeight: "700", padding: "3px 8px", borderRadius: "6px", border: "1px solid rgba(56, 189, 248, 0.25)" }}>
-                        Actif
-                      </span>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          {/* COLUMN 3: Tâches Prioritaires & Métriques */}
-          <div
-            className="cyber-card"
-            style={{
-              padding: "24px",
-              background: "linear-gradient(135deg, rgba(10, 20, 46, 0.8) 0%, rgba(6, 12, 28, 0.9) 100%)",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <div
-                  style={{
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "8px",
-                    background: "rgba(16, 185, 129, 0.15)",
-                    color: "#10b981",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CheckSquare size={16} />
-                </div>
-                <div>
-                  <h2 style={{ fontSize: "15px", fontWeight: "800", color: "#ffffff", margin: 0 }}>
-                    Tâches Prioritaires
-                  </h2>
-                  <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>
-                    Planification directe
-                  </p>
-                </div>
-              </div>
-              <span style={{ fontSize: "13px", fontWeight: "900", color: "#10b981" }}>
-                {taskCompletionRate}%
-              </span>
-            </div>
-
-            {/* Quick Task Creation Form */}
-            <form onSubmit={handleCreateQuickTask} style={{ marginBottom: "14px", display: "flex", gap: "8px" }}>
-              <input
-                type="text"
-                placeholder="Ajouter une tâche rapide..."
-                value={quickTaskText}
-                onChange={(e) => setQuickTaskText(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: "8px 12px",
-                  borderRadius: "10px",
-                  background: "rgba(15, 28, 63, 0.7)",
-                  border: "1px solid rgba(56, 189, 248, 0.2)",
-                  color: "#ffffff",
-                  fontSize: "12.5px",
-                  outline: "none",
-                }}
-              />
-              <button
-                type="submit"
-                disabled={!quickTaskText.trim() || isCreatingTask}
-                style={{
-                  padding: "8px 12px",
-                  borderRadius: "10px",
-                  background: "linear-gradient(135deg, #06b6d4, #10b981)",
-                  color: "#ffffff",
-                  border: "none",
-                  fontWeight: "700",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Plus size={16} />
-              </button>
-            </form>
-
-            {/* Task Checklist */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              {tasks.length === 0 ? (
-                <>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                      padding: "10px 12px",
-                      borderRadius: "10px",
-                      background: "rgba(15, 28, 63, 0.5)",
-                      border: "1px solid rgba(255, 255, 255, 0.05)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "18px",
-                        height: "18px",
-                        borderRadius: "6px",
-                        background: "#10b981",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "#ffffff",
-                      }}
-                    >
-                      <Check size={12} />
-                    </div>
-                    <span style={{ fontSize: "12.5px", color: "#cbd5e1", textDecoration: "line-through", opacity: 0.7 }}>
-                      Vérifier les factures fournisseurs
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                      padding: "10px 12px",
-                      borderRadius: "10px",
-                      background: "rgba(15, 28, 63, 0.5)",
-                      border: "1px solid rgba(56, 189, 248, 0.2)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "18px",
-                        height: "18px",
-                        borderRadius: "6px",
-                        border: "2px solid #38bdf8",
-                      }}
-                    />
-                    <span style={{ fontSize: "12.5px", color: "#ffffff", fontWeight: "600" }}>
-                      Préparer les pièces pour l&apos;atelier
-                    </span>
-                  </div>
-                </>
-              ) : (
-                tasks.slice(0, 4).map((task) => (
-                  <div
-                    key={task.id}
-                    onClick={() => handleToggleTask(task.id, task.isDone)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                      padding: "10px 12px",
-                      borderRadius: "10px",
-                      background: "rgba(15, 28, 63, 0.5)",
-                      border: task.isDone ? "1px solid rgba(255, 255, 255, 0.05)" : "1px solid rgba(56, 189, 248, 0.2)",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "18px",
-                        height: "18px",
-                        borderRadius: "6px",
-                        background: task.isDone ? "#10b981" : "transparent",
-                        border: task.isDone ? "none" : "2px solid #38bdf8",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "#ffffff",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {task.isDone && <Check size={12} />}
-                    </div>
-                    <span
-                      style={{
-                        fontSize: "12.5px",
-                        color: task.isDone ? "#94a3b8" : "#ffffff",
-                        textDecoration: task.isDone ? "line-through" : "none",
-                        fontWeight: task.isDone ? "400" : "600",
-                        flex: 1,
-                      }}
-                    >
-                      {task.title}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Impact Metric Strip */}
-            <div
-              style={{
-                marginTop: "16px",
-                padding: "12px 14px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%)",
-                border: "1px solid rgba(56, 189, 248, 0.2)",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
               <div>
-                <div style={{ fontSize: "16px", fontWeight: "900", color: "#10b981" }}>+5.2h / sem.</div>
-                <div style={{ fontSize: "10.5px", color: "#94a3b8" }}>Gain de temps IA</div>
+                <h2 className="text-base font-bold text-slate-900">
+                  Alarmes &amp; Rappels
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Déclenchement vocal garanti
+                </p>
               </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "16px", fontWeight: "900", color: "#38bdf8" }}>99.4%</div>
-                <div style={{ fontSize: "10.5px", color: "#94a3b8" }}>Fiabilité cockpit</div>
+            </div>
+
+            <Link
+              href="/reminders"
+              className="text-xs font-bold text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-xl border border-amber-200 transition-colors inline-flex items-center gap-1.5"
+            >
+              <span>Gérer</span>
+              <ArrowRight size={12} />
+            </Link>
+          </div>
+
+          <div className="space-y-3">
+            {reminders.length === 0 ? (
+              <div className="text-center py-8 px-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <Bell size={32} className="mx-auto text-slate-300 mb-2" />
+                <p className="text-sm font-semibold text-slate-700">Aucun rappel actif</p>
+                <p className="text-xs text-slate-400 mt-1 mb-4">Vos alarmes programmées s&apos;afficheront ici.</p>
+                <Link
+                  href="/reminders"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 transition-all"
+                >
+                  <Plus size={14} />
+                  <span>Créer une alarme</span>
+                </Link>
               </div>
+            ) : (
+              reminders.slice(0, 5).map((rem) => {
+                const remDate = new Date(rem.fireAt);
+                return (
+                  <div
+                    key={rem.id}
+                    className="p-3.5 rounded-2xl border border-slate-100 hover:border-amber-200 bg-slate-50/50 hover:bg-white transition-all flex items-center justify-between gap-3"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
+                        <Volume2 size={18} />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-bold text-slate-900 truncate">
+                          {rem.title}
+                        </h4>
+                        <div className="text-xs font-semibold text-amber-700 mt-0.5">
+                          Prévu à {remDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleDismissReminder(rem.id)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                        title="Acquitter le rappel"
+                      >
+                        <Check size={16} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-xs text-amber-900 flex items-start gap-2.5">
+            <Volume2 size={16} className="text-amber-600 mt-0.5 shrink-0" />
+            <div>
+              <strong className="font-bold">Alerte vocale automatique :</strong> Votre navigateur émettra un son carillon clair et l&apos;IA dictera votre rappel à voix haute à l&apos;heure dite.
+            </div>
+          </div>
+        </div>
+
+        {/* COLONNE 3 : Tâches Prioritaires & Focus */}
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
+                <CheckSquare size={18} />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-900">
+                  Priorités du Jour
+                </h2>
+                <p className="text-xs text-slate-500">
+                  {tasks.length} tâche(s) à faire
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/tasks"
+              className="text-xs font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200 transition-colors inline-flex items-center gap-1.5"
+            >
+              <span>Matrice</span>
+              <ArrowRight size={12} />
+            </Link>
+          </div>
+
+          <div className="space-y-2.5">
+            {tasks.length === 0 ? (
+              <div className="text-center py-8 px-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <CheckCircle2 size={32} className="mx-auto text-emerald-500 mb-2" />
+                <p className="text-sm font-semibold text-slate-700">Toutes les tâches sont terminées !</p>
+                <p className="text-xs text-slate-400 mt-1">Bravo, vous avez complété votre liste de travail.</p>
+              </div>
+            ) : (
+              tasks.slice(0, 5).map((task) => (
+                <div
+                  key={task.id}
+                  onClick={() => handleToggleTask(task.id, task.isDone)}
+                  className="p-3 rounded-xl border border-slate-100 hover:border-slate-200 bg-slate-50/40 hover:bg-slate-50 flex items-center gap-3 cursor-pointer transition-all"
+                >
+                  <div
+                    className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
+                      task.isDone
+                        ? "bg-emerald-600 border-emerald-600 text-white"
+                        : "border-slate-300 hover:border-blue-600"
+                    }`}
+                  >
+                    {task.isDone && <Check size={12} strokeWidth={3} />}
+                  </div>
+
+                  <span
+                    className={`text-sm flex-1 truncate ${
+                      task.isDone ? "line-through text-slate-400" : "font-semibold text-slate-800"
+                    }`}
+                  >
+                    {task.title}
+                  </span>
+
+                  {task.priority === "URGENT" && (
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-100 text-red-700">
+                      URGENT
+                    </span>
+                  )}
+                  {task.priority === "HIGH" && (
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-700">
+                      HIGH
+                    </span>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Metric Strip */}
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs text-slate-600">
+            <div>
+              <div className="text-base font-extrabold text-emerald-700">+5.2h / sem.</div>
+              <div className="text-[11px] text-slate-400">Gain de temps moyen</div>
+            </div>
+            <div className="text-right">
+              <div className="text-base font-extrabold text-blue-700">100% IA Flash</div>
+              <div className="text-[11px] text-slate-400">Fiabilité Cockpit</div>
             </div>
           </div>
         </div>
