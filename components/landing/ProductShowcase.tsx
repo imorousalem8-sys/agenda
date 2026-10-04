@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Volume2, Sparkles, PhoneCall, CheckCircle2, Play, Square, BellRing, Smartphone, ShieldCheck } from "lucide-react";
 import { playAlertChime } from "@/lib/voice";
@@ -50,8 +51,10 @@ export default function ProductShowcase() {
             <div className="relative w-full max-w-[420px]">
               
               {/* Badge supérieur flottant */}
-              <div className="absolute -top-4 -left-3 z-30 bg-white/90 backdrop-blur-xl px-4 py-2 rounded-2xl shadow-[0_8px_25px_rgba(37,99,235,0.12)] border border-white flex items-center gap-2">
-                <Sparkles size={15} className="text-blue-600 animate-spin-slow" />
+              <div className="absolute -top-4 -left-3 z-30 bg-white/90 backdrop-blur-xl px-4 py-2 rounded-2xl shadow-[0_8px_25px_rgba(37,99,235,0.12)] border border-white flex items-center gap-2.5">
+                <div className="relative w-6 h-6 rounded-lg overflow-hidden shrink-0 border border-blue-200">
+                  <Image src="/logo.png" alt="Logo AlarmAgenda" fill className="object-cover" />
+                </div>
                 <span className="text-xs font-black text-[#09132b] tracking-wide">
                   Technologie d&apos;Appel IA
                 </span>
