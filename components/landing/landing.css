@@ -1,0 +1,375 @@
+/* ==========================================================================
+   Landing page Alamajonda — CSS dédié (indépendant de Tailwind)
+   Référence de maquette : 1024px de large. Les tailles en vw reproduisent
+   les proportions de la maquette sur desktop, les media queries gèrent le reste.
+   ========================================================================== */
+
+.lp {
+  --lp-ink: #0b1736;
+  --lp-blue: #1a56d6;
+  --lp-blue-dark: #1546b3;
+  --lp-soft: #f3f8ff;
+  --lp-pad: clamp(24px, 8vw, 120px);
+  width: 100%;
+  background: #ffffff;
+  color: var(--lp-ink);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.lp a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------- Header ---------- */
+.lp-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #ffffff;
+  box-shadow: 0 6px 24px rgba(15, 27, 61, 0.07);
+}
+
+.lp-header-inner {
+  max-width: 1536px;
+  height: 72px;
+  margin: 0 auto;
+  padding: 0 var(--lp-pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.lp-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.lp-logo-img {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.lp-logo:hover .lp-logo-img {
+  transform: scale(1.06);
+}
+
+.lp-logo-text {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--lp-ink);
+}
+
+.lp-nav {
+  display: none;
+  align-items: center;
+  gap: 40px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.lp-nav a {
+  transition: color 0.2s ease;
+}
+
+.lp-nav a:hover {
+  color: var(--lp-blue);
+}
+
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background: var(--lp-blue);
+  color: #ffffff !important;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(26, 86, 214, 0.28);
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lp-btn:hover {
+  background: var(--lp-blue-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 86, 214, 0.32);
+}
+
+.lp-header .lp-btn {
+  font-size: 13px;
+  padding: 9px 14px;
+}
+
+/* ---------- Hero ---------- */
+.lp-hero {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+}
+
+.lp-band {
+  position: relative;
+  width: 100%;
+  background: var(--lp-soft);
+}
+
+.lp-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 512 / 370;
+}
+
+.lp-photo-btn {
+  position: absolute;
+  left: 5%;
+  top: 38.5%;
+  width: 36%;
+  height: 14%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.lp-photo-btn:hover {
+  background: rgba(59, 130, 246, 0.07);
+}
+
+.lp-photo-btn.is-playing {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.65);
+}
+
+.lp-copy {
+  position: relative;
+  padding: 40px var(--lp-pad) 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.lp-title {
+  font-size: clamp(32px, 7.4vw, 46px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+}
+
+.lp-sub {
+  font-size: 16px;
+  line-height: 1.45;
+  margin: 0 0 24px;
+  max-width: 36ch;
+}
+
+/* ---------- Cartes ---------- */
+.lp-cards-wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 1536px;
+  margin: 0 auto;
+  padding: 32px var(--lp-pad) 72px;
+}
+
+.lp-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.lp-card {
+  background: #ffffff;
+  border: 1px solid #eef2f8;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 8px 28px rgba(15, 27, 61, 0.09);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lp-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 36px rgba(26, 86, 214, 0.15);
+}
+
+.lp-card svg {
+  display: block;
+  width: 40px;
+  height: 40px;
+  color: var(--lp-blue);
+  margin-bottom: 14px;
+}
+
+.lp-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 8px;
+}
+
+.lp-card p {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #475569;
+  margin: 0;
+}
+
+/* ---------- Footer ---------- */
+.lp-footer {
+  border-top: 1px solid #e8edf5;
+  background: #ffffff;
+}
+
+.lp-footer-inner {
+  max-width: 1536px;
+  margin: 0 auto;
+  padding: 36px var(--lp-pad);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.lp-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.lp-footer-brand .lp-logo-img {
+  width: 28px;
+  height: 28px;
+}
+
+.lp-footer-brand strong {
+  font-size: 16px;
+  color: var(--lp-ink);
+}
+
+.lp-footer-links {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-weight: 600;
+  color: #475569;
+}
+
+.lp-footer-links a:hover {
+  color: var(--lp-blue);
+}
+
+/* ---------- Tablette ---------- */
+@media (min-width: 640px) {
+  .lp-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .lp-card {
+    padding: 18px;
+  }
+  .lp-header .lp-btn {
+    font-size: 15px;
+    padding: 10px 20px;
+  }
+  .lp-footer-inner {
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 768px) {
+  .lp-nav {
+    display: flex;
+    gap: clamp(20px, 3.9vw, 56px);
+  }
+}
+
+/* ---------- Desktop : proportions identiques à la maquette ---------- */
+@media (min-width: 1024px) {
+  .lp-band {
+    aspect-ratio: 1024 / 370;
+  }
+
+  .lp-photo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+
+  .lp-copy {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    padding: 0 3vw 2vw var(--lp-pad);
+  }
+
+  .lp-title {
+    font-size: clamp(34px, 3.7vw, 64px);
+    margin-bottom: 1.4vw;
+  }
+
+  .lp-sub {
+    font-size: clamp(15px, 1.5vw, 24px);
+    max-width: none;
+    margin-bottom: 1.9vw;
+  }
+
+  .lp-copy .lp-btn {
+    font-size: clamp(14px, 1.4vw, 20px);
+    padding: 0.8vw 1.7vw;
+    min-height: 40px;
+  }
+
+  .lp-cards-wrap {
+    margin-top: -7.8vw;
+    padding-top: 0;
+    padding-bottom: 80px;
+  }
+
+  .lp-cards {
+    width: 52vw;
+    max-width: 52vw;
+    gap: 1.4vw;
+  }
+
+  .lp-card {
+    padding: 1.7vw;
+    border-radius: 1.2vw;
+  }
+
+  .lp-card svg {
+    width: clamp(34px, 3.9vw, 64px);
+    height: clamp(34px, 3.9vw, 64px);
+    margin-bottom: 1.4vw;
+  }
+
+  .lp-card h3 {
+    font-size: clamp(14px, 1.5vw, 24px);
+    margin-bottom: 0.7vw;
+  }
+
+  .lp-card p {
+    font-size: clamp(11.5px, 1.1vw, 17px);
+  }
+}
