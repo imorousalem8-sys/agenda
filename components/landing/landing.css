@@ -127,28 +127,116 @@
   position: relative;
   width: 100%;
   aspect-ratio: 512 / 370;
+  overflow: hidden;
 }
 
-.lp-photo-btn {
+.lp-photo-img {
+  transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.lp-photo:hover .lp-photo-img {
+  transform: scale(1.04);
+}
+
+/* Bulle « Appel Vocal » : vrai composant interactif */
+.lp-bubble {
   position: absolute;
   left: 5%;
-  top: 38.5%;
-  width: 36%;
-  height: 14%;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  border-radius: 12px;
+  top: 36%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px 12px 14px;
+  border: 1px solid rgba(26, 86, 214, 0.18);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--lp-ink);
+  font: inherit;
+  text-align: left;
   cursor: pointer;
-  transition: background 0.2s ease;
+  box-shadow: 0 14px 34px rgba(11, 23, 54, 0.18);
+  animation: lp-float 4.5s ease-in-out infinite;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.lp-photo-btn:hover {
-  background: rgba(59, 130, 246, 0.07);
+.lp-bubble::after {
+  content: "";
+  position: absolute;
+  left: 44px;
+  bottom: -7px;
+  width: 14px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  border-right: 1px solid rgba(26, 86, 214, 0.18);
+  border-bottom: 1px solid rgba(26, 86, 214, 0.18);
+  transform: rotate(45deg);
 }
 
-.lp-photo-btn.is-playing {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.65);
+.lp-bubble:hover {
+  border-color: rgba(26, 86, 214, 0.5);
+  box-shadow: 0 18px 40px rgba(26, 86, 214, 0.28);
+  animation-play-state: paused;
+}
+
+.lp-bubble.is-playing {
+  border-color: var(--lp-blue);
+  box-shadow: 0 0 0 4px rgba(26, 86, 214, 0.18), 0 18px 40px rgba(26, 86, 214, 0.28);
+}
+
+.lp-wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 28px;
+}
+
+.lp-wave i {
+  display: block;
+  width: 3px;
+  height: 40%;
+  border-radius: 3px;
+  background: var(--lp-blue);
+  animation: lp-wave 1.2s ease-in-out infinite;
+}
+
+.lp-wave i:nth-child(2) { animation-delay: 0.1s; }
+.lp-wave i:nth-child(3) { animation-delay: 0.2s; }
+.lp-wave i:nth-child(4) { animation-delay: 0.3s; }
+.lp-wave i:nth-child(5) { animation-delay: 0.4s; }
+.lp-wave i:nth-child(6) { animation-delay: 0.5s; }
+.lp-wave i:nth-child(7) { animation-delay: 0.6s; }
+
+.lp-bubble.is-playing .lp-wave i {
+  animation-duration: 0.6s;
+}
+
+.lp-bubble-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.lp-bubble-text strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.lp-bubble-text span {
+  font-size: 13px;
+  color: #475569;
+}
+
+@keyframes lp-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes lp-wave {
+  0%, 100% { height: 25%; }
+  50% { height: 100%; }
 }
 
 .lp-copy {
@@ -371,5 +459,131 @@
 
   .lp-card p {
     font-size: clamp(11.5px, 1.1vw, 17px);
+  }
+}
+
+/* ---------- Finitions « vivantes » ---------- */
+.lp-br {
+  display: none;
+}
+
+.lp-nav a {
+  position: relative;
+  padding: 4px 0;
+}
+
+.lp-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--lp-blue);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.lp-nav a:hover::after {
+  transform: scaleX(1);
+}
+
+.lp-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.lp-card {
+  cursor: default;
+}
+
+.lp-card svg {
+  transition: transform 0.3s ease;
+}
+
+.lp-card:hover svg {
+  transform: scale(1.12) rotate(-4deg);
+}
+
+.lp-card:hover h3 {
+  color: var(--lp-blue);
+}
+
+.lp-card h3 {
+  transition: color 0.25s ease;
+}
+
+/* Entrée en douceur */
+@keyframes lp-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.lp-copy > * {
+  animation: lp-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+.lp-copy > *:nth-child(2) { animation-delay: 0.1s; }
+.lp-copy > *:nth-child(3) { animation-delay: 0.2s; }
+
+.lp-card {
+  animation: lp-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+.lp-card:nth-child(1) { animation-delay: 0.3s; }
+.lp-card:nth-child(2) { animation-delay: 0.4s; }
+.lp-card:nth-child(3) { animation-delay: 0.5s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lp *, .lp *::before, .lp *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lp-br {
+    display: inline;
+  }
+
+  .lp-copy {
+    padding-right: 0;
+  }
+
+  .lp-title {
+    font-size: clamp(30px, 3.5vw, 64px);
+  }
+
+  .lp-title span {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .lp-sub {
+    font-size: clamp(14px, 1.4vw, 22px);
+  }
+
+  .lp-bubble {
+    top: 37%;
+    gap: 0.9vw;
+    padding: 0.9vw 1.4vw 0.9vw 1.1vw;
+    border-radius: 1.1vw;
+  }
+
+  .lp-wave {
+    height: 2.4vw;
+    gap: 0.28vw;
+  }
+
+  .lp-wave i {
+    width: 0.28vw;
+    min-width: 3px;
+  }
+
+  .lp-bubble-text strong {
+    font-size: clamp(13px, 1.25vw, 20px);
+  }
+
+  .lp-bubble-text span {
+    font-size: clamp(12px, 1.15vw, 18px);
   }
 }

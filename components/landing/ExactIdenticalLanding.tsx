@@ -67,31 +67,39 @@ export default function ExactIdenticalLanding() {
         <div className="lp-band">
           <div className="lp-photo">
             <Image
-              src="/images/hero-mockup-crop.jpg"
+              src="/images/hero-woman.jpg"
               alt="Femme d'affaires souriante utilisant l'assistant vocal Alamajonda dans un bureau lumineux"
               fill
               priority
+              quality={92}
               sizes="(min-width: 1024px) 50vw, 100vw"
-              style={{ objectFit: "cover", objectPosition: "center" }}
+              className="lp-photo-img"
+              style={{ objectFit: "cover", objectPosition: "62% 30%" }}
             />
             <button
               type="button"
               onClick={handlePlayVoice}
               aria-label="Écouter l'annonce vocale du rendez-vous de 14h30"
-              title="Cliquer pour écouter l'annonce vocale"
-              className={`lp-photo-btn${isPlayingVoice ? " is-playing" : ""}`}
-            />
+              className={`lp-bubble${isPlayingVoice ? " is-playing" : ""}`}
+            >
+              <span className="lp-wave" aria-hidden="true">
+                <i /><i /><i /><i /><i /><i /><i />
+              </span>
+              <span className="lp-bubble-text">
+                <strong>Appel Vocal</strong>
+                <span>{isPlayingVoice ? "Lecture en cours…" : "Programmé à 14h30"}</span>
+              </span>
+            </button>
           </div>
 
           <div className="lp-copy">
             <h1 className="lp-title">
-              Ne manquez plus aucun
-              <br />
-              rendez-vous important
+              <span>Ne manquez plus aucun</span>
+              <span>rendez-vous important</span>
             </h1>
             <p className="lp-sub">
-              L&apos;assistant vocal IA intelligent pour une gestion d&apos;agenda sans effort,
-              précise et automatisée.
+              L&apos;assistant vocal IA intelligent pour une gestion d&apos;agenda
+              <br className="lp-br" /> sans effort, précise et automatisée.
             </p>
             <Link href="#fonctionnalites" className="lp-btn">
               En savoir plus
