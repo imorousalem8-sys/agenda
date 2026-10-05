@@ -124,9 +124,16 @@ export default function ExactIdenticalLanding() {
 
           {/* Titres et Bouton à gauche */}
           <div className="lp-copy">
+            <div className="lp-badge-wrap">
+              <span className="lp-badge">
+                <span className="lp-badge-dot" />
+                Copilote Vocal IA Autonome
+              </span>
+            </div>
+
             <h1 className="lp-title">
-              <span style={{ display: "block", whiteSpace: "nowrap" }}>Ne manquez plus aucun</span>
-              <span style={{ display: "block", whiteSpace: "nowrap" }}>rendez-vous important</span>
+              <span className="lp-title-line">Ne manquez plus aucun</span>
+              <span className="lp-title-line lp-gradient-text">rendez-vous important</span>
             </h1>
 
             <p className="lp-sub">
@@ -134,9 +141,18 @@ export default function ExactIdenticalLanding() {
               <br className="lp-br" /> sans effort, précise et automatisée.
             </p>
 
-            <Link href="/register" className="lp-btn">
-              En savoir plus
-            </Link>
+            <div className="lp-hero-btns">
+              <Link href="/register" className="lp-btn lp-btn-primary">
+                Commencer Gratuitement
+              </Link>
+              <button
+                type="button"
+                onClick={handlePlayVoice}
+                className="lp-btn lp-btn-glass"
+              >
+                {isPlayingVoice ? "Arrêter la voix" : "Écouter l'IA en direct"}
+              </button>
+            </div>
           </div>
 
         </div>
@@ -238,8 +254,8 @@ export default function ExactIdenticalLanding() {
             <div className="lp-price-card">
               <div>
                 <span className="lp-tag">Découverte</span>
-                <h3 style={{ fontSize: "24px", fontWeight: "800", margin: "8px 0" }}>Gratuit</h3>
-                <p style={{ fontSize: "14px", color: "#64748b" }}>Pour gérer et organiser votre calendrier personnel.</p>
+                <h3 className="lp-price-title">Gratuit</h3>
+                <p className="lp-price-desc">Pour gérer et organiser votre calendrier personnel.</p>
                 <div className="lp-price-val">
                   <strong>0€</strong>
                   <span>/ pour toujours</span>
@@ -248,10 +264,10 @@ export default function ExactIdenticalLanding() {
                   <li><Check size={16} /> Agenda intelligent synchronisé</li>
                   <li><Check size={16} /> Notifications web push et sonores</li>
                   <li><Check size={16} /> Gestion complète des contacts et tâches</li>
-                  <li style={{ color: "#94a3b8", textDecoration: "line-through" }}>Appels Vocaux IA réels sur mobile</li>
+                  <li className="lp-feature-disabled">Appels Vocaux IA réels sur mobile</li>
                 </ul>
               </div>
-              <Link href="/register" className="lp-btn" style={{ background: "#f1f5f9", color: "#0b1736", boxShadow: "none" }}>
+              <Link href="/register" className="lp-btn lp-btn-secondary">
                 Commencer Gratuitement
               </Link>
             </div>
@@ -261,21 +277,21 @@ export default function ExactIdenticalLanding() {
               <span className="lp-price-badge">Recommandé</span>
               <div>
                 <span className="lp-tag">Pro Executive</span>
-                <h3 style={{ fontSize: "24px", fontWeight: "800", margin: "8px 0" }}>Pro Executive</h3>
-                <p style={{ fontSize: "14px", color: "#64748b" }}>Pour les dirigeants et professionnels soucieux de ponctualité.</p>
+                <h3 className="lp-price-title">Pro Executive</h3>
+                <p className="lp-price-desc">Pour les dirigeants et professionnels soucieux de ponctualité.</p>
                 <div className="lp-price-val">
-                  <strong style={{ color: "var(--lp-blue)" }}>19€</strong>
+                  <strong className="lp-price-accent">19€</strong>
                   <span>/ mois · sans engagement</span>
                 </div>
                 <ul className="lp-price-features">
-                  <li style={{ fontWeight: "700", color: "#0b1736" }}><Check size={16} /> Appels Vocaux IA illimités sur votre mobile</li>
+                  <li className="lp-feature-highlight"><Check size={16} /> Appels Vocaux IA illimités sur votre mobile</li>
                   <li><Check size={16} /> Briefing vocal avant chaque réunion</li>
                   <li><Check size={16} /> Rappels SMS automatiques de secours</li>
                   <li><Check size={16} /> Copilote vocal avec commandes naturelles</li>
                   <li><Check size={16} /> Support prioritaire exécutif 7j/7</li>
                 </ul>
               </div>
-              <Link href="/register" className="lp-btn">
+              <Link href="/register" className="lp-btn lp-btn-primary">
                 Démarrer l&apos;essai Pro 14 jours
               </Link>
             </div>
