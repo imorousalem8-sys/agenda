@@ -1,14 +1,20 @@
 /* ==========================================================================
-   Landing page Alamajonda — CSS dédié (Design Bleu-Blanc Translucide & Nuit Étoilée)
-   Arrière-plan : Nature nocturne, ciel orageux avec lune argentée et étoiles filantes
-   Style : Liquid Frosted Glass (Verre dépoli bleu-blanc translucide prestigieux)
+   Landing page Alamajonda — CSS dédié (Design Transparent & Ciel Étoilé Nocturne)
+   Arrière-plan : Paysage nocturne orageux avec pleine lune, sapins et prairie
+   Style : Verre Dépoli Transparent Ultra-Prestigieux (Liquid Dark Glassmorphism)
+   ZÉRO film blanc opaque : Le paysage est 100% visible à travers le site !
    ========================================================================== */
 
 .lp {
-  --lp-ink: #09132b;
+  --lp-ink: #ffffff;
   --lp-blue: #0d55e0;
+  --lp-blue-light: #38bdf8;
   --lp-blue-dark: #0b47bf;
-  --lp-soft: rgba(238, 245, 255, 0.75);
+  --lp-text-sub: #cbd5e1;
+  --lp-text-muted: #94a3b8;
+  --lp-glass-bg: rgba(9, 20, 48, 0.62);
+  --lp-glass-border: rgba(255, 255, 255, 0.18);
+  --lp-glass-hover: rgba(14, 30, 72, 0.78);
   --lp-pad: clamp(20px, 6vw, 100px);
   width: 100%;
   max-width: 100%;
@@ -18,13 +24,14 @@
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   
-  /* Fond Nature Étoilée avec Lune */
-  background-color: #060e22;
+  /* Fond Nature Étoilée avec Pleine Lune — Entièrement Visible */
+  background-color: #050b1a;
   background-image: url('/images/starry-night-bg.jpg');
   background-attachment: fixed;
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
+  min-height: 100vh;
 }
 
 .lp a {
@@ -32,17 +39,11 @@
   text-decoration: none;
 }
 
-/* ---------- Voile Atmosphérique Translucide Bleu-Blanc ---------- */
-.lp-mist-overlay {
+/* ---------- Voile très léger de contraste (Zéro film blanc) ---------- */
+.lp-vignette {
   position: fixed;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(240, 246, 255, 0.68) 0%,
-    rgba(245, 249, 255, 0.60) 22%,
-    rgba(238, 246, 255, 0.72) 55%,
-    rgba(232, 242, 255, 0.82) 100%
-  );
+  background: radial-gradient(circle at 50% 30%, transparent 40%, rgba(5, 11, 26, 0.45) 100%);
   pointer-events: none;
   z-index: 1;
 }
@@ -53,7 +54,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 65vh;
+  height: 70vh;
   pointer-events: none;
   z-index: 2;
   overflow: hidden;
@@ -63,31 +64,31 @@
   position: absolute;
   width: 140px;
   height: 2px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(56, 189, 248, 0.6), transparent);
+  background: linear-gradient(90deg, #ffffff, rgba(56, 189, 248, 0.8), transparent);
   transform: rotate(-35deg);
   opacity: 0;
   animation: shootingStarAnim 7s linear infinite;
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9));
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
 }
 
 .lp-shooting-star:nth-child(1) {
   top: 14%;
-  left: 38%;
+  left: 35%;
   animation-delay: 0.5s;
 }
 
 .lp-shooting-star:nth-child(2) {
   top: 8%;
-  left: 72%;
+  left: 70%;
   width: 180px;
-  animation-delay: 3.8s;
+  animation-delay: 3.5s;
 }
 
 .lp-shooting-star:nth-child(3) {
-  top: 25%;
-  left: 82%;
-  width: 110px;
-  animation-delay: 5.6s;
+  top: 22%;
+  left: 80%;
+  width: 120px;
+  animation-delay: 5.5s;
 }
 
 @keyframes shootingStarAnim {
@@ -108,22 +109,22 @@
   }
 }
 
-/* Contenu Principal positionné au-dessus des voiles */
+/* Contenu Principal positionné au-dessus des étoiles */
 .lp-main-content {
   position: relative;
   z-index: 10;
 }
 
-/* ---------- 1. Header (Navbar en Verre Dépoli Bleu-Blanc) ---------- */
+/* ---------- 1. Header (Navbar en Verre Dépoli Transparent) ---------- */
 .lp-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(6, 14, 34, 0.72);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 8px 30px rgba(11, 23, 54, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 .lp-header-inner {
@@ -151,7 +152,7 @@
   flex-shrink: 0;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 14px rgba(13, 85, 224, 0.28);
+  box-shadow: 0 4px 16px rgba(13, 85, 224, 0.45);
   transition: transform 0.25s ease;
 }
 
@@ -163,11 +164,11 @@
   font-size: 24px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--lp-ink);
+  color: #ffffff;
 }
 
 .lp-logo-text span {
-  color: var(--lp-blue);
+  color: var(--lp-blue-light);
 }
 
 /* MENUS PARFAITEMENT CENTRÉS AU MILIEU */
@@ -183,7 +184,7 @@
     gap: clamp(20px, 3.2vw, 44px);
     font-size: 15px;
     font-weight: 600;
-    color: #334155;
+    color: #e2e8f0;
     flex: 1;
     margin: 0 20px;
   }
@@ -196,7 +197,7 @@
 }
 
 .lp-nav a:hover {
-  color: var(--lp-blue);
+  color: var(--lp-blue-light);
 }
 
 .lp-nav a::after {
@@ -207,7 +208,7 @@
   width: 100%;
   height: 2px;
   border-radius: 2px;
-  background: var(--lp-blue);
+  background: var(--lp-blue-light);
   transform: scaleX(0);
   transform-origin: center;
   transition: transform 0.2s ease;
@@ -227,7 +228,7 @@
 .lp-link-login {
   font-size: 14px;
   font-weight: 600;
-  color: #334155;
+  color: #e2e8f0;
   padding: 8px 14px;
   border-radius: 9px;
   transition: all 0.2s;
@@ -241,8 +242,8 @@
 }
 
 .lp-link-login:hover {
-  color: var(--lp-blue);
-  background: rgba(255, 255, 255, 0.85);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .lp-btn {
@@ -256,16 +257,16 @@
   font-size: 15px;
   font-weight: 700;
   white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(13, 85, 224, 0.32);
+  box-shadow: 0 4px 16px rgba(13, 85, 224, 0.4);
   transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   border: none;
   cursor: pointer;
 }
 
 .lp-btn:hover {
-  background: var(--lp-blue-dark);
+  background: #1d77ff;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(13, 85, 224, 0.42);
+  box-shadow: 0 8px 24px rgba(13, 85, 224, 0.55);
 }
 
 .lp-header .lp-btn {
@@ -274,7 +275,7 @@
   border-radius: 9px;
 }
 
-/* ---------- 2. Hero Section (Verre Dépoli Bleu-Blanc & Photo Nette) ---------- */
+/* ---------- 2. Hero Section (100% Transparent) ---------- */
 .lp-hero {
   position: relative;
   width: 100%;
@@ -283,22 +284,17 @@
 .lp-band {
   position: relative;
   width: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.82) 0%,
-    rgba(240, 247, 255, 0.74) 60%,
-    rgba(235, 244, 255, 0.80) 100%
-  );
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.75);
+  background: transparent;
+  padding: 40px 0 20px;
 }
 
 .lp-photo {
   position: relative;
   width: 100%;
   aspect-ratio: 512 / 370;
+  border-radius: 28px;
   overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
 .lp-photo-img {
@@ -318,16 +314,16 @@
   align-items: center;
   gap: 12px;
   padding: 12px 18px 12px 14px;
-  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: var(--lp-ink);
+  background: rgba(10, 22, 53, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #ffffff;
   font: inherit;
   text-align: left;
   cursor: pointer;
-  box-shadow: 0 14px 34px rgba(11, 23, 54, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
   animation: lp-float 4.5s ease-in-out infinite;
   transition: box-shadow 0.25s ease, border-color 0.25s ease;
   z-index: 5;
@@ -340,21 +336,21 @@
   bottom: -7px;
   width: 14px;
   height: 14px;
-  background: rgba(255, 255, 255, 0.92);
-  border-right: 1.5px solid rgba(255, 255, 255, 0.95);
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.95);
+  background: rgba(10, 22, 53, 0.85);
+  border-right: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.4);
   transform: rotate(45deg);
 }
 
 .lp-bubble:hover {
-  border-color: var(--lp-blue);
-  box-shadow: 0 18px 40px rgba(13, 85, 224, 0.32);
+  border-color: var(--lp-blue-light);
+  box-shadow: 0 20px 45px rgba(13, 85, 224, 0.45);
   animation-play-state: paused;
 }
 
 .lp-bubble.is-playing {
-  border-color: var(--lp-blue);
-  box-shadow: 0 0 0 4px rgba(13, 85, 224, 0.2), 0 18px 40px rgba(13, 85, 224, 0.32);
+  border-color: var(--lp-blue-light);
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.3), 0 20px 45px rgba(13, 85, 224, 0.45);
 }
 
 .lp-wave {
@@ -369,7 +365,7 @@
   width: 3px;
   height: 40%;
   border-radius: 3px;
-  background: var(--lp-blue);
+  background: var(--lp-blue-light);
   animation: lp-wave 1.2s ease-in-out infinite;
 }
 
@@ -394,12 +390,12 @@
 .lp-bubble-text strong {
   font-size: 14px;
   font-weight: 700;
-  color: var(--lp-ink);
+  color: #ffffff;
 }
 
 .lp-bubble-text span {
   font-size: 13px;
-  color: #475569;
+  color: var(--lp-text-sub);
 }
 
 @keyframes lp-float {
@@ -427,7 +423,8 @@
   line-height: 1.15;
   letter-spacing: -0.03em;
   margin: 0 0 16px;
-  color: var(--lp-ink);
+  color: #ffffff;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .lp-title span {
@@ -437,10 +434,11 @@
 .lp-sub {
   font-size: clamp(15px, 1.35vw, 18.5px);
   line-height: 1.5;
-  color: #334155;
+  color: var(--lp-text-sub);
   margin: 0 0 26px;
   max-width: 44ch;
   font-weight: 500;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .lp-copy .lp-btn {
@@ -448,7 +446,7 @@
   padding: 12px 28px;
 }
 
-/* ---------- 3. Les 3 Cartes Flottantes Translucides Givrés ---------- */
+/* ---------- 3. Les 3 Cartes Flottantes Translucides (Fond visible à travers) ---------- */
 .lp-cards-wrap {
   position: relative;
   z-index: 10;
@@ -470,27 +468,28 @@
 }
 
 .lp-card {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  background: var(--lp-glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1.5px solid var(--lp-glass-border);
   border-radius: 20px;
   padding: 28px 24px;
-  box-shadow: 0 16px 40px rgba(11, 23, 54, 0.12), inset 0 1.5px 2px rgba(255, 255, 255, 0.95);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
 }
 
 .lp-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(13, 85, 224, 0.4);
-  box-shadow: 0 22px 50px rgba(13, 85, 224, 0.20), inset 0 1.5px 2px rgba(255, 255, 255, 1);
+  background: var(--lp-glass-hover);
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.45), 0 0 25px rgba(13, 85, 224, 0.25);
 }
 
 .lp-card svg {
   display: block;
   width: 44px;
   height: 44px;
-  color: var(--lp-blue);
+  color: var(--lp-blue-light);
   margin-bottom: 16px;
   transition: transform 0.3s ease;
 }
@@ -504,43 +503,41 @@
   font-weight: 800;
   line-height: 1.25;
   margin: 0 0 8px;
-  color: var(--lp-ink);
+  color: #ffffff;
 }
 
 .lp-card p {
   font-size: 13.5px;
   line-height: 1.45;
-  color: #475569;
+  color: var(--lp-text-sub);
   margin: 0;
 }
 
 /* Responsive Desktop Band (Photo à droite, Copy à gauche) */
 @media (min-width: 1024px) {
   .lp-band {
-    min-height: 520px;
+    min-height: 540px;
+    padding: 20px 0 0;
   }
 
   .lp-photo {
     position: absolute;
-    top: 0;
+    top: 20px;
     bottom: 0;
-    right: 0;
-    width: 50%;
-    height: 100%;
+    right: var(--lp-pad);
+    width: 46%;
+    height: 94%;
     aspect-ratio: auto;
   }
 
   .lp-copy {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 50%;
-    padding: 0 3vw 2vw var(--lp-pad);
+    position: relative;
+    width: 52%;
+    padding: 30px 3vw 20px var(--lp-pad);
   }
 
   .lp-cards-wrap {
-    margin-top: -65px;
+    margin-top: -45px;
     padding-top: 0;
   }
 
@@ -552,12 +549,8 @@
 
 /* ---------- 4. Sections Complémentaires Translucides ---------- */
 .lp-section {
-  padding: 80px var(--lp-pad);
+  padding: 85px var(--lp-pad);
   position: relative;
-}
-
-.lp-section.bg-soft {
-  background: transparent;
 }
 
 .lp-section-inner {
@@ -577,13 +570,13 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--lp-blue);
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(13, 85, 224, 0.2);
+  color: var(--lp-blue-light);
+  background: rgba(13, 85, 224, 0.25);
+  border: 1px solid rgba(56, 189, 248, 0.4);
   padding: 5px 14px;
   border-radius: 999px;
   margin-bottom: 12px;
-  box-shadow: 0 4px 14px rgba(13, 85, 224, 0.08);
+  box-shadow: 0 4px 14px rgba(13, 85, 224, 0.2);
 }
 
 .lp-section-header h2 {
@@ -591,13 +584,14 @@
   font-weight: 900;
   letter-spacing: -0.02em;
   margin-bottom: 14px;
-  color: var(--lp-ink);
+  color: #ffffff;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .lp-section-header p {
   font-size: 16px;
   line-height: 1.5;
-  color: #334155;
+  color: var(--lp-text-sub);
   margin: 0;
 }
 
@@ -615,43 +609,46 @@
 }
 
 .lp-step-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--lp-glass-bg);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border: 1.5px solid var(--lp-glass-border);
   border-radius: 22px;
   padding: 34px 28px;
-  box-shadow: 0 14px 35px rgba(11, 23, 54, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .lp-step-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 45px rgba(13, 85, 224, 0.16);
+  background: var(--lp-glass-hover);
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45);
 }
 
 .lp-step-num {
   font-size: 34px;
   font-weight: 900;
-  color: rgba(13, 85, 224, 0.35);
+  color: var(--lp-blue-light);
   margin-bottom: 16px;
   line-height: 1;
+  opacity: 0.9;
 }
 
 .lp-step-card h3 {
   font-size: 19px;
   font-weight: 800;
-  color: var(--lp-ink);
+  color: #ffffff;
   margin-bottom: 10px;
 }
 
 .lp-step-card p {
   font-size: 14px;
   line-height: 1.5;
-  color: #475569;
+  color: var(--lp-text-sub);
   margin: 0;
 }
 
@@ -671,28 +668,28 @@
 }
 
 .lp-price-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--lp-glass-bg);
   backdrop-filter: blur(24px) saturate(190%);
   -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border: 1.5px solid var(--lp-glass-border);
   border-radius: 26px;
   padding: 38px 34px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 16px 45px rgba(11, 23, 54, 0.09), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .lp-price-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 22px 55px rgba(13, 85, 224, 0.18);
+  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.45);
 }
 
 .lp-price-card.featured {
-  border: 2px solid var(--lp-blue);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 20px 60px rgba(13, 85, 224, 0.22);
+  border: 2px solid var(--lp-blue-light);
+  background: rgba(12, 26, 64, 0.75);
+  box-shadow: 0 20px 60px rgba(13, 85, 224, 0.35);
   position: relative;
 }
 
@@ -708,7 +705,7 @@
   letter-spacing: 0.06em;
   padding: 4px 14px;
   border-radius: 999px;
-  box-shadow: 0 4px 12px rgba(13, 85, 224, 0.35);
+  box-shadow: 0 4px 14px rgba(13, 85, 224, 0.4);
 }
 
 .lp-price-val {
@@ -721,12 +718,12 @@
 .lp-price-val strong {
   font-size: 48px;
   font-weight: 900;
-  color: var(--lp-ink);
+  color: #ffffff;
 }
 
 .lp-price-val span {
   font-size: 14px;
-  color: #64748b;
+  color: var(--lp-text-sub);
   font-weight: 600;
 }
 
@@ -738,16 +735,16 @@
 
 .lp-price-features li {
   font-size: 14px;
-  color: #334155;
+  color: var(--lp-text-sub);
   padding: 9px 0;
   display: flex;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid rgba(13, 85, 224, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .lp-price-features li svg {
-  color: var(--lp-blue);
+  color: var(--lp-blue-light);
   flex-shrink: 0;
 }
 
@@ -761,20 +758,20 @@
 }
 
 .lp-faq-item {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--lp-glass-bg);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border: 1.5px solid var(--lp-glass-border);
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(11, 23, 54, 0.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .lp-faq-item summary {
   padding: 22px 26px;
   font-size: 16.5px;
   font-weight: 700;
-  color: var(--lp-ink);
+  color: #ffffff;
   cursor: pointer;
   list-style: none;
   display: flex;
@@ -790,20 +787,20 @@
   padding: 0 26px 22px;
   font-size: 14.5px;
   line-height: 1.55;
-  color: #475569;
-  border-top: 1px solid rgba(13, 85, 224, 0.08);
+  color: var(--lp-text-sub);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* CTA Final Enveloppant */
 .lp-cta-box {
-  background: linear-gradient(135deg, rgba(7, 13, 30, 0.95) 0%, rgba(11, 23, 54, 0.92) 50%, rgba(13, 85, 224, 0.95) 100%);
+  background: linear-gradient(135deg, rgba(8, 17, 42, 0.85) 0%, rgba(13, 30, 75, 0.82) 50%, rgba(13, 85, 224, 0.85) 100%);
   backdrop-filter: blur(20px);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
   border-radius: 30px;
   padding: 64px 34px;
   text-align: center;
   color: #ffffff;
-  box-shadow: 0 25px 70px rgba(7, 13, 30, 0.45);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.55);
   max-width: 1100px;
   margin: 0 auto;
 }
@@ -819,19 +816,19 @@
 .lp-cta-box p {
   font-size: 16px;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.9);
   max-width: 560px;
   margin: 0 auto 32px;
 }
 
 /* ---------- 5. Footer Translucide ---------- */
 .lp-footer {
-  border-top: 1.5px solid rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.85);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(6, 14, 34, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   padding: 48px var(--lp-pad) 32px;
-  box-shadow: 0 -8px 30px rgba(11, 23, 54, 0.04);
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.4);
 }
 
 .lp-footer-inner {
@@ -862,11 +859,11 @@
   gap: 24px;
   font-size: 14px;
   font-weight: 600;
-  color: #475569;
+  color: var(--lp-text-sub);
 }
 
 .lp-footer-links a:hover {
-  color: var(--lp-blue);
+  color: var(--lp-blue-light);
 }
 
 .lp-footer-bottom {
@@ -877,7 +874,7 @@
   align-items: center;
   gap: 12px;
   padding-top: 24px;
-  border-top: 1px solid rgba(13, 85, 224, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 13px;
-  color: #64748b;
+  color: var(--lp-text-muted);
 }

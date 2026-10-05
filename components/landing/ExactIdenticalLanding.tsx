@@ -32,8 +32,6 @@ export default function ExactIdenticalLanding() {
 
   return (
     <div className="lp">
-      {/* Voile atmosphérique translucide bleu-blanc */}
-      <div className="lp-mist-overlay" aria-hidden="true" />
 
       {/* Étoiles filantes animées dans le ciel nocturne */}
       <div className="lp-sky-stars" aria-hidden="true">
