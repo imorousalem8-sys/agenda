@@ -14,14 +14,12 @@ import {
   Users,
   X,
   Volume2,
-  Phone,
   Sparkles,
-  UserPlus,
   Moon,
   Sun,
   Settings,
   Globe,
-  Home,
+  SlidersHorizontal,
 } from "lucide-react";
 import AlarmOverlay from "@/components/reminders/AlarmOverlay";
 import NotificationManager from "@/components/reminders/NotificationManager";
@@ -34,15 +32,18 @@ import Logo from "@/components/brand/Logo";
 import UpgradeModal from "@/components/subscription/UpgradeModal";
 import PaymentSuccessToast from "@/components/subscription/PaymentSuccessToast";
 import { useSubscription } from "@/lib/useSubscription";
+import "@/components/dashboard/dashboard.css";
 
-const navLinks = [
+const mainNavLinks = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Tableau de bord" },
-  { href: "/calendar", icon: Calendar, label: "Agenda" },
-  { href: "/reminders", icon: Bell, label: "Rappels" },
-  { href: "/tasks", icon: CheckSquare, label: "Tâches" },
-  { href: "/agent", icon: Sparkles, label: "Assistant IA", badge: "Nouveau" },
-  { href: "/contacts", icon: Users, label: "Contacts" },
-  { href: "/", icon: Globe, label: "Page d'Accueil" },
+  { href: "/calendar", icon: Calendar, label: "Agenda synchronisé" },
+  { href: "/reminders", icon: Bell, label: "Rappels & Alarmes" },
+  { href: "/tasks", icon: CheckSquare, label: "Tâches & Priorités" },
+];
+
+const smartToolsLinks = [
+  { href: "/agent", icon: Sparkles, label: "Copilote Vocal IA", badge: "Pro" },
+  { href: "/contacts", icon: Users, label: "Annuaire Contacts" },
 ];
 
 export default function DashboardLayout({
@@ -146,10 +147,8 @@ export default function DashboardLayout({
     window.dispatchEvent(new CustomEvent("open-ai-assistant"));
   };
 
-
-
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-app)" }}>
+    <div className="dash-layout">
       {/* Mobile Backdrop */}
       {sidebarOpen && (
         <div
@@ -157,7 +156,7 @@ export default function DashboardLayout({
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(11, 21, 46, 0.7)",
+            background: "rgba(3, 7, 18, 0.65)",
             zIndex: 40,
             backdropFilter: "blur(6px)",
           }}
@@ -165,40 +164,16 @@ export default function DashboardLayout({
         />
       )}
 
-      {/* Sidebar (Clean Executive White & Light Modern) */}
-      <aside
-        style={{
-          width: "260px",
-          flexShrink: 0,
-          background: "var(--bg-sidebar)",
-          borderRight: "1px solid var(--border-default)",
-          display: "flex",
-          flexDirection: "column",
-          position: "sticky",
-          top: 0,
-          height: "100vh",
-          zIndex: 45,
-          transition: "transform 0.2s ease",
-          boxShadow: "var(--shadow-card)",
-        }}
-        className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}
-      >
+      {/* Sidebar Cockpit en Verre Dépoli Bleu-Blanc */}
+      <aside className={`dash-sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
         {/* Brand Header */}
-        <div
-          style={{
-            padding: "20px 18px",
-            borderBottom: "1px solid var(--border-subtle)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
+        <div className="dash-sidebar-brand">
           <Link href="/" title="Retourner à la page d'accueil" style={{ textDecoration: "none" }}>
             <Logo size={32} showText={true} />
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="btn btn-ghost"
+            className="btn btn-ghost lg:hidden"
             style={{ padding: "4px", color: "var(--text-muted)" }}
             id="sidebar-close-btn"
           >
@@ -206,193 +181,153 @@ export default function DashboardLayout({
           </button>
         </div>
 
-        {/* Navigation Links */}
-        <nav style={{ flex: 1, padding: "16px 12px", overflowY: "auto" }}>
-          {navLinks.map((link) => {
-            const Icon = link.icon;
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setSidebarOpen(false)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: "12px",
-                  padding: "10px 14px",
-                  borderRadius: "12px",
-                  marginBottom: "6px",
-                  fontSize: "13.5px",
-                  fontWeight: isActive ? "700" : "500",
-                  color: isActive ? "#0d55e0" : "var(--text-secondary)",
-                  background: isActive ? "#eff6ff" : "transparent",
-                  border: isActive ? "1px solid #bfdbfe" : "1px solid transparent",
-                  boxShadow: isActive ? "0 2px 8px rgba(13, 85, 224, 0.08)" : "none",
-                  transition: "all 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
-                  textDecoration: "none",
-                }}
-                className={isActive ? "" : "hover:bg-slate-100 hover:text-slate-900"}
+        {/* Corps de navigation structuré avec catégories claires */}
+        <nav className="dash-sidebar-nav">
+          
+          {/* Section 1 : Navigation Principale */}
+          <div>
+            <div className="dash-nav-section-title">
+              <span>Navigation Principale</span>
+            </div>
+            <div className="dash-nav-list">
+              {mainNavLinks.map((link) => {
+                const Icon = link.icon;
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`dash-nav-link ${isActive ? "is-active" : ""}`}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <span className="dash-nav-icon">
+                        <Icon size={18} />
+                      </span>
+                      <span>{link.label}</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Section 2 : Outils Intelligents & Vocal */}
+          <div>
+            <div className="dash-nav-section-title">
+              <span>Outils Intelligents</span>
+            </div>
+            <div className="dash-nav-list">
+              {smartToolsLinks.map((link) => {
+                const Icon = link.icon;
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`dash-nav-link ${isActive ? "is-active" : ""}`}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <span className="dash-nav-icon">
+                        <Icon size={18} />
+                      </span>
+                      <span>{link.label}</span>
+                    </div>
+                    {link.badge && (
+                      <span className="dash-nav-badge">{link.badge}</span>
+                    )}
+                  </Link>
+                );
+              })}
+
+              {/* Bouton Voix & Synthèse IA */}
+              <button
+                onClick={handleOpenVoiceSettings}
+                className="dash-nav-action-btn"
+                title="Tester et configurer les voix IA"
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <Icon
-                    size={18}
-                    style={{
-                    color: isActive ? "#0d55e0" : "var(--text-muted)",
-                    flexShrink: 0,
-                  }}
-                  />
-                  <span>{link.label}</span>
-                </div>
-
-                {link.badge && (
-                  <span
-                    style={{
-                      fontSize: "9.5px",
-                      fontWeight: "800",
-                      letterSpacing: "0.04em",
-                      textTransform: "uppercase",
-                      background: "linear-gradient(135deg, #1d4ed8, #4f46e5)",
-                      color: "#ffffff",
-                      padding: "2px 7px",
-                      borderRadius: "6px",
-                      boxShadow: "0 2px 6px rgba(29, 78, 216, 0.25)",
-                    }}
-                  >
-                    {link.badge}
+                  <span className="dash-nav-icon">
+                    <Volume2 size={17} />
                   </span>
-                )}
-              </Link>
-            );
-          })}
-
-          <div style={{ height: "1px", background: "var(--border-subtle)", margin: "14px 4px" }} />
-
-          {/* Bouton de Thème Nuit / Jour Réel */}
-          <button
-            onClick={toggleTheme}
-            style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "10px",
-              padding: "9px 14px",
-              borderRadius: "10px",
-              fontSize: "13px",
-              fontWeight: "500",
-              color: "#94a3b8",
-              background: "transparent",
-              border: "1px solid transparent",
-              cursor: "pointer",
-              textAlign: "left",
-              marginBottom: "4px",
-              transition: "all 0.15s ease",
-            }}
-            className="hover:bg-slate-800/60 hover:text-white hover:border-slate-700/50"
-            title={theme === "light" ? "Activer le Mode Nuit (Sombre)" : "Activer le Mode Jour (Clair)"}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              {theme === "light" ? <Moon size={17} style={{ color: "#38bdf8" }} /> : <Sun size={17} style={{ color: "#f59e0b" }} />}
-              <span>{theme === "light" ? "Mode Nuit (Sombre)" : "Mode Jour (Clair)"}</span>
+                  <span>Voix & Synthèse IA</span>
+                </div>
+              </button>
             </div>
-            <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "6px", background: "rgba(255, 255, 255, 0.08)", color: "#cbd5e1" }}>
-              {theme === "light" ? "OFF" : "ON"}
-            </span>
-          </button>
+          </div>
 
-          {/* Voix & Synthèse (Test Homme / Femme) */}
-          <button
-            onClick={handleOpenVoiceSettings}
-            style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              padding: "9px 14px",
-              borderRadius: "10px",
-              fontSize: "13px",
-              fontWeight: "500",
-              color: "#94a3b8",
-              background: "transparent",
-              border: "1px solid transparent",
-              cursor: "pointer",
-              textAlign: "left",
-              marginBottom: "4px",
-              transition: "all 0.15s ease",
-            }}
-            className="hover:bg-slate-800/60 hover:text-white hover:border-slate-700/50"
-          >
-            <Volume2 size={17} style={{ color: "#38bdf8" }} />
-            <span>Voix & Synthèse IA</span>
-          </button>
+          {/* Section 3 : Cockpit & Système */}
+          <div>
+            <div className="dash-nav-section-title">
+              <span>Système & Réglages</span>
+            </div>
+            <div className="dash-nav-list">
+              {/* Paramètres Cockpit */}
+              <button
+                onClick={handleOpenPhoneSettings}
+                className="dash-nav-action-btn"
+                title="Paramètres de téléphonie et rappels"
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span className="dash-nav-icon">
+                    <SlidersHorizontal size={17} />
+                  </span>
+                  <span>Paramètres Cockpit</span>
+                </div>
+              </button>
 
-          <button
-            onClick={handleOpenPhoneSettings}
-            style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              padding: "9px 14px",
-              borderRadius: "10px",
-              fontSize: "13px",
-              fontWeight: "500",
-              color: "#94a3b8",
-              background: "transparent",
-              border: "1px solid transparent",
-              cursor: "pointer",
-              textAlign: "left",
-              transition: "all 0.15s ease",
-            }}
-            className="hover:bg-slate-800/60 hover:text-white hover:border-slate-700/50"
-          >
-            <Settings size={17} style={{ color: "#818cf8" }} />
-            <span>Paramètres Cockpit</span>
-          </button>
+              {/* Mode Thème */}
+              <button
+                onClick={toggleTheme}
+                className="dash-nav-action-btn"
+                title={theme === "light" ? "Activer le Mode Nuit (Sombre)" : "Activer le Mode Jour (Clair)"}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span className="dash-nav-icon">
+                    {theme === "light" ? <Moon size={17} /> : <Sun size={17} />}
+                  </span>
+                  <span>{theme === "light" ? "Mode Nuit (Sombre)" : "Mode Jour (Clair)"}</span>
+                </div>
+                <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "6px", background: "rgba(13, 85, 224, 0.08)", fontWeight: 700 }}>
+                  {theme === "light" ? "OFF" : "ON"}
+                </span>
+              </button>
+
+              {/* Retour Site Web */}
+              <Link
+                href="/"
+                className="dash-nav-link"
+                title="Retourner à la page d'accueil"
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span className="dash-nav-icon">
+                    <Globe size={17} />
+                  </span>
+                  <span>Site Vitrine</span>
+                </div>
+              </Link>
+            </div>
+          </div>
+
         </nav>
 
-        {/* Live Quota Indicator */}
-        <div style={{ padding: "10px 14px" }}>
+        {/* Live Quota Indicator dans une carte translucide */}
+        <div className="dash-quota-wrap">
           <QuotaIndicator />
         </div>
 
-        {/* User Footer (Clean Executive Profile) */}
-        <div
-          style={{
-            padding: "14px",
-            borderTop: "1px solid var(--border-default)",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            background: "var(--bg-secondary)",
-          }}
-        >
-          <div
-            style={{
-              width: "36px",
-              height: "36px",
-              borderRadius: "10px",
-              background: "linear-gradient(135deg, #1d4ed8 0%, #4f46e5 100%)",
-              color: "#ffffff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: "800",
-              fontSize: "14px",
-              flexShrink: 0,
-              boxShadow: "0 2px 8px rgba(29, 78, 216, 0.25)",
-            }}
-          >
+        {/* Profil Utilisateur Exécutif */}
+        <div className="dash-sidebar-user">
+          <div className="dash-user-avatar">
             {userName[0]?.toUpperCase() || "S"}
           </div>
 
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <div className="dash-user-name">
               {userName}
             </div>
-            <div style={{ fontSize: "11px", color: "#1d4ed8", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
+            <div className="dash-user-plan">
               <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block" }} />
               {isPro ? "Compte Pro Actif" : "Membre Standard"}
             </div>
@@ -409,16 +344,17 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      {/* Main Content Area (No overlapping headers!) */}
-      <main style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflowY: "auto" }}>
+      {/* Main Content Area */}
+      <main className="dash-main">
         {/* Mobile Topbar */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             padding: "10px 14px",
-            borderBottom: "1px solid var(--border-subtle)",
-            background: "var(--bg-sidebar)",
+            borderBottom: "1px solid rgba(13, 85, 224, 0.12)",
+            background: "rgba(255, 255, 255, 0.8)",
+            backdropFilter: "blur(16px)",
             position: "sticky",
             top: 0,
             zIndex: 30,
@@ -479,19 +415,12 @@ export default function DashboardLayout({
       />
 
       <style>{`
-        @media (min-width: 769px) {
+        @media (min-width: 1024px) {
           .mobile-topbar { display: none !important; }
           .mobile-backdrop { display: none !important; }
         }
-        @media (max-width: 768px) {
+        @media (max-width: 1023px) {
           .mobile-topbar { display: flex !important; }
-          .sidebar {
-            position: fixed !important;
-            transform: translateX(-100%);
-          }
-          .sidebar-open {
-            transform: translateX(0) !important;
-          }
         }
       `}</style>
     </div>

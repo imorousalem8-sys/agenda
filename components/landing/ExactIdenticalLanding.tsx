@@ -33,6 +33,13 @@ export default function ExactIdenticalLanding() {
   return (
     <div className="lp">
 
+      {/* Vapeur et brume volumétrique lumineuse */}
+      <div className="lp-vapor-layer" aria-hidden="true">
+        <div className="lp-vapor-cloud" />
+        <div className="lp-vapor-cloud" />
+        <div className="lp-vapor-cloud" />
+      </div>
+
       {/* Étoiles filantes animées dans le ciel nocturne */}
       <div className="lp-sky-stars" aria-hidden="true">
         <span className="lp-shooting-star" />

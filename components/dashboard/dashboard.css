@@ -1,0 +1,328 @@
+/* ==========================================================================
+   Dashboard Alamajonda — CSS Cockpit Exécutif (Bleu-Blanc & Frosted Glass)
+   Style : Verre Dépoli Translucide Lumineux, Menus Bien Structurés & Propres
+   ========================================================================== */
+
+/* Conteneur Global Cockpit */
+.dash-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--dash-bg, #f1f7ff);
+  background-image: 
+    radial-gradient(ellipse 1000px 600px at 15% 10%, rgba(13, 85, 224, 0.07) 0%, transparent 50%),
+    radial-gradient(ellipse 800px 500px at 85% 85%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
+  background-attachment: fixed;
+  color: var(--dash-text, #0f172a);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] .dash-layout {
+  --dash-bg: #030712;
+  --dash-text: #f8fafc;
+  background-image: 
+    radial-gradient(ellipse 1100px 700px at 15% 10%, rgba(13, 85, 224, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 900px 500px at 85% 85%, rgba(56, 189, 248, 0.12) 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, rgba(6, 14, 34, 0.95) 0%, #030712 100%);
+}
+
+/* ---------- SIDEBAR COCKPIT EN VERRE DÉPOLI BLEU-BLANC ---------- */
+.dash-sidebar {
+  width: 275px;
+  flex-shrink: 0;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border-right: 1px solid rgba(13, 85, 224, 0.14);
+  box-shadow: 4px 0 25px rgba(13, 85, 224, 0.04);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[data-theme="dark"] .dash-sidebar {
+  background: rgba(6, 14, 34, 0.82);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.4);
+}
+
+/* En-tête Marque */
+.dash-sidebar-brand {
+  padding: 22px 20px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(13, 85, 224, 0.08);
+}
+
+[data-theme="dark"] .dash-sidebar-brand {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Corps de navigation avec scroll fin */
+.dash-sidebar-nav {
+  flex: 1;
+  padding: 16px 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Titres de Catégories de Menus (Structure Impeccable) */
+.dash-nav-section-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #0d55e0;
+  padding: 0 12px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+[data-theme="dark"] .dash-nav-section-title {
+  color: #38bdf8;
+}
+
+.dash-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Liens de Navigation */
+.dash-nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #334155;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[data-theme="dark"] .dash-nav-link {
+  color: #cbd5e1;
+}
+
+.dash-nav-link:hover {
+  background: rgba(13, 85, 224, 0.06);
+  color: #0d55e0;
+  border-color: rgba(13, 85, 224, 0.12);
+  transform: translateX(2px);
+}
+
+[data-theme="dark"] .dash-nav-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border-color: rgba(56, 189, 248, 0.2);
+}
+
+/* Lien Actif (Luminous Bleu-Blanc Frosted) */
+.dash-nav-link.is-active {
+  background: linear-gradient(135deg, rgba(13, 85, 224, 0.1) 0%, rgba(56, 189, 248, 0.12) 100%);
+  color: #0d55e0;
+  font-weight: 700;
+  border: 1px solid rgba(13, 85, 224, 0.25);
+  box-shadow: 0 4px 14px rgba(13, 85, 224, 0.08);
+}
+
+[data-theme="dark"] .dash-nav-link.is-active {
+  background: linear-gradient(135deg, rgba(13, 85, 224, 0.3) 0%, rgba(56, 189, 248, 0.15) 100%);
+  color: #ffffff;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 20px rgba(13, 85, 224, 0.3);
+}
+
+.dash-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.dash-nav-link:hover .dash-nav-icon,
+.dash-nav-link.is-active .dash-nav-icon {
+  color: #0d55e0;
+}
+
+[data-theme="dark"] .dash-nav-icon {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .dash-nav-link:hover .dash-nav-icon,
+[data-theme="dark"] .dash-nav-link.is-active .dash-nav-icon {
+  color: #38bdf8;
+}
+
+/* Badge dans le menu */
+.dash-nav-badge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #0d55e0, #38bdf8);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(13, 85, 224, 0.25);
+}
+
+/* Boutons d'Action Outils dans la Sidebar */
+.dash-nav-action-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 14px;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s ease;
+}
+
+[data-theme="dark"] .dash-nav-action-btn {
+  color: #94a3b8;
+}
+
+.dash-nav-action-btn:hover {
+  background: rgba(13, 85, 224, 0.06);
+  color: #0d55e0;
+  border-color: rgba(13, 85, 224, 0.12);
+}
+
+[data-theme="dark"] .dash-nav-action-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Carte Quota Translucide */
+.dash-quota-wrap {
+  padding: 10px 14px;
+}
+
+/* Profil Utilisateur en Bas de Sidebar */
+.dash-sidebar-user {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(13, 85, 224, 0.08);
+  background: rgba(248, 250, 252, 0.7);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+[data-theme="dark"] .dash-sidebar-user {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(4, 9, 24, 0.7);
+}
+
+.dash-user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0d55e0 0%, #38bdf8 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(13, 85, 224, 0.25);
+}
+
+.dash-user-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dash-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-user-plan {
+  font-size: 11px;
+  color: #0d55e0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+[data-theme="dark"] .dash-user-plan {
+  color: #38bdf8;
+}
+
+/* ---------- MAIN CONTENT AREA DU DASHBOARD ---------- */
+.dash-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+/* Cartes Translucides Verre Dépoli Cockpit (Frosted Blue-White) */
+.dash-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(13, 85, 224, 0.12);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(13, 85, 224, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+[data-theme="dark"] .dash-card {
+  background: rgba(8, 17, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+}
+
+.dash-card:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 16px 40px rgba(13, 85, 224, 0.08);
+}
+
+[data-theme="dark"] .dash-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(13, 85, 224, 0.2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 1023px) {
+  .dash-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .dash-sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+}
