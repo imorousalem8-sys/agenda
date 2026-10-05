@@ -32,10 +32,21 @@ export default function ExactIdenticalLanding() {
 
   return (
     <div className="lp">
-      {/* ========================================================
-          1. HEADER (Navbar) — Menus bien centrés au milieu
-         ======================================================== */}
-      <header className="lp-header">
+      {/* Voile atmosphérique translucide bleu-blanc */}
+      <div className="lp-mist-overlay" aria-hidden="true" />
+
+      {/* Étoiles filantes animées dans le ciel nocturne */}
+      <div className="lp-sky-stars" aria-hidden="true">
+        <span className="lp-shooting-star" />
+        <span className="lp-shooting-star" />
+        <span className="lp-shooting-star" />
+      </div>
+
+      <div className="lp-main-content">
+        {/* ========================================================
+            1. HEADER (Navbar) — Menus bien centrés au milieu
+           ======================================================== */}
+        <header className="lp-header">
         <div className="lp-header-inner">
           
           {/* Logo Officiel avec l'icône squircle fournie */}
@@ -362,6 +373,7 @@ export default function ExactIdenticalLanding() {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 }
