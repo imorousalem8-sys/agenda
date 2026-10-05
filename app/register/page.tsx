@@ -251,7 +251,7 @@ export default function RegisterPage() {
           <p style={{ fontSize: "14px", color: "#475569", marginTop: "6px", fontWeight: "600" }}>
             {otpStep
               ? `Un code de confirmation a été envoyé à ${pendingRegData?.email}`
-              : "Rejoignez AlarmAgenda et pilotez vos journées à la voix"}
+              : "Rejoignez Alamajonda et pilotez vos journées à la voix"}
           </p>
         </div>
 
@@ -519,7 +519,7 @@ export default function RegisterPage() {
                 transition: "all 0.2s ease",
               }}
             >
-              {loading ? <Loader2 size={18} className="animate-spin" /> : <span>Valider et Accéder à AlarmAgenda</span>}
+              {loading ? <Loader2 size={18} className="animate-spin" /> : <span>Valider et Accéder à Alamajonda</span>}
             </button>
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "12px" }}>

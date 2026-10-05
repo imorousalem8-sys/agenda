@@ -6,13 +6,13 @@ import AutoUpdater from "@/components/AutoUpdater";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://agenda-gamma-orpin.vercel.app"),
   title: {
-    default: "AlarmAgenda — Rappels intelligents",
-    template: "%s | AlarmAgenda",
+    default: "Alamajonda — Assistant Vocal IA & Agenda de Précision",
+    template: "%s | Alamajonda",
   },
   description:
-    "Gérez vos rendez-vous, tâches et rappels avec AlarmAgenda. Ne laissez plus jamais un rendez-vous passer.",
-  keywords: ["agenda", "rappels", "alarme", "calendrier", "rendez-vous", "tâches"],
-  authors: [{ name: "AlarmAgenda" }],
+    "Gérez vos rendez-vous, tâches et rappels avec Alamajonda. L'assistant vocal IA qui vous appelle au bon moment et synchronise votre emploi du temps.",
+  keywords: ["agenda", "rappels", "alarme", "calendrier", "rendez-vous", "tâches", "assistant vocal IA"],
+  authors: [{ name: "Alamajonda" }],
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -28,20 +28,20 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "AlarmAgenda",
+    title: "Alamajonda",
   },
   openGraph: {
     type: "website",
-    title: "AlarmAgenda — Rappels intelligents",
-    description: "Ne laissez plus jamais passer un rendez-vous important.",
-    siteName: "AlarmAgenda",
-    images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: "AlarmAgenda Logo" }],
+    title: "Alamajonda — Assistant Vocal IA & Agenda de Précision",
+    description: "Ne laissez plus jamais passer un rendez-vous important avec Alamajonda.",
+    siteName: "Alamajonda",
+    images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: "Alamajonda Logo" }],
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0284c7",
-  colorScheme: "dark",
+  themeColor: "#0d55e0",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
