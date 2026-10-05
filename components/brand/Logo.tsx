@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 
@@ -8,23 +10,29 @@ interface LogoProps {
   animated?: boolean;
   className?: string;
   theme?: "dark" | "light";
+  subtitle?: string;
 }
 
 export default function Logo({
-  size = 38,
+  size = 40,
   showText = true,
-  animated = true,
+  animated = false,
   className = "",
-  theme = "dark",
+  theme = "light",
+  subtitle = "Assistant Vocal & Agenda IA",
 }: LogoProps) {
   const isLight = theme === "light";
 
   return (
     <div
       className={`flex items-center select-none ${className}`}
-      style={{ display: "flex", alignItems: "center", gap: `${Math.max(10, size * 0.28)}px` }}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: `${Math.max(10, size * 0.26)}px`,
+      }}
     >
-      {/* Icon Container with Subtle Glow */}
+      {/* Icon Squircle Haute Définition */}
       <div
         style={{
           width: `${size}px`,
@@ -36,80 +44,84 @@ export default function Logo({
           flexShrink: 0,
         }}
       >
-        {/* Ambient Glow */}
+        {/* Halo d'ambiance bleu royal doux */}
         <div
           style={{
             position: "absolute",
-            inset: "-15%",
-            background: "radial-gradient(circle, rgba(37, 99, 235, 0.45) 0%, rgba(6, 182, 212, 0.25) 45%, transparent 75%)",
+            inset: "-12%",
+            background:
+              "radial-gradient(circle, rgba(13, 85, 224, 0.35) 0%, rgba(30, 64, 175, 0.15) 50%, transparent 75%)",
             filter: "blur(6px)",
-            borderRadius: "14px",
+            borderRadius: `${Math.max(10, size * 0.28)}px`,
             zIndex: 0,
-            animation: animated ? "pulseGlow 3s ease-in-out infinite alternate" : undefined,
+            opacity: animated ? 0.9 : 0.6,
           }}
         />
 
-        {/* Official AlarmAgenda App Emblem */}
+        {/* Emblème Officiel Alamajonda */}
         <Image
-          src="/icons/icon-192.png"
-          alt="AlarmAgenda Logo"
+          src="/logo.png"
+          alt="Alamajonda"
           width={size}
           height={size}
           priority
-          className="relative z-10 shadow-[0_4px_16px_rgba(37,99,235,0.35)]"
+          className="relative z-10 transition-transform duration-300 hover:scale-105"
           style={{
             width: `${size}px`,
             height: `${size}px`,
             borderRadius: `${Math.max(8, size * 0.24)}px`,
-            objectFit: "cover",
+            objectFit: "contain",
+            boxShadow: "0 4px 14px rgba(13, 85, 224, 0.28)",
           }}
         />
       </div>
 
-      {/* Brand Text & Executive Tag */}
+      {/* Libellé Marque */}
       {showText && (
         <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span
               style={{
-                fontSize: `${Math.max(17, size * 0.48)}px`,
-                fontWeight: "900",
+                fontSize: `${Math.max(18, size * 0.48)}px`,
+                fontWeight: "800",
                 letterSpacing: "-0.03em",
-                color: isLight ? "#09132b" : "#ffffff",
+                color: isLight ? "#0b1736" : "#ffffff",
                 display: "inline-flex",
                 alignItems: "center",
               }}
             >
-              <span>Alarm</span>
-              <span style={{ color: "#2563eb", marginLeft: "1px" }}>Agenda</span>
+              <span>Alama</span>
+              <span style={{ color: "#0d55e0", marginLeft: "1px" }}>jonda</span>
             </span>
             <span
               style={{
-                fontSize: "9.5px",
-                fontWeight: "800",
+                fontSize: "9px",
+                fontWeight: "700",
                 textTransform: "uppercase",
                 letterSpacing: "0.08em",
-                padding: "2.5px 7px",
-                borderRadius: "6px",
-                background: isLight ? "rgba(37, 99, 235, 0.12)" : "rgba(56, 189, 248, 0.2)",
-                border: isLight ? "1px solid rgba(37, 99, 235, 0.3)" : "1px solid rgba(56, 189, 248, 0.4)",
-                color: isLight ? "#1d4ed8" : "#38bdf8",
+                padding: "2px 6px",
+                borderRadius: "5px",
+                background: isLight ? "rgba(13, 85, 224, 0.08)" : "rgba(13, 85, 224, 0.25)",
+                border: isLight ? "1px solid rgba(13, 85, 224, 0.2)" : "1px solid rgba(13, 85, 224, 0.4)",
+                color: isLight ? "#0d55e0" : "#60a5fa",
               }}
             >
-              EXECUTIVE
+              AI PRO
             </span>
           </div>
-          <span
-            style={{
-              fontSize: `${Math.max(10.5, size * 0.23)}px`,
-              fontWeight: "600",
-              color: isLight ? "#475569" : "#94a3b8",
-              letterSpacing: "0.01em",
-              marginTop: "2px",
-            }}
-          >
-            Cockpit Personnel & IA
-          </span>
+          {subtitle && (
+            <span
+              style={{
+                fontSize: `${Math.max(10, size * 0.22)}px`,
+                fontWeight: "500",
+                color: isLight ? "#64748b" : "#94a3b8",
+                letterSpacing: "0.01em",
+                marginTop: "2px",
+              }}
+            >
+              {subtitle}
+            </span>
+          )}
         </div>
       )}
     </div>

@@ -1,190 +1,187 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
-import { Check, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { Check, ArrowRight, Sparkles, ShieldCheck } from "lucide-react";
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="py-24 sm:py-32 bg-gradient-to-b from-white via-[#f8faff] to-white relative overflow-hidden border-t border-slate-100">
-      {/* Halo d'ambiance bleuté */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-100/40 rounded-full blur-3xl pointer-events-none -z-10" />
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section id="tarifs" className="py-20 sm:py-28 bg-[#f8faff] border-t border-slate-200/80 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Titre centré, aéré et élégant */}
-        <div className="text-center max-w-2xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/70 text-blue-700 text-xs font-bold uppercase tracking-wider mb-4 shadow-xs">
-            <Sparkles size={13} className="text-blue-600" />
-            <span>TARIFICATION SIMPLE &amp; TRANSPARENTE</span>
+        {/* Titre Centré */}
+        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#0d55e0] text-xs font-bold uppercase tracking-wider mb-4 shadow-xs">
+            <Sparkles size={13} className="text-[#0d55e0]" />
+            <span>TARIFICATION SIMPLE &amp; SANS SURPRISE</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#09132b] tracking-tight leading-tight mb-4">
-            Choisissez la formule qui vous correspond
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0b1736] tracking-tight leading-tight mb-4">
+            Investissez dans votre ponctualité
           </h2>
-          <p className="text-base sm:text-lg text-slate-500 leading-relaxed max-w-lg mx-auto">
-            Commencez gratuitement dès aujourd&apos;hui, sans engagement et sans carte bancaire requise.
+          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            Commencez sans frais, puis passez à la vitesse supérieure quand vos exigences s&apos;intensifient.
           </p>
         </div>
 
-        {/* 2 Cartes de Tarifs Haut de Gamme et Aérées */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+        {/* Grille des Plans */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
           
-          {/* CARTE 1 : Formule Découverte (Gratuit) */}
-          <div className="p-8 sm:p-10 rounded-[32px] bg-white border border-slate-200/90 shadow-[0_15px_45px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+          {/* PLAN 1 : Découverte Gratuit */}
+          <div className="p-8 sm:p-9 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all">
             <div>
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider bg-slate-100 px-3.5 py-1.5 rounded-full">
-                  DÉCOUVERTE
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
+                  Découverte
                 </span>
-                <span className="text-xs text-slate-400 font-semibold">Pour toujours</span>
+                <span className="text-xs text-slate-400 font-medium">Pour toujours</span>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-black text-[#09132b] mb-2">
-                Gratuit
-              </h3>
-              
-              <p className="text-sm text-slate-500 mb-8 leading-relaxed">
-                Idéal pour planifier et ne plus jamais oublier ses rendez-vous personnels.
+              <h3 className="text-2xl font-black text-[#0b1736] mb-2">Gratuit</h3>
+              <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
+                Idéal pour découvrir la puissance de l&apos;agenda intelligent et organiser vos journées.
               </p>
 
-              {/* Prix */}
-              <div className="flex items-baseline gap-1.5 mb-8 pb-8 border-b border-slate-100">
-                <span className="text-5xl font-black text-[#09132b]">0€</span>
-                <span className="text-slate-500 text-sm font-semibold">/ pour toujours</span>
+              <div className="flex items-baseline gap-1 mb-8 pb-6 border-b border-slate-100">
+                <span className="text-4xl sm:text-5xl font-black text-[#0b1736]">0€</span>
+                <span className="text-xs text-slate-500 font-semibold">/ pour toujours</span>
               </div>
 
-              {/* Liste d'avantages */}
-              <ul className="space-y-4 text-sm text-slate-600 mb-10">
-                <li className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/60">
-                    <Check size={13} className="stroke-[3]" />
-                  </div>
-                  <span>Gestion complète de votre agenda</span>
+              <ul className="space-y-3.5 text-xs sm:text-sm text-slate-600 mb-8">
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Agenda synchronisé (Google &amp; Outlook)</span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/60">
-                    <Check size={13} className="stroke-[3]" />
-                  </div>
-                  <span>Notifications sonores &amp; alertes web push</span>
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Rappels sonores et notifications Push web</span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/60">
-                    <Check size={13} className="stroke-[3]" />
-                  </div>
-                  <span>Accès mobile &amp; ordinateur</span>
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Gestion des tâches et des contacts</span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/60">
-                    <Check size={13} className="stroke-[3]" />
-                  </div>
-                  <span>Répertoire de contacts illimité</span>
+                <li className="flex items-center gap-2.5 text-slate-400 line-through">
+                  <span>Appels Vocaux IA réels sur mobile</span>
                 </li>
               </ul>
             </div>
 
-            {/* Bouton Formule Gratuite */}
             <Link
               href="/register"
-              className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl text-sm font-bold text-slate-700 hover:text-blue-700 bg-slate-50 hover:bg-blue-50/60 border border-slate-200/80 shadow-xs transition-all"
+              className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 rounded-xl text-sm font-bold text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all"
             >
-              <span>Commencer gratuitement</span>
+              <span>Commencer Gratuitement</span>
               <ArrowRight size={15} />
             </Link>
           </div>
 
-          {/* CARTE 2 : Formule Alamajonda Pro (Mise en avant) */}
-          <div className="relative p-8 sm:p-10 rounded-[32px] bg-white border-2 border-blue-600 shadow-[0_25px_60px_-15px_rgba(37,99,235,0.18)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+          {/* PLAN 2 : Pro Executive (Mise en avant Bleu Royal) */}
+          <div className="relative p-8 sm:p-9 rounded-3xl bg-white border-2 border-[#0d55e0] shadow-[0_20px_60px_rgba(13,85,224,0.18)] flex flex-col justify-between hover:-translate-y-1 transition-all">
             
-            {/* Badge Recommandé Parfaitement Intégré */}
-            <div className="absolute -top-3.5 right-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-1 rounded-full text-xs font-black tracking-wider uppercase shadow-md shadow-blue-500/30 flex items-center gap-1.5">
+            {/* Badge Flottant */}
+            <div className="absolute -top-3.5 right-8 bg-[#0d55e0] text-white px-3.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider shadow-md shadow-blue-600/30 flex items-center gap-1.5">
               <Sparkles size={12} />
-              <span>RECOMMANDÉ</span>
+              <span>LE CHOIX DES DIRIGEANTS</span>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold text-blue-700 uppercase tracking-wider bg-blue-50 border border-blue-200 px-3.5 py-1.5 rounded-full">
-                  PREMIUM ILLIMITÉ
+                <span className="text-xs font-bold uppercase tracking-wider text-[#0d55e0] bg-blue-50 px-3 py-1 rounded-full border border-blue-200/60">
+                  Pro Executive
                 </span>
-                <span className="text-xs text-blue-600 font-bold">14 jours d&apos;essai offert</span>
+                <span className="text-xs text-[#0d55e0] font-bold">Essai 14 jours</span>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-black text-[#09132b] mb-2">
-                Alamajonda Pro
-              </h3>
-              
-              <p className="text-sm text-slate-500 mb-8 leading-relaxed">
-                Pour ceux qui exigent la certitude absolue de ne rater aucun rendez-vous important.
+              <h3 className="text-2xl font-black text-[#0b1736] mb-2">Pro Executive</h3>
+              <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
+                Le pack complet avec appels vocaux IA illimités, SMS de secours et copilote conversationnel.
               </p>
 
-              {/* Prix */}
-              <div className="flex items-baseline gap-1.5 mb-8 pb-8 border-b border-blue-50">
-                <span className="text-5xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  9€
-                </span>
-                <span className="text-slate-500 text-sm font-semibold">/ mois</span>
+              <div className="flex items-baseline gap-1 mb-8 pb-6 border-b border-slate-100">
+                <span className="text-4xl sm:text-5xl font-black text-[#0d55e0]">19€</span>
+                <span className="text-xs text-slate-500 font-semibold">/ mois · sans engagement</span>
               </div>
 
-              {/* Liste d'avantages Pro */}
-              <ul className="space-y-4 text-sm text-slate-700 mb-10">
-                <li className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <Check size={13} className="stroke-[3]" />
-                  </div>
-                  <span className="font-bold text-[#09132b]">Appels vocaux directs sur votre smartphone</span>
+              <ul className="space-y-3.5 text-xs sm:text-sm text-slate-700 mb-8">
+                <li className="flex items-center gap-2.5 font-semibold text-[#0b1736]">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Appels Vocaux IA illimités sur votre mobile</span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <Check size={13} className="stroke-[3]" />
-                  </div>
-                  <span className="font-semibold text-slate-800">Rappels par SMS automatiques illimités</span>
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Briefing vocal intelligent avant chaque réunion</span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <Check size={13} className="stroke-[3]" />
-                  </div>
-                  <span className="font-semibold text-slate-800">Synchronisation Google Calendar &amp; Outlook</span>
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Rappels SMS de secours automatiques</span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <Check size={13} className="stroke-[3]" />
-                  </div>
-                  <span className="font-semibold text-slate-800">Mode Priorité &amp; Urgences 24h/24</span>
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Copilote vocal avec commandes en langage naturel</span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <Check size={13} className="stroke-[3]" />
-                  </div>
-                  <span className="font-semibold text-slate-800">Support client prioritaire 7j/7</span>
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Support VIP prioritaire 7j/7</span>
                 </li>
               </ul>
             </div>
 
-            {/* Bouton Formule Pro */}
             <Link
               href="/register"
-              className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:shadow-blue-500/35 hover:-translate-y-0.5 transition-all"
+              className="w-full inline-flex items-center justify-center gap-2 py-4 px-5 rounded-xl text-sm font-bold text-white bg-[#0d55e0] hover:bg-[#0b47bf] shadow-md shadow-blue-600/30 hover:shadow-lg transition-all"
             >
-              <span>Essayer Alamajonda Pro</span>
+              <span>Démarrer l&apos;essai Pro</span>
               <ArrowRight size={16} />
             </Link>
           </div>
 
-        </div>
+          {/* PLAN 3 : Entreprise & Équipes */}
+          <div className="p-8 sm:p-9 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
+                  Entreprise
+                </span>
+                <span className="text-xs text-slate-400 font-medium">Cabinet &amp; Société</span>
+              </div>
 
-        {/* Garanties centrées et réassurance */}
-        <div className="mt-14 text-center text-xs text-slate-500 font-semibold flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
-          <span className="flex items-center gap-2">
-            <ShieldCheck size={16} className="text-emerald-500" />
-            <span>14 jours d&apos;essai complet sans engagement</span>
-          </span>
-          <span className="flex items-center gap-2">
-            <Check size={16} className="text-emerald-500 stroke-[3]" />
-            <span>Sans carte bancaire requise</span>
-          </span>
-          <span className="flex items-center gap-2">
-            <Check size={16} className="text-emerald-500 stroke-[3]" />
-            <span>Annulation en 1 clic à tout moment</span>
-          </span>
+              <h3 className="text-2xl font-black text-[#0b1736] mb-2">Sur-Mesure</h3>
+              <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
+                Pour les cabinets, cliniques et directions ayant plusieurs collaborateurs à synchroniser.
+              </p>
+
+              <div className="flex items-baseline gap-1 mb-8 pb-6 border-b border-slate-100">
+                <span className="text-4xl sm:text-5xl font-black text-[#0b1736]">Sur devis</span>
+              </div>
+
+              <ul className="space-y-3.5 text-xs sm:text-sm text-slate-600 mb-8">
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Comptes collaborateurs multi-utilisateurs</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Numéro de standard personnalisé pour les appels</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Intégration API &amp; Webhooks sur-mesure</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check size={16} className="text-[#0d55e0] shrink-0" />
+                  <span>Gestionnaire de compte dédié</span>
+                </li>
+              </ul>
+            </div>
+
+            <Link
+              href="/register"
+              className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 rounded-xl text-sm font-bold text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all"
+            >
+              <span>Contacter l&apos;équipe</span>
+              <ArrowRight size={15} />
+            </Link>
+          </div>
+
         </div>
 
       </div>

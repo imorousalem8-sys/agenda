@@ -3,7 +3,20 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Sparkles, ArrowRight, Play, Square, Volume2, PhoneCall, CheckCircle2, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  Play,
+  Square,
+  Volume2,
+  PhoneCall,
+  Calendar as CalendarIcon,
+  CheckCircle2,
+  Clock,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  BellRing,
+} from "lucide-react";
 import { playAlertChime } from "@/lib/voice";
 
 export default function Hero() {
@@ -19,10 +32,11 @@ export default function Hero() {
       playAlertChime();
       setIsPlayingVoice(true);
       const utterance = new SpeechSynthesisUtterance(
-        "Bonjour ! C'est votre assistant AlarmAgenda. Vous avez un rendez-vous important aujourd'hui à 14 heures 30. Je reste à votre disposition."
+        "Bonjour ! C'est votre assistant vocal Alamajonda. Votre rendez-vous stratégique est programmé aujourd'hui à 14 heures 30 avec la direction. Vos documents sont prêts."
       );
       utterance.lang = "fr-FR";
-      utterance.rate = 1.05;
+      utterance.rate = 1.02;
+      utterance.pitch = 1.0;
       utterance.onend = () => setIsPlayingVoice(false);
       utterance.onerror = () => setIsPlayingVoice(false);
       window.speechSynthesis.speak(utterance);
@@ -30,151 +44,274 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative w-full pt-10 sm:pt-16 pb-16 sm:pb-24 overflow-hidden">
-      {/* Halo d'ambiance bleuté et blanc ultra-doux */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-blue-100/60 via-indigo-50/40 to-transparent rounded-full blur-3xl -z-10 pointer-events-none" />
+    <section className="relative w-full pt-10 sm:pt-16 pb-20 sm:pb-28 overflow-hidden bg-gradient-to-b from-[#f8faff] via-white to-[#f8faff]">
+      {/* Halo d'ambiance bleuté doux et raffiné (sans néon agressif) */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-b from-blue-100/60 via-blue-50/30 to-transparent rounded-full blur-3xl -z-10 pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* ========================================================
-            1. ÉCRITURES EN HAUT : COURTES, ÉPURÉES & CENTRÉES
+            1. EN-TÊTE DU HERO : CENTRÉ, PUISSANT & ÉQUILIBRÉ
            ======================================================== */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+        <div className="text-center max-w-4xl mx-auto mb-12 sm:mb-16">
           
-          {/* Badge discret translucide */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/85 backdrop-blur-xl border border-blue-200/70 shadow-sm text-blue-700 text-xs font-bold uppercase tracking-wider mb-5">
-            <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-            <span>ASSISTANT VOCAL IA · ZÉRO RETARD</span>
+          {/* Badge Haute Précision */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/90 border border-blue-200 text-[#0d55e0] text-xs font-bold uppercase tracking-wider mb-6 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-[#0d55e0] animate-pulse" />
+            <span>L&apos;Assistant Vocal IA &amp; Agenda Exécutif</span>
           </div>
 
-          {/* Grand Titre net */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#09132b] tracking-tight leading-[1.08] mb-5">
+          {/* Titre Principal sans détour */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#0b1736] tracking-tight leading-[1.12] mb-6">
             Ne manquez plus aucun <br className="hidden sm:inline" />
-            <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#0d55e0] via-[#0b47bf] to-[#1e40af] bg-clip-text text-transparent">
               rendez-vous important.
             </span>
           </h1>
 
-          {/* Une seule phrase courte et claire */}
-          <p className="text-base sm:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto mb-8">
-            AlarmAgenda vous appelle au bon moment et veille sur chaque échéance de votre journée.
+          {/* Description claire et engageante */}
+          <p className="text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto mb-8 sm:mb-10 font-normal">
+            Alamajonda synchronise votre emploi du temps et vous passe un véritable appel vocal à la seconde exacte. Fini les retards, les notifications ignorées et le stress des réunions.
           </p>
 
-          {/* Boutons d'action compacts */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          {/* Boutons d'Action Centrés */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5 mb-8">
             <Link
               href="/register"
-              className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-2xl text-base font-bold text-white bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:shadow-blue-500/35 hover:-translate-y-0.5 transition-all"
+              className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl text-base font-bold text-white bg-[#0d55e0] hover:bg-[#0b47bf] shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 hover:-translate-y-0.5 active:translate-y-0 transition-all"
             >
-              <span>Commencer gratuitement</span>
-              <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform" />
+              <span>Commencer Gratuitement</span>
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
 
             <button
               onClick={handlePlayVoiceDemo}
               type="button"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl text-sm font-bold text-slate-700 hover:text-blue-700 bg-white/85 backdrop-blur-xl border border-blue-100 hover:border-blue-300 shadow-sm transition-all"
+              className={`w-full sm:w-auto inline-flex items-center justify-center gap-3 px-6 py-4 rounded-xl text-sm font-bold border transition-all ${
+                isPlayingVoice
+                  ? "bg-blue-50 text-[#0d55e0] border-[#0d55e0] shadow-md shadow-blue-500/20"
+                  : "bg-white text-slate-700 hover:text-[#0d55e0] border-slate-200 hover:border-blue-300 shadow-xs"
+              }`}
             >
-              <div className="w-7 h-7 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200/60">
-                {isPlayingVoice ? <Square size={12} className="fill-blue-600" /> : <Play size={12} className="fill-blue-600 ml-0.5" />}
+              <div className="w-8 h-8 rounded-lg bg-blue-100/70 text-[#0d55e0] flex items-center justify-center">
+                {isPlayingVoice ? (
+                  <Square size={13} className="fill-[#0d55e0]" />
+                ) : (
+                  <Play size={13} className="fill-[#0d55e0] ml-0.5" />
+                )}
               </div>
-              <span>{isPlayingVoice ? "Arrêter la voix" : "Écouter l'assistant"}</span>
+              <span>{isPlayingVoice ? "Arrêter la voix" : "Écouter l'Appel Vocal IA"}</span>
             </button>
           </div>
 
+          {/* Points de Réassurance discrets */}
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-500">
+            <span className="inline-flex items-center gap-1.5">
+              <CheckCircle2 size={15} className="text-[#0d55e0]" /> Sans carte bancaire requise
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <CheckCircle2 size={15} className="text-[#0d55e0]" /> Synchronisation Google &amp; Outlook
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <CheckCircle2 size={15} className="text-[#0d55e0]" /> Conforme RGPD &amp; Données Chiffrées
+            </span>
+          </div>
+
         </div>
 
         {/* ========================================================
-            2. VUE D'IMAGE GRAND FORMAT : OCCUPE L'ENTIÈRETÉ DU PLAN
+            2. SHOWCASE VISUEL GRAND FORMAT HAUT DE GAMME
            ======================================================== */}
-        <div className="relative w-full rounded-[36px] overflow-hidden p-2 sm:p-3 bg-white/80 backdrop-blur-2xl border border-white/95 shadow-[0_30px_90px_-20px_rgba(37,99,235,0.22)] group">
+        <div className="relative max-w-5xl mx-auto">
           
-          <div className="relative w-full h-[360px] sm:h-[480px] lg:h-[560px] rounded-[28px] overflow-hidden bg-slate-100">
-            <Image
-              src="/images/hero-businesswoman.jpg"
-              alt="Femme d'affaires sereine avec son assistant vocal AlarmAgenda"
-              fill
-              priority
-              className="object-cover object-[center_20%] group-hover:scale-102 transition-transform duration-700"
-            />
-
-            {/* Voile translucide pour les cartes superposées */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent pointer-events-none" />
-
-            {/* Carte Flottante Gauche : Alerte Vocale avec le logo officiel */}
-            <div
-              onClick={handlePlayVoiceDemo}
-              className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 bg-white/90 backdrop-blur-2xl rounded-2xl p-4 shadow-[0_15px_35px_rgba(0,0,0,0.15)] border border-white/95 flex items-center gap-3.5 z-20 max-w-[280px] cursor-pointer hover:scale-105 transition-all group/call"
-              title="Cliquer pour écouter l'annonce"
-            >
-              <div className="relative w-12 h-12 rounded-xl overflow-hidden shadow-md shadow-blue-500/25 shrink-0 border border-blue-200">
-                <Image
-                  src="/logo.png"
-                  alt="Logo AlarmAgenda"
-                  fill
-                  className="object-cover"
-                />
+          {/* Cadre mockup d'application */}
+          <div className="relative rounded-3xl bg-white border border-slate-200/90 shadow-[0_25px_70px_rgba(11,23,54,0.12)] overflow-hidden">
+            
+            {/* Barre de fenêtre supérieure façon OS moderne */}
+            <div className="h-12 bg-slate-50/90 border-b border-slate-200/80 px-5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-rose-400" />
+                <span className="w-3 h-3 rounded-full bg-amber-400" />
+                <span className="w-3 h-3 rounded-full bg-emerald-400" />
+                <span className="ml-3 text-xs font-semibold text-slate-500">
+                  Alamajonda Executive Cockpit · En direct
+                </span>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-[#09132b]">
-                    Appel Vocal IA
-                  </span>
-                  <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                </div>
-                <div className="text-[11px] text-blue-600 font-bold truncate mt-0.5">
-                  {isPlayingVoice ? "Diffusion vocale en direct..." : "Programmé pour 14h30"}
-                </div>
-                <div className="flex items-center gap-1 mt-1.5 h-2.5">
-                  {[40, 80, 50, 100, 70, 90, 40].map((h, i) => (
-                    <span
-                      key={i}
-                      className={`w-0.5 rounded-full bg-blue-600 ${isPlayingVoice ? 'animate-pulse' : 'opacity-50'}`}
-                      style={{ height: `${h}%` }}
-                    />
-                  ))}
-                </div>
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200/70">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                <span>IA Active &amp; Prête</span>
               </div>
             </div>
 
-            {/* Carte Flottante Droite : Statut Confirmé */}
-            <div className="hidden sm:flex absolute bottom-8 right-8 bg-white/90 backdrop-blur-2xl rounded-2xl p-4 shadow-[0_15px_35px_rgba(0,0,0,0.15)] border border-white/95 items-center gap-3 z-20 max-w-[250px]">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200/60">
-                <CheckCircle2 size={18} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-black text-[#09132b]">
-                  Agenda synchronisé
+            {/* Corps du Mockup : Agencement Exécutif */}
+            <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 bg-gradient-to-b from-white to-[#fbfcfe]">
+              
+              {/* Colonne Gauche : Appel IA en direct (5 colonnes) */}
+              <div className="lg:col-span-5 flex flex-col gap-4">
+                
+                {/* Carte Appel Téléphonique IA */}
+                <div
+                  onClick={handlePlayVoiceDemo}
+                  className="p-5 rounded-2xl bg-gradient-to-br from-[#0b1736] to-[#0d55e0] text-white shadow-xl shadow-blue-900/20 border border-blue-400/30 cursor-pointer hover:scale-[1.02] transition-all group"
+                  title="Cliquez pour écouter la simulation"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-200 bg-white/10 px-2.5 py-1 rounded-full border border-white/10">
+                      Appel Entrant IA
+                    </span>
+                    <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-300">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      14:15:00
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3.5 mb-4">
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white/10 p-1 border border-white/20 shrink-0">
+                      <Image
+                        src="/logo.png"
+                        alt="Logo"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-white">
+                        Alamajonda Copilot
+                      </h4>
+                      <p className="text-xs text-blue-100">
+                        {isPlayingVoice ? "Audio en cours…" : "Prêt à sonner à 14h15"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Message retranscrit */}
+                  <div className="p-3.5 rounded-xl bg-white/10 border border-white/15 text-xs text-blue-50 leading-relaxed mb-4">
+                    &ldquo;Votre réunion de stratégie commence dans 15 minutes en salle du Conseil. Dossier financier synchronisé.&rdquo;
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs font-bold pt-2 border-t border-white/15">
+                    <span className="text-blue-100 flex items-center gap-1.5">
+                      <PhoneCall size={14} className="text-emerald-400 animate-bounce" />
+                      Sonnerie réelle GSM / Push
+                    </span>
+                    <span className="text-white underline underline-offset-4 group-hover:text-blue-200">
+                      {isPlayingVoice ? "Couper" : "Tester le son"}
+                    </span>
+                  </div>
                 </div>
-                <div className="text-[11px] text-emerald-600 font-semibold">
-                  Zéro retard · Ponctualité 100%
+
+                {/* Statut & Indicateur de Ponctualité */}
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0d55e0] flex items-center justify-center">
+                      <Clock size={20} />
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-500 font-medium">Taux de Ponctualité</div>
+                      <div className="text-lg font-black text-[#0b1736]">100% à l&apos;heure</div>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200/60">
+                    +0 retard ce mois
+                  </span>
                 </div>
+
               </div>
+
+              {/* Colonne Droite : Vue Agenda & Événements (7 colonnes) */}
+              <div className="lg:col-span-7 flex flex-col justify-between gap-4">
+                
+                {/* En-tête de la journée */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2.5">
+                    <CalendarIcon size={18} className="text-[#0d55e0]" />
+                    <span className="text-sm font-bold text-[#0b1736]">
+                      Agenda d&apos;aujourd&apos;hui · Synchronisé
+                    </span>
+                  </div>
+                  <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
+                    3 rendez-vous programmés
+                  </span>
+                </div>
+
+                {/* Liste d'événements ordonnée */}
+                <div className="space-y-3">
+                  {/* Événement 1 */}
+                  <div className="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/80 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2.5 h-10 rounded-full bg-[#0d55e0]" />
+                      <div>
+                        <div className="text-sm font-bold text-[#0b1736]">
+                          Comité de Direction &amp; Synthèse Mensuelle
+                        </div>
+                        <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                          <span>14h30 - 15h30</span>
+                          <span>•</span>
+                          <span>Salle Prestige</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-[#0d55e0] bg-white px-2.5 py-1 rounded-lg border border-blue-200 shadow-xs">
+                      Appel IA à 14h15
+                    </span>
+                  </div>
+
+                  {/* Événement 2 */}
+                  <div className="p-3.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between hover:border-blue-200 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2.5 h-10 rounded-full bg-slate-300" />
+                      <div>
+                        <div className="text-sm font-semibold text-[#0b1736]">
+                          Point Stratégie Investisseurs avec Me Laurent
+                        </div>
+                        <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                          <span>16h00 - 17h00</span>
+                          <span>•</span>
+                          <span>Visioconférence sécurisée</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs font-medium text-slate-600 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
+                      Rappel SMS 15:45
+                    </span>
+                  </div>
+
+                  {/* Événement 3 */}
+                  <div className="p-3.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between hover:border-blue-200 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2.5 h-10 rounded-full bg-slate-300" />
+                      <div>
+                        <div className="text-sm font-semibold text-[#0b1736]">
+                          Dîner d&apos;Affaires &amp; Partenariat Clé
+                        </div>
+                        <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                          <span>19h30</span>
+                          <span>•</span>
+                          <span>Hôtel Le Bristol</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs font-medium text-slate-600 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
+                      Appel IA à 18h45
+                    </span>
+                  </div>
+                </div>
+
+                {/* Barre basse : Détection proactive */}
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Sparkles size={14} className="text-[#0d55e0]" />
+                    <span>L&apos;IA a vérifié le temps de trajet : aucun bouchon détecté sur votre trajet.</span>
+                  </span>
+                  <span className="font-bold text-[#0d55e0]">Optimisé</span>
+                </div>
+
+              </div>
+
             </div>
 
           </div>
 
-        </div>
-
-        {/* ========================================================
-            3. BARRE DE GARANTIES MINIMALISTE (3 POINTS)
-           ======================================================== */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-xs font-semibold text-slate-500">
-          <div className="flex items-center gap-2">
-            <span className="text-amber-400 font-bold">★★★★★</span>
-            <span className="text-slate-700">4.9/5 par les utilisateurs</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 size={15} className="text-emerald-500" />
-            <span>Gratuit sans carte bancaire</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={15} className="text-blue-600" />
-            <span>Données protégées RGPD</span>
-          </div>
         </div>
 
       </div>

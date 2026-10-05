@@ -226,10 +226,10 @@ export default function DashboardLayout({
                   marginBottom: "6px",
                   fontSize: "13.5px",
                   fontWeight: isActive ? "700" : "500",
-                  color: isActive ? "#1d4ed8" : "var(--text-secondary)",
+                  color: isActive ? "#0d55e0" : "var(--text-secondary)",
                   background: isActive ? "#eff6ff" : "transparent",
                   border: isActive ? "1px solid #bfdbfe" : "1px solid transparent",
-                  boxShadow: isActive ? "0 2px 8px rgba(29, 78, 216, 0.08)" : "none",
+                  boxShadow: isActive ? "0 2px 8px rgba(13, 85, 224, 0.08)" : "none",
                   transition: "all 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
                   textDecoration: "none",
                 }}
@@ -239,9 +239,9 @@ export default function DashboardLayout({
                   <Icon
                     size={18}
                     style={{
-                      color: isActive ? "#1d4ed8" : "var(--text-muted)",
-                      flexShrink: 0,
-                    }}
+                    color: isActive ? "#0d55e0" : "var(--text-muted)",
+                    flexShrink: 0,
+                  }}
                   />
                   <span>{link.label}</span>
                 </div>
