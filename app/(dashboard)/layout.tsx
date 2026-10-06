@@ -61,15 +61,15 @@ export default function DashboardLayout({
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showVoiceLiveModal, setShowVoiceLiveModal] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>();
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const { isPro } = useSubscription();
 
   const userName = session?.user?.name || "Salem Imorou";
 
-  // Initialisation du thème sombre prestige par défaut (cohérent avec la page d'accueil)
+  // Initialisation du thème clair limpide & épuré par défaut
   useEffect(() => {
     const savedTheme = localStorage.getItem("alamajonda_theme") as "light" | "dark" | null;
-    const activeTheme = savedTheme || "dark";
+    const activeTheme = savedTheme || "light";
     setTheme(activeTheme);
     document.documentElement.setAttribute("data-theme", activeTheme);
     if (activeTheme === "dark") {

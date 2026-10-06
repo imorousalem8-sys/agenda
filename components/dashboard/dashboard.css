@@ -1,37 +1,49 @@
 /* ==========================================================================
-   Dashboard Alamajonda — CSS Cockpit Exécutif Prestige
-   Style : Sombre Luxueux Obsidian & Cyan Saphir (100% cohérent avec la Landing)
+   Dashboard Alamajonda — CSS Cockpit Exécutif Limpide & Épuré
+   Style : Clair, Net, Aéré, Lumineux et Ultra-Professionnel
    ========================================================================== */
 
-/* Variables Cockpit */
+/* Variables Cockpit Claires et Limpides */
 :root {
-  --dash-bg: #030712;
-  --dash-surface: rgba(10, 18, 38, 0.78);
-  --dash-surface-hover: rgba(15, 27, 56, 0.85);
-  --dash-surface-elevated: rgba(13, 24, 52, 0.9);
-  --dash-border: rgba(56, 189, 248, 0.14);
-  --dash-border-hover: rgba(56, 189, 248, 0.35);
-  --dash-border-subtle: rgba(255, 255, 255, 0.07);
+  --dash-bg: #f8fafc;
+  --dash-bg-subtle: #f1f5f9;
+  --dash-surface: #ffffff;
+  --dash-surface-hover: #f8fafc;
+  --dash-surface-subtle: #f8fafc;
+  --dash-border: #e2e8f0;
+  --dash-border-focus: #0d55e0;
+  --dash-border-subtle: #edf2f7;
   --dash-primary: #0d55e0;
-  --dash-cyan: #38bdf8;
-  --dash-text-main: #ffffff;
-  --dash-text-muted: #94a3b8;
-  --dash-text-dim: #64748b;
-  --dash-sidebar-bg: rgba(6, 14, 34, 0.92);
+  --dash-primary-hover: #0b47bf;
+  --dash-primary-subtle: rgba(13, 85, 224, 0.08);
+  --dash-text-main: #0f172a;
+  --dash-text-muted: #64748b;
+  --dash-text-dim: #94a3b8;
+  --dash-sidebar-bg: rgba(255, 255, 255, 0.92);
+  --dash-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --dash-shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
+  --dash-shadow-lg: 0 10px 25px -4px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
-[data-theme="light"] {
-  --dash-bg: #070e22;
-  --dash-surface: rgba(13, 25, 54, 0.82);
-  --dash-surface-hover: rgba(18, 34, 72, 0.9);
-  --dash-surface-elevated: rgba(16, 30, 64, 0.95);
-  --dash-border: rgba(56, 189, 248, 0.16);
-  --dash-border-hover: rgba(56, 189, 248, 0.4);
-  --dash-border-subtle: rgba(255, 255, 255, 0.08);
-  --dash-text-main: #ffffff;
+[data-theme="dark"] {
+  --dash-bg: #0b1120;
+  --dash-bg-subtle: #111827;
+  --dash-surface: #131d33;
+  --dash-surface-hover: #192542;
+  --dash-surface-subtle: #0f172a;
+  --dash-border: rgba(255, 255, 255, 0.1);
+  --dash-border-focus: #38bdf8;
+  --dash-border-subtle: rgba(255, 255, 255, 0.06);
+  --dash-primary: #0d55e0;
+  --dash-primary-hover: #2563eb;
+  --dash-primary-subtle: rgba(56, 189, 248, 0.12);
+  --dash-text-main: #f8fafc;
   --dash-text-muted: #94a3b8;
   --dash-text-dim: #64748b;
-  --dash-sidebar-bg: rgba(7, 16, 38, 0.94);
+  --dash-sidebar-bg: rgba(15, 23, 42, 0.94);
+  --dash-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --dash-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --dash-shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* Conteneur Global Cockpit */
@@ -40,9 +52,8 @@
   min-height: 100vh;
   background-color: var(--dash-bg);
   background-image: 
-    radial-gradient(ellipse 1200px 700px at 20% 10%, rgba(13, 85, 224, 0.22) 0%, transparent 60%),
-    radial-gradient(ellipse 900px 600px at 85% 80%, rgba(56, 189, 248, 0.12) 0%, transparent 55%),
-    radial-gradient(circle at 50% 50%, rgba(3, 7, 18, 0.95) 0%, #030712 100%);
+    radial-gradient(ellipse 1000px 500px at 15% 0%, rgba(13, 85, 224, 0.035) 0%, transparent 60%),
+    radial-gradient(ellipse 800px 400px at 85% 100%, rgba(56, 189, 248, 0.03) 0%, transparent 55%);
   background-attachment: fixed;
   color: var(--dash-text-main);
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -50,10 +61,10 @@
 }
 
 /* ==========================================================================
-   SIDEBAR À GAUCHE (TOUS LES MENUS ET ACTIONS RANGÉS VERS LA GAUCHE)
+   SIDEBAR À GAUCHE (VALIDÉE ET RANGÉE IMPECCABLEMENT)
    ========================================================================== */
 .dash-sidebar {
-  width: 290px;
+  width: 285px;
   flex-shrink: 0;
   height: 100vh;
   position: sticky;
@@ -62,10 +73,10 @@
   display: flex;
   flex-direction: column;
   background: var(--dash-sidebar-bg);
-  backdrop-filter: blur(28px) saturate(200%);
-  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-right: 1px solid var(--dash-border);
-  box-shadow: 4px 0 35px rgba(0, 0, 0, 0.5), inset -1px 0 0 rgba(56, 189, 248, 0.06);
+  box-shadow: 2px 0 15px rgba(15, 23, 42, 0.02);
   transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -76,10 +87,9 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--dash-border-subtle);
-  background: rgba(255, 255, 255, 0.02);
 }
 
-/* Corps de navigation scrollable */
+/* Navigation Déroulante */
 .dash-sidebar-nav {
   flex: 1;
   padding: 16px 14px;
@@ -93,29 +103,28 @@
   width: 5px;
 }
 .dash-sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(56, 189, 248, 0.2);
+  background: var(--dash-border);
   border-radius: 999px;
 }
 
-/* Titres de Catégories de Menus */
+/* Titres de Sections de la Sidebar */
 .dash-nav-section-title {
-  font-size: 10.5px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--dash-cyan);
+  letter-spacing: 0.06em;
+  color: var(--dash-text-muted);
   padding: 0 12px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 6px;
-  opacity: 0.9;
 }
 
 .dash-nav-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 /* Liens de Navigation */
@@ -124,30 +133,28 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 14px;
-  border-radius: 12px;
+  padding: 9px 13px;
+  border-radius: 10px;
   font-size: 13.5px;
   font-weight: 500;
-  color: #cbd5e1;
+  color: var(--dash-text-muted);
   text-decoration: none;
   border: 1px solid transparent;
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: all 0.15s ease;
 }
 
 .dash-nav-link:hover {
-  background: rgba(56, 189, 248, 0.08);
-  color: #ffffff;
-  border-color: rgba(56, 189, 248, 0.22);
-  transform: translateX(2px);
+  background: var(--dash-surface-subtle);
+  color: var(--dash-text-main);
+  border-color: var(--dash-border-subtle);
 }
 
-/* Lien Actif Prestige */
+/* Lien Actif Net & Élégant */
 .dash-nav-link.is-active {
-  background: linear-gradient(135deg, rgba(13, 85, 224, 0.35) 0%, rgba(56, 189, 248, 0.18) 100%);
-  color: #ffffff;
-  font-weight: 700;
-  border: 1px solid rgba(56, 189, 248, 0.45);
-  box-shadow: 0 4px 18px rgba(13, 85, 224, 0.25), inset 0 0 12px rgba(56, 189, 248, 0.15);
+  background: var(--dash-primary-subtle);
+  color: var(--dash-primary);
+  font-weight: 600;
+  border-color: rgba(13, 85, 224, 0.18);
 }
 
 .dash-nav-icon {
@@ -155,26 +162,25 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #94a3b8;
-  transition: color 0.2s ease;
+  color: var(--dash-text-muted);
+  transition: color 0.15s ease;
 }
 
 .dash-nav-link:hover .dash-nav-icon,
 .dash-nav-link.is-active .dash-nav-icon {
-  color: var(--dash-cyan);
+  color: var(--dash-primary);
 }
 
 /* Badge dans le menu */
 .dash-nav-badge {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   padding: 2px 7px;
   border-radius: 6px;
-  background: linear-gradient(135deg, #0d55e0, #38bdf8);
+  background: var(--dash-primary);
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(13, 85, 224, 0.4);
 }
 
 /* Boutons d'Action dans la Sidebar */
@@ -184,60 +190,59 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 9px 14px;
-  border-radius: 11px;
-  font-size: 13px;
+  padding: 9px 13px;
+  border-radius: 10px;
+  font-size: 13.5px;
   font-weight: 500;
-  color: #94a3b8;
+  color: var(--dash-text-muted);
   background: transparent;
   border: 1px solid transparent;
   cursor: pointer;
   text-align: left;
-  transition: all 0.18s ease;
+  transition: all 0.15s ease;
 }
 
 .dash-nav-action-btn:hover {
-  background: rgba(56, 189, 248, 0.08);
-  color: #ffffff;
-  border-color: rgba(56, 189, 248, 0.2);
+  background: var(--dash-surface-subtle);
+  color: var(--dash-text-main);
 }
 
-/* Bouton Spécial Action Rapide dans la Sidebar (Nouveau Créneau) */
+/* Bouton Action Principale Haut de Sidebar */
 .dash-sidebar-cta-btn {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  padding: 11px 16px;
-  border-radius: 13px;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 11px;
   font-size: 13.5px;
-  font-weight: 700;
+  font-weight: 600;
   color: #ffffff;
-  background: linear-gradient(135deg, #0d55e0 0%, #2563eb 50%, #38bdf8 100%);
-  border: 1px solid rgba(56, 189, 248, 0.5);
-  box-shadow: 0 6px 20px rgba(13, 85, 224, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: var(--dash-primary);
+  border: 1px solid rgba(13, 85, 224, 0.4);
+  box-shadow: 0 2px 8px rgba(13, 85, 224, 0.25);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
 }
 
 .dash-sidebar-cta-btn:hover {
+  background: var(--dash-primary-hover);
+  box-shadow: 0 4px 12px rgba(13, 85, 224, 0.35);
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(13, 85, 224, 0.55), 0 0 18px rgba(56, 189, 248, 0.35);
 }
 
-/* Carte Quota Translucide Sombre */
+/* Carte Quota Sidebar */
 .dash-quota-wrap {
   padding: 12px 14px;
   border-top: 1px solid var(--dash-border-subtle);
-  background: rgba(255, 255, 255, 0.015);
 }
 
 /* Profil Utilisateur */
 .dash-sidebar-user {
   padding: 14px 16px;
   border-top: 1px solid var(--dash-border-subtle);
-  background: rgba(4, 9, 24, 0.85);
+  background: var(--dash-surface-subtle);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -246,22 +251,21 @@
 .dash-user-avatar {
   width: 38px;
   height: 38px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #0d55e0 0%, #38bdf8 100%);
+  border-radius: 10px;
+  background: var(--dash-primary);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 14px;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(13, 85, 224, 0.4);
 }
 
 .dash-user-name {
   font-size: 13px;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: 600;
+  color: var(--dash-text-main);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -269,15 +273,15 @@
 
 .dash-user-plan {
   font-size: 11px;
-  color: var(--dash-cyan);
+  color: #10b981;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 /* ==========================================================================
-   ZONE PRINCIPALE DU DASHBOARD (TABLEAU DE BORD COCKPIT)
+   ZONE CENTRALE DU TABLEAU DE BORD (ESPACE LIMPIDE, ÉPURÉ & AÉRÉ)
    ========================================================================== */
 .dash-main {
   flex: 1;
@@ -287,107 +291,195 @@
   overflow-y: auto;
 }
 
-/* Cartes Translucides Verre Dépoli Sombre Prestige (Frosted Glass) */
+/* Cartes Définies & Claires (Zéro sentiment d'étouffement ou de fenêtres imbriquées) */
 .dash-card {
   background: var(--dash-surface);
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
   border: 1px solid var(--dash-border);
-  border-radius: 20px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  border-radius: 16px;
+  box-shadow: var(--dash-shadow-md);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   color: var(--dash-text-main);
 }
 
 .dash-card:hover {
-  border-color: var(--dash-border-hover);
-  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.55), 0 0 24px rgba(13, 85, 224, 0.15);
+  border-color: rgba(13, 85, 224, 0.25);
+  box-shadow: var(--dash-shadow-lg);
 }
 
-/* Boutons secondaires cockpit harmonisés */
-.dash-btn-glass {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 15px;
-  border-radius: 12px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #cbd5e1;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(56, 189, 248, 0.15);
-  backdrop-filter: blur(12px);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
+/* Bandeau de Statistiques 1 Seule Ligne Fluide */
+.dash-stats-bar {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 16px;
+  box-shadow: var(--dash-shadow-sm);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: hidden;
 }
 
-.dash-btn-glass:hover {
-  background: rgba(56, 189, 248, 0.1);
-  color: #ffffff;
-  border-color: rgba(56, 189, 248, 0.35);
-  transform: translateY(-1px);
+@media (max-width: 768px) {
+  .dash-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-.dash-btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 18px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 700;
-  color: #ffffff;
-  background: linear-gradient(135deg, #0d55e0 0%, #2563eb 50%, #38bdf8 100%);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  box-shadow: 0 4px 16px rgba(13, 85, 224, 0.35);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.dash-btn-primary:hover {
-  box-shadow: 0 6px 22px rgba(13, 85, 224, 0.5), 0 0 16px rgba(56, 189, 248, 0.3);
-  transform: translateY(-1px);
-}
-
-/* Conteneur Élément de Liste (Événements, Rappels, Tâches) */
-.dash-item-row {
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.2s ease;
+.dash-stat-item {
+  padding: 16px 20px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  border-right: 1px solid var(--dash-border-subtle);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.dash-stat-item:last-child {
+  border-right: none;
+}
+
+.dash-stat-item:hover {
+  background: var(--dash-surface-subtle);
+}
+
+.dash-stat-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dash-primary-subtle);
+  color: var(--dash-primary);
+  flex-shrink: 0;
+}
+
+.dash-stat-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--dash-text-main);
+  line-height: 1.1;
+}
+
+.dash-stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dash-text-muted);
+  margin-top: 2px;
+}
+
+/* Onglets Limpides pour l'Espace Principal */
+.dash-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--dash-border-subtle);
+  padding: 0 20px;
+}
+
+.dash-tab-btn {
+  padding: 14px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--dash-text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.dash-tab-btn:hover {
+  color: var(--dash-text-main);
+}
+
+.dash-tab-btn.is-active {
+  color: var(--dash-primary);
+  border-bottom-color: var(--dash-primary);
+}
+
+/* Ligne d'Élément Spacieuse (Agenda, Alarme, Tâche) */
+.dash-item-row {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid var(--dash-border);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+[data-theme="dark"] .dash-item-row {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .dash-item-row:hover {
-  background: rgba(56, 189, 248, 0.06);
-  border-color: rgba(56, 189, 248, 0.25);
-  transform: translateX(2px);
+  border-color: rgba(13, 85, 224, 0.3);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
-/* État Vide Élégant (Sans fond gris boueux !) */
+/* État Vide Limpide (Élégant, propre, sans boîte noire bizarre) */
 .dash-empty-state {
   text-align: center;
-  padding: 28px 16px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.015);
-  border: 1px dashed rgba(56, 189, 248, 0.16);
+  padding: 36px 20px;
 }
 
-/* Bannière d'Information Technologique (Au lieu du pavé jaune criard) */
+/* Boutons Limpides */
+.dash-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--dash-primary);
+  border: 1px solid rgba(13, 85, 224, 0.3);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(13, 85, 224, 0.2);
+}
+
+.dash-btn-primary:hover {
+  background: var(--dash-primary-hover);
+  box-shadow: 0 3px 8px rgba(13, 85, 224, 0.3);
+}
+
+.dash-btn-glass {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dash-text-main);
+  background: #ffffff;
+  border: 1px solid var(--dash-border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dash-btn-glass:hover {
+  background: var(--dash-surface-subtle);
+  border-color: rgba(13, 85, 224, 0.25);
+}
+
+/* Note Technologique Subtile */
 .dash-info-banner {
   padding: 12px 14px;
-  border-radius: 14px;
-  background: rgba(13, 85, 224, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 10px;
+  background: var(--dash-primary-subtle);
+  border: 1px solid rgba(13, 85, 224, 0.12);
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 12px;
-  color: #bae6fd;
+  font-size: 12.5px;
+  color: var(--dash-text-muted);
 }
 
 /* Mobile Responsive */
@@ -398,7 +490,7 @@
     top: 0;
     bottom: 0;
     transform: translateX(-100%);
-    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.15);
   }
 
   .dash-sidebar.sidebar-open {
