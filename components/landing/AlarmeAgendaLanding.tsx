@@ -33,11 +33,25 @@ export default function AlarmeAgendaLanding() {
   const [videoModalOpen, setVideoModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#060c18] text-white font-sans antialiased overflow-x-hidden selection:bg-blue-600 selection:text-white flex flex-col justify-between">
+    <div className="relative min-h-screen text-white font-sans antialiased overflow-x-hidden selection:bg-blue-600 selection:text-white flex flex-col justify-between">
+      {/* =========================================================================
+          ARRIÈRE-PLAN FLUIDE 3D AVEC VAPEUR VOLUMÉTRIQUE ÉTALÉE DANS TOUS LES SENS
+          Style officiel avec volutes de vapeur animées et reflets iridescents
+         ========================================================================= */}
+      <div className="aa-fluid-background-root" aria-hidden="true">
+        <div className="aa-fluid-bg-image" />
+        <div className="aa-steam-layer">
+          <div className="aa-steam-cloud aa-steam-cloud-1" />
+          <div className="aa-steam-cloud aa-steam-cloud-2" />
+          <div className="aa-steam-cloud aa-steam-cloud-3" />
+        </div>
+        <div className="aa-steam-vignette" />
+      </div>
+
       {/* =========================================================================
           1. NAVIGATION HAUTE INTERACTIVE & VIVANTE
          ========================================================================= */}
-      <header className="relative z-50 w-full border-b border-white/[0.06] bg-[#060c18]/85 backdrop-blur-xl">
+      <header className="relative z-50 w-full border-b border-white/[0.08] bg-[#050a18]/70 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo officiel */}
           <Link href="/" className="flex items-center gap-3 no-underline text-white group">
@@ -273,7 +287,7 @@ export default function AlarmeAgendaLanding() {
       {/* =========================================================================
           4. BANDEAU DES 5 FONCTIONNALITÉS (EXACT RÉFÉRENCE)
          ========================================================================= */}
-      <section id="fonctionnalites" className="relative z-10 py-8 px-6 lg:px-8 border-t border-white/[0.06] bg-[#050a14]/95">
+      <section id="fonctionnalites" className="relative z-10 py-8 px-6 lg:px-8 border-t border-white/[0.08] bg-[#050a18]/70 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-6 sm:gap-8">
             {/* 1. Rappels intelligents */}

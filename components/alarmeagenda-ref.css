@@ -42,11 +42,197 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .aa-dashboard-card:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+/* ==========================================================================
+   STYLE CRISTAL DU DASHBOARD — TRANSPARENT BLEU CLAIR / BLEU BLANC
+   Ultra épuré, sans fonds d'écran lourds, lisibilité et prestige absolus
+   ========================================================================== */
+.aa-crystal-card {
+  background: linear-gradient(135deg, rgba(14, 28, 64, 0.52) 0%, rgba(8, 17, 40, 0.38) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.16);
+  border-top: 1px solid rgba(186, 230, 253, 0.25);
+  border-radius: 18px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 10px 32px -4px rgba(2, 6, 23, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aa-crystal-card:hover {
+  border-color: rgba(56, 189, 248, 0.38);
+  border-top-color: rgba(186, 230, 253, 0.5);
+  box-shadow: 0 14px 40px -4px rgba(2, 6, 23, 0.65), 0 0 24px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.aa-crystal-card-subtle {
+  background: rgba(10, 20, 46, 0.38);
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  border-radius: 14px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.2s ease;
+}
+
+.aa-crystal-card-subtle:hover {
+  background: rgba(14, 28, 62, 0.55);
   border-color: rgba(56, 189, 248, 0.25);
+}
+
+/* Pilule de filtre / badge cristal */
+.aa-crystal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  color: #bae6fd;
+  backdrop-filter: blur(10px);
+}
+
+/* ==========================================================================
+   ARRIÈRE-PLAN FLUIDE AVEC VAPEUR VOLUMÉTRIQUE ÉTALÉE DANS TOUS LES SENS
+   ========================================================================== */
+.aa-fluid-background-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background-color: #040814;
+}
+
+.aa-fluid-bg-image {
+  position: absolute;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  background-image: url('/images/executive-fluid-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.85;
+  filter: contrast(1.1) brightness(0.95);
+  animation: aaFluidSway 28s ease-in-out infinite alternate;
+  transform-origin: center center;
+}
+
+/* Nappes de vapeur volumétrique vivante */
+.aa-steam-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.aa-steam-cloud {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.aa-steam-cloud-1 {
+  width: 70vw;
+  height: 60vh;
+  top: -10%;
+  left: -15%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.35) 0%, rgba(37, 99, 235, 0.2) 45%, transparent 70%);
+  animation: aaSteamDrift1 22s ease-in-out infinite alternate;
+}
+
+.aa-steam-cloud-2 {
+  width: 80vw;
+  height: 70vh;
+  bottom: -20%;
+  right: -20%;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.3) 0%, rgba(99, 102, 241, 0.22) 50%, transparent 75%);
+  animation: aaSteamDrift2 26s ease-in-out infinite alternate;
+}
+
+.aa-steam-cloud-3 {
+  width: 50vw;
+  height: 50vh;
+  top: 30%;
+  left: 25%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(56, 189, 248, 0.18) 40%, transparent 65%);
+  animation: aaSteamPulse 16s ease-in-out infinite alternate;
+}
+
+.aa-steam-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, transparent 20%, rgba(4, 8, 20, 0.45) 70%, rgba(4, 8, 20, 0.8) 100%);
+  pointer-events: none;
+}
+
+@keyframes aaFluidSway {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.04) translate(-1%, 1.5%);
+  }
+  100% {
+    transform: scale(1.02) translate(1%, -1%);
+  }
+}
+
+@keyframes aaSteamDrift1 {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(8vw, 6vh) scale(1.15) rotate(5deg);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate(3vw, -4vh) scale(1.05) rotate(-3deg);
+    opacity: 0.28;
+  }
+}
+
+@keyframes aaSteamDrift2 {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 0.32;
+  }
+  50% {
+    transform: translate(-7vw, -8vh) scale(1.2) rotate(-6deg);
+    opacity: 0.48;
+  }
+  100% {
+    transform: translate(-3vw, 5vh) scale(0.95) rotate(4deg);
+    opacity: 0.35;
+  }
+}
+
+@keyframes aaSteamPulse {
+  0% {
+    transform: scale(0.9) translate(-3%, 2%);
+    opacity: 0.15;
+  }
+  50% {
+    transform: scale(1.2) translate(4%, -3%);
+    opacity: 0.28;
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.18;
+  }
 }
 
 /* Bouton bleu plein d'action */
