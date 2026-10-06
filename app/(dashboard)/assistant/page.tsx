@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Mic,
   MicOff,
@@ -38,7 +39,11 @@ const suggestions = [
   "Déplace mon rendez-vous de demain.",
 ];
 
-export default function AssistantPage() {
+function AssistantChat() {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q");
+  const queryHandledRef = useRef(false);
+
   const [messages, setMessages] = useState<ChatItem[]>([
     {
       id: "intro-1",
@@ -74,6 +79,13 @@ export default function AssistantPage() {
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  useEffect(() => {
+    if (initialQuery && !queryHandledRef.current) {
+      queryHandledRef.current = true;
+      handleSendMessage(initialQuery);
+    }
+  }, [initialQuery]);
 
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
@@ -332,5 +344,20 @@ export default function AssistantPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function AssistantPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-[400px] text-slate-400 gap-2">
+          <Loader2 className="animate-spin text-blue-500" size={20} />
+          <span className="text-sm">Chargement de votre assistant...</span>
+        </div>
+      }
+    >
+      <AssistantChat />
+    </Suspense>
   );
 }

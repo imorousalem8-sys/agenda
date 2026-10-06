@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Calendar,
   Clock,
@@ -16,7 +17,9 @@ import {
   Briefcase,
   Dumbbell,
   Send,
-  Sparkle,
+  Plus,
+  Loader2,
+  CalendarPlus,
 } from "lucide-react";
 import EventFormModal from "@/components/forms/EventFormModal";
 import "@/components/alarmeagenda-ref.css";
@@ -29,21 +32,94 @@ interface TaskItem {
   priority?: "Haute" | "Moyenne" | "Basse";
 }
 
+const DEFAULT_TASKS: TaskItem[] = [
+  { id: "task-1", title: "Envoyer le document", done: false, time: "10:00", priority: "Haute" },
+  { id: "task-2", title: "Appeler le client", done: true, time: "13:00", priority: "Moyenne" },
+  { id: "task-3", title: "Préparer le rendez-vous", done: false, time: "16:00", priority: "Basse" },
+];
+
 export default function DashboardPage() {
+  const router = useRouter();
   const [showEventModal, setShowEventModal] = useState(false);
+  const [eventToEdit, setEventToEdit] = useState<any>(null);
   const [aiPrompt, setAiPrompt] = useState("");
+  const [tasks, setTasks] = useState<TaskItem[]>(DEFAULT_TASKS);
+  const [loadingTasks, setLoadingTasks] = useState(false);
 
-  // Tâches de démonstration réalistes (Exact Image 2)
-  const [tasks, setTasks] = useState<TaskItem[]>([
-    { id: "1", title: "Envoyer le document", done: false, time: "10:00", priority: "Haute" },
-    { id: "2", title: "Appeler le client", done: true, time: "13:00", priority: "Moyenne" },
-    { id: "3", title: "Préparer le rendez-vous", done: false, time: "16:00", priority: "Basse" },
-  ]);
+  // Charger les tâches depuis l'API backend si disponibles
+  const loadTasksFromBackend = useCallback(async () => {
+    try {
+      const res = await fetch("/api/tasks?limit=5");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.tasks && data.tasks.length > 0) {
+          const mapped: TaskItem[] = data.tasks.slice(0, 3).map((t: any, idx: number) => ({
+            id: t.id,
+            title: t.title,
+            done: !!t.isDone,
+            time: t.dueAt ? new Date(t.dueAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : DEFAULT_TASKS[idx]?.time || "12:00",
+            priority: (t.priority === "URGENT" || t.priority === "HIGH" ? "Haute" : t.priority === "LOW" ? "Basse" : "Moyenne") as TaskItem["priority"],
+          }));
+          setTasks(mapped);
+          return;
+        }
+      }
+    } catch {
+      // Fallback gracieux sur DEFAULT_TASKS
+    }
+  }, []);
 
-  const toggleTask = (id: string) => {
+  useEffect(() => {
+    loadTasksFromBackend();
+    const handleSync = () => loadTasksFromBackend();
+    window.addEventListener("task-updated", handleSync);
+    window.addEventListener("event-updated", handleSync);
+    return () => {
+      window.removeEventListener("task-updated", handleSync);
+      window.removeEventListener("event-updated", handleSync);
+    };
+  }, [loadTasksFromBackend]);
+
+  // Basculer l'état d'une tâche (synchro locale immédiate + API persistante)
+  const toggleTask = async (id: string) => {
     setTasks((prev) =>
       prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
     );
+
+    try {
+      const task = tasks.find((t) => t.id === id);
+      if (task && !id.startsWith("task-")) {
+        await fetch(`/api/tasks/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isDone: !task.done }),
+        });
+      }
+    } catch {
+      // Conservation de l'état UI optimiste
+    }
+  };
+
+  // Soumission de prompt Assistant IA
+  const handleAiSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!aiPrompt.trim()) return;
+    router.push(`/assistant?q=${encodeURIComponent(aiPrompt.trim())}`);
+  };
+
+  const handleEditNextMeeting = () => {
+    setEventToEdit({
+      id: "demo-next-event",
+      title: "Rendez-vous professionnel",
+      description: "Discussion stratégique et revue des étapes clés",
+      startAt: new Date(new Date().setHours(14, 30, 0, 0)).toISOString(),
+      endAt: new Date(new Date().setHours(15, 30, 0, 0)).toISOString(),
+      location: "Centre-ville",
+      category: "WORK",
+      priority: "HIGH",
+      mode: "PROFESSIONAL",
+    });
+    setShowEventModal(true);
   };
 
   return (
@@ -70,9 +146,21 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Citation discrète en italique conforme à l'image 2 */}
-        <div className="relative z-10 text-xs sm:text-sm text-slate-400 italic font-light max-w-md lg:text-right">
-          « Chaque petit pas vous rapproche de vos grands objectifs. »
+        {/* Citation discrète en italique conforme à l'image 2 + Bouton d'action rapide */}
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-3 lg:text-right">
+          <div className="text-xs sm:text-sm text-slate-400 italic font-light max-w-md">
+            « Chaque petit pas vous rapproche de vos grands objectifs. »
+          </div>
+          <button
+            onClick={() => {
+              setEventToEdit(null);
+              setShowEventModal(true);
+            }}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-[0_4px_15px_rgba(37,99,235,0.35)] shrink-0"
+          >
+            <CalendarPlus size={15} />
+            <span>+ Nouveau rendez-vous</span>
+          </button>
         </div>
       </div>
 
@@ -128,8 +216,8 @@ export default function DashboardPage() {
               <ArrowRight size={13} />
             </Link>
             <button
-              onClick={() => setShowEventModal(true)}
-              className="aa-pill-btn-glass text-xs py-2 px-4"
+              onClick={handleEditNextMeeting}
+              className="aa-pill-btn-glass text-xs py-2 px-4 cursor-pointer"
             >
               Modifier
             </button>
@@ -344,7 +432,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Champ de saisie prompt Image 2 */}
-            <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.04] border border-white/[0.1] focus-within:border-blue-500">
+            <form onSubmit={handleAiSubmit} className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.04] border border-white/[0.1] focus-within:border-blue-500">
               <input
                 type="text"
                 placeholder="Par exemple : « Qu'ai-je prévu demain ? »"
@@ -352,39 +440,43 @@ export default function DashboardPage() {
                 onChange={(e) => setAiPrompt(e.target.value)}
                 className="bg-transparent border-none outline-none w-full text-xs text-white placeholder-slate-400 px-1"
               />
-              <Link
-                href="/assistant"
-                className="w-7 h-7 rounded-lg bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center shrink-0 transition-colors"
+              <button
+                type="submit"
+                className="w-7 h-7 rounded-lg bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center shrink-0 transition-colors cursor-pointer"
+                title="Poser la question à l'assistant"
               >
                 <ArrowRight size={13} />
-              </Link>
-            </div>
+              </button>
+            </form>
 
             {/* Suggestions en pilules exactes Image 2 */}
             <div className="space-y-1.5 pt-1 text-xs">
-              <Link
-                href="/assistant"
-                className="w-full text-left p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] text-slate-300 hover:text-white flex items-center gap-2 transition-all no-underline text-[11px]"
+              <button
+                type="button"
+                onClick={() => router.push(`/assistant?q=${encodeURIComponent("Ajoute un rendez-vous vendredi à 16h")}`)}
+                className="w-full text-left p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] text-slate-300 hover:text-white flex items-center gap-2 transition-all cursor-pointer text-[11px]"
               >
                 <span className="text-blue-400">💬</span>
                 <span>Ajoute un rendez-vous vendredi à 16h</span>
-              </Link>
+              </button>
 
-              <Link
-                href="/assistant"
-                className="w-full text-left p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] text-slate-300 hover:text-white flex items-center gap-2 transition-all no-underline text-[11px]"
+              <button
+                type="button"
+                onClick={() => router.push(`/assistant?q=${encodeURIComponent("Quels sont mes rappels aujourd'hui ?")}`)}
+                className="w-full text-left p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] text-slate-300 hover:text-white flex items-center gap-2 transition-all cursor-pointer text-[11px]"
               >
                 <span className="text-blue-400">💬</span>
                 <span>Quels sont mes rappels aujourd&apos;hui ?</span>
-              </Link>
+              </button>
 
-              <Link
-                href="/assistant"
-                className="w-full text-left p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] text-slate-300 hover:text-white flex items-center gap-2 transition-all no-underline text-[11px]"
+              <button
+                type="button"
+                onClick={() => router.push(`/assistant?q=${encodeURIComponent("Montre-moi mes tâches importantes")}`)}
+                className="w-full text-left p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] text-slate-300 hover:text-white flex items-center gap-2 transition-all cursor-pointer text-[11px]"
               >
                 <span className="text-blue-400">💬</span>
                 <span>Montre-moi mes tâches importantes</span>
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -418,7 +510,7 @@ export default function DashboardPage() {
                 <Check size={13} strokeWidth={2.5} />
               </div>
               <div className="text-xs font-bold text-white">
-                Tâches prioritaires <span className="text-slate-400 font-normal">· 3 tâches · Aujourd&apos;hui</span>
+                Tâches prioritaires <span className="text-slate-400 font-normal">· {tasks.length} tâches · Aujourd&apos;hui</span>
               </div>
             </div>
             <Link href="/tasks" className="text-xs text-blue-400 hover:text-blue-300 font-medium no-underline">
@@ -427,50 +519,43 @@ export default function DashboardPage() {
           </div>
 
           <div className="space-y-2.5 text-xs">
-            {/* Tâche 1 : Envoyer le document - 10:00 - Haute */}
-            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02]">
-              <div className="flex items-center gap-3">
-                <span className="w-4 h-4 rounded border border-slate-500" />
-                <span className="text-slate-200">Envoyer le document</span>
+            {tasks.map((task) => (
+              <div
+                key={`priority-${task.id}`}
+                onClick={() => toggleTask(task.id)}
+                className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.04] cursor-pointer transition-colors group select-none"
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                      task.done
+                        ? "bg-blue-600 border-blue-500 text-white"
+                        : "border-slate-500 group-hover:border-blue-400"
+                    }`}
+                  >
+                    {task.done && <Check size={11} strokeWidth={3} />}
+                  </div>
+                  <span className={`text-slate-200 ${task.done ? "line-through text-slate-400" : ""}`}>
+                    {task.title}
+                  </span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-slate-400 text-[11px]">{task.time || "12:00"}</span>
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded border flex items-center gap-1 ${
+                      task.priority === "Haute"
+                        ? "bg-red-500/20 text-red-300 border-red-500/30"
+                        : task.priority === "Moyenne"
+                        ? "bg-amber-500/20 text-amber-300 border-amber-500/30"
+                        : "bg-blue-500/20 text-blue-300 border-blue-500/30"
+                    }`}
+                  >
+                    <span>{task.priority === "Basse" ? "●" : "◆"}</span>
+                    <span>{task.priority || "Normale"}</span>
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-4">
-                <span className="font-mono text-slate-400 text-[11px]">10:00</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 flex items-center gap-1">
-                  <span>◆</span>
-                  <span>Haute</span>
-                </span>
-              </div>
-            </div>
-
-            {/* Tâche 2 : Appeler le client - 13:00 - Moyenne */}
-            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02]">
-              <div className="flex items-center gap-3">
-                <span className="w-4 h-4 rounded border border-slate-500" />
-                <span className="text-slate-200">Appeler le client</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="font-mono text-slate-400 text-[11px]">13:00</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                  <span>◆</span>
-                  <span>Moyenne</span>
-                </span>
-              </div>
-            </div>
-
-            {/* Tâche 3 : Préparer le rendez-vous - 16:00 - Basse */}
-            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02]">
-              <div className="flex items-center gap-3">
-                <span className="w-4 h-4 rounded border border-slate-500" />
-                <span className="text-slate-200">Préparer le rendez-vous</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="font-mono text-slate-400 text-[11px]">16:00</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-1">
-                  <span>●</span>
-                  <span>Basse</span>
-                </span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
@@ -514,11 +599,20 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Modal d'ajout de rendez-vous */}
+      {/* Modal d'ajout / modification de rendez-vous */}
       {showEventModal && (
         <EventFormModal
-          onClose={() => setShowEventModal(false)}
-          onSaved={() => setShowEventModal(false)}
+          eventToEdit={eventToEdit}
+          onClose={() => {
+            setShowEventModal(false);
+            setEventToEdit(null);
+          }}
+          onSaved={() => {
+            setShowEventModal(false);
+            setEventToEdit(null);
+            loadTasksFromBackend();
+            window.dispatchEvent(new CustomEvent("event-updated"));
+          }}
         />
       )}
     </div>

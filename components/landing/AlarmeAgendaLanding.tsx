@@ -191,70 +191,82 @@ export default function AlarmeAgendaLanding() {
           </h2>
         </div>
 
-        {/* Grille des 3 blocs carrés stylés et épaissis */}
+        {/* Grille des 3 blocs carrés stylés, typographie épaisse et percutante */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {/* BLOC 1 : Planification Prédictive */}
-          <div className="group relative rounded-3xl bg-[#0c142b]/80 hover:bg-[#0f1b3b] border border-white/[0.1] hover:border-blue-500/50 p-8 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(37,99,235,0.25)] flex flex-col justify-between min-h-[340px]">
-            <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-blue-600/25 border border-blue-500/40 text-blue-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)]">
-                <Calendar size={26} strokeWidth={2.4} />
+          <Link
+            href="/calendar"
+            className="group relative rounded-3xl bg-gradient-to-b from-[#0f1d40] to-[#081026] border border-blue-500/35 hover:border-blue-400 p-8 sm:p-9 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_25px_50px_rgba(37,99,235,0.3)] flex flex-col justify-between min-h-[360px] no-underline text-inherit"
+          >
+            <div className="space-y-5">
+              <div className="w-16 h-16 rounded-2xl bg-blue-600/30 border border-blue-400/50 text-blue-300 flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-[0_0_25px_rgba(37,99,235,0.4)]">
+                <Calendar size={30} strokeWidth={2.6} />
               </div>
-              <h3 className="text-2xl font-black text-white tracking-tight leading-snug">
+              <h3 className="text-2xl sm:text-[26px] font-black text-white tracking-tight leading-snug">
                 Planification Prédictive &amp; Zéro Oubli
               </h3>
-              <p className="text-sm sm:text-[15px] text-slate-200 leading-relaxed font-medium">
+              <p className="text-[15px] sm:text-base text-slate-100 leading-relaxed font-bold">
                 AlarmeAgenda analyse votre emploi du temps et anticipe vos trajets et vos temps de préparation pour vous alerter avant chaque imprévu.
               </p>
             </div>
-            <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between">
-              <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30">
-                98% de ponctualité garantie
+            <div className="pt-6 border-t border-white/[0.12] flex items-center justify-between mt-4">
+              <span className="text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/50 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                <span>98% Ponctualité Garantie</span>
               </span>
-              <span className="text-blue-400 group-hover:translate-x-1.5 transition-transform font-bold text-base">→</span>
+              <span className="text-blue-300 group-hover:text-white group-hover:translate-x-2 transition-all font-black text-xl">→</span>
             </div>
-          </div>
+          </Link>
 
           {/* BLOC 2 : Rappels Vocaux Proactifs */}
-          <div className="group relative rounded-3xl bg-[#0c142b]/80 hover:bg-[#0f1b3b] border border-white/[0.1] hover:border-amber-500/50 p-8 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(245,158,11,0.25)] flex flex-col justify-between min-h-[340px]">
-            <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-amber-500/25 border border-amber-500/40 text-amber-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-                <Volume2 size={26} strokeWidth={2.4} />
+          <Link
+            href="/reminders"
+            className="group relative rounded-3xl bg-gradient-to-b from-[#241a0d] to-[#081026] border border-amber-500/35 hover:border-amber-400 p-8 sm:p-9 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_25px_50px_rgba(245,158,11,0.3)] flex flex-col justify-between min-h-[360px] no-underline text-inherit"
+          >
+            <div className="space-y-5">
+              <div className="w-16 h-16 rounded-2xl bg-amber-500/30 border border-amber-400/50 text-amber-300 flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shadow-[0_0_25px_rgba(245,158,11,0.4)]">
+                <Volume2 size={30} strokeWidth={2.6} />
               </div>
-              <h3 className="text-2xl font-black text-white tracking-tight leading-snug">
+              <h3 className="text-2xl sm:text-[26px] font-black text-white tracking-tight leading-snug">
                 Rappels Vocaux Proactifs
               </h3>
-              <p className="text-sm sm:text-[15px] text-slate-200 leading-relaxed font-medium">
+              <p className="text-[15px] sm:text-base text-slate-100 leading-relaxed font-bold">
                 Plus besoin d&apos;avoir les yeux rivés sur votre écran : une voix claire et contextuelle vous prévient au moment opportun avec les détails essentiels.
               </p>
             </div>
-            <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between">
-              <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                Alertes sonores &amp; vocales
+            <div className="pt-6 border-t border-white/[0.12] flex items-center justify-between mt-4">
+              <span className="text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/50 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                <span>Alertes Vocales &amp; Sonores</span>
               </span>
-              <span className="text-amber-400 group-hover:translate-x-1.5 transition-transform font-bold text-base">→</span>
+              <span className="text-amber-300 group-hover:text-white group-hover:translate-x-2 transition-all font-black text-xl">→</span>
             </div>
-          </div>
+          </Link>
 
           {/* BLOC 3 : Synchronisation Multi-Appareils */}
-          <div className="group relative rounded-3xl bg-[#0c142b]/80 hover:bg-[#0f1b3b] border border-white/[0.1] hover:border-emerald-500/50 p-8 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(16,185,129,0.25)] flex flex-col justify-between min-h-[340px]">
-            <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                <Laptop size={26} strokeWidth={2.4} />
+          <Link
+            href="/dashboard"
+            className="group relative rounded-3xl bg-gradient-to-b from-[#0a231d] to-[#081026] border border-emerald-500/35 hover:border-emerald-400 p-8 sm:p-9 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_25px_50px_rgba(16,185,129,0.3)] flex flex-col justify-between min-h-[360px] no-underline text-inherit"
+          >
+            <div className="space-y-5">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/30 border border-emerald-400/50 text-emerald-300 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 shadow-[0_0_25px_rgba(16,185,129,0.4)]">
+                <Laptop size={30} strokeWidth={2.6} />
               </div>
-              <h3 className="text-2xl font-black text-white tracking-tight leading-snug">
+              <h3 className="text-2xl sm:text-[26px] font-black text-white tracking-tight leading-snug">
                 Synchronisation Instantanée
               </h3>
-              <p className="text-sm sm:text-[15px] text-slate-200 leading-relaxed font-medium">
+              <p className="text-[15px] sm:text-base text-slate-100 leading-relaxed font-bold">
                 Passez de votre ordinateur à votre mobile sans interruption. Vos tâches, rendez-vous et alarmes se mettent à jour en temps réel à la seconde près.
               </p>
             </div>
-            <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between">
-              <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                Ordinateur · Mobile · Cloud
+            <div className="pt-6 border-t border-white/[0.12] flex items-center justify-between mt-4">
+              <span className="text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/50 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Cloud &middot; PC &middot; Mobile</span>
               </span>
-              <span className="text-emerald-400 group-hover:translate-x-1.5 transition-transform font-bold text-base">→</span>
+              <span className="text-emerald-300 group-hover:text-white group-hover:translate-x-2 transition-all font-black text-xl">→</span>
             </div>
-          </div>
+          </Link>
         </div>
       </section>
 
