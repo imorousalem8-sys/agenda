@@ -20,6 +20,8 @@ import {
   Settings,
   Globe,
   SlidersHorizontal,
+  Plus,
+  Download,
 } from "lucide-react";
 import AlarmOverlay from "@/components/reminders/AlarmOverlay";
 import NotificationManager from "@/components/reminders/NotificationManager";
@@ -59,22 +61,21 @@ export default function DashboardLayout({
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showVoiceLiveModal, setShowVoiceLiveModal] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>();
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
   const { isPro } = useSubscription();
 
   const userName = session?.user?.name || "Salem Imorou";
 
-  // Initialisation du thème depuis localStorage
+  // Initialisation du thème sombre prestige par défaut (cohérent avec la page d'accueil)
   useEffect(() => {
     const savedTheme = localStorage.getItem("alamajonda_theme") as "light" | "dark" | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.setAttribute("data-theme", savedTheme);
-      if (savedTheme === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+    const activeTheme = savedTheme || "dark";
+    setTheme(activeTheme);
+    document.documentElement.setAttribute("data-theme", activeTheme);
+    if (activeTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
   }, []);
 
@@ -88,6 +89,14 @@ export default function DashboardLayout({
     } else {
       document.documentElement.classList.remove("dark");
     }
+  };
+
+  const handleOpenNewEvent = () => {
+    window.dispatchEvent(new CustomEvent("open-new-event"));
+  };
+
+  const handlePlayBriefing = () => {
+    window.dispatchEvent(new CustomEvent("play-daily-briefing"));
   };
 
   useEffect(() => {
@@ -181,13 +190,25 @@ export default function DashboardLayout({
           </button>
         </div>
 
+        {/* Bouton Action Rapide : Nouveau Créneau Express */}
+        <div style={{ padding: "14px 14px 4px" }}>
+          <button
+            onClick={handleOpenNewEvent}
+            className="dash-sidebar-cta-btn"
+            id="sidebar-new-event-btn"
+          >
+            <Plus size={16} strokeWidth={2.5} />
+            <span>Nouveau Créneau</span>
+          </button>
+        </div>
+
         {/* Corps de navigation structuré avec catégories claires */}
         <nav className="dash-sidebar-nav">
           
           {/* Section 1 : Navigation Principale */}
           <div>
             <div className="dash-nav-section-title">
-              <span>Navigation Principale</span>
+              <span>Navigation Cockpit</span>
             </div>
             <div className="dash-nav-list">
               {mainNavLinks.map((link) => {
@@ -257,12 +278,41 @@ export default function DashboardLayout({
             </div>
           </div>
 
-          {/* Section 3 : Cockpit & Système */}
+          {/* Section 3 : Actions Cockpit & Système */}
           <div>
             <div className="dash-nav-section-title">
-              <span>Système & Réglages</span>
+              <span>Actions & Système</span>
             </div>
             <div className="dash-nav-list">
+              {/* Briefing Vocal */}
+              <button
+                onClick={handlePlayBriefing}
+                className="dash-nav-action-btn"
+                title="Écouter le briefing vocal de la journée"
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span className="dash-nav-icon">
+                    <Volume2 size={17} />
+                  </span>
+                  <span>Briefing Vocal</span>
+                </div>
+              </button>
+
+              {/* Export ICS */}
+              <a
+                href="/api/events/export"
+                download="agenda-alamajonda.ics"
+                className="dash-nav-link"
+                title="Exporter l'agenda complet au format .ICS"
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span className="dash-nav-icon">
+                    <Download size={17} />
+                  </span>
+                  <span>Export .ICS</span>
+                </div>
+              </a>
+
               {/* Paramètres Cockpit */}
               <button
                 onClick={handleOpenPhoneSettings}
@@ -287,10 +337,10 @@ export default function DashboardLayout({
                   <span className="dash-nav-icon">
                     {theme === "light" ? <Moon size={17} /> : <Sun size={17} />}
                   </span>
-                  <span>{theme === "light" ? "Mode Nuit (Sombre)" : "Mode Jour (Clair)"}</span>
+                  <span>{theme === "light" ? "Mode Sombre" : "Mode Clair"}</span>
                 </div>
-                <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "6px", background: "rgba(13, 85, 224, 0.08)", fontWeight: 700 }}>
-                  {theme === "light" ? "OFF" : "ON"}
+                <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "6px", background: "rgba(56, 189, 248, 0.12)", color: "#38bdf8", fontWeight: 700 }}>
+                  {theme === "dark" ? "ON" : "OFF"}
                 </span>
               </button>
 

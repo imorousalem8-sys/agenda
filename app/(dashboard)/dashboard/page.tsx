@@ -132,10 +132,18 @@ export default function DashboardPage() {
     window.addEventListener("reminder-updated", handleRefresh);
     window.addEventListener("event-updated", handleRefresh);
 
+    const handleOpenNewEvent = () => setShowEventForm(true);
+    const handleTriggerBriefing = () => handlePlayDailyBriefing();
+
+    window.addEventListener("open-new-event", handleOpenNewEvent);
+    window.addEventListener("play-daily-briefing", handleTriggerBriefing);
+
     return () => {
       window.removeEventListener("task-updated", handleRefresh);
       window.removeEventListener("reminder-updated", handleRefresh);
       window.removeEventListener("event-updated", handleRefresh);
+      window.removeEventListener("open-new-event", handleOpenNewEvent);
+      window.removeEventListener("play-daily-briefing", handleTriggerBriefing);
     };
   }, []);
 
@@ -244,87 +252,61 @@ export default function DashboardPage() {
     return `${m}:${s}`;
   };
 
-  const completedCount = tasks.filter((t) => t.isDone).length;
-  const totalTasksCount = tasks.length || 1;
-  const taskCompletionRate = Math.min(100, Math.round(((completedCount) / (totalTasksCount || 1)) * 100) || 85);
-
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* =========================================================================
-          1. HEADER COCKPIT ÉXÉCUTIF TRANSLUCIDE (BLEU-BLANC FROSTED)
+          1. HEADER COCKPIT ÉXÉCUTIF TRANSLUCIDE (HARMONISÉ AVEC LA LANDING)
          ========================================================================= */}
       <div className="dash-card p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
         <div>
           <div className="flex items-center gap-3 mb-3 flex-wrap">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               COCKPIT OPÉRATIONNEL
             </span>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-semibold border border-blue-500/20">
-              <Clock size={13} className="text-blue-500" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-[#38bdf8] text-xs font-semibold border border-blue-500/20">
+              <Clock size={13} className="text-[#38bdf8]" />
               <span className="font-mono">{currentTime || "12:00:00"}</span>
             </div>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
-            {greeting}, <span className="text-[#0d55e0] dark:text-[#38bdf8]">{userName}</span> ⚡
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
+            {greeting}, <span className="text-[#38bdf8]">{userName}</span> ⚡
           </h1>
 
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium capitalize mt-1">
-            {currentDateFormatted || "Aujourd'hui"} · <span className="text-[#0d55e0] dark:text-[#38bdf8] font-semibold">Système 100% synchronisé</span>
+          <p className="text-sm text-slate-400 font-medium capitalize mt-1">
+            {currentDateFormatted || "Aujourd'hui"} · <span className="text-[#38bdf8] font-semibold">Système 100% synchronisé</span>
           </p>
         </div>
 
-        {/* Action Buttons Matrix */}
+        {/* Boutons d'Action Principaux du Cockpit */}
         <div className="flex items-center gap-3 flex-wrap">
           {/* Briefing Vocal */}
           <button
             onClick={handlePlayDailyBriefing}
             disabled={isPlayingBriefing}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
-              isPlayingBriefing
-                ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                : "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 border border-blue-200/80 dark:border-blue-800/40"
-            }`}
+            className={`dash-btn-glass ${isPlayingBriefing ? "opacity-75" : ""}`}
             title="Écouter le briefing vocal de la journée"
           >
-            <Volume2 size={16} className={isPlayingBriefing ? "animate-bounce" : "text-blue-600 dark:text-blue-400"} />
+            <Volume2 size={16} className={isPlayingBriefing ? "animate-bounce text-[#38bdf8]" : "text-[#38bdf8]"} />
             <span>{isPlayingBriefing ? "Lecture en cours..." : "Briefing Vocal"}</span>
-          </button>
-
-          {/* Export ICS */}
-          <button
-            onClick={handleExportICS}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 bg-white/70 dark:bg-slate-800/50 hover:bg-slate-50 border border-slate-200/90 dark:border-slate-700/50 shadow-xs transition-all"
-            title="Exporter l'agenda au format .ICS"
-          >
-            <Download size={15} className="text-slate-500 dark:text-slate-400" />
-            <span>Export .ICS</span>
           </button>
 
           {/* Nouveau Rendez-vous */}
           <button
             onClick={() => setShowEventForm(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-white bg-[#0d55e0] hover:bg-[#0b47bf] shadow-md shadow-blue-600/25 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+            className="dash-btn-primary"
+            id="dash-new-event-btn"
           >
-            <Plus size={16} />
+            <Plus size={16} strokeWidth={2.5} />
             <span>Nouveau Créneau</span>
-          </button>
-
-          {/* Parler à l'IA */}
-          <button
-            onClick={handleOpenAI}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 border border-emerald-200/80 dark:border-emerald-800/40 transition-all"
-          >
-            <Sparkles size={16} className="text-emerald-600 dark:text-emerald-400" />
-            <span>Copilote IA</span>
           </button>
         </div>
       </div>
 
       {/* =========================================================================
-          2. STATS OVERVIEW CARDS (Grid 4 Colonnes en Verre Dépoli)
+          2. STATS OVERVIEW CARDS (Grid 4 Colonnes en Verre Dépoli Sombre)
          ========================================================================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* KPI 1 : Rendez-vous */}
@@ -333,24 +315,24 @@ export default function DashboardPage() {
           className="dash-card p-5 group flex flex-col justify-between"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="w-11 h-11 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold border border-blue-500/20 group-hover:scale-105 transition-transform">
-              <CalendarIcon size={20} className="text-blue-600 dark:text-blue-400" />
+            <div className="w-11 h-11 rounded-xl bg-blue-500/10 text-[#38bdf8] flex items-center justify-center font-bold border border-blue-500/20 group-hover:scale-105 transition-transform">
+              <CalendarIcon size={20} className="text-[#38bdf8]" />
             </div>
-            <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20">
+            <span className="text-xs font-semibold text-[#38bdf8] bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20">
               7 jours
             </span>
           </div>
 
           <div>
-            <div className="text-3xl font-black mb-1">
+            <div className="text-3xl font-black text-white mb-1">
               {events.length}
             </div>
-            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div className="text-xs font-semibold text-slate-400">
               Rendez-vous programmés
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-blue-600 dark:text-blue-400 font-semibold">
+          <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-[#38bdf8] font-semibold">
             <span>Consulter l&apos;agenda</span>
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </div>
@@ -362,24 +344,24 @@ export default function DashboardPage() {
           className="dash-card p-5 group flex flex-col justify-between"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold border border-amber-500/20 group-hover:scale-105 transition-transform">
-              <Bell size={20} className="text-amber-600 dark:text-amber-400" />
+            <div className="w-11 h-11 rounded-xl bg-blue-500/10 text-[#38bdf8] flex items-center justify-center font-bold border border-blue-500/20 group-hover:scale-105 transition-transform">
+              <Bell size={20} className="text-[#38bdf8]" />
             </div>
-            <span className="text-xs font-semibold text-amber-700 dark:text-amber-300 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+            <span className="text-xs font-semibold text-[#38bdf8] bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20">
               En attente
             </span>
           </div>
 
           <div>
-            <div className="text-3xl font-black mb-1">
+            <div className="text-3xl font-black text-white mb-1">
               {reminders.length}
             </div>
-            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div className="text-xs font-semibold text-slate-400">
               Alarmes &amp; Rappels vocaux
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-amber-600 dark:text-amber-400 font-semibold">
+          <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-[#38bdf8] font-semibold">
             <span>Gérer les alarmes</span>
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </div>
@@ -391,24 +373,24 @@ export default function DashboardPage() {
           className="dash-card p-5 group flex flex-col justify-between"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold border border-emerald-500/20 group-hover:scale-105 transition-transform">
-              <CheckSquare size={20} className="text-emerald-600 dark:text-emerald-400" />
+            <div className="w-11 h-11 rounded-xl bg-blue-500/10 text-[#38bdf8] flex items-center justify-center font-bold border border-blue-500/20 group-hover:scale-105 transition-transform">
+              <CheckSquare size={20} className="text-[#38bdf8]" />
             </div>
-            <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+            <span className="text-xs font-semibold text-[#38bdf8] bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20">
               {tasks.length} actives
             </span>
           </div>
 
           <div>
-            <div className="text-3xl font-black mb-1">
+            <div className="text-3xl font-black text-white mb-1">
               {tasks.length}
             </div>
-            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div className="text-xs font-semibold text-slate-400">
               Tâches à accomplir
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
+          <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-[#38bdf8] font-semibold">
             <span>Ouvrir la to-do</span>
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </div>
@@ -417,8 +399,8 @@ export default function DashboardPage() {
         {/* KPI 4 : Pomodoro Focus Pod */}
         <div className="dash-card p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3">
-            <div className="w-11 h-11 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold border border-indigo-500/20">
-              <Target size={20} className="text-indigo-600 dark:text-indigo-400" />
+            <div className="w-11 h-11 rounded-xl bg-blue-500/10 text-[#38bdf8] flex items-center justify-center font-bold border border-blue-500/20">
+              <Target size={20} className="text-[#38bdf8]" />
             </div>
             <div className="flex items-center gap-1.5">
               <button
@@ -426,7 +408,7 @@ export default function DashboardPage() {
                   setIsFocusRunning(false);
                   setFocusSeconds(25 * 60);
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                 title="Réinitialiser à 25 minutes"
               >
                 <RotateCcw size={14} />
@@ -434,7 +416,7 @@ export default function DashboardPage() {
               <button
                 onClick={() => setIsFocusRunning(!isFocusRunning)}
                 className={`p-1.5 rounded-lg text-white font-bold transition-all ${
-                  isFocusRunning ? "bg-amber-500 hover:bg-amber-600" : "bg-indigo-600 hover:bg-indigo-700"
+                  isFocusRunning ? "bg-amber-600 hover:bg-amber-500" : "bg-[#0d55e0] hover:bg-[#2563eb]"
                 }`}
                 title={isFocusRunning ? "Mettre en pause" : "Démarrer"}
               >
@@ -444,29 +426,29 @@ export default function DashboardPage() {
           </div>
 
           <div>
-            <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400 font-mono tracking-tight mb-1">
+            <div className="text-3xl font-black text-white font-mono tracking-tight mb-1">
               {formatFocusTime(focusSeconds)}
             </div>
-            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div className="text-xs font-semibold text-slate-400">
               {isFocusRunning ? "Session de concentration active 🔥" : "Mode Focus Pomodoro (25m)"}
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+          <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">
             <span>Série active</span>
-            <span className="font-bold text-amber-600">🔥 7 jours</span>
+            <span className="font-bold text-amber-400">🔥 7 jours</span>
           </div>
         </div>
       </div>
 
       {/* =========================================================================
-          3. BARRE D'AJOUT RAPIDE DE TÂCHE
+          3. BARRE D'AJOUT RAPIDE DE TÂCHE (Champ Sombre Translucide)
          ========================================================================= */}
       <form
         onSubmit={handleCreateQuickTask}
         className="dash-card p-3 sm:p-4 flex items-center gap-3"
       >
-        <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-[#38bdf8] flex items-center justify-center shrink-0 border border-blue-500/20">
           <Plus size={20} />
         </div>
         <input
@@ -475,33 +457,33 @@ export default function DashboardPage() {
           onChange={(e) => setQuickTaskText(e.target.value)}
           placeholder="Ajouter une tâche ou un rappel express... (Appuyez sur Entrée pour valider)"
           disabled={isCreatingTask}
-          className="flex-1 bg-transparent border-none outline-hidden text-sm sm:text-base placeholder-slate-400 font-medium"
+          className="flex-1 bg-transparent border-none outline-hidden text-sm sm:text-base text-white placeholder-slate-500 font-medium"
         />
         <button
           type="submit"
           disabled={!quickTaskText.trim() || isCreatingTask}
-          className="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#0d55e0] hover:bg-[#0b47bf] disabled:opacity-50 disabled:pointer-events-none transition-all shrink-0"
+          className="dash-btn-primary disabled:opacity-50 disabled:pointer-events-none"
         >
           {isCreatingTask ? "Ajout..." : "Ajouter"}
         </button>
       </form>
 
       {/* =========================================================================
-          4. MAIN COCKPIT PANELS : 3 COLONNES STRUCTURÉES EN VERRE DÉPOLI
+          4. MAIN COCKPIT PANELS : 3 COLONNES STRUCTURÉES EN VERRE DÉPOLI SOMBRE
          ========================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
         {/* COLONNE 1 : Agenda & Rendez-vous Récents */}
         <div className="dash-card p-6 sm:p-7 flex flex-col justify-between space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between pb-4 border-b border-white/5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-[#38bdf8] flex items-center justify-center font-bold border border-blue-500/20">
                 <CalendarIcon size={18} />
               </div>
               <div>
-                <h2 className="text-base font-bold">
+                <h2 className="text-base font-bold text-white">
                   Prochains Rendez-vous
                 </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-400">
                   {events.length} créneau(x) à venir
                 </p>
               </div>
@@ -509,7 +491,7 @@ export default function DashboardPage() {
 
             <Link
               href="/calendar"
-              className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline bg-blue-500/10 px-3 py-1.5 rounded-xl border border-blue-500/20 transition-colors inline-flex items-center gap-1.5"
+              className="text-xs font-bold text-[#38bdf8] hover:text-white bg-blue-500/10 hover:bg-blue-500/20 px-3 py-1.5 rounded-xl border border-blue-500/20 transition-all inline-flex items-center gap-1.5"
             >
               <span>Voir tout</span>
               <ArrowRight size={12} />
@@ -518,13 +500,13 @@ export default function DashboardPage() {
 
           <div className="space-y-3">
             {events.length === 0 ? (
-              <div className="text-center py-8 px-4 bg-slate-50/50 dark:bg-slate-900/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
-                <CalendarIcon size={32} className="mx-auto text-slate-300 dark:text-slate-600 mb-2" />
-                <p className="text-sm font-semibold">Aucun rendez-vous prévu</p>
+              <div className="dash-empty-state">
+                <CalendarIcon size={32} className="mx-auto text-blue-400/60 mb-2.5" />
+                <p className="text-sm font-semibold text-white">Aucun rendez-vous prévu</p>
                 <p className="text-xs text-slate-400 mt-1 mb-4">Votre agenda est totalement libre.</p>
                 <button
                   onClick={() => setShowEventForm(true)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#0d55e0] hover:bg-[#0b47bf] transition-all"
+                  className="dash-btn-primary"
                 >
                   <Plus size={14} />
                   <span>Ajouter un événement</span>
@@ -536,27 +518,27 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={evt.id}
-                    className="p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800/80 hover:border-blue-200 dark:hover:border-blue-700 bg-slate-50/50 dark:bg-slate-900/40 transition-all flex items-start gap-3.5"
+                    className="dash-item-row"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex flex-col items-center justify-center font-extrabold text-xs shrink-0 border border-blue-500/20">
-                      <span className="text-[10px] uppercase font-bold">
+                    <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-[#38bdf8] flex flex-col items-center justify-center font-extrabold text-xs shrink-0 border border-blue-500/20">
+                      <span className="text-[10px] uppercase font-bold text-slate-400">
                         {eventDate.toLocaleDateString("fr-FR", { weekday: "short" })}
                       </span>
-                      <span className="text-sm font-black">
+                      <span className="text-sm font-black text-white">
                         {eventDate.getDate()}
                       </span>
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-bold truncate">
+                      <h4 className="text-sm font-bold text-white truncate">
                         {evt.title}
                       </h4>
-                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                        <span className="font-semibold text-blue-600 dark:text-blue-400">
+                      <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+                        <span className="font-semibold text-[#38bdf8]">
                           {eventDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
                         </span>
                         {evt.location && (
-                          <span className="flex items-center gap-1 truncate">
+                          <span className="flex items-center gap-1 truncate text-slate-400">
                             · <MapPin size={11} className="text-slate-400 shrink-0" />
                             {evt.location}
                           </span>
@@ -578,16 +560,16 @@ export default function DashboardPage() {
 
         {/* COLONNE 2 : Rappels Vocaux & Alarmes Immanquables */}
         <div className="dash-card p-6 sm:p-7 flex flex-col justify-between space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between pb-4 border-b border-white/5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-[#38bdf8] flex items-center justify-center font-bold border border-blue-500/20">
                 <Bell size={18} />
               </div>
               <div>
-                <h2 className="text-base font-bold">
+                <h2 className="text-base font-bold text-white">
                   Alarmes &amp; Rappels
                 </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-400">
                   Déclenchement vocal garanti
                 </p>
               </div>
@@ -595,7 +577,7 @@ export default function DashboardPage() {
 
             <Link
               href="/reminders"
-              className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20 transition-colors inline-flex items-center gap-1.5"
+              className="text-xs font-bold text-[#38bdf8] hover:text-white bg-blue-500/10 hover:bg-blue-500/20 px-3 py-1.5 rounded-xl border border-blue-500/20 transition-all inline-flex items-center gap-1.5"
             >
               <span>Gérer</span>
               <ArrowRight size={12} />
@@ -604,13 +586,13 @@ export default function DashboardPage() {
 
           <div className="space-y-3">
             {reminders.length === 0 ? (
-              <div className="text-center py-8 px-4 bg-slate-50/50 dark:bg-slate-900/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
-                <Bell size={32} className="mx-auto text-slate-300 dark:text-slate-600 mb-2" />
-                <p className="text-sm font-semibold">Aucun rappel actif</p>
+              <div className="dash-empty-state">
+                <Bell size={32} className="mx-auto text-blue-400/60 mb-2.5" />
+                <p className="text-sm font-semibold text-white">Aucun rappel actif</p>
                 <p className="text-xs text-slate-400 mt-1 mb-4">Vos alarmes programmées s&apos;afficheront ici.</p>
                 <Link
                   href="/reminders"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/40 hover:bg-amber-200 transition-all"
+                  className="dash-btn-primary"
                 >
                   <Plus size={14} />
                   <span>Créer une alarme</span>
@@ -622,17 +604,17 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={rem.id}
-                    className="p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800/80 hover:border-amber-200 dark:hover:border-amber-700 bg-slate-50/50 dark:bg-slate-900/40 transition-all flex items-center justify-between gap-3"
+                    className="dash-item-row justify-between"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/20">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-[#38bdf8] flex items-center justify-center shrink-0 border border-blue-500/20">
                         <Volume2 size={18} />
                       </div>
                       <div className="min-w-0">
-                        <h4 className="text-sm font-bold truncate">
+                        <h4 className="text-sm font-bold text-white truncate">
                           {rem.title}
                         </h4>
-                        <div className="text-xs font-semibold text-amber-600 dark:text-amber-400 mt-0.5">
+                        <div className="text-xs font-semibold text-[#38bdf8] mt-0.5">
                           Prévu à {remDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
                         </div>
                       </div>
@@ -641,7 +623,7 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleDismissReminder(rem.id)}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-500/10 transition-colors"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
                         title="Acquitter le rappel"
                       >
                         <Check size={16} />
@@ -653,26 +635,27 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
-            <Volume2 size={16} className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+          {/* Note d'Information Technologique (Au lieu du bloc jaune criard) */}
+          <div className="dash-info-banner">
+            <Volume2 size={16} className="text-[#38bdf8] mt-0.5 shrink-0" />
             <div>
-              <strong className="font-bold">Alerte vocale automatique :</strong> Votre navigateur émettra un son carillon clair et l&apos;IA dictera votre rappel à voix haute à l&apos;heure dite.
+              <strong className="font-bold text-white">Alerte vocale automatique :</strong> Votre navigateur émettra un carillon cristallin et l&apos;IA dictera votre rappel à voix haute à l&apos;heure dite.
             </div>
           </div>
         </div>
 
         {/* COLONNE 3 : Tâches Prioritaires & Focus */}
         <div className="dash-card p-6 sm:p-7 flex flex-col justify-between space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between pb-4 border-b border-white/5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-[#38bdf8] flex items-center justify-center font-bold border border-blue-500/20">
                 <CheckSquare size={18} />
               </div>
               <div>
-                <h2 className="text-base font-bold">
+                <h2 className="text-base font-bold text-white">
                   Priorités du Jour
                 </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-400">
                   {tasks.length} tâche(s) à faire
                 </p>
               </div>
@@ -680,7 +663,7 @@ export default function DashboardPage() {
 
             <Link
               href="/tasks"
-              className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20 transition-colors inline-flex items-center gap-1.5"
+              className="text-xs font-bold text-[#38bdf8] hover:text-white bg-blue-500/10 hover:bg-blue-500/20 px-3 py-1.5 rounded-xl border border-blue-500/20 transition-all inline-flex items-center gap-1.5"
             >
               <span>Matrice</span>
               <ArrowRight size={12} />
@@ -689,23 +672,23 @@ export default function DashboardPage() {
 
           <div className="space-y-2.5">
             {tasks.length === 0 ? (
-              <div className="text-center py-8 px-4 bg-slate-50/50 dark:bg-slate-900/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
-                <CheckCircle2 size={32} className="mx-auto text-emerald-500 mb-2" />
-                <p className="text-sm font-semibold">Toutes les tâches sont terminées !</p>
-                <p className="text-xs text-slate-400 mt-1">Bravo, vous avez complété votre liste de travail.</p>
+              <div className="dash-empty-state">
+                <CheckCircle2 size={32} className="mx-auto text-[#38bdf8] mb-2.5" />
+                <p className="text-sm font-semibold text-white">Toutes les tâches sont terminées !</p>
+                <p className="text-xs text-slate-400 mt-1">Bravo, votre liste de travail est à jour.</p>
               </div>
             ) : (
               tasks.slice(0, 5).map((task) => (
                 <div
                   key={task.id}
                   onClick={() => handleToggleTask(task.id, task.isDone)}
-                  className="p-3 rounded-xl border border-slate-100 dark:border-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 flex items-center gap-3 cursor-pointer transition-all"
+                  className="dash-item-row cursor-pointer"
                 >
                   <div
                     className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
                       task.isDone
-                        ? "bg-emerald-600 border-emerald-600 text-white"
-                        : "border-slate-300 dark:border-slate-600 hover:border-blue-600"
+                        ? "bg-[#0d55e0] border-[#38bdf8] text-white"
+                        : "border-slate-600 hover:border-[#38bdf8]"
                     }`}
                   >
                     {task.isDone && <Check size={12} strokeWidth={3} />}
@@ -713,19 +696,19 @@ export default function DashboardPage() {
 
                   <span
                     className={`text-sm flex-1 truncate ${
-                      task.isDone ? "line-through text-slate-400" : "font-semibold"
+                      task.isDone ? "line-through text-slate-500" : "font-semibold text-white"
                     }`}
                   >
                     {task.title}
                   </span>
 
                   {task.priority === "URGENT" && (
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-500/15 text-red-300 border border-red-500/30">
                       URGENT
                     </span>
                   )}
                   {task.priority === "HIGH" && (
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
                       HIGH
                     </span>
                   )}
@@ -734,14 +717,14 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Metric Strip */}
-          <div className="p-4 rounded-2xl bg-slate-50/60 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
+          {/* Metric Strip Harmonisé */}
+          <div className="dash-info-banner justify-between items-center text-xs">
             <div>
-              <div className="text-base font-extrabold text-emerald-600 dark:text-emerald-400">+5.2h / sem.</div>
+              <div className="text-base font-extrabold text-[#38bdf8]">+5.2h / sem.</div>
               <div className="text-[11px] text-slate-400">Gain de temps moyen</div>
             </div>
             <div className="text-right">
-              <div className="text-base font-extrabold text-blue-600 dark:text-blue-400">100% IA Flash</div>
+              <div className="text-base font-extrabold text-blue-400">100% IA Flash</div>
               <div className="text-[11px] text-slate-400">Fiabilité Cockpit</div>
             </div>
           </div>

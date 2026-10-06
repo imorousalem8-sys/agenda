@@ -58,24 +58,26 @@ export default function QuotaIndicator({ compact = false }: { compact?: boolean 
     <div
       style={{
         padding: "12px 14px",
-        borderRadius: "8px",
-        background: "var(--bg-card)",
-        border: "1px solid var(--border-subtle)",
+        borderRadius: "14px",
+        background: "rgba(13, 24, 52, 0.65)",
+        border: "1px solid rgba(56, 189, 248, 0.18)",
+        backdropFilter: "blur(12px)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: "600", color: "#f8fafc" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: "700", color: "#ffffff" }}>
           <Sparkles size={12} style={{ color: "#38bdf8" }} />
           <span>Quota Assistant IA</span>
         </div>
         <span
           style={{
             fontSize: "9px",
-            fontWeight: "700",
-            padding: "2px 6px",
-            borderRadius: "4px",
-            background: quota.plan === "PRO" ? "#10b981" : "rgba(255, 255, 255, 0.06)",
-            color: "#ffffff",
+            fontWeight: "800",
+            padding: "2px 7px",
+            borderRadius: "6px",
+            background: quota.plan === "PRO" ? "#10b981" : "rgba(56, 189, 248, 0.12)",
+            color: quota.plan === "PRO" ? "#ffffff" : "#38bdf8",
+            border: `1px solid ${quota.plan === "PRO" ? "transparent" : "rgba(56, 189, 248, 0.25)"}`,
           }}
         >
           {quota.plan === "PRO" ? "PRO" : "GRATUIT"}
@@ -86,8 +88,8 @@ export default function QuotaIndicator({ compact = false }: { compact?: boolean 
       <div
         style={{
           width: "100%",
-          height: "4px",
-          background: "rgba(255, 255, 255, 0.06)",
+          height: "5px",
+          background: "rgba(255, 255, 255, 0.08)",
           borderRadius: "999px",
           overflow: "hidden",
           marginBottom: "6px",
@@ -97,15 +99,15 @@ export default function QuotaIndicator({ compact = false }: { compact?: boolean 
           style={{
             width: `${percentage}%`,
             height: "100%",
-            background: isLow ? "#ef4444" : "#38bdf8",
+            background: isLow ? "#ef4444" : "linear-gradient(90deg, #0d55e0, #38bdf8)",
             transition: "width 0.3s ease",
           }}
         />
       </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "var(--text-muted)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#94a3b8" }}>
         <span>{quota.used} / {quota.limit} req</span>
-        <span style={{ color: isLow ? "#f87171" : "#38bdf8", fontWeight: "600" }}>
+        <span style={{ color: isLow ? "#f87171" : "#38bdf8", fontWeight: "700" }}>
           {quota.remaining} restante{quota.remaining > 1 ? "s" : ""}
         </span>
       </div>
@@ -113,14 +115,21 @@ export default function QuotaIndicator({ compact = false }: { compact?: boolean 
       {quota.plan !== "PRO" && isLow && (
         <button
           onClick={() => window.dispatchEvent(new CustomEvent("open-upgrade-modal", { detail: { feature: "Quotas IA Illimités" } }))}
-          className="btn btn-primary btn-sm"
           style={{
             width: "100%",
-            marginTop: "8px",
-            padding: "5px",
+            marginTop: "10px",
+            padding: "6px 10px",
             fontSize: "11px",
-            fontWeight: "600",
-            gap: "5px",
+            fontWeight: "700",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "6px",
+            borderRadius: "10px",
+            background: "linear-gradient(135deg, #0d55e0, #38bdf8)",
+            color: "#ffffff",
+            border: "none",
+            cursor: "pointer",
           }}
         >
           <Crown size={12} />
