@@ -16,6 +16,9 @@ import {
   Loader2,
   Volume2,
   VolumeX,
+  ArrowRight,
+  ShieldCheck,
+  Zap,
 } from "lucide-react";
 import { speakAIText } from "@/lib/voice";
 import VoiceRecordingBubble from "@/components/ai/VoiceRecordingBubble";
@@ -36,10 +39,46 @@ interface ChatMessage {
 }
 
 const quickPrompts = [
-  { label: "Créer un rendez-vous", prompt: "Prends rendez-vous demain à 14h avec Paul", icon: Calendar, color: "#2563eb", bg: "#eff6ff" },
-  { label: "Ajouter un rappel", prompt: "Rappelle-moi à 18h d'acheter les pièces", icon: Bell, color: "#ea580c", bg: "#fff7ed" },
-  { label: "Voir mes rendez-vous", prompt: "Quels sont mes rendez-vous demain ?", icon: Clock, color: "#4f46e5", bg: "#eef2ff" },
-  { label: "Organiser ma journée", prompt: "Organise ma journée de demain", icon: Compass, color: "#16a34a", bg: "#f0fdf4" },
+  {
+    label: "Créer un rendez-vous",
+    prompt: "Prends rendez-vous demain à 14h avec Paul",
+    icon: Calendar,
+    color: "#38bdf8",
+    bg: "rgba(56, 189, 248, 0.15)",
+    border: "rgba(56, 189, 248, 0.3)",
+  },
+  {
+    label: "Ajouter un rappel",
+    prompt: "Rappelle-moi à 18h d'acheter les pièces pour le projet",
+    icon: Bell,
+    color: "#f59e0b",
+    bg: "rgba(245, 158, 11, 0.15)",
+    border: "rgba(245, 158, 11, 0.3)",
+  },
+  {
+    label: "Créer une tâche",
+    prompt: "Ajoute une tâche prioritaire : Finaliser le dossier client avant vendredi",
+    icon: CheckSquare,
+    color: "#10b981",
+    bg: "rgba(16, 185, 129, 0.15)",
+    border: "rgba(16, 185, 129, 0.3)",
+  },
+  {
+    label: "Voir mes rendez-vous",
+    prompt: "Quels sont mes rendez-vous prévus pour aujourd'hui et demain ?",
+    icon: Clock,
+    color: "#818cf8",
+    bg: "rgba(129, 140, 248, 0.15)",
+    border: "rgba(129, 140, 248, 0.3)",
+  },
+  {
+    label: "Organiser ma journée",
+    prompt: "Organise ma journée en optimisant mes créneaux et mes priorités",
+    icon: Compass,
+    color: "#06b6d4",
+    bg: "rgba(6, 182, 212, 0.15)",
+    border: "rgba(6, 182, 212, 0.3)",
+  },
 ];
 
 export default function AgentPage() {
@@ -201,145 +240,105 @@ export default function AgentPage() {
 
   return (
     <div
+      className="grid grid-cols-1 lg:grid-cols-12 h-[calc(100vh-64px)] overflow-hidden"
       style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 340px",
-        height: "calc(100vh - 64px)",
-        background: "#f8fafc",
-        overflow: "hidden",
+        backgroundColor: "#030712",
+        backgroundImage:
+          "radial-gradient(ellipse 900px 600px at 15% 10%, rgba(13, 85, 224, 0.18) 0%, transparent 60%), radial-gradient(ellipse 700px 500px at 85% 85%, rgba(56, 189, 248, 0.12) 0%, transparent 55%)",
       }}
     >
-      {/* 1. Main Chat Conversation Area */}
-      <div style={{ display: "flex", flexDirection: "column", height: "100%", borderRight: "1px solid #e2e8f0" }}>
-        {/* Chat Header */}
-        <div
-          style={{
-            padding: "16px 28px",
-            background: "#ffffff",
-            borderBottom: "1px solid #e2e8f0",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div
-              style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "10px",
-                background: "linear-gradient(135deg, #2563eb, #38bdf8)",
-                color: "#ffffff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: "0 4px 14px rgba(37, 99, 235, 0.3)",
-              }}
-            >
-              <Sparkles size={18} />
+      {/* 1. Zone Principale : Conversation Chat IA (Gauche / 8 Colonnes) */}
+      <div className="lg:col-span-8 flex flex-col h-full border-r border-white/[0.08] min-w-0">
+        
+        {/* En-tête du Chat */}
+        <div className="px-6 py-4.5 bg-[#060e22]/90 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0d55e0] to-[#38bdf8] text-white flex items-center justify-center shadow-[0_0_20px_rgba(13,85,224,0.45)] border border-[#38bdf8]/40">
+              <Sparkles size={20} />
             </div>
             <div>
-              <h1 style={{ fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>Assistant IA</h1>
-              <p style={{ fontSize: "12px", color: "#64748b" }}>Votre assistant personnel intelligent</p>
+              <h1 className="text-base font-extrabold text-white tracking-wide">
+                Copilote IA Alamajonda
+              </h1>
+              <p className="text-xs text-slate-400">
+                Assistant exécutif connecté à votre agenda &amp; tâches
+              </p>
             </div>
           </div>
 
+          {/* Toggle Synthèse Vocale */}
           <button
             onClick={() => setVoiceEnabled(!voiceEnabled)}
-            style={{
-              padding: "6px 12px",
-              borderRadius: "8px",
-              background: voiceEnabled ? "#eff6ff" : "#f1f5f9",
-              border: "1px solid",
-              borderColor: voiceEnabled ? "#bfdbfe" : "#e2e8f0",
-              color: voiceEnabled ? "#2563eb" : "#64748b",
-              fontSize: "12.5px",
-              fontWeight: "600",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              cursor: "pointer",
-            }}
+            className={`px-3.5 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-2 ${
+              voiceEnabled
+                ? "bg-[#0d55e0]/20 text-[#38bdf8] border-[#38bdf8]/35 shadow-[0_0_12px_rgba(56,189,248,0.2)]"
+                : "bg-white/[0.03] text-slate-400 border-white/[0.08] hover:text-white"
+            }`}
+            title={voiceEnabled ? "Désactiver la voix IA" : "Activer la voix IA"}
           >
             {voiceEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
-            <span>{voiceEnabled ? "Voix activée" : "Muet"}</span>
+            <span>{voiceEnabled ? "Voix IA Active" : "Voix Coupée"}</span>
           </button>
         </div>
 
-        {/* Messages Stream */}
-        <div
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "24px 28px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "16px",
-          }}
-        >
+        {/* Flux des Messages */}
+        <div className="flex-1 overflow-y-auto px-6 py-7 flex flex-col gap-5">
           {messages.map((m) => (
             <div
               key={m.id}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: m.sender === "user" ? "flex-end" : "flex-start",
-              }}
+              className={`flex flex-col ${
+                m.sender === "user" ? "items-end" : "items-start"
+              }`}
             >
               <div
-                style={{
-                  maxWidth: "80%",
-                  padding: "14px 18px",
-                  borderRadius: m.sender === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-                  background:
-                    m.sender === "user"
-                      ? "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)"
-                      : "#ffffff",
-                  color: m.sender === "user" ? "#ffffff" : "#0f172a",
-                  fontSize: "14px",
-                  lineHeight: "1.55",
-                  whiteSpace: "pre-wrap",
-                  border: m.sender === "user" ? "none" : "1px solid #e2e8f0",
-                  boxShadow: m.sender === "user" ? "0 4px 16px rgba(37, 99, 235, 0.25)" : "0 2px 10px rgba(0, 0, 0, 0.04)",
-                }}
+                className={`max-w-[85%] sm:max-w-[78%] px-5 py-4 rounded-2xl text-sm leading-relaxed transition-all ${
+                  m.sender === "user"
+                    ? "rounded-tr-xs bg-gradient-to-br from-[#0d55e0] via-[#1d4ed8] to-[#2563eb] text-white border border-[#38bdf8]/40 shadow-[0_8px_25px_rgba(13,85,224,0.35)]"
+                    : "rounded-tl-xs bg-[#0b142a]/85 backdrop-blur-md text-white border border-white/[0.09] shadow-[0_8px_25px_rgba(0,0,0,0.4)]"
+                }`}
               >
-                {m.text}
+                {/* Badge Expéditeur subtil */}
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className={`text-[10px] font-extrabold uppercase tracking-wider ${
+                    m.sender === "user" ? "text-cyan-200" : "text-[#38bdf8]"
+                  }`}>
+                    {m.sender === "user" ? "Vous" : "Copilote IA"}
+                  </span>
+                </div>
 
-                {/* Structured Action Confirmation Card */}
+                <div className="whitespace-pre-wrap">{m.text}</div>
+
+                {/* Carte de Confirmation d'Action Structurée */}
                 {m.action && (
-                  <div
-                    style={{
-                      marginTop: "12px",
-                      padding: "12px",
-                      borderRadius: "10px",
-                      background: "#f8fafc",
-                      border: "1px solid #e2e8f0",
-                      color: "#0f172a",
-                    }}
-                  >
-                    <div style={{ fontWeight: "700", fontSize: "13px" }}>
-                      {m.action.type === "EVENT" ? "📅 Rendez-vous confirmé" : "🔔 Action enregistrée"} : {m.action.title}
+                  <div className="mt-3.5 p-3.5 rounded-xl bg-[#060c1e] border border-[#38bdf8]/30 shadow-inner">
+                    <div className="flex items-center gap-2 text-xs font-bold text-white">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>
+                        {m.action.type === "EVENT"
+                          ? "📅 Rendez-vous planifié"
+                          : m.action.type === "TASK"
+                          ? "✅ Tâche enregistrée"
+                          : "🔔 Alarme vocale programmée"}
+                      </span>
                     </div>
+
+                    <div className="text-xs font-medium text-[#38bdf8] mt-1">
+                      {m.action.title}
+                    </div>
+
                     {m.action.dateTime && (
-                      <div style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>
+                      <div className="text-[11px] text-slate-400 mt-1">
                         Horaire : {new Date(m.action.dateTime).toLocaleString("fr-FR")}
                       </div>
                     )}
-                    <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
+
+                    <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-white/[0.06]">
                       <button
-                        onClick={() => (window.location.href = "/calendar")}
-                        style={{
-                          padding: "5px 12px",
-                          borderRadius: "6px",
-                          background: "#2563eb",
-                          color: "#ffffff",
-                          border: "none",
-                          fontSize: "12px",
-                          fontWeight: "600",
-                          cursor: "pointer",
-                        }}
+                        onClick={() => (window.location.href = m.action?.type === "TASK" ? "/tasks" : "/calendar")}
+                        className="px-3 py-1.5 rounded-lg bg-[#0d55e0] hover:bg-[#1e60e8] text-white text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-[0_2px_10px_rgba(13,85,224,0.4)]"
                       >
-                        Voir dans le calendrier
+                        <span>{m.action.type === "TASK" ? "Voir dans les tâches" : "Voir dans le calendrier"}</span>
+                        <ArrowRight size={12} />
                       </button>
                     </div>
                   </div>
@@ -349,44 +348,33 @@ export default function AgentPage() {
           ))}
 
           {loading && (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#2563eb", fontSize: "13px", padding: "10px 14px", background: "#eff6ff", borderRadius: "10px", width: "fit-content" }}>
-              <Loader2 size={16} className="animate-spin text-blue-600" />
-              <span>L&apos;IA réfléchit et prépare votre demande...</span>
+            <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#0d55e0]/15 border border-[#38bdf8]/25 text-[#38bdf8] text-xs font-medium w-fit backdrop-blur-md">
+              <Loader2 size={15} className="animate-spin text-[#38bdf8]" />
+              <span>Le Copilote IA analyse votre demande et synchronise vos données...</span>
             </div>
           )}
           <div ref={chatBottomRef} />
         </div>
 
-        {/* Input Bar */}
-        <div
-          style={{
-            padding: "16px 28px",
-            background: "#ffffff",
-            borderTop: "1px solid #e2e8f0",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-          }}
-        >
+        {/* Barre de Saisie Inférieure */}
+        <div className="px-6 py-4.5 bg-[#060e22]/95 backdrop-blur-xl border-t border-white/[0.08] flex items-center gap-3">
+          {/* Bouton Microphone Vocal */}
           <button
             onClick={isListening ? stopListening : startListening}
-            style={{
-              padding: "10px",
-              borderRadius: "10px",
-              background: isListening ? "#ffe4e6" : "#eff6ff",
-              color: isListening ? "#e11d48" : "#2563eb",
-              border: "1px solid",
-              borderColor: isListening ? "#fecdd3" : "#bfdbfe",
-              cursor: "pointer",
-            }}
-            title={isListening ? "Arrêter la dictée" : "Parler"}
+            className={`p-3 rounded-xl border transition-all shrink-0 ${
+              isListening
+                ? "bg-rose-500/20 text-rose-400 border-rose-500/40 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.35)]"
+                : "bg-white/[0.03] text-[#38bdf8] border-[#38bdf8]/30 hover:bg-[#0d55e0]/20 hover:border-[#38bdf8]/60"
+            }`}
+            title={isListening ? "Arrêter la dictée" : "Activer la dictée vocale"}
           >
-            {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+            {isListening ? <MicOff size={19} /> : <Mic size={19} />}
           </button>
 
+          {/* Champ de Texte */}
           <input
             type="text"
-            placeholder="Écrivez votre message..."
+            placeholder="Écrivez votre message ou dictez votre demande..."
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => {
@@ -395,108 +383,99 @@ export default function AgentPage() {
                 handleSendMessage();
               }
             }}
-            style={{
-              flex: 1,
-              padding: "11px 16px",
-              borderRadius: "10px",
-              border: "1px solid #cbd5e1",
-              background: "#f8fafc",
-              fontSize: "14px",
-              color: "#0f172a",
-              outline: "none",
-            }}
+            className="flex-1 bg-[#0b142a]/80 border border-white/[0.12] focus:border-[#38bdf8] focus:ring-1 focus:ring-[#38bdf8]/40 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all font-medium"
           />
 
+          {/* Bouton Envoyer */}
           <button
             onClick={() => handleSendMessage()}
             disabled={loading || !inputMessage.trim()}
-            style={{
-              padding: "11px 20px",
-              borderRadius: "10px",
-              background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
-              color: "#ffffff",
-              border: "none",
-              fontSize: "13.5px",
-              fontWeight: "700",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              opacity: loading || !inputMessage.trim() ? 0.5 : 1,
-            }}
+            className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#0d55e0] to-[#2563eb] hover:from-[#1e60e8] hover:to-[#38bdf8] text-white text-xs sm:text-sm font-bold border border-[#38bdf8]/40 transition-all flex items-center gap-2 shadow-[0_4px_18px_rgba(13,85,224,0.4)] disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
           >
             <Send size={15} />
-            <span>Envoyer</span>
+            <span className="hidden sm:inline">Envoyer</span>
           </button>
         </div>
       </div>
 
-      {/* 2. Right Side: Actions rapides & Contexte */}
-      <div style={{ padding: "24px 20px", background: "#ffffff", display: "flex", flexDirection: "column", gap: "20px", overflowY: "auto" }}>
+      {/* 2. Volet Latéral Droit : Actions Rapides & Contexte (4 Colonnes) */}
+      <div className="lg:col-span-4 p-6 bg-[#060e22]/98 backdrop-blur-2xl flex flex-col gap-6 overflow-y-auto min-w-0">
         <div>
-          <h2 style={{ fontSize: "15px", fontWeight: "700", color: "#0f172a", marginBottom: "12px" }}>
-            Actions rapides & Contexte
-          </h2>
-
-          {/* Status Card */}
-          <div
-            style={{
-              padding: "14px",
-              borderRadius: "12px",
-              background: "#f0fdf4",
-              border: "1px solid #bbf7d0",
-              marginBottom: "16px",
-            }}
-          >
-            <div style={{ fontSize: "12px", fontWeight: "700", color: "#166534", marginBottom: "4px" }}>Status</div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#16a34a", boxShadow: "0 0 8px #16a34a" }} />
-              <span style={{ fontSize: "13px", fontWeight: "600", color: "#15803d" }}>Assistant IA : En ligne & connecté</span>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-base font-extrabold text-white tracking-wide">
+                Actions rapides &amp; Contexte
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Exécutez vos requêtes clés en un clic
+              </p>
+            </div>
+            <div className="w-8 h-8 rounded-lg bg-[#0d55e0]/20 border border-[#38bdf8]/30 flex items-center justify-center text-[#38bdf8]">
+              <Zap size={16} />
             </div>
           </div>
 
-          {/* Quick Action Prompt Buttons */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {/* Carte Status Assistant */}
+          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25 mb-5 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+            <div className="text-[11px] font-bold text-emerald-400/90 uppercase tracking-wider mb-1">
+              Statut du Système
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981] animate-pulse" />
+              <span className="text-xs sm:text-sm font-bold text-emerald-400">
+                Assistant IA : En ligne &amp; synchronisé
+              </span>
+            </div>
+          </div>
+
+          {/* Liste Stylisée des Boutons d'Action Rapide */}
+          <div className="flex flex-col gap-3">
             {quickPrompts.map((qp, idx) => {
               const Icon = qp.icon;
               return (
                 <button
                   key={idx}
                   onClick={() => handleSendMessage(qp.prompt)}
-                  style={{
-                    padding: "12px 14px",
-                    borderRadius: "10px",
-                    background: "#ffffff",
-                    border: "1px solid #e2e8f0",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    cursor: "pointer",
-                    textAlign: "left",
-                    transition: "all 0.15s ease",
-                  }}
-                  className="hover:border-blue-400 hover:shadow-sm"
+                  className="group w-full p-3.5 rounded-xl bg-[rgba(11,20,42,0.7)] hover:bg-[rgba(15,27,56,0.95)] border border-[rgba(56,189,248,0.14)] hover:border-[#38bdf8]/50 flex items-center justify-between gap-3 text-left transition-all duration-200 hover:translate-x-1 shadow-[0_4px_15px_rgba(0,0,0,0.25)]"
                 >
-                  <div
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      borderRadius: "8px",
-                      background: qp.bg,
-                      color: qp.color,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Icon size={16} />
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border transition-transform group-hover:scale-105"
+                      style={{
+                        backgroundColor: qp.bg,
+                        borderColor: qp.border,
+                        color: qp.color,
+                      }}
+                    >
+                      <Icon size={18} />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-xs sm:text-sm font-bold text-white group-hover:text-[#38bdf8] transition-colors block truncate">
+                        {qp.label}
+                      </span>
+                      <span className="text-[11px] text-slate-400 truncate block">
+                        Cliquez pour déclencher
+                      </span>
+                    </div>
                   </div>
-                  <span style={{ fontSize: "13px", fontWeight: "600", color: "#0f172a" }}>{qp.label}</span>
+
+                  <ArrowRight size={14} className="text-slate-500 group-hover:text-[#38bdf8] transition-colors shrink-0" />
                 </button>
               );
             })}
           </div>
+
+          {/* Carte Rassurance & Proactivité */}
+          <div className="mt-6 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-white">
+              <ShieldCheck size={16} className="text-[#38bdf8]" />
+              <span>Compréhension en langage naturel</span>
+            </div>
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              Vous pouvez parler ou écrire comme à un collaborateur. L&apos;IA extrait automatiquement les personnes, les dates, les heures et les priorités sans syntaxe compliquée.
+            </p>
+          </div>
+
         </div>
       </div>
 
