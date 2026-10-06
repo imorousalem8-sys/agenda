@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
@@ -65,12 +66,19 @@ export default function DashboardLayout({
           {/* Logo AlarmeAgenda avec sous-titre officiel Image 2 */}
           <div className="pb-6 pt-2 px-2 border-b border-white/[0.08] mb-4">
             <Link href="/dashboard" className="flex items-center gap-3 no-underline text-white">
-              <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]">
-                <Calendar size={20} className="stroke-[2.2]" />
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-[0_0_15px_rgba(37,99,235,0.4)] border border-blue-500/30 flex items-center justify-center bg-[#07132e] shrink-0">
+                <Image
+                  src="/images/alarmagenda-logo.png"
+                  alt="Logo AlarmeAgenda"
+                  width={40}
+                  height={40}
+                  priority
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <div className="font-bold text-base tracking-tight leading-tight text-white">
-                  AlarmeAgenda
+                  Alarme<span className="text-blue-500">Agenda</span>
                 </div>
                 <div className="text-[10px] text-slate-400 font-normal leading-tight mt-0.5">
                   Organise. Rappelle. Avance.
