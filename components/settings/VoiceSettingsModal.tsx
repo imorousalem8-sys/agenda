@@ -233,9 +233,9 @@ export default function VoiceSettingsModal({ onClose }: VoiceSettingsModalProps)
                   padding: "16px",
                   borderRadius: "14px",
                   cursor: "pointer",
-                  border: gender === "MALE" ? "2px solid #6366f1" : "1px solid rgba(255, 255, 255, 0.1)",
-                  background: gender === "MALE" ? "linear-gradient(135deg, rgba(79, 70, 229, 0.25) 0%, rgba(99, 102, 241, 0.15) 100%)" : "rgba(255, 255, 255, 0.03)",
-                  boxShadow: gender === "MALE" ? "0 0 20px rgba(99, 102, 241, 0.25)" : "none",
+                  border: gender === "MALE" ? "2px solid #38bdf8" : "1px solid rgba(255, 255, 255, 0.1)",
+                  background: gender === "MALE" ? "linear-gradient(135deg, rgba(13, 85, 224, 0.25) 0%, rgba(56, 189, 248, 0.15) 100%)" : "rgba(255, 255, 255, 0.03)",
+                  boxShadow: gender === "MALE" ? "0 0 20px rgba(56, 189, 248, 0.25)" : "none",
                   transition: "all 0.2s ease",
                   display: "flex",
                   flexDirection: "column",
@@ -250,7 +250,7 @@ export default function VoiceSettingsModal({ onClose }: VoiceSettingsModalProps)
                         width: "36px",
                         height: "36px",
                         borderRadius: "10px",
-                        background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+                        background: "linear-gradient(135deg, #0d55e0, #38bdf8)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -260,7 +260,7 @@ export default function VoiceSettingsModal({ onClose }: VoiceSettingsModalProps)
                       <Mic size={18} />
                     </div>
                     {gender === "MALE" && (
-                      <span style={{ width: "20px", height: "20px", borderRadius: "50%", background: "#6366f1", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "11px" }}>
+                      <span style={{ width: "20px", height: "20px", borderRadius: "50%", background: "#0d55e0", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "11px" }}>
                         ✓
                       </span>
                     )}

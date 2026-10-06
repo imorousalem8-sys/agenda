@@ -90,7 +90,7 @@ export default function TasksPage() {
   const priorityColors: Record<string, string> = {
     URGENT: "#ef4444",
     HIGH: "#f59e0b",
-    NORMAL: "#6366f1",
+    NORMAL: "#38bdf8",
     LOW: "#5a6a8a",
   };
 

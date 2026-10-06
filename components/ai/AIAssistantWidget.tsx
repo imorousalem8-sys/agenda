@@ -210,6 +210,10 @@ export default function AIAssistantWidget() {
     setLiveTranscript("");
   };
 
+  if (pathname === "/agent") {
+    return null;
+  }
+
   return (
     <>
       {/* Floating Trigger Button - Luxury Slate Style */}
@@ -223,15 +227,15 @@ export default function AIAssistantWidget() {
             zIndex: 40,
             padding: "10px 18px",
             borderRadius: "12px",
-            background: "linear-gradient(135deg, #152244 0%, #1c2d5a 100%)",
-            border: "1px solid rgba(99, 102, 241, 0.4)",
+            background: "linear-gradient(135deg, #0d55e0 0%, #091329 100%)",
+            border: "1px solid rgba(56, 189, 248, 0.4)",
             color: "#ffffff",
             fontWeight: "600",
             fontSize: "13px",
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            boxShadow: "0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.2)",
+            boxShadow: "0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(13, 85, 224, 0.3)",
             cursor: "pointer",
             transition: "all 0.2s ease",
           }}
@@ -243,7 +247,7 @@ export default function AIAssistantWidget() {
               width: "26px",
               height: "26px",
               borderRadius: "8px",
-              background: "linear-gradient(135deg, #38bdf8, #6366f1)",
+              background: "linear-gradient(135deg, #38bdf8, #0d55e0)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -270,9 +274,9 @@ export default function AIAssistantWidget() {
             height: "620px",
             maxHeight: "calc(100vh - 48px)",
             borderRadius: "18px",
-            backgroundColor: "#152244",
-            border: "1px solid rgba(99, 102, 241, 0.45)",
-            boxShadow: "0 25px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(99, 102, 241, 0.25)",
+            backgroundColor: "#0d162a",
+            border: "1px solid rgba(56, 189, 248, 0.35)",
+            boxShadow: "0 25px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(13, 85, 224, 0.3)",
             zIndex: 100,
             display: "flex",
             flexDirection: "column",
@@ -284,7 +288,7 @@ export default function AIAssistantWidget() {
             style={{
               padding: "14px 18px",
               borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-              backgroundColor: "#0f1a36",
+              backgroundColor: "#091020",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -296,12 +300,12 @@ export default function AIAssistantWidget() {
                   width: "32px",
                   height: "32px",
                   borderRadius: "9px",
-                  background: "linear-gradient(135deg, #38bdf8, #6366f1)",
+                  background: "linear-gradient(135deg, #38bdf8, #0d55e0)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#ffffff",
-                  boxShadow: "0 0 15px rgba(99, 102, 241, 0.4)",
+                  boxShadow: "0 0 15px rgba(56, 189, 248, 0.4)",
                 }}
               >
                 <Sparkles size={17} />

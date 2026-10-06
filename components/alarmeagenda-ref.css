@@ -1,0 +1,98 @@
+/* ==========================================================================
+   ALARMEAGENDA — STYLES OFFICIELS BASÉS STRICTEMENT SUR LES DEUX IMAGES
+   Référence 1 : Landing Page Bleu Nuit Pétrole avec Mockup Laptop & Mobile
+   Référence 2 : Dashboard Bleu Nuit Profond avec Silhouette Montagnes
+   ========================================================================== */
+
+:root {
+  --aa-bg-dark: #070d1e;
+  --aa-bg-surface: #0c142b;
+  --aa-bg-card: rgba(13, 22, 46, 0.85);
+  --aa-bg-card-hover: rgba(17, 30, 62, 0.95);
+  --aa-border-subtle: rgba(255, 255, 255, 0.08);
+  --aa-border-blue: rgba(37, 99, 235, 0.35);
+  
+  --aa-blue-primary: #2563eb;
+  --aa-blue-hover: #1d4ed8;
+  --aa-blue-glow: rgba(37, 99, 235, 0.45);
+  --aa-blue-subtle: rgba(37, 99, 235, 0.15);
+  
+  --aa-text-white: #ffffff;
+  --aa-text-muted: #94a3b8;
+  --aa-text-dim: #64748b;
+  
+  --aa-green: #10b981;
+  --aa-orange: #f59e0b;
+  --aa-red: #ef4444;
+}
+
+/* Base sombre commune */
+.aa-ref-dark {
+  background-color: var(--aa-bg-dark);
+  color: var(--aa-text-white);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Carte Dashboard officielle (Image 2) */
+.aa-dashboard-card {
+  background: var(--aa-bg-card);
+  border: 1px solid var(--aa-border-subtle);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.aa-dashboard-card:hover {
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+/* Bouton bleu plein d'action */
+.aa-pill-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--aa-blue-primary);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.65rem 1.35rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 15px var(--aa-blue-glow);
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.aa-pill-btn-primary:hover {
+  background-color: var(--aa-blue-hover);
+  transform: translateY(-1px);
+}
+
+/* Bouton translucide */
+.aa-pill-btn-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--aa-border-subtle);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.65rem 1.35rem;
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.aa-pill-btn-glass:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}

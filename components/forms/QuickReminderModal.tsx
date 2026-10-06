@@ -93,7 +93,7 @@ export default function QuickReminderModal({ onClose, onSaved }: QuickReminderMo
                 width: "36px",
                 height: "36px",
                 borderRadius: "10px",
-                background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                background: "linear-gradient(135deg, #0d55e0, #38bdf8)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",

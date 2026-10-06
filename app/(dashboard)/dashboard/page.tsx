@@ -1,731 +1,524 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
-  Bell,
-  Calendar as CalendarIcon,
-  CheckSquare,
-  Plus,
-  ArrowRight,
-  Sparkles,
+  Calendar,
   Clock,
-  Activity,
-  MapPin,
-  Volume2,
-  Zap,
-  Play,
-  Pause,
-  RotateCcw,
-  Target,
-  Flame,
-  CloudSun,
-  Download,
-  TrendingUp,
-  Check,
   CheckCircle2,
-  AlertCircle,
-  PhoneCall,
-  User,
+  Bell,
+  Sparkles,
+  ArrowRight,
+  MapPin,
+  Check,
+  Building,
+  Phone,
+  Briefcase,
+  Dumbbell,
+  Send,
+  Sparkle,
 } from "lucide-react";
-import { useSession } from "next-auth/react";
 import EventFormModal from "@/components/forms/EventFormModal";
-import { speakAIText, playAlertChime } from "@/lib/voice";
-
-interface EventItem {
-  id: string;
-  title: string;
-  startAt: string;
-  category: string;
-  location?: string | null;
-  mode?: string;
-  contact?: { firstName: string; lastName?: string | null } | null;
-}
-
-interface ReminderItem {
-  id: string;
-  title: string;
-  fireAt: string;
-  status: string;
-  method: string;
-}
+import "@/components/alarmeagenda-ref.css";
 
 interface TaskItem {
   id: string;
   title: string;
-  priority: string;
-  isDone: boolean;
-  dueAt?: string | null;
+  done: boolean;
+  time?: string;
+  priority?: "Haute" | "Moyenne" | "Basse";
 }
 
 export default function DashboardPage() {
-  const { data: session } = useSession();
-  const [events, setEvents] = useState<EventItem[]>([]);
-  const [reminders, setReminders] = useState<ReminderItem[]>([]);
-  const [tasks, setTasks] = useState<TaskItem[]>([]);
-  const [activeTab, setActiveTab] = useState<"calendar" | "tasks">("calendar");
-  const [loading, setLoading] = useState(true);
-  const [showEventForm, setShowEventForm] = useState(false);
-  const [currentTime, setCurrentTime] = useState("");
-  const [currentDateFormatted, setCurrentDateFormatted] = useState("");
-  const [greeting, setGreeting] = useState("Bonjour");
-  const [isPlayingBriefing, setIsPlayingBriefing] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
 
-  // Focus / Pomodoro Timer State (25 mins = 1500s)
-  const [focusSeconds, setFocusSeconds] = useState(25 * 60);
-  const [isFocusRunning, setIsFocusRunning] = useState(false);
+  // Tâches de démonstration réalistes (Exact Image 2)
+  const [tasks, setTasks] = useState<TaskItem[]>([
+    { id: "1", title: "Envoyer le document", done: false, time: "10:00", priority: "Haute" },
+    { id: "2", title: "Appeler le client", done: true, time: "13:00", priority: "Moyenne" },
+    { id: "3", title: "Préparer le rendez-vous", done: false, time: "16:00", priority: "Basse" },
+  ]);
 
-  // Quick Task Input state
-  const [quickTaskText, setQuickTaskText] = useState("");
-  const [isCreatingTask, setIsCreatingTask] = useState(false);
-
-  const userName = session?.user?.name ? session.user.name.split(" ")[0] : "Salem";
-
-  useEffect(() => {
-    const updateClock = () => {
-      const now = new Date();
-      setCurrentTime(
-        now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
-      );
-      setCurrentDateFormatted(
-        now.toLocaleDateString("fr-FR", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })
-      );
-      const h = now.getHours();
-      if (h >= 5 && h < 12) setGreeting("Bonjour");
-      else if (h >= 12 && h < 18) setGreeting("Bon après-midi");
-      else setGreeting("Bonsoir");
-    };
-
-    updateClock();
-    const interval = setInterval(updateClock, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Pomodoro Focus Timer
-  useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
-    if (isFocusRunning && focusSeconds > 0) {
-      timer = setInterval(() => {
-        setFocusSeconds((prev) => prev - 1);
-      }, 1000);
-    } else if (focusSeconds === 0 && isFocusRunning) {
-      setIsFocusRunning(false);
-      playAlertChime();
-      speakAIText("Session Focus terminée avec succès ! Prenez une pause de 5 minutes.");
-    }
-    return () => {
-      if (timer) clearInterval(timer);
-    };
-  }, [isFocusRunning, focusSeconds]);
-
-  useEffect(() => {
-    loadDashboard();
-
-    const handleRefresh = () => {
-      loadDashboard();
-    };
-    window.addEventListener("task-updated", handleRefresh);
-    window.addEventListener("reminder-updated", handleRefresh);
-    window.addEventListener("event-updated", handleRefresh);
-
-    const handleOpenNewEvent = () => setShowEventForm(true);
-    const handleTriggerBriefing = () => handlePlayDailyBriefing();
-
-    window.addEventListener("open-new-event", handleOpenNewEvent);
-    window.addEventListener("play-daily-briefing", handleTriggerBriefing);
-
-    return () => {
-      window.removeEventListener("task-updated", handleRefresh);
-      window.removeEventListener("reminder-updated", handleRefresh);
-      window.removeEventListener("event-updated", handleRefresh);
-      window.removeEventListener("open-new-event", handleOpenNewEvent);
-      window.removeEventListener("play-daily-briefing", handleTriggerBriefing);
-    };
-  }, []);
-
-  const loadDashboard = async () => {
-    setLoading(true);
-    try {
-      const now = new Date();
-      const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-
-      const [evRes, remRes, taskRes] = await Promise.all([
-        fetch(`/api/events?from=${now.toISOString()}&to=${nextWeek.toISOString()}`),
-        fetch("/api/reminders?status=PENDING&upcoming=true"),
-        fetch("/api/tasks?done=false"),
-      ]);
-
-      const [evData, remData, taskData] = await Promise.all([
-        evRes.ok ? evRes.json() : { events: [] },
-        remRes.ok ? remRes.json() : { reminders: [] },
-        taskRes.ok ? taskRes.json() : { tasks: [] },
-      ]);
-
-      setEvents(evData.events || []);
-      setReminders(remData.reminders || []);
-      setTasks(taskData.tasks || []);
-    } catch (e) {
-      console.error("Dashboard data load error:", e);
-    } finally {
-      setLoading(false);
-    }
+  const toggleTask = (id: string) => {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
+    );
   };
-
-  const handleOpenAI = () => {
-    window.dispatchEvent(new CustomEvent("open-ai-assistant"));
-  };
-
-  const handlePlayDailyBriefing = async () => {
-    setIsPlayingBriefing(true);
-    await playAlertChime();
-
-    const eventCount = events.length || 0;
-    const reminderCount = reminders.length || 0;
-    const taskCount = tasks.length || 0;
-    const briefingText = `${greeting} ${userName} ! Vous avez ${eventCount} rendez-vous programmés, ${reminderCount} rappels vocaux actifs et ${taskCount} tâches en attente. Tout est parfaitement synchronisé. Excellente journée à vous !`;
-
-    speakAIText(briefingText, {
-      gender: "FEMALE",
-      onEnd: () => setIsPlayingBriefing(false),
-      onError: () => setIsPlayingBriefing(false),
-    });
-  };
-
-  const handleExportICS = () => {
-    window.location.href = "/api/events/export";
-  };
-
-  const handleToggleTask = async (id: string, currentStatus: boolean) => {
-    try {
-      await fetch(`/api/tasks/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isDone: !currentStatus }),
-      });
-      loadDashboard();
-    } catch (e) {
-      console.error("Error toggling task:", e);
-    }
-  };
-
-  const handleDismissReminder = async (id: string) => {
-    try {
-      await fetch(`/api/reminders/${id}/dismiss`, { method: "PUT" });
-      loadDashboard();
-    } catch (e) {
-      console.error("Error dismissing reminder:", e);
-    }
-  };
-
-  const handleCreateQuickTask = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!quickTaskText.trim() || isCreatingTask) return;
-
-    setIsCreatingTask(true);
-    try {
-      const res = await fetch("/api/tasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: quickTaskText.trim(),
-          priority: "HIGH",
-        }),
-      });
-      if (res.ok) {
-        setQuickTaskText("");
-        loadDashboard();
-      }
-    } catch (err) {
-      console.error("Error creating quick task:", err);
-    } finally {
-      setIsCreatingTask(false);
-    }
-  };
-
-  const formatFocusTime = (secs: number) => {
-    const m = Math.floor(secs / 60).toString().padStart(2, "0");
-    const s = (secs % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  };
-
-  const doneTasksCount = tasks.filter((t) => t.isDone).length;
-  const timeSavedHours = ((doneTasksCount * 0.5) + (events.length * 0.75)).toFixed(1);
 
   return (
-    <div className="w-full px-6 sm:px-8 lg:px-10 py-8 space-y-8">
+    <div className="max-w-[1340px] mx-auto space-y-6">
       {/* =========================================================================
-          HEADER SUPÉRIEUR DU WORKSPACE (STYLE A : PLEINE LARGEUR & BORD À BORD)
+          1. EN-TÊTE DU DASHBOARD CONFORME STRICTEMENT À L'IMAGE 2
          ========================================================================= */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pb-2">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20 backdrop-blur-md">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Système 100% synchronisé ⚡
-            </span>
-            <span className="text-xs text-slate-600">·</span>
-            <span className="text-xs text-slate-400 font-medium capitalize">
-              {currentDateFormatted || "Aujourd'hui"}
-            </span>
-          </div>
+      <div className="relative flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-3 pt-1">
+        {/* Silhouette de montagnes nocturnes en arrière-plan à droite (Exact Image 2) */}
+        <div
+          className="absolute right-0 top-[-10px] w-72 sm:w-96 h-28 pointer-events-none opacity-35 bg-no-repeat bg-right-top bg-contain"
+          style={{
+            backgroundImage: "url('/images/alarmeagenda-mountains-bg.jpg')",
+          }}
+        />
 
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
-            {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#38bdf8] via-[#60a5fa] to-[#3b82f6]">{userName}</span>
+        <div className="relative z-10">
+          <h1 className="text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
+            <span>Bonjour, Salem</span>
+            <span>👋</span>
           </h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Voici ce qui vous attend aujourd&apos;hui.
+          </p>
         </div>
 
-        {/* Contrôles contextuels à droite */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handlePlayDailyBriefing}
-            disabled={isPlayingBriefing}
-            className="dash-btn-glass"
-            title="Écouter le briefing vocal de la journée"
-          >
-            <Volume2 size={16} className={isPlayingBriefing ? "animate-bounce text-[#38bdf8]" : "text-[#38bdf8]"} />
-            <span>{isPlayingBriefing ? "Lecture en cours..." : "Briefing Vocal"}</span>
-          </button>
-
-          <a
-            href="/api/events/export"
-            download="agenda-alamajonda.ics"
-            className="dash-btn-glass hidden sm:inline-flex"
-            title="Exporter l'agenda en .ICS"
-          >
-            <Download size={15} />
-            <span>Export .ICS</span>
-          </a>
-
-          <button
-            onClick={() => setShowEventForm(true)}
-            className="dash-btn-primary"
-            id="dash-new-event-btn"
-          >
-            <Plus size={16} strokeWidth={2.5} />
-            <span>Nouveau Rendez-vous</span>
-          </button>
+        {/* Citation discrète en italique conforme à l'image 2 */}
+        <div className="relative z-10 text-xs sm:text-sm text-slate-400 italic font-light max-w-md lg:text-right">
+          « Chaque petit pas vous rapproche de vos grands objectifs. »
         </div>
       </div>
 
       {/* =========================================================================
-          RANGÉE 1 DU STYLE A : CARTES KPI SUR UNE SEULE LIGNE HORIZONTALE
+          2. LIGNE 1 : LES 3 GRANDES CARTES DU HAUT (IMAGE 2)
          ========================================================================= */}
-      <div className="dash-metric-ribbon">
-        {/* KPI 1 : Tâches à accomplir */}
-        <Link href="/tasks" className="dash-metric-item">
-          <div className="dash-metric-icon-box">
-            <CheckSquare size={19} />
-          </div>
-          <div>
-            <div className="dash-metric-label">Tâches à accomplir</div>
-            <div className="dash-metric-val">{tasks.filter((t) => !t.isDone).length}</div>
-          </div>
-        </Link>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+        {/* CARTE 1 (Gauche ~40%) : PROCHAIN RENDEZ-VOUS */}
+        <div className="md:col-span-5 aa-dashboard-card p-5 relative overflow-hidden flex flex-col justify-between min-h-[210px] bg-gradient-to-br from-[#0c1633] to-[#070e24]">
+          {/* Filigrane d'immeuble moderne en arrière-plan (Exact Image 2) */}
+          <div
+            className="absolute right-0 bottom-0 w-36 h-28 pointer-events-none opacity-30 bg-no-repeat bg-right-bottom bg-contain"
+            style={{
+              backgroundImage: "url('/images/alarmeagenda-building-crop.jpg')",
+            }}
+          />
 
-        {/* KPI 2 : Rendez-vous programmés */}
-        <Link href="/calendar" className="dash-metric-item">
-          <div className="dash-metric-icon-box">
-            <CalendarIcon size={19} />
-          </div>
           <div>
-            <div className="dash-metric-label">Rendez-vous programmés</div>
-            <div className="dash-metric-val">{events.length}</div>
-          </div>
-        </Link>
-
-        {/* KPI 3 : Alarmes & Rappels vocaux */}
-        <Link href="/reminders" className="dash-metric-item">
-          <div className="dash-metric-icon-box text-amber-400 bg-amber-500/10 border-amber-500/20">
-            <Bell size={19} />
-          </div>
-          <div>
-            <div className="dash-metric-label">Alarmes vocales</div>
-            <div className="dash-metric-val text-amber-400">{reminders.length}</div>
-          </div>
-        </Link>
-
-        {/* KPI 4 : Temps gagné calculé */}
-        <div className="dash-metric-item">
-          <div className="dash-metric-icon-box text-cyan-400 bg-cyan-500/10 border-cyan-500/20">
-            <Zap size={19} />
-          </div>
-          <div>
-            <div className="dash-metric-label">Temps économisé</div>
-            <div className="dash-metric-val text-[#38bdf8]">+{timeSavedHours}h</div>
-          </div>
-        </div>
-      </div>
-
-      {/* =========================================================================
-          RANGÉE 2 DU STYLE A : SECTION CŒUR MÉTIER (65% AGENDA | 35% RAPPELS VOCAUX)
-         ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* VOLET GAUCHE (65% / 8 COLONNES) : AGENDA & PLANNING CHRONOLOGIQUE AÉRÉ */}
-        <div className="lg:col-span-8 space-y-6">
-          <div className="dash-card p-7 sm:p-8 space-y-6">
-            
-            {/* Entête de l'agenda */}
-            <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#0d55e0]/20 border border-[#38bdf8]/30 flex items-center justify-center text-[#38bdf8]">
-                  <CalendarIcon size={20} />
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
+                  <Calendar size={16} />
                 </div>
-                <div>
-                  <h2 className="text-base sm:text-lg font-bold text-white tracking-wide">
-                    Planning &amp; Rendez-vous de la Journée
-                  </h2>
-                  <p className="text-xs text-slate-400">
-                    {events.length} créneau{events.length > 1 ? "x" : ""} synchronisé{events.length > 1 ? "s" : ""}
-                  </p>
-                </div>
+                <span className="text-xs font-semibold text-slate-300">Prochain rendez-vous</span>
               </div>
-
-              <Link
-                href="/calendar"
-                className="text-xs font-semibold text-[#38bdf8] hover:text-white px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all flex items-center gap-1.5"
-              >
-                <span>Vue Calendrier</span>
-                <ArrowRight size={13} />
-              </Link>
+              <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-600/40 text-blue-300 border border-blue-500/30">
+                Dans 2 h 15
+              </span>
             </div>
 
-            {/* Timeline des Rendez-vous réels (Zéro faux rendez-vous) */}
-            <div className="dash-timeline-container pt-2">
-              {events.length > 0 ? (
-                events.map((evt) => {
-                  const eventDate = new Date(evt.startAt);
-                  const timeFormatted = eventDate.toLocaleTimeString("fr-FR", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  });
-                  return (
-                    <div key={evt.id} className="dash-timeline-row">
-                      <div className="dash-time-label">{timeFormatted}</div>
-                      <div className="dash-timeline-line" />
-                      
-                      <div className="dash-timeline-event">
-                        <div className="flex items-center gap-3.5 min-w-0">
-                          <span className="dash-event-time-pill">{timeFormatted}</span>
-                          <div className="min-w-0">
-                            <h3 className="dash-event-title">{evt.title}</h3>
-                            <div className="flex items-center gap-3.5 text-xs text-slate-400 mt-0.5">
-                              {evt.location && (
-                                <span className="flex items-center gap-1 truncate">
-                                  <MapPin size={11} className="text-[#38bdf8] shrink-0" />
-                                  {evt.location}
-                                </span>
-                              )}
-                              {evt.contact && (
-                                <span className="flex items-center gap-1 truncate">
-                                  <User size={11} className="text-slate-400 shrink-0" />
-                                  Avec {evt.contact.firstName} {evt.contact.lastName || ""}
-                                </span>
-                              )}
-                              {!evt.location && !evt.contact && (
-                                <span className="text-[11px] text-slate-500">Rendez-vous synchronisé</span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+            <h2 className="text-xl font-bold text-white mb-2 tracking-tight">
+              Rendez-vous professionnel
+            </h2>
 
-                        <div className="dash-avatars-cluster">
-                          <div className="dash-avatar-circle" title="Salem">S</div>
-                          <div className="dash-avatar-circle bg-[#0d55e0] text-[#38bdf8]" title="Participant">
-                            {evt.contact ? evt.contact.firstName.charAt(0).toUpperCase() : "A"}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                /* État zéro authentique et spacieux */
-                <div className="py-12 px-6 text-center rounded-2xl bg-white/[0.015] border border-white/[0.04]">
-                  <div className="w-12 h-12 mx-auto rounded-2xl bg-[#0d55e0]/15 border border-[#38bdf8]/20 flex items-center justify-center text-[#38bdf8] mb-3 shadow-[0_0_20px_rgba(13,85,224,0.2)]">
-                    <CalendarIcon size={22} />
-                  </div>
-                  <h3 className="text-base font-bold text-white">Aucun rendez-vous aujourd&apos;hui</h3>
-                  <p className="text-xs text-slate-400 mt-1 mb-5 max-w-md mx-auto leading-relaxed">
-                    Votre journée est entièrement libre. Planifiez un créneau ou synchronisez vos calendriers en un instant.
-                  </p>
-                  <button
-                    onClick={() => setShowEventForm(true)}
-                    className="dash-btn-primary inline-flex items-center gap-2"
-                  >
-                    <Plus size={15} strokeWidth={2.5} />
-                    <span>Planifier un rendez-vous</span>
-                  </button>
-                </div>
-              )}
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300">
+              <span className="flex items-center gap-1.5 font-medium">
+                <Clock size={14} className="text-blue-400" />
+                <span>14:30 - 15:30</span>
+              </span>
+              <span className="flex items-center gap-1.5 font-medium">
+                <MapPin size={14} className="text-blue-400" />
+                <span>Centre-ville</span>
+              </span>
             </div>
+          </div>
 
-            {/* Barre d'Ajout Express Intégrée en bas de Timeline */}
-            <form onSubmit={handleCreateQuickTask} className="dash-timeline-quickadd">
-              <Plus size={16} className="text-[#38bdf8] shrink-0" />
-              <input
-                type="text"
-                value={quickTaskText}
-                onChange={(e) => setQuickTaskText(e.target.value)}
-                placeholder="Ajouter une priorité express ou un rappel... (Appuyez sur Entrée)"
-                disabled={isCreatingTask}
-                className="dash-timeline-input"
-              />
-              <button
-                type="submit"
-                disabled={!quickTaskText.trim() || isCreatingTask}
-                className="px-4 py-2 rounded-xl bg-[#0d55e0] hover:bg-[#1e60e8] text-white text-xs font-bold transition-all disabled:opacity-40"
-              >
-                {isCreatingTask ? "Ajout..." : "Ajouter"}
-              </button>
-            </form>
-
+          <div className="pt-4 mt-2 flex items-center gap-3">
+            <Link
+              href="/today"
+              className="aa-pill-btn-primary text-xs py-2 px-4 shadow-[0_2px_15px_rgba(37,99,235,0.4)] no-underline"
+            >
+              <span>Voir le détail</span>
+              <ArrowRight size={13} />
+            </Link>
+            <button
+              onClick={() => setShowEventModal(true)}
+              className="aa-pill-btn-glass text-xs py-2 px-4"
+            >
+              Modifier
+            </button>
           </div>
         </div>
 
-        {/* VOLET DROIT (35% / 4 COLONNES) : ALARMES & RAPPELS VOCAUX */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="dash-card p-7 space-y-5">
-            <div className="flex items-center justify-between pb-3.5 border-b border-white/[0.06]">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#0d55e0]/20 border border-[#38bdf8]/30 text-[#38bdf8] flex items-center justify-center">
-                  <Volume2 size={16} />
+        {/* CARTE 2 (Milieu ~35%) : TÂCHES */}
+        <div className="md:col-span-4 aa-dashboard-card p-5 flex flex-col justify-between min-h-[210px]">
+          <div>
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.06]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                  <Check size={14} strokeWidth={2.5} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">Alarmes &amp; Rappels Vocaux</h3>
-                  <p className="text-[11px] text-slate-400">Synthèse vocale en temps réel</p>
+                  <h3 className="text-sm font-bold text-white leading-tight">Tâches</h3>
+                  <div className="text-[10px] text-slate-400 font-normal">3 tâches aujourd&apos;hui</div>
                 </div>
               </div>
-
-              <Link
-                href="/reminders"
-                className="text-xs font-semibold text-[#38bdf8] hover:text-white transition-colors"
-              >
-                Gérer
+              <Link href="/tasks" className="text-xs text-blue-400 hover:text-blue-300 font-medium no-underline">
+                Voir tout
               </Link>
             </div>
 
-            {/* Visualiseur d'Onde Sonore Cyan Animée */}
-            <div className="dash-soundwave-container" title="Visualiseur audio vocal de l'assistant">
-              {[...Array(26)].map((_, i) => (
+            {/* Liste des cases à cocher exactes Image 2 */}
+            <div className="space-y-2.5 text-xs text-slate-200">
+              {tasks.map((task) => (
                 <div
-                  key={i}
-                  className="dash-soundwave-bar"
-                  style={{
-                    animationDelay: `${(i * 0.08) % 1.2}s`,
-                    animationDuration: `${1.1 + (i % 5) * 0.25}s`,
-                  }}
-                />
+                  key={task.id}
+                  onClick={() => toggleTask(task.id)}
+                  className="flex items-center gap-2.5 cursor-pointer select-none group"
+                >
+                  <div
+                    className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                      task.done
+                        ? "bg-blue-600 border-blue-500 text-white"
+                        : "border-slate-500 group-hover:border-blue-400"
+                    }`}
+                  >
+                    {task.done && <Check size={11} strokeWidth={3} />}
+                  </div>
+                  <span className={`${task.done ? "text-slate-400 line-through" : "text-slate-200"}`}>
+                    {task.title}
+                  </span>
+                </div>
               ))}
             </div>
+          </div>
+        </div>
 
-            {/* Liste des rappels réels */}
-            <div className="space-y-3 pt-1">
-              {reminders.length > 0 ? (
-                reminders.slice(0, 3).map((rem) => {
-                  const remDate = new Date(rem.fireAt);
-                  return (
-                    <div
-                      key={rem.id}
-                      className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-between gap-3 hover:border-[#38bdf8]/30 transition-all"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <Volume2 size={15} className="text-[#38bdf8] shrink-0" />
-                        <div className="min-w-0">
-                          <h4 className="text-xs font-bold text-white truncate">{rem.title}</h4>
-                          <div className="text-[11px] font-semibold text-[#38bdf8]">
-                            {remDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => handleDismissReminder(rem.id)}
-                        className="p-1 rounded text-slate-400 hover:text-emerald-400 transition-colors"
-                        title="Acquitter"
-                      >
-                        <Check size={14} />
-                      </button>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="py-7 px-4 text-center rounded-xl bg-white/[0.015] border border-white/[0.04]">
-                  <Volume2 size={22} className="mx-auto text-slate-500 mb-2 opacity-60" />
-                  <p className="text-xs font-bold text-white">0 alarme active</p>
-                  <p className="text-[11px] text-slate-400 mt-1 mb-4 leading-relaxed">
-                    Vos alarmes vocales sonneront automatiquement à l&apos;heure dite.
-                  </p>
-                  <Link href="/reminders" className="dash-btn-glass text-xs inline-flex items-center gap-1.5 py-1.5 px-3">
-                    <Plus size={13} />
-                    <span>Créer une alarme</span>
-                  </Link>
+        {/* CARTE 3 (Droite ~25%) : RAPPELS */}
+        <div className="md:col-span-3 aa-dashboard-card p-5 flex flex-col justify-between min-h-[210px]">
+          <div>
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.06]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+                  <Bell size={14} />
                 </div>
-              )}
+                <div>
+                  <h3 className="text-sm font-bold text-white leading-tight">Rappels</h3>
+                  <div className="text-[10px] text-slate-400 font-normal">2 rappels à venir</div>
+                </div>
+              </div>
+              <Link href="/reminders" className="text-xs text-blue-400 hover:text-blue-300 font-medium no-underline">
+                Voir tout
+              </Link>
             </div>
 
-            {/* Bannière info alerte vocale */}
-            <div className="p-3.5 rounded-xl bg-[#0d55e0]/10 border border-[#38bdf8]/20 flex items-start gap-2.5">
-              <Sparkles size={15} className="text-[#38bdf8] mt-0.5 shrink-0" />
-              <div className="text-[11px] text-slate-300 leading-relaxed">
-                <strong className="text-white font-semibold">Synthèse Proactive :</strong> Votre navigateur émet un carillon puis dicte vos alertes à haute voix.
+            {/* Liste des rappels Image 2 */}
+            <div className="space-y-3 text-xs">
+              <div className="flex items-start gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500 mt-1.5 shrink-0 shadow-[0_0_8px_#f59e0b]" />
+                <div>
+                  <div className="font-semibold text-white">Rendez-vous professionnel</div>
+                  <div className="text-[11px] text-slate-400">14:30 · Aujourd&apos;hui</div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0 shadow-[0_0_8px_#3b82f6]" />
+                <div>
+                  <div className="font-semibold text-white">Appel important</div>
+                  <div className="text-[11px] text-slate-400">16:30 · Aujourd&apos;hui</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
       </div>
 
       {/* =========================================================================
-          RANGÉE 3 DU STYLE A : DONNÉES & ACTIVITÉ (65% TÂCHES | 35% IMPACT PRODUCTIVITÉ)
+          3. LIGNE 2 : AGENDA DU JOUR (60%) & ASSISTANT IA / RESTEZ CONCENTRÉ (40%)
          ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* VOLET GAUCHE (65% / 8 COLONNES) : TABLE DE GESTION DES PRIORITÉS & TÂCHES */}
-        <div className="lg:col-span-8 space-y-6">
-          <div className="dash-card p-7 sm:p-8 space-y-5">
-            <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#0d55e0]/20 border border-[#38bdf8]/30 flex items-center justify-center text-[#38bdf8]">
-                  <CheckSquare size={20} />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* AGENDA DU JOUR (60% Gauche) */}
+        <div className="lg:col-span-7 aa-dashboard-card p-6">
+          <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2.5">
+              <Calendar size={18} className="text-blue-400" />
+              <h2 className="text-base font-bold text-white">Agenda du jour</h2>
+            </div>
+            <Link
+              href="/calendar"
+              className="text-xs text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1 no-underline"
+            >
+              <span>Voir l&apos;agenda complet</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
+
+          {/* Timeline verticale continue Image 2 */}
+          <div className="space-y-3.5 relative pl-4 before:absolute before:left-1 before:top-2 before:bottom-2 before:w-0.5 before:bg-blue-600/30">
+            {/* 09:00 Réunion d'équipe */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-xs font-semibold text-slate-300 w-12">09:00</span>
+                <div className="w-8 h-8 rounded-lg bg-white/[0.04] text-slate-300 flex items-center justify-center shrink-0">
+                  <Building size={15} />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white tracking-wide">
-                    Tâches &amp; Priorités d&apos;Exécution
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    {tasks.filter((t) => !t.isDone).length} tâche{tasks.filter((t) => !t.isDone).length > 1 ? "s" : ""} en cours
-                  </p>
+                  <div className="text-xs font-bold text-white">Réunion d&apos;équipe</div>
+                  <div className="text-[11px] text-slate-400">Bureau · Salle de réunion</div>
                 </div>
               </div>
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                ✓ Terminé
+              </span>
+            </div>
 
+            {/* 11:30 Appel avec client */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-xs font-semibold text-slate-300 w-12">11:30</span>
+                <div className="w-8 h-8 rounded-lg bg-white/[0.04] text-slate-300 flex items-center justify-center shrink-0">
+                  <Phone size={15} />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Appel avec client</div>
+                  <div className="text-[11px] text-slate-400">Téléphone</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/25">
+                À venir
+              </span>
+            </div>
+
+            {/* 14:30 Rendez-vous professionnel (En surbrillance bleue) */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-blue-900/25 border border-blue-500/40 shadow-[0_0_15px_rgba(37,99,235,0.15)]">
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-xs font-bold text-blue-400 w-12">14:30</span>
+                <div className="w-8 h-8 rounded-lg bg-blue-600/30 text-blue-300 flex items-center justify-center shrink-0">
+                  <Briefcase size={15} />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Rendez-vous professionnel</div>
+                  <div className="text-[11px] text-blue-200">Centre-ville</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-500/25 text-blue-200 border border-blue-400/40">
+                À venir
+              </span>
+            </div>
+
+            {/* 16:30 Appel important */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-xs font-semibold text-slate-300 w-12">16:30</span>
+                <div className="w-8 h-8 rounded-lg bg-white/[0.04] text-slate-300 flex items-center justify-center shrink-0">
+                  <Phone size={15} />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Appel important</div>
+                  <div className="text-[11px] text-slate-400">Téléphone</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/25">
+                À venir
+              </span>
+            </div>
+
+            {/* 18:00 Sport */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-xs font-semibold text-slate-300 w-12">18:00</span>
+                <div className="w-8 h-8 rounded-lg bg-white/[0.04] text-slate-300 flex items-center justify-center shrink-0">
+                  <Dumbbell size={15} />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Sport</div>
+                  <div className="text-[11px] text-slate-400">Salle de sport</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/25">
+                À venir
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* COLONNE DROITE (40% Droite) : ASSISTANT IA & RESTEZ CONCENTRÉ */}
+        <div className="lg:col-span-5 space-y-5">
+          {/* CARTE ASSISTANT IA (Exact Image 2) */}
+          <div className="aa-dashboard-card p-5 space-y-3.5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-blue-600/30 text-blue-400 flex items-center justify-center border border-blue-500/40">
+                <Sparkles size={16} />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white leading-tight">Votre assistant IA</h3>
+                <div className="text-[10px] text-slate-400">Une question ? Je suis là pour vous aider.</div>
+              </div>
+            </div>
+
+            {/* Champ de saisie prompt Image 2 */}
+            <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.04] border border-white/[0.1] focus-within:border-blue-500">
+              <input
+                type="text"
+                placeholder="Par exemple : « Qu'ai-je prévu demain ? »"
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                className="bg-transparent border-none outline-none w-full text-xs text-white placeholder-slate-400 px-1"
+              />
               <Link
-                href="/tasks"
-                className="text-xs font-semibold text-[#38bdf8] hover:text-white px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all flex items-center gap-1.5"
+                href="/assistant"
+                className="w-7 h-7 rounded-lg bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center shrink-0 transition-colors"
               >
-                <span>Toutes les tâches</span>
                 <ArrowRight size={13} />
               </Link>
             </div>
 
-            {/* Liste structurée des tâches avec case à cocher */}
-            <div className="space-y-3">
-              {tasks.length > 0 ? (
-                tasks.slice(0, 5).map((task) => (
-                  <div
-                    key={task.id}
-                    onClick={() => handleToggleTask(task.id, task.isDone)}
-                    className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-[#38bdf8]/30 transition-all flex items-center justify-between gap-4 cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div
-                        className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all shrink-0 ${
-                          task.isDone
-                            ? "bg-emerald-500 border-emerald-500 text-white"
-                            : "border-slate-500 hover:border-[#38bdf8]"
-                        }`}
-                      >
-                        {task.isDone && <Check size={12} strokeWidth={3} />}
-                      </div>
-
-                      <span
-                        className={`text-sm font-medium truncate ${
-                          task.isDone
-                            ? "line-through text-slate-500"
-                            : "text-white"
-                        }`}
-                      >
-                        {task.title}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      {task.priority === "URGENT" && (
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
-                          URGENT
-                        </span>
-                      )}
-                      {task.priority === "HIGH" && (
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                          PRIORITAIRE
-                        </span>
-                      )}
-                      {task.priority !== "URGENT" && task.priority !== "HIGH" && (
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-white/[0.04] text-slate-400 border border-white/[0.08]">
-                          STANDARD
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="py-8 text-center">
-                  <CheckCircle2 size={24} className="mx-auto text-emerald-400 mb-2 opacity-80" />
-                  <p className="text-xs font-bold text-white">Toutes les tâches sont accomplies</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Ajoutez une nouvelle tâche via la barre rapide ci-dessus.</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* VOLET DROIT (35% / 4 COLONNES) : IMPACT PRODUCTIVITÉ & COPILOTE EXPRESS */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="dash-card p-7 space-y-5">
-            <div className="flex items-center justify-between text-xs pb-3.5 border-b border-white/[0.06]">
-              <span className="font-bold text-white flex items-center gap-2">
-                <Target size={14} className="text-[#38bdf8]" />
-                Productivité &amp; Réalisation
-              </span>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold text-[10px] border border-emerald-500/20">
-                Temps Réel
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3.5">
-              <div className="dash-impact-card">
-                <div className="dash-impact-val">+{timeSavedHours}h</div>
-                <div className="text-[11px] text-slate-400 mt-0.5 font-medium">Économisées</div>
-              </div>
-
-              <div className="dash-impact-card">
-                <div className="dash-impact-val text-emerald-400">
-                  {tasks.length > 0 ? `${Math.round((doneTasksCount / tasks.length) * 100)}%` : "100%"}
-                </div>
-                <div className="text-[11px] text-slate-400 mt-0.5 font-medium">Taux complétion</div>
-              </div>
-            </div>
-
-            <div className="pt-2">
+            {/* Suggestions en pilules exactes Image 2 */}
+            <div className="space-y-1.5 pt-1 text-xs">
               <Link
-                href="/agent"
-                className="w-full p-3.5 rounded-xl bg-[#0d55e0]/20 hover:bg-[#0d55e0]/30 border border-[#38bdf8]/30 flex items-center justify-between gap-3 text-xs font-bold text-white transition-all group"
+                href="/assistant"
+                className="w-full text-left p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] text-slate-300 hover:text-white flex items-center gap-2 transition-all no-underline text-[11px]"
               >
-                <div className="flex items-center gap-2.5">
-                  <Sparkles size={16} className="text-[#38bdf8]" />
-                  <span>Ouvrir le Copilote IA</span>
-                </div>
-                <ArrowRight size={14} className="text-[#38bdf8] group-hover:translate-x-1 transition-transform" />
+                <span className="text-blue-400">💬</span>
+                <span>Ajoute un rendez-vous vendredi à 16h</span>
+              </Link>
+
+              <Link
+                href="/assistant"
+                className="w-full text-left p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] text-slate-300 hover:text-white flex items-center gap-2 transition-all no-underline text-[11px]"
+              >
+                <span className="text-blue-400">💬</span>
+                <span>Quels sont mes rappels aujourd&apos;hui ?</span>
+              </Link>
+
+              <Link
+                href="/assistant"
+                className="w-full text-left p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] text-slate-300 hover:text-white flex items-center gap-2 transition-all no-underline text-[11px]"
+              >
+                <span className="text-blue-400">💬</span>
+                <span>Montre-moi mes tâches importantes</span>
               </Link>
             </div>
           </div>
-        </div>
 
+          {/* BANNIÈRE « RESTEZ CONCENTRÉ » (Exact Image 2 avec paysage montagnard) */}
+          <div
+            className="aa-dashboard-card p-5 relative overflow-hidden bg-cover bg-center border-blue-500/20"
+            style={{
+              backgroundImage: "linear-gradient(to right, rgba(7,14,36,0.92) 20%, rgba(7,14,36,0.6) 100%), url('/images/alarmeagenda-mountain-card.jpg')",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-blue-400">✦</span>
+              <h4 className="text-sm font-bold text-white">Restez concentré</h4>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed font-normal">
+              Une journée bien organisée est une journée plus sereine.
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Modal de création de rendez-vous */}
-      {showEventForm && (
+      {/* =========================================================================
+          4. LIGNE 3 : TÂCHES PRIORITAIRES & RAPPELS À VENIR (IMAGE 2)
+         ========================================================================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-1">
+        {/* TÂCHES PRIORITAIRES (Gauche ~60%) */}
+        <div className="lg:col-span-7 aa-dashboard-card p-5">
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2.5">
+              <div className="w-6 h-6 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                <Check size={13} strokeWidth={2.5} />
+              </div>
+              <div className="text-xs font-bold text-white">
+                Tâches prioritaires <span className="text-slate-400 font-normal">· 3 tâches · Aujourd&apos;hui</span>
+              </div>
+            </div>
+            <Link href="/tasks" className="text-xs text-blue-400 hover:text-blue-300 font-medium no-underline">
+              Voir tout
+            </Link>
+          </div>
+
+          <div className="space-y-2.5 text-xs">
+            {/* Tâche 1 : Envoyer le document - 10:00 - Haute */}
+            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02]">
+              <div className="flex items-center gap-3">
+                <span className="w-4 h-4 rounded border border-slate-500" />
+                <span className="text-slate-200">Envoyer le document</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-slate-400 text-[11px]">10:00</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 flex items-center gap-1">
+                  <span>◆</span>
+                  <span>Haute</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Tâche 2 : Appeler le client - 13:00 - Moyenne */}
+            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02]">
+              <div className="flex items-center gap-3">
+                <span className="w-4 h-4 rounded border border-slate-500" />
+                <span className="text-slate-200">Appeler le client</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-slate-400 text-[11px]">13:00</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                  <span>◆</span>
+                  <span>Moyenne</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Tâche 3 : Préparer le rendez-vous - 16:00 - Basse */}
+            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02]">
+              <div className="flex items-center gap-3">
+                <span className="w-4 h-4 rounded border border-slate-500" />
+                <span className="text-slate-200">Préparer le rendez-vous</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-slate-400 text-[11px]">16:00</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-1">
+                  <span>●</span>
+                  <span>Basse</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* RAPPELS À VENIR (Droite ~40%) */}
+        <div className="lg:col-span-5 aa-dashboard-card p-5">
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2.5">
+              <div className="w-6 h-6 rounded-md bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                <Bell size={13} />
+              </div>
+              <div className="text-xs font-bold text-white">
+                Rappels à venir <span className="text-slate-400 font-normal">· 2 rappels · Prochains</span>
+              </div>
+            </div>
+            <Link href="/reminders" className="text-xs text-blue-400 hover:text-blue-300 font-medium no-underline">
+              Voir tout
+            </Link>
+          </div>
+
+          <div className="space-y-3 text-xs pt-1">
+            <div className="flex items-center gap-3 p-2 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+              <div className="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                <Bell size={13} />
+              </div>
+              <div>
+                <div className="font-semibold text-white">Rendez-vous professionnel</div>
+                <div className="text-[11px] text-slate-400">14:30 · Aujourd&apos;hui</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-2 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+              <div className="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+                <Bell size={13} />
+              </div>
+              <div>
+                <div className="font-semibold text-white">Appel important</div>
+                <div className="text-[11px] text-slate-400">16:30 · Aujourd&apos;hui</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal d'ajout de rendez-vous */}
+      {showEventModal && (
         <EventFormModal
-          onClose={() => setShowEventForm(false)}
-          onSaved={() => {
-            setShowEventForm(false);
-            loadDashboard();
-          }}
+          onClose={() => setShowEventModal(false)}
+          onSaved={() => setShowEventModal(false)}
         />
       )}
     </div>

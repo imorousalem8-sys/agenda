@@ -28,7 +28,7 @@ const STATUS_COLORS: Record<string, string> = {
   PENDING: "#f59e0b",
   FIRED: "#ef4444",
   DISMISSED: "#5a6a8a",
-  SNOOZED: "#6366f1",
+  SNOOZED: "#0d55e0",
 };
 
 export default function RemindersPage() {

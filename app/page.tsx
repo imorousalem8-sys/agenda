@@ -1,19 +1,19 @@
-import ExactIdenticalLanding from "@/components/landing/ExactIdenticalLanding";
+import AlarmeAgendaLanding from "@/components/landing/AlarmeAgendaLanding";
 
 export const metadata = {
-  title: "Alamajonda — Ne manquez plus aucun rendez-vous important",
+  title: "AlarmeAgenda — N'oubliez plus jamais ce qui compte",
   description:
-    "L'assistant vocal IA intelligent pour une gestion d'agenda sans effort, précise et automatisée.",
+    "AlarmeAgenda organise vos rendez-vous, vos tâches et vos rappels, puis vous prévient au bon moment grâce à une expérience pensée pour vous.",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
 };
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-white text-slate-900 font-sans antialiased">
-      <ExactIdenticalLanding />
+    <main className="min-h-screen w-full bg-[#060c18]">
+      <AlarmeAgendaLanding />
     </main>
   );
 }

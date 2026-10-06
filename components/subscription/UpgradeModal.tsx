@@ -295,7 +295,7 @@ export default function UpgradeModal({
                 position: "absolute",
                 top: "-11px",
                 right: "16px",
-                background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
+                background: "linear-gradient(135deg, #0d55e0, #2563eb, #38bdf8)",
                 padding: "3px 10px",
                 borderRadius: "12px",
                 fontSize: "10px",
@@ -351,8 +351,8 @@ export default function UpgradeModal({
                 padding: "12px",
                 fontWeight: "800",
                 fontSize: "14px",
-                background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
-                boxShadow: "0 8px 20px rgba(99, 102, 241, 0.4)",
+                background: "linear-gradient(135deg, #0d55e0, #2563eb, #38bdf8)",
+                boxShadow: "0 8px 20px rgba(13, 85, 224, 0.4)",
                 cursor: "pointer",
               }}
             >

@@ -202,7 +202,7 @@ export default function EventFormModal({ onClose, onSaved, initialDate, eventToE
                     onClick={handleOpenUpgradeFromModal}
                     className="btn btn-primary btn-sm"
                     style={{
-                      background: "linear-gradient(135deg, #06b6d4, #6366f1, #a855f7)",
+                      background: "linear-gradient(135deg, #0d55e0, #2563eb, #38bdf8)",
                       color: "#ffffff",
                       fontWeight: "800",
                       alignSelf: "flex-start",

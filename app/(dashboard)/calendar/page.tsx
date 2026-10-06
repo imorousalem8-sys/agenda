@@ -93,12 +93,12 @@ const MONTHS_LIST = [
 const WEEKDAYS_SHORT = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 const CATEGORY_STYLES: Record<string, { bg: string; text: string; border: string; dot: string }> = {
-  WORK: { bg: "#eff6ff", text: "#1d4ed8", border: "#bfdbfe", dot: "#2563eb" },
-  HEALTH: { bg: "#fff1f2", text: "#be123c", border: "#fecdd3", dot: "#e11d48" },
-  FAMILY: { bg: "#faf5ff", text: "#7e22ce", border: "#e9d5ff", dot: "#9333ea" },
-  ADMIN: { bg: "#fffbeb", text: "#b45309", border: "#fde68a", dot: "#d97706" },
-  EDUCATION: { bg: "#f0fdf4", text: "#15803d", border: "#bbf7d0", dot: "#16a34a" },
-  OTHER: { bg: "#eef2ff", text: "#4338ca", border: "#c7d2fe", dot: "#4f46e5" },
+  WORK: { bg: "rgba(13, 85, 224, 0.2)", text: "#93c5fd", border: "rgba(56, 189, 248, 0.35)", dot: "#38bdf8" },
+  HEALTH: { bg: "rgba(239, 68, 68, 0.2)", text: "#fca5a5", border: "rgba(239, 68, 68, 0.35)", dot: "#ef4444" },
+  FAMILY: { bg: "rgba(14, 165, 233, 0.2)", text: "#7dd3fc", border: "rgba(14, 165, 233, 0.35)", dot: "#38bdf8" },
+  ADMIN: { bg: "rgba(245, 158, 11, 0.2)", text: "#fcd34d", border: "rgba(245, 158, 11, 0.35)", dot: "#f59e0b" },
+  EDUCATION: { bg: "rgba(16, 185, 129, 0.2)", text: "#6ee7b7", border: "rgba(16, 185, 129, 0.35)", dot: "#10b981" },
+  OTHER: { bg: "rgba(30, 41, 59, 0.8)", text: "#cbd5e1", border: "rgba(255, 255, 255, 0.15)", dot: "#94a3b8" },
 };
 
 export default function CalendarPage() {
@@ -113,7 +113,7 @@ export default function CalendarPage() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [showSidePanel, setShowSidePanel] = useState(true);
+  const [showSidePanel, setShowSidePanel] = useState(false);
   const [showMonthPickerModal, setShowMonthPickerModal] = useState(false);
 
   const currentYear = getYear(currentDate);
@@ -414,10 +414,10 @@ export default function CalendarPage() {
 
         <div className="pro-quick-categories">
           {[
-            { label: "Tous", val: "ALL", color: "#6366f1" },
+            { label: "Tous", val: "ALL", color: "#38bdf8" },
             { label: "Travail / Pro", val: "WORK", color: "#3b82f6" },
             { label: "Santé", val: "HEALTH", color: "#f43f5e" },
-            { label: "Famille", val: "FAMILY", color: "#a855f7" },
+            { label: "Famille", val: "FAMILY", color: "#0ea5e9" },
             { label: "Administratif", val: "ADMIN", color: "#f59e0b" },
           ].map((cat) => (
             <button
@@ -1319,7 +1319,7 @@ export default function CalendarPage() {
         .pro-view-tab.active {
           background: var(--accent-primary);
           color: white;
-          box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+          box-shadow: 0 2px 8px rgba(13, 85, 224, 0.4);
         }
         .pro-inspector-toggle {
           display: flex;
@@ -1336,9 +1336,9 @@ export default function CalendarPage() {
           transition: all 0.2s;
         }
         .pro-inspector-toggle.active {
-          border-color: rgba(99, 102, 241, 0.4);
+          border-color: rgba(56, 189, 248, 0.4);
           color: var(--accent-primary-hover);
-          background: rgba(99, 102, 241, 0.1);
+          background: rgba(13, 85, 224, 0.15);
         }
 
         /* Filters */

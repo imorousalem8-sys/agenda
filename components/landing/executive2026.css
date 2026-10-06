@@ -1,0 +1,585 @@
+/* ==========================================================================
+   Alamajonda — Design System & Landing Page 2026
+   Inspiré des plus hauts standards SaaS (Linear, Amie, Raycast)
+   Palette : Obsidian Inky (#06080f), Electric Sapphire (#0d55e0), Sky Cyan (#38bdf8)
+   Typographie ciselée, surfaces calibrées, zéro pricing, zéro néon criard
+   ========================================================================== */
+
+.el-page {
+  --el-bg: #06080f;
+  --el-surface-1: #0b1120;
+  --el-surface-2: #111a33;
+  --el-surface-card: rgba(14, 22, 44, 0.72);
+  --el-border-hairline: rgba(255, 255, 255, 0.08);
+  --el-border-hover: rgba(56, 189, 248, 0.35);
+  --el-blue-accent: #0d55e0;
+  --el-cyan-accent: #38bdf8;
+  --el-emerald: #10b981;
+  --el-text-main: #f8fafc;
+  --el-text-sub: #94a3b8;
+  --el-text-dim: #64748b;
+  
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--el-bg);
+  color: var(--el-text-main);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Gradients d'ambiance ultra-subtils (Linear style) */
+.el-ambient-glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1200px;
+  height: 600px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(13, 85, 224, 0.22) 0%, rgba(56, 189, 248, 0.08) 45%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ==========================================================================
+   1. NAVBAR MINIMALISTE ÉLÉGANTE
+   ========================================================================== */
+.el-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  border-bottom: 1px solid var(--el-border-hairline);
+  background: rgba(6, 8, 15, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.el-navbar-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0.875rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.el-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--el-text-main);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+.el-brand-logo {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.35);
+}
+
+.el-brand span span {
+  color: var(--el-cyan-accent);
+}
+
+.el-nav-links {
+  display: none;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .el-nav-links {
+    display: flex;
+  }
+}
+
+.el-nav-link {
+  color: var(--el-text-sub);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.el-nav-link:hover {
+  color: var(--el-text-main);
+}
+
+.el-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.el-btn-ghost {
+  color: var(--el-text-main);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.el-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.el-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #0d55e0 0%, #1a6afc 100%);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 18px rgba(13, 85, 224, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.el-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(13, 85, 224, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* ==========================================================================
+   2. HERO SECTION — AUTORITÉ & IMPACT IMMÉDIAT
+   ========================================================================== */
+.el-hero {
+  position: relative;
+  z-index: 10;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4.5rem 1.5rem 3rem 1.5rem;
+  text-align: center;
+}
+
+.el-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  background: rgba(13, 85, 224, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: var(--el-cyan-accent);
+  letter-spacing: 0.02em;
+  margin-bottom: 1.5rem;
+}
+
+.el-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--el-emerald);
+  box-shadow: 0 0 8px var(--el-emerald);
+  animation: el-pulse 2s infinite;
+}
+
+@keyframes el-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.el-title {
+  font-size: clamp(2.4rem, 6vw, 4.25rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+  max-width: 980px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.el-title-gradient {
+  background: linear-gradient(135deg, #ffffff 30%, #38bdf8 80%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.el-subtitle {
+  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--el-text-sub);
+  max-width: 720px;
+  margin: 0 auto 2.5rem auto;
+}
+
+.el-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+
+.el-btn-lg-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: linear-gradient(135deg, #0d55e0 0%, #1d68f5 100%);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.85rem 1.85rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  box-shadow: 0 8px 30px rgba(13, 85, 224, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.el-btn-lg-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 38px rgba(13, 85, 224, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.el-btn-lg-voice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: rgba(14, 22, 44, 0.7);
+  backdrop-filter: blur(12px);
+  color: var(--el-text-main);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.85rem 1.65rem;
+  border-radius: 9999px;
+  border: 1px solid var(--el-border-hairline);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.el-btn-lg-voice:hover {
+  background: rgba(20, 32, 64, 0.85);
+  border-color: var(--el-border-hover);
+  color: #ffffff;
+}
+
+.el-btn-lg-voice.is-active {
+  border-color: var(--el-cyan-accent);
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
+  color: var(--el-cyan-accent);
+}
+
+/* ==========================================================================
+   3. PRODUCT STAGE — APERÇU LIVE DU COCKPIT (Linear / Raycast Style)
+   ========================================================================== */
+.el-product-stage {
+  max-width: 1140px;
+  margin: 0 auto 5rem auto;
+  position: relative;
+  border-radius: 20px;
+  padding: 6px;
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.25) 0%, rgba(13, 85, 224, 0.1) 40%, rgba(255, 255, 255, 0.03) 100%);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 0 0 50px rgba(13, 85, 224, 0.15);
+}
+
+.el-product-window {
+  border-radius: 16px;
+  background: #080d1a;
+  border: 1px solid var(--el-border-hairline);
+  overflow: hidden;
+  position: relative;
+}
+
+.el-window-header {
+  height: 44px;
+  background: #070a14;
+  border-bottom: 1px solid var(--el-border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+}
+
+.el-window-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.el-window-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.el-window-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--el-text-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.el-window-body {
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .el-window-body {
+    grid-template-columns: 320px 1fr;
+  }
+}
+
+.el-mockup-panel {
+  background: rgba(11, 17, 32, 0.85);
+  border: 1px solid var(--el-border-hairline);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.el-mockup-timeline {
+  background: rgba(11, 17, 32, 0.85);
+  border: 1px solid var(--el-border-hairline);
+  border-radius: 12px;
+  padding: 1.25rem;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   4. BENTO GRID — 4 PILIERS DE VALEUR SANS AUCUN PRICING
+   ========================================================================== */
+.el-bento-section {
+  max-width: 1200px;
+  margin: 0 auto 6rem auto;
+  padding: 0 1.5rem;
+}
+
+.el-section-head {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.el-section-tag {
+  color: var(--el-cyan-accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.el-section-title {
+  font-size: clamp(1.8rem, 4vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  max-width: 700px;
+  margin: 0 auto 1rem auto;
+}
+
+.el-section-desc {
+  font-size: 1.05rem;
+  color: var(--el-text-sub);
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+.el-bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .el-bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.el-bento-card {
+  position: relative;
+  background: var(--el-surface-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--el-border-hairline);
+  border-radius: 18px;
+  padding: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.el-bento-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--el-border-hover);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 30px rgba(13, 85, 224, 0.15);
+}
+
+.el-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 85, 224, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: var(--el-cyan-accent);
+}
+
+.el-card-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.015em;
+}
+
+.el-card-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--el-text-sub);
+}
+
+/* ==========================================================================
+   5. TEMOIGNAGES ET PREUVE DE CONFIANCE
+   ========================================================================== */
+.el-trust-section {
+  max-width: 1200px;
+  margin: 0 auto 6rem auto;
+  padding: 0 1.5rem;
+}
+
+.el-quote-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .el-quote-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.el-quote-card {
+  background: rgba(11, 17, 32, 0.6);
+  border: 1px solid var(--el-border-hairline);
+  border-radius: 16px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.el-quote-text {
+  font-size: 0.925rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  font-style: italic;
+}
+
+.el-quote-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.el-author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0d55e0, #38bdf8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #ffffff;
+}
+
+.el-author-info h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.el-author-info p {
+  font-size: 0.775rem;
+  color: var(--el-text-dim);
+  margin: 0;
+}
+
+/* ==========================================================================
+   6. CTA FINAL ÉPURÉ & FOOTER
+   ========================================================================== */
+.el-cta-final {
+  max-width: 1000px;
+  margin: 0 auto 6rem auto;
+  padding: 3.5rem 1.5rem;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(13, 85, 224, 0.15) 0%, rgba(6, 8, 15, 0.9) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.el-cta-title {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.el-cta-desc {
+  font-size: 1.05rem;
+  color: var(--el-text-sub);
+  max-width: 600px;
+  margin: 0 auto 2.25rem auto;
+}
+
+.el-footer {
+  border-top: 1px solid var(--el-border-hairline);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  font-size: 0.825rem;
+  color: var(--el-text-dim);
+}
+
+.el-footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .el-footer-content {
+    flex-direction: row;
+  }
+}

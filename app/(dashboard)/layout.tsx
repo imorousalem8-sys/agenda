@@ -5,47 +5,38 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
-  Bell,
+  Home,
+  Clock,
   Calendar,
   CheckSquare,
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  Users,
-  X,
-  Volume2,
+  Bell,
   Sparkles,
-  Moon,
-  Sun,
+  Users,
   Settings,
-  Globe,
-  SlidersHorizontal,
   Plus,
-  Download,
+  LogOut,
+  ChevronRight,
+  Menu,
+  X,
+  Search,
+  Sun,
 } from "lucide-react";
-import AlarmOverlay from "@/components/reminders/AlarmOverlay";
-import NotificationManager from "@/components/reminders/NotificationManager";
-import AIAssistantWidget from "@/components/ai/AIAssistantWidget";
-import QuotaIndicator from "@/components/ai/QuotaIndicator";
-import VoiceSettingsModal from "@/components/settings/VoiceSettingsModal";
-import PhoneSettingsModal from "@/components/settings/PhoneSettingsModal";
-import VoiceConversationModal from "@/components/ai/VoiceConversationModal";
-import Logo from "@/components/brand/Logo";
-import UpgradeModal from "@/components/subscription/UpgradeModal";
-import PaymentSuccessToast from "@/components/subscription/PaymentSuccessToast";
-import { useSubscription } from "@/lib/useSubscription";
-import "@/components/dashboard/dashboard.css";
+import EventFormModal from "@/components/forms/EventFormModal";
+import "@/components/alarmeagenda-ref.css";
 
-const mainNavLinks = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Tableau de bord" },
-  { href: "/calendar", icon: Calendar, label: "Agenda synchronisé" },
-  { href: "/reminders", icon: Bell, label: "Rappels & Alarmes" },
-  { href: "/tasks", icon: CheckSquare, label: "Tâches & Priorités" },
+const primaryNav = [
+  { href: "/dashboard", icon: Home, label: "Accueil" },
+  { href: "/today", icon: Clock, label: "Aujourd'hui" },
+  { href: "/calendar", icon: Calendar, label: "Agenda" },
+  { href: "/tasks", icon: CheckSquare, label: "Tâches" },
+  { href: "/reminders", icon: Bell, label: "Rappels" },
+  { href: "/assistant", icon: Sparkles, label: "Assistant IA" },
+  { href: "/contacts", icon: Users, label: "Contacts" },
 ];
 
-const smartToolsLinks = [
-  { href: "/agent", icon: Sparkles, label: "Copilote Vocal IA", badge: "Pro" },
-  { href: "/contacts", icon: Users, label: "Annuaire Contacts" },
+const secondaryNav = [
+  { href: "/notifications", icon: Bell, label: "Notifications", badge: "3" },
+  { href: "/settings", icon: Settings, label: "Paramètres" },
 ];
 
 export default function DashboardLayout({
@@ -55,424 +46,203 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showVoiceSettings, setShowVoiceSettings] = useState(false);
-  const [showPhoneSettings, setShowPhoneSettings] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [showVoiceLiveModal, setShowVoiceLiveModal] = useState(false);
-  const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>();
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  const { isPro } = useSubscription();
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const userName = session?.user?.name || "Salem Imorou";
 
-  // Initialisation du thème sombre aligné sur la page d'accueil (#030712)
   useEffect(() => {
-    const savedTheme = localStorage.getItem("alamajonda_theme") as "light" | "dark" | null;
-    const activeTheme = savedTheme || "dark";
-    setTheme(activeTheme);
-    document.documentElement.setAttribute("data-theme", activeTheme);
-    if (activeTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const nextTheme = theme === "light" ? "dark" : "light";
-    setTheme(nextTheme);
-    localStorage.setItem("alamajonda_theme", nextTheme);
-    document.documentElement.setAttribute("data-theme", nextTheme);
-    if (nextTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  };
-
-  const handleOpenNewEvent = () => {
-    window.dispatchEvent(new CustomEvent("open-new-event"));
-  };
-
-  const handlePlayBriefing = () => {
-    window.dispatchEvent(new CustomEvent("play-daily-briefing"));
-  };
-
-  useEffect(() => {
-    const handleOpenUpgrade = (e: CustomEvent<{ feature?: string }>) => {
-      setShowVoiceSettings(false);
-      setShowPhoneSettings(false);
-      setUpgradeFeature(e.detail?.feature);
-      setShowUpgradeModal(true);
-    };
-
-    const handleOpenVoiceLive = () => {
-      setShowVoiceLiveModal(true);
-    };
-
-    window.addEventListener("open-upgrade-modal" as any, handleOpenUpgrade as EventListener);
-    window.addEventListener("open-voice-live-modal" as any, handleOpenVoiceLive as EventListener);
-    return () => {
-      window.removeEventListener("open-upgrade-modal" as any, handleOpenUpgrade as EventListener);
-      window.removeEventListener("open-voice-live-modal" as any, handleOpenVoiceLive as EventListener);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setShowVoiceSettings(false);
-        setShowPhoneSettings(false);
-        setShowUpgradeModal(false);
-        setSidebarOpen(false);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  useEffect(() => {
-    if (showVoiceSettings || showPhoneSettings || showUpgradeModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-  }, [showVoiceSettings, showPhoneSettings, showUpgradeModal]);
-
-  const handleOpenVoiceSettings = () => {
-    setShowPhoneSettings(false);
-    setShowUpgradeModal(false);
-    setShowVoiceSettings(true);
-  };
-
-  const handleOpenPhoneSettings = () => {
-    setShowVoiceSettings(false);
-    setShowUpgradeModal(false);
-    setShowPhoneSettings(true);
-  };
-
-  const handleOpenAI = () => {
-    window.dispatchEvent(new CustomEvent("open-ai-assistant"));
-  };
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   return (
-    <div className="dash-layout">
-      {/* Mobile Backdrop */}
-      {sidebarOpen && (
-        <div
-          onClick={() => setSidebarOpen(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(3, 7, 18, 0.65)",
-            zIndex: 40,
-            backdropFilter: "blur(6px)",
-          }}
-          className="mobile-backdrop"
-        />
-      )}
+    <div className="min-h-screen bg-[#070d1e] text-white flex flex-col md:flex-row font-sans antialiased selection:bg-blue-600 selection:text-white">
+      {/* =========================================================================
+          1. SIDEBAR DESKTOP CONFORME STRICTEMENT À L'IMAGE 2
+         ========================================================================= */}
+      <aside className="hidden md:flex w-64 h-screen sticky top-0 bg-[#070d1e] border-r border-white/[0.08] flex-col justify-between p-4 shrink-0 z-30">
+        <div>
+          {/* Logo AlarmeAgenda avec sous-titre officiel Image 2 */}
+          <div className="pb-6 pt-2 px-2 border-b border-white/[0.08] mb-4">
+            <Link href="/dashboard" className="flex items-center gap-3 no-underline text-white">
+              <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]">
+                <Calendar size={20} className="stroke-[2.2]" />
+              </div>
+              <div>
+                <div className="font-bold text-base tracking-tight leading-tight text-white">
+                  AlarmeAgenda
+                </div>
+                <div className="text-[10px] text-slate-400 font-normal leading-tight mt-0.5">
+                  Organise. Rappelle. Avance.
+                </div>
+              </div>
+            </Link>
+          </div>
 
-      {/* Sidebar Cockpit en Verre Dépoli Bleu-Blanc */}
-      <aside className={`dash-sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
-        {/* Brand Header */}
-        <div className="dash-sidebar-brand">
-          <Link href="/" title="Retourner à la page d'accueil" style={{ textDecoration: "none" }}>
-            <Logo size={32} showText={true} />
+          {/* Navigation Principale Conforme Image 2 */}
+          <nav className="space-y-1.5">
+            {primaryNav.map((item) => {
+              const Icon = item.icon;
+              const isActive =
+                pathname === item.href ||
+                (item.href === "/dashboard" && pathname === "/") ||
+                (item.href === "/assistant" && pathname === "/agent");
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all no-underline ${
+                    isActive
+                      ? "bg-blue-600 text-white font-semibold shadow-[0_4px_15px_rgba(37,99,235,0.4)]"
+                      : "text-slate-300 hover:text-white hover:bg-white/[0.05]"
+                  }`}
+                >
+                  <Icon size={17} className={isActive ? "text-white" : "text-slate-400"} />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Séparateur discret Image 2 */}
+          <div className="my-5 border-t border-white/[0.08]" />
+
+          {/* Navigation Secondaire Conforme Image 2 */}
+          <nav className="space-y-1.5">
+            {secondaryNav.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all no-underline ${
+                    isActive
+                      ? "bg-blue-600 text-white font-semibold shadow-[0_4px_15px_rgba(37,99,235,0.4)]"
+                      : "text-slate-300 hover:text-white hover:bg-white/[0.05]"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon size={17} className={isActive ? "text-white" : "text-slate-400"} />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge && (
+                    <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Profil en bas Conforme Image 2 */}
+        <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between px-2">
+          <Link
+            href="/profile"
+            className="flex items-center gap-3 min-w-0 no-underline text-inherit group"
+            title="Mon profil"
+          >
+            {/* Avatar Salem Imorou */}
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-700 to-blue-400 text-white font-bold text-xs flex items-center justify-center shrink-0 border border-white/20 shadow-sm overflow-hidden">
+              <span className="text-xs">SI</span>
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs font-bold text-white truncate group-hover:text-blue-400 transition-colors">
+                Salem Imorou
+              </div>
+              <div className="text-[10px] text-slate-400 font-medium">
+                Plan Free
+              </div>
+            </div>
           </Link>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="btn btn-ghost lg:hidden"
-            style={{ padding: "4px", color: "var(--text-muted)" }}
-            id="sidebar-close-btn"
-          >
-            <X size={18} />
-          </button>
-        </div>
 
-        {/* Bouton Action Rapide : Nouveau Créneau Express */}
-        <div style={{ padding: "14px 14px 4px" }}>
-          <button
-            onClick={handleOpenNewEvent}
-            className="dash-sidebar-cta-btn"
-            id="sidebar-new-event-btn"
-          >
-            <Plus size={16} strokeWidth={2.5} />
-            <span>Nouveau Créneau</span>
-          </button>
-        </div>
-
-        {/* Corps de navigation structuré avec catégories claires */}
-        <nav className="dash-sidebar-nav">
-          
-          {/* Section 1 : Navigation Principale */}
-          <div>
-            <div className="dash-nav-section-title">
-              <span>Navigation Cockpit</span>
-            </div>
-            <div className="dash-nav-list">
-              {mainNavLinks.map((link) => {
-                const Icon = link.icon;
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`dash-nav-link ${isActive ? "is-active" : ""}`}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <span className="dash-nav-icon">
-                        <Icon size={18} />
-                      </span>
-                      <span>{link.label}</span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Section 2 : Outils Intelligents & Vocal */}
-          <div>
-            <div className="dash-nav-section-title">
-              <span>Outils Intelligents</span>
-            </div>
-            <div className="dash-nav-list">
-              {smartToolsLinks.map((link) => {
-                const Icon = link.icon;
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`dash-nav-link ${isActive ? "is-active" : ""}`}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <span className="dash-nav-icon">
-                        <Icon size={18} />
-                      </span>
-                      <span>{link.label}</span>
-                    </div>
-                    {link.badge && (
-                      <span className="dash-nav-badge">{link.badge}</span>
-                    )}
-                  </Link>
-                );
-              })}
-
-              {/* Bouton Voix & Synthèse IA */}
-              <button
-                onClick={handleOpenVoiceSettings}
-                className="dash-nav-action-btn"
-                title="Tester et configurer les voix IA"
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span className="dash-nav-icon">
-                    <Volume2 size={17} />
-                  </span>
-                  <span>Voix & Synthèse IA</span>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          {/* Section 3 : Actions Cockpit & Système */}
-          <div>
-            <div className="dash-nav-section-title">
-              <span>Actions & Système</span>
-            </div>
-            <div className="dash-nav-list">
-              {/* Briefing Vocal */}
-              <button
-                onClick={handlePlayBriefing}
-                className="dash-nav-action-btn"
-                title="Écouter le briefing vocal de la journée"
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span className="dash-nav-icon">
-                    <Volume2 size={17} />
-                  </span>
-                  <span>Briefing Vocal</span>
-                </div>
-              </button>
-
-              {/* Export ICS */}
-              <a
-                href="/api/events/export"
-                download="agenda-alamajonda.ics"
-                className="dash-nav-link"
-                title="Exporter l'agenda complet au format .ICS"
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span className="dash-nav-icon">
-                    <Download size={17} />
-                  </span>
-                  <span>Export .ICS</span>
-                </div>
-              </a>
-
-              {/* Paramètres Cockpit */}
-              <button
-                onClick={handleOpenPhoneSettings}
-                className="dash-nav-action-btn"
-                title="Paramètres de téléphonie et rappels"
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span className="dash-nav-icon">
-                    <SlidersHorizontal size={17} />
-                  </span>
-                  <span>Paramètres Cockpit</span>
-                </div>
-              </button>
-
-              {/* Mode Thème */}
-              <button
-                onClick={toggleTheme}
-                className="dash-nav-action-btn"
-                title={theme === "light" ? "Activer le Mode Nuit (Sombre)" : "Activer le Mode Jour (Clair)"}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span className="dash-nav-icon">
-                    {theme === "light" ? <Moon size={17} /> : <Sun size={17} />}
-                  </span>
-                  <span>{theme === "light" ? "Mode Sombre" : "Mode Clair"}</span>
-                </div>
-                <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "6px", background: "rgba(56, 189, 248, 0.12)", color: "#38bdf8", fontWeight: 700 }}>
-                  {theme === "dark" ? "ON" : "OFF"}
-                </span>
-              </button>
-
-              {/* Retour Site Web */}
-              <Link
-                href="/"
-                className="dash-nav-link"
-                title="Retourner à la page d'accueil"
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span className="dash-nav-icon">
-                    <Globe size={17} />
-                  </span>
-                  <span>Site Vitrine</span>
-                </div>
-              </Link>
-            </div>
-          </div>
-
-        </nav>
-
-        {/* Live Quota Indicator dans une carte translucide */}
-        <div className="dash-quota-wrap">
-          <QuotaIndicator />
-        </div>
-
-        {/* Profil Utilisateur Exécutif */}
-        <div className="dash-sidebar-user">
-          <div className="dash-user-avatar">
-            {userName[0]?.toUpperCase() || "S"}
-          </div>
-
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="dash-user-name">
-              {userName}
-            </div>
-            <div className="dash-user-plan">
-              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block" }} />
-              {isPro ? "Compte Pro Actif" : "Membre Standard"}
-            </div>
-          </div>
-
-          <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            className="btn btn-ghost"
-            style={{ padding: "6px", color: "var(--text-muted)" }}
-            title="Se déconnecter"
-          >
-            <LogOut size={16} />
-          </button>
+          <ChevronRight size={14} className="text-slate-500" />
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="dash-main">
-        {/* Mobile Topbar */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            padding: "10px 14px",
-            borderBottom: "1px solid rgba(13, 85, 224, 0.12)",
-            background: "rgba(6, 14, 34, 0.95)",
-            backdropFilter: "blur(20px)",
-            position: "sticky",
-            top: 0,
-            zIndex: 30,
-          }}
-          className="mobile-topbar"
-        >
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="btn btn-ghost"
-            style={{ padding: "6px" }}
-          >
-            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <div style={{ marginLeft: "8px" }}>
-            <Logo size={24} showText={false} />
+      {/* =========================================================================
+          2. HEADER MOBILE
+         ========================================================================= */}
+      <header className="md:hidden sticky top-0 z-40 bg-[#070d1e]/95 backdrop-blur-md border-b border-white/[0.08] px-4 h-14 flex items-center justify-between">
+        <Link href="/dashboard" className="flex items-center gap-2.5 no-underline text-white">
+          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+            <Calendar size={16} />
           </div>
-          <div style={{ flex: 1 }} />
-          <button
-            onClick={handleOpenAI}
-            className="btn btn-primary btn-sm"
-            style={{
-              padding: "6px 12px",
-              gap: "6px",
-              fontSize: "12px",
-            }}
-          >
-            <Sparkles size={14} />
-            <span>Assistant</span>
-          </button>
-        </div>
+          <span className="font-bold text-sm text-white">AlarmeAgenda</span>
+        </Link>
 
-        {children}
-      </main>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-1.5 text-slate-300 hover:text-white"
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </header>
 
-      {/* Persistent Global Overlays */}
-      <PaymentSuccessToast />
-      <AlarmOverlay />
-      <NotificationManager />
-      <AIAssistantWidget />
+      {/* =========================================================================
+          3. WORKSPACE PRINCIPAL
+         ========================================================================= */}
+      <div className="flex-1 min-w-0 flex flex-col min-h-screen">
+        {/* Topbar Desktop Conforme Image 2 */}
+        <header className="hidden md:flex h-16 border-b border-white/[0.08] bg-[#070d1e]/80 backdrop-blur-md px-8 items-center justify-between shrink-0">
+          {/* Barre de recherche conforme Image 2 */}
+          <div className="w-96 px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/[0.1] text-xs text-slate-300 flex items-center gap-2.5 focus-within:border-blue-500 focus-within:bg-white/[0.07] transition-all">
+            <Search size={14} className="text-slate-400" />
+            <input
+              type="text"
+              placeholder="Rechercher un rendez-vous, une tâche, un contact..."
+              className="bg-transparent border-none outline-none w-full text-white placeholder-slate-400 text-xs"
+            />
+          </div>
 
-      <UpgradeModal
-        isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-        featureName={upgradeFeature}
-      />
+          {/* Outils à droite : Soleil, Cloche badge 3, Date avec icône calendrier */}
+          <div className="flex items-center gap-4 text-xs text-slate-300">
+            <button
+              type="button"
+              className="p-2 rounded-xl hover:bg-white/[0.06] text-slate-400 hover:text-white transition-colors"
+              title="Thème"
+            >
+              <Sun size={17} />
+            </button>
 
-      {showVoiceSettings && (
-        <VoiceSettingsModal onClose={() => setShowVoiceSettings(false)} />
+            <Link
+              href="/notifications"
+              className="relative p-2 rounded-xl hover:bg-white/[0.06] text-slate-400 hover:text-white transition-colors no-underline"
+              title="Notifications"
+            >
+              <Bell size={17} />
+              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
+                3
+              </span>
+            </Link>
+
+            <div className="flex items-center gap-2 pl-2 border-l border-white/[0.08] text-slate-200 font-medium">
+              <span>Mardi 5 octobre 2026</span>
+              <Calendar size={14} className="text-slate-400" />
+            </div>
+          </div>
+        </header>
+
+        {/* Contenu de la page */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+          {children}
+        </main>
+      </div>
+
+      {/* Modal nouveau créneau */}
+      {showEventModal && (
+        <EventFormModal
+          onClose={() => setShowEventModal(false)}
+          onSaved={() => {
+            setShowEventModal(false);
+            window.dispatchEvent(new CustomEvent("event-updated"));
+          }}
+        />
       )}
-
-      {showPhoneSettings && (
-        <PhoneSettingsModal onClose={() => setShowPhoneSettings(false)} />
-      )}
-
-      <VoiceConversationModal
-        isOpen={showVoiceLiveModal}
-        onClose={() => setShowVoiceLiveModal(false)}
-      />
-
-      <style>{`
-        @media (min-width: 1024px) {
-          .mobile-topbar { display: none !important; }
-          .mobile-backdrop { display: none !important; }
-        }
-        @media (max-width: 1023px) {
-          .mobile-topbar { display: flex !important; }
-        }
-      `}</style>
     </div>
   );
 }
