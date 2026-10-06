@@ -240,36 +240,42 @@ export default function AgentPage() {
 
   return (
     <div
-      className="grid grid-cols-1 lg:grid-cols-12 h-[calc(100vh-64px)] overflow-hidden"
+      className="flex flex-col h-[calc(100vh-64px)] overflow-hidden"
       style={{
         backgroundColor: "#030712",
         backgroundImage:
-          "radial-gradient(ellipse 900px 600px at 15% 10%, rgba(13, 85, 224, 0.18) 0%, transparent 60%), radial-gradient(ellipse 700px 500px at 85% 85%, rgba(56, 189, 248, 0.12) 0%, transparent 55%)",
+          "radial-gradient(ellipse 1100px 700px at 20% 10%, rgba(13, 85, 224, 0.16) 0%, transparent 60%), radial-gradient(ellipse 900px 600px at 80% 90%, rgba(56, 189, 248, 0.12) 0%, transparent 55%)",
       }}
     >
-      {/* 1. Zone Principale : Conversation Chat IA (Gauche / 8 Colonnes) */}
-      <div className="lg:col-span-8 flex flex-col h-full border-r border-white/[0.08] min-w-0">
-        
-        {/* En-tête du Chat */}
-        <div className="px-6 py-4.5 bg-[#060e22]/90 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0d55e0] to-[#38bdf8] text-white flex items-center justify-center shadow-[0_0_20px_rgba(13,85,224,0.45)] border border-[#38bdf8]/40">
-              <Sparkles size={20} />
-            </div>
-            <div>
-              <h1 className="text-base font-extrabold text-white tracking-wide">
+      {/* =========================================================================
+          1. EN-TÊTE PRINCIPAL : PLEINE LARGEUR & AÉRÉ
+         ========================================================================= */}
+      <header className="px-6 sm:px-8 py-4 bg-[#060e22]/90 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between gap-4 shrink-0">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0d55e0] to-[#38bdf8] text-white flex items-center justify-center shadow-[0_0_20px_rgba(13,85,224,0.45)] border border-[#38bdf8]/40 shrink-0">
+            <Sparkles size={20} />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-base sm:text-lg font-extrabold text-white tracking-wide truncate">
                 Copilote IA Alamajonda
               </h1>
-              <p className="text-xs text-slate-400">
-                Assistant exécutif connecté à votre agenda &amp; tâches
-              </p>
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[11px] font-semibold border border-emerald-500/20">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                En ligne &amp; synchronisé
+              </span>
             </div>
+            <p className="text-xs text-slate-400 truncate">
+              Assistant exécutif connecté à votre agenda, vos tâches et vos rappels vocaux
+            </p>
           </div>
+        </div>
 
-          {/* Toggle Synthèse Vocale */}
+        {/* Bouton Toggle Voix IA */}
+        <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => setVoiceEnabled(!voiceEnabled)}
-            className={`px-3.5 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3.5 py-2 rounded-xl border text-xs font-bold transition-all flex items-center gap-2 ${
               voiceEnabled
                 ? "bg-[#0d55e0]/20 text-[#38bdf8] border-[#38bdf8]/35 shadow-[0_0_12px_rgba(56,189,248,0.2)]"
                 : "bg-white/[0.03] text-slate-400 border-white/[0.08] hover:text-white"
@@ -277,12 +283,54 @@ export default function AgentPage() {
             title={voiceEnabled ? "Désactiver la voix IA" : "Activer la voix IA"}
           >
             {voiceEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
-            <span>{voiceEnabled ? "Voix IA Active" : "Voix Coupée"}</span>
+            <span className="hidden sm:inline">{voiceEnabled ? "Voix IA Active" : "Voix Coupée"}</span>
           </button>
         </div>
+      </header>
 
-        {/* Flux des Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-7 flex flex-col gap-5">
+      {/* =========================================================================
+          2. BANDEAU DES ACTIONS RAPIDES : TOUTES SUR LA MÊME LIGNE AVEC PETIT ESPACE
+         ========================================================================= */}
+      <div className="px-6 sm:px-8 py-3 bg-[#060e22]/60 backdrop-blur-md border-b border-white/[0.06] shrink-0">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {quickPrompts.map((qp, idx) => {
+            const Icon = qp.icon;
+            return (
+              <button
+                key={idx}
+                onClick={() => handleSendMessage(qp.prompt)}
+                className="group p-2.5 sm:p-3 rounded-xl bg-[rgba(11,20,42,0.65)] hover:bg-[rgba(15,27,56,0.95)] border border-[rgba(56,189,248,0.14)] hover:border-[#38bdf8]/50 flex items-center gap-3 text-left transition-all duration-200 hover:-translate-y-0.5 shadow-[0_4px_15px_rgba(0,0,0,0.2)]"
+              >
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border transition-transform group-hover:scale-105"
+                  style={{
+                    backgroundColor: qp.bg,
+                    borderColor: qp.border,
+                    color: qp.color,
+                  }}
+                >
+                  <Icon size={16} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="text-xs font-bold text-white group-hover:text-[#38bdf8] transition-colors block truncate">
+                    {qp.label}
+                  </span>
+                  <span className="text-[10px] text-slate-400 block truncate">
+                    Déclencher l&apos;action
+                  </span>
+                </div>
+                <ArrowRight size={13} className="text-slate-500 group-hover:text-[#38bdf8] transition-colors shrink-0 hidden lg:block" />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* =========================================================================
+          3. ZONE DE CONVERSATION CENTRÉE & SPACIEUSE (PLEINE LARGEUR)
+         ========================================================================= */}
+      <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
+        <div className="max-w-4xl mx-auto flex flex-col gap-5">
           {messages.map((m) => (
             <div
               key={m.id}
@@ -297,11 +345,13 @@ export default function AgentPage() {
                     : "rounded-tl-xs bg-[#0b142a]/85 backdrop-blur-md text-white border border-white/[0.09] shadow-[0_8px_25px_rgba(0,0,0,0.4)]"
                 }`}
               >
-                {/* Badge Expéditeur subtil */}
+                {/* Badge Expéditeur */}
                 <div className="flex items-center gap-2 mb-1.5">
-                  <span className={`text-[10px] font-extrabold uppercase tracking-wider ${
-                    m.sender === "user" ? "text-cyan-200" : "text-[#38bdf8]"
-                  }`}>
+                  <span
+                    className={`text-[10px] font-extrabold uppercase tracking-wider ${
+                      m.sender === "user" ? "text-cyan-200" : "text-[#38bdf8]"
+                    }`}
+                  >
                     {m.sender === "user" ? "Vous" : "Copilote IA"}
                   </span>
                 </div>
@@ -334,10 +384,17 @@ export default function AgentPage() {
 
                     <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-white/[0.06]">
                       <button
-                        onClick={() => (window.location.href = m.action?.type === "TASK" ? "/tasks" : "/calendar")}
+                        onClick={() =>
+                          (window.location.href =
+                            m.action?.type === "TASK" ? "/tasks" : "/calendar")
+                        }
                         className="px-3 py-1.5 rounded-lg bg-[#0d55e0] hover:bg-[#1e60e8] text-white text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-[0_2px_10px_rgba(13,85,224,0.4)]"
                       >
-                        <span>{m.action.type === "TASK" ? "Voir dans les tâches" : "Voir dans le calendrier"}</span>
+                        <span>
+                          {m.action.type === "TASK"
+                            ? "Voir dans les tâches"
+                            : "Voir dans le calendrier"}
+                        </span>
                         <ArrowRight size={12} />
                       </button>
                     </div>
@@ -355,9 +412,13 @@ export default function AgentPage() {
           )}
           <div ref={chatBottomRef} />
         </div>
+      </div>
 
-        {/* Barre de Saisie Inférieure */}
-        <div className="px-6 py-4.5 bg-[#060e22]/95 backdrop-blur-xl border-t border-white/[0.08] flex items-center gap-3">
+      {/* =========================================================================
+          4. BARRE DE SAISIE INFÉRIEURE : CENTRÉE & HAUT DE GAMME
+         ========================================================================= */}
+      <footer className="px-6 sm:px-8 py-4 bg-[#060e22]/95 backdrop-blur-xl border-t border-white/[0.08] shrink-0">
+        <div className="max-w-4xl mx-auto flex items-center gap-3">
           {/* Bouton Microphone Vocal */}
           <button
             onClick={isListening ? stopListening : startListening}
@@ -374,7 +435,7 @@ export default function AgentPage() {
           {/* Champ de Texte */}
           <input
             type="text"
-            placeholder="Écrivez votre message ou dictez votre demande..."
+            placeholder="Écrivez votre message ou dictez votre demande à voix haute..."
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => {
@@ -396,88 +457,7 @@ export default function AgentPage() {
             <span className="hidden sm:inline">Envoyer</span>
           </button>
         </div>
-      </div>
-
-      {/* 2. Volet Latéral Droit : Actions Rapides & Contexte (4 Colonnes) */}
-      <div className="lg:col-span-4 p-6 bg-[#060e22]/98 backdrop-blur-2xl flex flex-col gap-6 overflow-y-auto min-w-0">
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-base font-extrabold text-white tracking-wide">
-                Actions rapides &amp; Contexte
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Exécutez vos requêtes clés en un clic
-              </p>
-            </div>
-            <div className="w-8 h-8 rounded-lg bg-[#0d55e0]/20 border border-[#38bdf8]/30 flex items-center justify-center text-[#38bdf8]">
-              <Zap size={16} />
-            </div>
-          </div>
-
-          {/* Carte Status Assistant */}
-          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25 mb-5 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-            <div className="text-[11px] font-bold text-emerald-400/90 uppercase tracking-wider mb-1">
-              Statut du Système
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981] animate-pulse" />
-              <span className="text-xs sm:text-sm font-bold text-emerald-400">
-                Assistant IA : En ligne &amp; synchronisé
-              </span>
-            </div>
-          </div>
-
-          {/* Liste Stylisée des Boutons d'Action Rapide */}
-          <div className="flex flex-col gap-3">
-            {quickPrompts.map((qp, idx) => {
-              const Icon = qp.icon;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => handleSendMessage(qp.prompt)}
-                  className="group w-full p-3.5 rounded-xl bg-[rgba(11,20,42,0.7)] hover:bg-[rgba(15,27,56,0.95)] border border-[rgba(56,189,248,0.14)] hover:border-[#38bdf8]/50 flex items-center justify-between gap-3 text-left transition-all duration-200 hover:translate-x-1 shadow-[0_4px_15px_rgba(0,0,0,0.25)]"
-                >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <div
-                      className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border transition-transform group-hover:scale-105"
-                      style={{
-                        backgroundColor: qp.bg,
-                        borderColor: qp.border,
-                        color: qp.color,
-                      }}
-                    >
-                      <Icon size={18} />
-                    </div>
-                    <div className="min-w-0">
-                      <span className="text-xs sm:text-sm font-bold text-white group-hover:text-[#38bdf8] transition-colors block truncate">
-                        {qp.label}
-                      </span>
-                      <span className="text-[11px] text-slate-400 truncate block">
-                        Cliquez pour déclencher
-                      </span>
-                    </div>
-                  </div>
-
-                  <ArrowRight size={14} className="text-slate-500 group-hover:text-[#38bdf8] transition-colors shrink-0" />
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Carte Rassurance & Proactivité */}
-          <div className="mt-6 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-white">
-              <ShieldCheck size={16} className="text-[#38bdf8]" />
-              <span>Compréhension en langage naturel</span>
-            </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              Vous pouvez parler ou écrire comme à un collaborateur. L&apos;IA extrait automatiquement les personnes, les dates, les heures et les priorités sans syntaxe compliquée.
-            </p>
-          </div>
-
-        </div>
-      </div>
+      </footer>
 
       <VoiceRecordingBubble
         isListening={isListening}
