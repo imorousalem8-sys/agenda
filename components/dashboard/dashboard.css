@@ -237,32 +237,39 @@
   border-color: rgba(56, 189, 248, 0.28);
 }
 
-/* Ruban Horizontal Unique de Métriques (4 KPIs en 1 seule bande fluide) */
+/* Ruban Horizontal Unique de Métriques (4 KPIs en 1 seule bande fluide & spacieuse) */
 .dash-metric-ribbon {
   background: rgba(11, 20, 42, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(56, 189, 248, 0.12);
-  border-radius: 16px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(56, 189, 248, 0.14);
+  border-radius: 18px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  padding: 8px 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  padding: 12px 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 @media (max-width: 768px) {
   .dash-metric-ribbon {
     grid-template-columns: repeat(2, 1fr);
+    padding: 10px 12px;
   }
 }
 
 .dash-metric-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 18px;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 14px;
+  padding: 14px 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
   text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.dash-metric-item:hover {
+  background: rgba(255, 255, 255, 0.025);
 }
 
 .dash-metric-item:last-child {
@@ -270,11 +277,11 @@
 }
 
 .dash-metric-icon-box {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
   background: rgba(13, 85, 224, 0.18);
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -408,12 +415,12 @@
 .dash-timeline-quickadd {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px 8px 18px;
+  gap: 14px;
+  padding: 12px 16px 12px 20px;
   border-radius: 14px;
   background: rgba(8, 15, 33, 0.85);
-  border: 1px solid rgba(56, 189, 248, 0.16);
-  margin-top: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  margin-top: 24px;
 }
 
 .dash-timeline-input {

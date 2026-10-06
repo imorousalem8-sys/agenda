@@ -66,10 +66,10 @@ export default function DashboardLayout({
 
   const userName = session?.user?.name || "Salem Imorou";
 
-  // Initialisation du thème clair limpide & épuré par défaut
+  // Initialisation du thème sombre aligné sur la page d'accueil (#030712)
   useEffect(() => {
     const savedTheme = localStorage.getItem("alamajonda_theme") as "light" | "dark" | null;
-    const activeTheme = savedTheme || "light";
+    const activeTheme = savedTheme || "dark";
     setTheme(activeTheme);
     document.documentElement.setAttribute("data-theme", activeTheme);
     if (activeTheme === "dark") {
