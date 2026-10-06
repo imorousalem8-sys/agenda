@@ -257,14 +257,14 @@ export default function DashboardPage() {
   const timeSavedHours = ((doneTasksCount * 0.5) + (events.length * 0.75)).toFixed(1);
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-10 space-y-9">
+    <div className="w-full px-6 sm:px-8 lg:px-10 py-8 space-y-8">
       {/* =========================================================================
-          1. EN-TÊTE ÉPURÉ & AÉRÉ (STYLE OBSIDIAN & SAPHIR DE LA PAGE D'ACCUEIL)
+          HEADER SUPÉRIEUR DU WORKSPACE (STYLE A : PLEINE LARGEUR & BORD À BORD)
          ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-2">
-        <div className="space-y-1.5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pb-2">
+        <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20 backdrop-blur-md">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20 backdrop-blur-md">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               Système 100% synchronisé ⚡
             </span>
@@ -279,8 +279,8 @@ export default function DashboardPage() {
           </h1>
         </div>
 
-        {/* Boutons d'Action Rapides */}
-        <div className="flex items-center gap-3.5">
+        {/* Contrôles contextuels à droite */}
+        <div className="flex items-center gap-3">
           <button
             onClick={handlePlayDailyBriefing}
             disabled={isPlayingBriefing}
@@ -290,6 +290,16 @@ export default function DashboardPage() {
             <Volume2 size={16} className={isPlayingBriefing ? "animate-bounce text-[#38bdf8]" : "text-[#38bdf8]"} />
             <span>{isPlayingBriefing ? "Lecture en cours..." : "Briefing Vocal"}</span>
           </button>
+
+          <a
+            href="/api/events/export"
+            download="agenda-alamajonda.ics"
+            className="dash-btn-glass hidden sm:inline-flex"
+            title="Exporter l'agenda en .ICS"
+          >
+            <Download size={15} />
+            <span>Export .ICS</span>
+          </a>
 
           <button
             onClick={() => setShowEventForm(true)}
@@ -303,66 +313,66 @@ export default function DashboardPage() {
       </div>
 
       {/* =========================================================================
-          2. RUBAN HORIZONTAL UNIQUE DE MÉTRIQUES (DONNÉES 100% RÉELLES SANS FAUX CHIFFRES)
+          RANGÉE 1 DU STYLE A : CARTES KPI SUR UNE SEULE LIGNE HORIZONTALE
          ========================================================================= */}
       <div className="dash-metric-ribbon">
-        {/* KPI 1 : Tâches réelles */}
+        {/* KPI 1 : Tâches à accomplir */}
         <Link href="/tasks" className="dash-metric-item">
           <div className="dash-metric-icon-box">
             <CheckSquare size={19} />
           </div>
           <div>
-            <div className="dash-metric-label">Tâches du jour</div>
-            <div className="dash-metric-val">{tasks.length}</div>
+            <div className="dash-metric-label">Tâches à accomplir</div>
+            <div className="dash-metric-val">{tasks.filter((t) => !t.isDone).length}</div>
           </div>
         </Link>
 
-        {/* KPI 2 : Réunions réelles */}
+        {/* KPI 2 : Rendez-vous programmés */}
         <Link href="/calendar" className="dash-metric-item">
           <div className="dash-metric-icon-box">
             <CalendarIcon size={19} />
           </div>
           <div>
-            <div className="dash-metric-label">Réunions</div>
+            <div className="dash-metric-label">Rendez-vous programmés</div>
             <div className="dash-metric-val">{events.length}</div>
           </div>
         </Link>
 
-        {/* KPI 3 : Efficacité IA */}
-        <div className="dash-metric-item">
-          <div className="dash-metric-icon-box text-emerald-400 bg-emerald-500/10 border-emerald-500/20">
-            <Sparkles size={19} />
+        {/* KPI 3 : Alarmes & Rappels vocaux */}
+        <Link href="/reminders" className="dash-metric-item">
+          <div className="dash-metric-icon-box text-amber-400 bg-amber-500/10 border-amber-500/20">
+            <Bell size={19} />
           </div>
           <div>
-            <div className="dash-metric-label">Efficacité IA</div>
-            <div className="dash-metric-val text-emerald-400">100%</div>
+            <div className="dash-metric-label">Alarmes vocales</div>
+            <div className="dash-metric-val text-amber-400">{reminders.length}</div>
           </div>
-        </div>
+        </Link>
 
-        {/* KPI 4 : Temps Gagné réel */}
+        {/* KPI 4 : Temps gagné calculé */}
         <div className="dash-metric-item">
           <div className="dash-metric-icon-box text-cyan-400 bg-cyan-500/10 border-cyan-500/20">
             <Zap size={19} />
           </div>
           <div>
-            <div className="dash-metric-label">Temps gagné</div>
+            <div className="dash-metric-label">Temps économisé</div>
             <div className="dash-metric-val text-[#38bdf8]">+{timeSavedHours}h</div>
           </div>
         </div>
       </div>
 
       {/* =========================================================================
-          3. DISPOSITION EN 2 VOLETS AÉRÉS (65% CALENDRIER / 35% IA VOCALE)
+          RANGÉE 2 DU STYLE A : SECTION CŒUR MÉTIER (65% AGENDA | 35% RAPPELS VOCAUX)
          ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* VOLET GAUCHE (8 COLONNES / ~65%) : TIMELINE CALENDRIER ÉPURÉE SANS RENDEZ-VOUS FURTIFS */}
-        <div className="lg:col-span-8 space-y-7">
-          <div className="dash-card p-7 sm:p-9 space-y-7">
+        {/* VOLET GAUCHE (65% / 8 COLONNES) : AGENDA & PLANNING CHRONOLOGIQUE AÉRÉ */}
+        <div className="lg:col-span-8 space-y-6">
+          <div className="dash-card p-7 sm:p-8 space-y-6">
             
-            {/* Entête du planning */}
-            <div className="flex items-center justify-between pb-5 border-b border-white/[0.06]">
-              <div className="flex items-center gap-3.5">
+            {/* Entête de l'agenda */}
+            <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+              <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#0d55e0]/20 border border-[#38bdf8]/30 flex items-center justify-center text-[#38bdf8]">
                   <CalendarIcon size={20} />
                 </div>
@@ -370,24 +380,22 @@ export default function DashboardPage() {
                   <h2 className="text-base sm:text-lg font-bold text-white tracking-wide">
                     Planning &amp; Rendez-vous de la Journée
                   </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    {events.length} rendez-vous programmé{events.length > 1 ? "s" : ""} aujourd&apos;hui
+                  <p className="text-xs text-slate-400">
+                    {events.length} créneau{events.length > 1 ? "x" : ""} synchronisé{events.length > 1 ? "s" : ""}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/calendar"
-                  className="text-xs font-semibold text-[#38bdf8] hover:text-white px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all flex items-center gap-1.5"
-                >
-                  <span>Vue Calendrier</span>
-                  <ArrowRight size={13} />
-                </Link>
-              </div>
+              <Link
+                href="/calendar"
+                className="text-xs font-semibold text-[#38bdf8] hover:text-white px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all flex items-center gap-1.5"
+              >
+                <span>Vue Calendrier</span>
+                <ArrowRight size={13} />
+              </Link>
             </div>
 
-            {/* Timeline des Rendez-vous : 100% Réels, Zéro rendez-vous furtifs */}
+            {/* Timeline des Rendez-vous réels (Zéro faux rendez-vous) */}
             <div className="dash-timeline-container pt-2">
               {events.length > 0 ? (
                 events.map((evt) => {
@@ -426,7 +434,6 @@ export default function DashboardPage() {
                           </div>
                         </div>
 
-                        {/* Avatars participants */}
                         <div className="dash-avatars-cluster">
                           <div className="dash-avatar-circle" title="Salem">S</div>
                           <div className="dash-avatar-circle bg-[#0d55e0] text-[#38bdf8]" title="Participant">
@@ -438,20 +445,20 @@ export default function DashboardPage() {
                   );
                 })
               ) : (
-                /* État zéro authentique, aéré et prestigieux sans faux rendez-vous */
-                <div className="py-14 px-6 text-center rounded-2xl bg-white/[0.015] border border-white/[0.04]">
-                  <div className="w-14 h-14 mx-auto rounded-2xl bg-[#0d55e0]/15 border border-[#38bdf8]/20 flex items-center justify-center text-[#38bdf8] mb-4 shadow-[0_0_20px_rgba(13,85,224,0.2)]">
-                    <CalendarIcon size={24} />
+                /* État zéro authentique et spacieux */
+                <div className="py-12 px-6 text-center rounded-2xl bg-white/[0.015] border border-white/[0.04]">
+                  <div className="w-12 h-12 mx-auto rounded-2xl bg-[#0d55e0]/15 border border-[#38bdf8]/20 flex items-center justify-center text-[#38bdf8] mb-3 shadow-[0_0_20px_rgba(13,85,224,0.2)]">
+                    <CalendarIcon size={22} />
                   </div>
-                  <h3 className="text-base font-bold text-white">Aucun rendez-vous planifié aujourd&apos;hui</h3>
-                  <p className="text-xs text-slate-400 mt-1.5 mb-6 max-w-md mx-auto leading-relaxed">
-                    Votre journée est entièrement libre. Planifiez votre premier créneau ci-dessous ou synchronisez vos calendriers en un instant.
+                  <h3 className="text-base font-bold text-white">Aucun rendez-vous aujourd&apos;hui</h3>
+                  <p className="text-xs text-slate-400 mt-1 mb-5 max-w-md mx-auto leading-relaxed">
+                    Votre journée est entièrement libre. Planifiez un créneau ou synchronisez vos calendriers en un instant.
                   </p>
                   <button
                     onClick={() => setShowEventForm(true)}
                     className="dash-btn-primary inline-flex items-center gap-2"
                   >
-                    <Plus size={16} strokeWidth={2.5} />
+                    <Plus size={15} strokeWidth={2.5} />
                     <span>Planifier un rendez-vous</span>
                   </button>
                 </div>
@@ -465,7 +472,7 @@ export default function DashboardPage() {
                 type="text"
                 value={quickTaskText}
                 onChange={(e) => setQuickTaskText(e.target.value)}
-                placeholder="Ajouter un créneau express ou une priorité... (Appuyez sur Entrée)"
+                placeholder="Ajouter une priorité express ou un rappel... (Appuyez sur Entrée)"
                 disabled={isCreatingTask}
                 className="dash-timeline-input"
               />
@@ -481,18 +488,16 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* VOLET DROIT (4 COLONNES / ~35%) : ASSISTANT VOCAL & IMPACT PRODUCTIVITÉ */}
-        <div className="lg:col-span-4 space-y-7">
-          
-          {/* CARTE 1 : RAPPELS & ALARMES VOCALES IA AVEC VISUALISEUR D'ONDE SONORE */}
-          <div className="dash-card p-7 sm:p-8 space-y-6">
+        {/* VOLET DROIT (35% / 4 COLONNES) : ALARMES & RAPPELS VOCAUX */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="dash-card p-7 space-y-5">
             <div className="flex items-center justify-between pb-3.5 border-b border-white/[0.06]">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-[#0d55e0]/20 border border-[#38bdf8]/30 text-[#38bdf8] flex items-center justify-center">
                   <Volume2 size={16} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">Rappels &amp; Alarmes Vocales</h3>
+                  <h3 className="text-sm font-bold text-white">Alarmes &amp; Rappels Vocaux</h3>
                   <p className="text-[11px] text-slate-400">Synthèse vocale en temps réel</p>
                 </div>
               </div>
@@ -505,7 +510,7 @@ export default function DashboardPage() {
               </Link>
             </div>
 
-            {/* Visualiseur d'Onde Sonore Cyan Animée (Conforme Maquette) */}
+            {/* Visualiseur d'Onde Sonore Cyan Animée */}
             <div className="dash-soundwave-container" title="Visualiseur audio vocal de l'assistant">
               {[...Array(26)].map((_, i) => (
                 <div
@@ -551,10 +556,10 @@ export default function DashboardPage() {
                 })
               ) : (
                 <div className="py-7 px-4 text-center rounded-xl bg-white/[0.015] border border-white/[0.04]">
-                  <Volume2 size={22} className="mx-auto text-slate-500 mb-2.5 opacity-60" />
-                  <p className="text-xs font-bold text-white">0 alarme en attente</p>
+                  <Volume2 size={22} className="mx-auto text-slate-500 mb-2 opacity-60" />
+                  <p className="text-xs font-bold text-white">0 alarme active</p>
                   <p className="text-[11px] text-slate-400 mt-1 mb-4 leading-relaxed">
-                    Vos alarmes vocales programmées sonneront automatiquement au moment choisi.
+                    Vos alarmes vocales sonneront automatiquement à l&apos;heure dite.
                   </p>
                   <Link href="/reminders" className="dash-btn-glass text-xs inline-flex items-center gap-1.5 py-1.5 px-3">
                     <Plus size={13} />
@@ -568,17 +573,114 @@ export default function DashboardPage() {
             <div className="p-3.5 rounded-xl bg-[#0d55e0]/10 border border-[#38bdf8]/20 flex items-start gap-2.5">
               <Sparkles size={15} className="text-[#38bdf8] mt-0.5 shrink-0" />
               <div className="text-[11px] text-slate-300 leading-relaxed">
-                <strong className="text-white font-semibold">Assistant Vocal Proactif :</strong> Vos notifications retentissent avec carillon et lecture vocale haute fidélité.
+                <strong className="text-white font-semibold">Synthèse Proactive :</strong> Votre navigateur émet un carillon puis dicte vos alertes à haute voix.
               </div>
             </div>
           </div>
+        </div>
 
-          {/* CARTE 2 : IMPACT PRODUCTIVITÉ (CALCULÉ SÉCURISE ET RÉEL) */}
+      </div>
+
+      {/* =========================================================================
+          RANGÉE 3 DU STYLE A : DONNÉES & ACTIVITÉ (65% TÂCHES | 35% IMPACT PRODUCTIVITÉ)
+         ========================================================================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* VOLET GAUCHE (65% / 8 COLONNES) : TABLE DE GESTION DES PRIORITÉS & TÂCHES */}
+        <div className="lg:col-span-8 space-y-6">
+          <div className="dash-card p-7 sm:p-8 space-y-5">
+            <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#0d55e0]/20 border border-[#38bdf8]/30 flex items-center justify-center text-[#38bdf8]">
+                  <CheckSquare size={20} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white tracking-wide">
+                    Tâches &amp; Priorités d&apos;Exécution
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {tasks.filter((t) => !t.isDone).length} tâche{tasks.filter((t) => !t.isDone).length > 1 ? "s" : ""} en cours
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/tasks"
+                className="text-xs font-semibold text-[#38bdf8] hover:text-white px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all flex items-center gap-1.5"
+              >
+                <span>Toutes les tâches</span>
+                <ArrowRight size={13} />
+              </Link>
+            </div>
+
+            {/* Liste structurée des tâches avec case à cocher */}
+            <div className="space-y-3">
+              {tasks.length > 0 ? (
+                tasks.slice(0, 5).map((task) => (
+                  <div
+                    key={task.id}
+                    onClick={() => handleToggleTask(task.id, task.isDone)}
+                    className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-[#38bdf8]/30 transition-all flex items-center justify-between gap-4 cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div
+                        className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all shrink-0 ${
+                          task.isDone
+                            ? "bg-emerald-500 border-emerald-500 text-white"
+                            : "border-slate-500 hover:border-[#38bdf8]"
+                        }`}
+                      >
+                        {task.isDone && <Check size={12} strokeWidth={3} />}
+                      </div>
+
+                      <span
+                        className={`text-sm font-medium truncate ${
+                          task.isDone
+                            ? "line-through text-slate-500"
+                            : "text-white"
+                        }`}
+                      >
+                        {task.title}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {task.priority === "URGENT" && (
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                          URGENT
+                        </span>
+                      )}
+                      {task.priority === "HIGH" && (
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                          PRIORITAIRE
+                        </span>
+                      )}
+                      {task.priority !== "URGENT" && task.priority !== "HIGH" && (
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-white/[0.04] text-slate-400 border border-white/[0.08]">
+                          STANDARD
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-8 text-center">
+                  <CheckCircle2 size={24} className="mx-auto text-emerald-400 mb-2 opacity-80" />
+                  <p className="text-xs font-bold text-white">Toutes les tâches sont accomplies</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Ajoutez une nouvelle tâche via la barre rapide ci-dessus.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* VOLET DROIT (35% / 4 COLONNES) : IMPACT PRODUCTIVITÉ & COPILOTE EXPRESS */}
+        <div className="lg:col-span-4 space-y-6">
           <div className="dash-card p-7 space-y-5">
             <div className="flex items-center justify-between text-xs pb-3.5 border-b border-white/[0.06]">
               <span className="font-bold text-white flex items-center gap-2">
                 <Target size={14} className="text-[#38bdf8]" />
-                Productivité &amp; Gain de Temps
+                Productivité &amp; Réalisation
               </span>
               <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold text-[10px] border border-emerald-500/20">
                 Temps Réel
@@ -595,15 +697,23 @@ export default function DashboardPage() {
                 <div className="dash-impact-val text-emerald-400">
                   {tasks.length > 0 ? `${Math.round((doneTasksCount / tasks.length) * 100)}%` : "100%"}
                 </div>
-                <div className="text-[11px] text-slate-400 mt-0.5 font-medium">Priorités à jour</div>
+                <div className="text-[11px] text-slate-400 mt-0.5 font-medium">Taux complétion</div>
               </div>
             </div>
 
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              Vos rendez-vous, rappels et synthèses sont orchestrés sans aucune friction cognitive.
-            </p>
+            <div className="pt-2">
+              <Link
+                href="/agent"
+                className="w-full p-3.5 rounded-xl bg-[#0d55e0]/20 hover:bg-[#0d55e0]/30 border border-[#38bdf8]/30 flex items-center justify-between gap-3 text-xs font-bold text-white transition-all group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Sparkles size={16} className="text-[#38bdf8]" />
+                  <span>Ouvrir le Copilote IA</span>
+                </div>
+                <ArrowRight size={14} className="text-[#38bdf8] group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
           </div>
-
         </div>
 
       </div>
